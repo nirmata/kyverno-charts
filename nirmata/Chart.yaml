@@ -8,6 +8,7 @@ keywords:
   - kubernetes
   - nirmata
   - policy agent
+  - policy engine
   - validating webhook
   - admissions controller
 home: https://kyverno.io/
@@ -15,6 +16,6 @@ sources:
   - https://github.com/kyverno/kyverno
 maintainers:
   - name: Nirmata
-    url: https://kyverno.io/
+    url: https://nirmata.com/
 engine: gotpl
 kubeVersion: ">=1.10.0-0"
