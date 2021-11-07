@@ -19,7 +19,7 @@ This chart bootstraps a Kyverno deployment on a [Kubernetes](http://kubernetes.i
 **Add the Kyverno Helm repository:**
 
 ```console
-$ helm repo add kyverno https://nirmata.github.io/nirmata/
+$  helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 ```
 
 **Create a namespace:**
@@ -31,7 +31,7 @@ $ kubectl create namespace kyverno
 **Install the Kyverno chart:**
 
 ```console
-$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/nirmata --set image.pullSecrets.username=<username> --set image.pullSecrets.password=<token>
+$ helm install kyverno --namespace kyverno nirmata/kyverno --set image.pullSecrets.username=<user> --set image.pullSecrets.password=<token>
 ```
 
 The command deploys Kyverno on the Kubernetes cluster with default configuration. The [installation](https://kyverno.io/docs/installation/) guide lists the parameters that can be configured during installation.
