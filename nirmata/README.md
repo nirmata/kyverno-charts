@@ -36,6 +36,16 @@ $ helm install kyverno --namespace kyverno nirmata/kyverno --set image.pullSecre
 
 The command deploys Kyverno on the Kubernetes cluster with default configuration. The [installation](https://kyverno.io/docs/installation/) guide lists the parameters that can be configured during installation.
 
+## Installing the YAML
+
+Add the Kyverno Helm repository as described above. Then create the namespace for kyverno. Once the namespace is created, generate the kyverno YAML file using the helm template command
+
+```console
+helm template kyverno --namespace=kyverno nirmata/kyverno --set image.pullSecrets.username=<user> --set image.pullSecrets.password=<token> > kyverno.yaml
+
+kubectl create -f kyverno.yaml
+```
+
 ## Uninstalling the Chart
 
 To uninstall/delete the `kyverno` deployment:
