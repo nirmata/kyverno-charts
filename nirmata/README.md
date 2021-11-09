@@ -38,6 +38,7 @@ The command deploys Kyverno on the Kubernetes cluster with default configuration
 
 ## Installing the YAML
 
+If you do not want to use "helm install" to install the chart, you can generate the YAML from the helm chart and install it directly.
 Add the Kyverno Helm repository as described above. Then create the namespace for kyverno. Once the namespace is created, generate the kyverno YAML file using the helm template command
 
 ```console
