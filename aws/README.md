@@ -28,10 +28,31 @@ $ helm repo add kyverno https://nirmata.github.io/nirmata/
 $ kubectl create namespace kyverno
 ```
 
-**Install the Kyverno chart:**
+**Install the Kyverno chart on EKS cluster:**
 
 ```console
-$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/nirmata --set image.pullSecrets.username=<username> --set image.pullSecrets.password=<token>
+
+$ eksctl create iamserviceaccount \
+--name <service-account-name> \
+--namespace kyverno \
+--cluster <cluster-name> \
+--attach-policy-arn "arn:aws:iam::aws:policy/servicerole/
+AWSLicenseManagerConsumptionPolicy" \
+--approve \
+--override-existing-serviceaccounts
+
+$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/aws --set rbac.create=true --set rbac.serviceAccount.name=<service-account-name> --set rbac.serviceAccount.annotations."eks\.amazonaws\.com\/role-arn"=<role-arn>
+```
+
+**Install the Kyverno chart on on-prem cluster:**
+
+```console
+
+$ kubectl create secret generic "<license-secret>" \
+--from-literal=license_token=${TOKEN} \
+--from-literal=iam_role=${ROLE_ARN}
+
+$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/aws --set aws.licenseConfigSecretName=<license-secret>
 ```
 
 The command deploys Kyverno on the Kubernetes cluster with default configuration. The [installation](https://kyverno.io/docs/installation/) guide lists the parameters that can be configured during installation.
