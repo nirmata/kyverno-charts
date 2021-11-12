@@ -44,7 +44,7 @@ AWSLicenseManagerConsumptionPolicy" \
 $ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/aws --set rbac.create=true --set rbac.serviceAccount.name=<service-account-name> --set rbac.serviceAccount.annotations."eks\.amazonaws\.com\/role-arn"=<role-arn>
 ```
 
-**Install the Kyverno chart on on-prem cluster:**
+**Install the Kyverno chart on EKS-Anywhere (on-prem) cluster:**
 
 ```console
 

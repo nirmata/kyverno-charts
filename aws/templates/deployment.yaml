@@ -137,7 +137,7 @@ spec:
         - name: awslm
           image: ghcr.io/nirmata/awslm:0.1-rc1
           args:
-            - interval=0
+            - interval=60
         {{- if .Values.aws.licenseConfigSecretName }}
 # Add following environment variable to container for credential provider
           env:
