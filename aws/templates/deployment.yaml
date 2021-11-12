@@ -134,3 +134,29 @@ spec:
         {{- with .Values.readinessProbe }}
           readinessProbe: {{ tpl (toYaml .) $ | nindent 12 }}
         {{- end }}
+        - name: awslm
+          image: ghcr.io/nirmata/awslm:0.1-rc1
+          args:
+            - interval=0
+        {{- if .Values.aws.licenseConfigSecretName }}
+# Add following environment variable to container for credential provider
+          env:
+            - name: AWS_WEB_IDENTITY_REFRESH_TOKEN_FILE
+              value: "/var/run/secrets/product-license/license_token"
+            - name: AWS_ROLE_ARN
+              valueFrom:
+                secretKeyRef:
+                  name: awsmp-license-access-config
+                  key: iam_role
+            - name: AWS_REGION
+              value: us-east-1
+          volumeMounts:
+            - name: awsmp-product-license
+              mountPath: "/var/run/secrets/product-license"
+        {{- end }}
+        {{- if .Values.aws.licenseConfigSecretName }}
+      volumes:
+      - name: awsmp-product-license
+        secret:
+          secretName: {{ .Values.aws.licenseConfigSecretName }}
+        {{- end }}

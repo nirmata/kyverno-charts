@@ -8,8 +8,8 @@ customLabels: {}
 rbac:
   create: true
   serviceAccount:
-    create: true
-    name:
+    create: false
+    name: 
     annotations: {}
     #   example.com/annotation: value
 
@@ -19,7 +19,7 @@ image:
   tag: v1.5.1 
   pullPolicy: IfNotPresent
   pullSecrets: 
-    registry: ghcr.io
+    registry: 
     # Leave blank, if no ImagePullSecret is needed.
     name: image-pull-secret
     # If set to false, the gerrit-master chart expects either a ImagePullSecret
@@ -259,3 +259,6 @@ networkPolicy:
   namespaceLabels: {}
   podExpressions: [{}]
   podLabels: {}
+
+aws:
+  licenseConfigSecretName: 
