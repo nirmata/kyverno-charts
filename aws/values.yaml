@@ -14,7 +14,7 @@ rbac:
     #   example.com/annotation: value
 
 image:
-  repository: ghcr.io/nirmata/kyverno
+  repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno
   # Defaults to appVersion in Chart.yaml if omitted
   tag: v1.5.1 
   pullPolicy: IfNotPresent
@@ -29,12 +29,19 @@ image:
     username:
     password:
 initImage:
-  repository: ghcr.io/nirmata/kyvernopre
+  repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyvernopre
   # If initImage.tag is missing, defaults to image.tag
   tag:  v1.5.1
   # If initImage.pullPolicy is missing, defaults to image.pullPolicy
   pullPolicy:
   # No pull secrets just for initImage; just add to image.pullSecrets
+licensemanagerImage:
+  repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/awslm
+  # If licensemanagerImage.tag is missing, defaults to image.tag
+  tag:  0.1-rc2
+  # If licensemanagerImage.pullPolicy is missing, defaults to image.pullPolicy
+  pullPolicy:
+  # No pull secrets just for licensemanagerImage; just add to image.pullSecrets
 testImage:
   # testImage.repository defaults to "busybox" if omitted
   repository:

@@ -135,9 +135,10 @@ spec:
           readinessProbe: {{ tpl (toYaml .) $ | nindent 12 }}
         {{- end }}
         - name: awslm
-          image: ghcr.io/nirmata/awslm:0.1-rc1
+          image: {{ .Values.licensemanagerImage.repository }}:{{ default .Chart.AppVersion (default .Values.licensemanagerImage.tag .Values.licensemanagerImage.tag) }}
+          imagePullPolicy: {{ default .Values.image.pullPolicy .Values.licensemanagerImage.pullPolicy }}
           args:
-            - interval=60
+            - --interval=60m
         {{- if .Values.aws.licenseConfigSecretName }}
 # Add following environment variable to container for credential provider
           env:
