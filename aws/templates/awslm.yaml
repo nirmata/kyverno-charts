@@ -23,8 +23,8 @@ metadata:
   name: awslm-binding
 subjects:
   - kind: ServiceAccount
-    name: awslm-sa
-    namespace: awslm
+    name: {{ template "kyverno.serviceAccountName" . }}
+    namespace: {{ template "kyverno.namespace" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -36,8 +36,8 @@ metadata:
   name: awslm-secrets-binding
 subjects:
   - kind: ServiceAccount
-    name: awslm-sa
-    namespace: awslm
+    name: {{ template "kyverno.serviceAccountName" . }}
+    namespace: {{ template "kyverno.namespace" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

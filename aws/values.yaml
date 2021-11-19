@@ -16,22 +16,22 @@ rbac:
 image:
   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno
   # Defaults to appVersion in Chart.yaml if omitted
-  tag: v1.5.1 
+  tag: v1.5.1-n4kbuild.1
   pullPolicy: IfNotPresent
   pullSecrets: 
     registry: 
     # Leave blank, if no ImagePullSecret is needed.
-    name: image-pull-secret
+    name: 
     # If set to false, the gerrit-master chart expects either a ImagePullSecret
     # with the name configured above to be present on the cluster or that no
     # credentials are needed.
-    create: true
+    create: false
     username:
     password:
 initImage:
   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyvernopre
   # If initImage.tag is missing, defaults to image.tag
-  tag:  v1.5.1
+  tag:  v1.5.1-n4kbuild.1
   # If initImage.pullPolicy is missing, defaults to image.pullPolicy
   pullPolicy:
   # No pull secrets just for initImage; just add to image.pullSecrets
