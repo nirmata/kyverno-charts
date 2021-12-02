@@ -22,10 +22,11 @@ This chart bootstraps a Kyverno deployment on a [Kubernetes](http://kubernetes.i
 helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 ```
 
-Note: If you have open source Kyverno installed, please follow the instructions below to remove/uninstall Kyverno prior to installing Kyverno using the Nirmata Enterprise Subscription.
+**Note:** If you have open source Kyverno installed, please follow the instructions below to remove/uninstall Kyverno prior to installing Kyverno using the Nirmata Enterprise Subscription.
 
 **Create a namespace:**
-Note: You can skip this step if you already have kyverno namespace created.
+
+**Note:** You can skip this step if you already have kyverno namespace created.
 
 ```console
 kubectl create namespace kyverno
