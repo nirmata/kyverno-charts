@@ -22,7 +22,10 @@ This chart bootstraps a Kyverno deployment on a [Kubernetes](http://kubernetes.i
 $  helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 ```
 
+Note: If you have open source Kyverno installed, please follow the instructions below to remove/uninstall Kyverno prior to installing Kyverno using the Nirmata Enterprise Subscription.
+
 **Create a namespace:**
+Note: You can skip this step if you already have kyverno namespace created.
 
 ```console
 $ kubectl create namespace kyverno
@@ -56,6 +59,26 @@ $ helm delete -n kyverno kyverno
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+## Uninstall manually installed Kyverno (YAML)
+
+To uninstall/delete the `kyverno` deployment follow these steps:
+
+```
+$ kubectl delete deployment kyverno
+$ kubectl delete crds clusterpolicies.kyverno.io clusterpolicyreports.wgpolicyk8s.io clusterreportchangerequests.kyverno.io generaterequests.kyverno.io policies.kyverno.io policyreports.wgpolicyk8s.io reportchangerequests.kyverno.io
+$ kubectl delete clusterrole kyverno:admin-policies kyverno:admin-policyreport kyverno:admin-reportchangerequest kyverno:customresources kyverno:generatecontroller kyverno:leaderelection kyverno:policycontroller kyverno:userinfo kyverno:webhook
+$ kubectl delete clusterrolebinding kyverno:customresources kyverno:generatecontroller kyverno:leaderelection kyverno:nirmata-ns-access-controls kyverno:policycontroller kyverno:userinfo kyverno:webhook
+```
+
+You can check if any kyverno resources are still deployed using the commands:
+
+```
+kubectl get crds |grep kyverno
+kubectl get crds |grep policyreports
+kubectl get clusterrole |grep kyverno
+kubectl get clusterrolebinding |grep kyverno
+```
 
 ## Configuration
 
