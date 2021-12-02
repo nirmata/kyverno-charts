@@ -26,7 +26,7 @@ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 
 **Create a namespace:**
 
-**Note:** You can skip this step if you already have kyverno namespace created.
+**Note:** You can skip this step if you have already creared the kyverno namespace.
 
 ```console
 kubectl create namespace kyverno
