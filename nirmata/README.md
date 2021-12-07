@@ -22,7 +22,7 @@ This chart bootstraps a Kyverno deployment on a [Kubernetes](http://kubernetes.i
 helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 ```
 
-**Note:** If you have open source Kyverno installed, please follow the instructions below to remove/uninstall Kyverno prior to installing Kyverno using the Nirmata Enterprise Subscription.
+**Note:** If you have open source Kyverno installed, please follow the instructions below to upgrade to the Nirmata Enterprise Subscription.
 
 **Create a namespace:**
 
@@ -50,6 +50,18 @@ helm template kyverno --namespace=kyverno nirmata/kyverno --set image.pullSecret
 
 kubectl create -f kyverno.yaml
 ```
+
+## Upgrading from open source Kyverno to Nirmata Enterprise Subscription
+
+If you are running open source Kyverno 1.5.0 or above in your cluster, you can directly upgrade to Nirmata Enterprise Subscription
+
+```console
+helm upgrade kyverno --namespace kyverno nirmata/kyverno --set image.pullSecrets.username=<user> --set image.pullSecrets.password=<token>
+```
+
+## Installing policies
+
+You can install the curated Kyverno policies by following the instructions [here](https://github.com/nirmata/kyverno-policies)
 
 ## Uninstalling the Chart
 
