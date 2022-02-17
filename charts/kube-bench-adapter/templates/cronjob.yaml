@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  namespace: {{ .Values.kubeBench.namespace}}
+  name: {{ include "kube-bench.fullname" . }}
+  labels:
+    {{- include "kube-bench.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.cronjob.schedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: {{ include "kube-bench.fullname" . }}
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+            command: ["./{{ .Values.kubeBench.command }}"]
+            args: [
+            "-name","{{ .Values.kubeBench.name}}",
+            "-yaml", "{{ .Values.kubeBench.yaml }}",
+            "-category", "{{ .Values.kubeBench.category }}",
+            "-namespace", "{{ .Values.kubeBench.namespace }}",
+            "-kube-bench-benchmark", "{{ .Values.kubeBench.benchmark }}",
+            "-kube-bench-targets", "{{ .Values.kubeBench.targets }}",
+            "-kube-bench-version", "{{ .Values.kubeBench.version }}",
+            "-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}",
+            "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
+            ]
+          restartPolicy: Never
+          serviceAccountName:   {{ include "kube-bench.fullname" . }}
