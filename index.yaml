@@ -1,0 +1,44 @@
+apiVersion: v1
+entries:
+  kube-bench-adapter:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-02-17T13:01:03.369105617Z"
+    description: The kube-bench adapter periodically runs a CIS benchmark check using
+      cron-job with a tool called kube-bench and produces a cluster-wide policy report
+      based on the Policy Report Custom Resource Definition
+    digest: 8f0584c0401481aa3dde8b6f6ca90fdf39113b5052829e24c0d5b1e478f99d32
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kube-bench-adapter
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kube-bench-adapter-v1.1.0/kube-bench-adapter-v1.1.0.tgz
+    version: v1.1.0
+  kyverno:
+  - apiVersion: v1
+    appVersion: v1.5.1
+    created: "2021-11-07T10:55:05.903419-08:00"
+    description: Kubernetes Native Policy Management
+    digest: 333489c7cf84a580429bb2962d8a4d066173c8678492feb401551c850a8217e8
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy engine
+    - validating webhook
+    - admissions controller
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://kyverno.io/
+    name: kyverno
+    sources:
+    - https://github.com/kyverno/kyverno
+    urls:
+    - https://nirmata.github.io/kyverno-charts/kyverno-v1.1.0.tgz
+    version: v1.1.0
+generated: "2022-02-17T13:01:03.495575212Z"
