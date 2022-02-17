@@ -1,0 +1,72 @@
+# Default values for kube-bench.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  # --image repository of kube-bench-adapter
+  repository: ghcr.io/nirmata/kube-bench-adapter
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+   # --tag of image repository of kube-bench-adapter
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+rbac:
+  create: true
+
+cronjob:
+  # -- cronjob schedule, default is 2 mins.
+  schedule: '"*/2 * * * *"'
+
+kubeBench:
+  command: "policyreport"
+  # -- name of kube-bench adapter cluster policy report
+  name: "kube-bench"
+  # -- category of the policy report
+  category: "CIS Benchmarks"
+  # -- specifies namespace where kube-bench job will run
+  namespace: "default"
+  # -- specify the benchmark for kube-bench job, allowed values:cis-1.5, cis-1.6, gke-1.0, eks-1.0, ack-1.0
+  benchmark: "cis-1.6"
+  # -- targets for benchmark of kube-bench job, multiple values allowed.
+  targets: "master,node,etcd,policies"
+  # -- specify the Kubernetes version for kube-bench job
+  version: "1.21"
+  # -- kube-bench image used for the adapter
+  kubebenchImg: "aquasec/kube-bench:latest"
+  # -- absolute path to the kubeconfig file
+  kubeconfig: "$HOME/.kube/config"
+  # -- name of name of YAML for kube-bench job, allowed values: job.yaml, job-master.yaml, job-node.yaml, job-ack.yaml, job-aks.yaml, job-eks-asff.yaml, job-eks.yaml, job-gke.yaml, job-iks.yaml
+  yaml: "job.yaml"
+
+service:
+  type: NodePort
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+      - path: /
+        backend:
+          serviceName: chart-example.local
+          servicePort: 80
+  tls: []
