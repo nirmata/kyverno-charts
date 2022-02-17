@@ -1,6 +1,6 @@
 # kube-bench-adapter
 
-![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.16.0](https://img.shields.io/badge/AppVersion-1.16.0-informational?style=flat-square)
+![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.16.0](https://img.shields.io/badge/AppVersion-1.16.0-informational?style=flat-square)
 
 The kube-bench adapter periodically runs a CIS benchmark check using cron-job with a tool called kube-bench and produces a cluster-wide policy report based on the Policy Report Custom Resource Definition
 
@@ -28,7 +28,7 @@ kubectl get clusterpolicyreports
 | cronjob.schedule | string | `"\"*/2 * * * *\""` | cronjob schedule, default is 2 mins. |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
-| image.repository | string | `"mritunjay394/policyreport"` | image repository of kube-bench-adapter |
+| image.repository | string | `"ghcr.io/nirmata/kube-bench-adapter"` | image repository of kube-bench-adapter |
 | image.tag | string | `"latest"` | tag of image repository of kube-bench-adapter |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
