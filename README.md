@@ -3,7 +3,7 @@
 This page contains the list of Helm charts for Nirmata Enterprise Subscription for Kyverno
 
 ### Installing the Kyverno Chart 
-The [installation](./nirmata/README.md) guide lists the instructions to install the Kyverno helm chart as well as the parameters that can be configured during installation.
+The [installation](https://github.com/nirmata/kyverno-charts/blob/main/charts/nirmata/README.md) guide lists the instructions to install the Kyverno helm chart as well as the parameters that can be configured during installation.
 
 
 ### Support or Contact
