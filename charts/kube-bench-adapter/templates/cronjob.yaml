@@ -20,9 +20,6 @@ spec:
             "-yaml", "{{ .Values.kubeBench.yaml }}",
             "-category", "{{ .Values.kubeBench.category }}",
             "-namespace", "{{ .Values.kubeBench.namespace }}",
-            "-kube-bench-benchmark", "{{ .Values.kubeBench.benchmark }}",
-            "-kube-bench-targets", "{{ .Values.kubeBench.targets }}",
-            "-kube-bench-version", "{{ .Values.kubeBench.version }}",
             "-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}",
             "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
             ]
