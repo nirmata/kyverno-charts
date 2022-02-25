@@ -10,7 +10,7 @@ image:
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
    # --tag of image repository of kube-bench-adapter
-  tag: "latest"
+  tag: "v0.1.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -29,8 +29,8 @@ rbac:
   create: true
 
 cronjob:
-  # -- cronjob schedule, default is 2 mins.
-  schedule: '"*/2 * * * *"'
+  # -- cronjob schedule, default is weekly.
+  schedule: '"@weekly"'
 
 kubeBench:
   command: "policyreport"
@@ -40,17 +40,11 @@ kubeBench:
   category: "CIS Benchmarks"
   # -- specifies namespace where kube-bench job will run
   namespace: "default"
-  # -- specify the benchmark for kube-bench job, allowed values:cis-1.5, cis-1.6, gke-1.0, eks-1.0, ack-1.0
-  benchmark: "cis-1.6"
-  # -- targets for benchmark of kube-bench job, multiple values allowed.
-  targets: "master,node,etcd,policies"
-  # -- specify the Kubernetes version for kube-bench job
-  version: "1.21"
   # -- kube-bench image used for the adapter
-  kubebenchImg: "aquasec/kube-bench:latest"
+  kubebenchImg: "aquasec/kube-bench:v0.6.6"
   # -- absolute path to the kubeconfig file
   kubeconfig: "$HOME/.kube/config"
-  # -- name of name of YAML for kube-bench job, allowed values: job.yaml, job-master.yaml, job-node.yaml, job-ack.yaml, job-aks.yaml, job-eks-asff.yaml, job-eks.yaml, job-gke.yaml, job-iks.yaml
+  # -- name of provider of YAML for kube-bench job, allowed values: job.yaml, job-master.yaml, job-node.yaml, job-ack.yaml, job-aks.yaml, job-eks-asff.yaml, job-eks.yaml, job-gke.yaml, job-iks.yaml
   yaml: "job.yaml"
 
 service:
