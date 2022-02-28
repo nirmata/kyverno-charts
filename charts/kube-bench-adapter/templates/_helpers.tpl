@@ -34,6 +34,8 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "kube-bench.labels" -}}
+app.kubernetes.io/instance: nirmata
+app.kubernetes.io/name: nirmata
 helm.sh/chart: {{ include "kube-bench.chart" . }}
 {{ include "kube-bench.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
@@ -41,6 +43,12 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
+
+{{/* matchLabels */}}
+{{- define "kube-bench.matchLabels" -}}
+app.kubernetes.io/name: nirmata
+app.kubernetes.io/instance: nirmata
+{{- end -}}
 
 {{/*
 Selector labels
@@ -59,4 +67,11 @@ Create the name of the service account to use
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
+{{- end }}
+
+{{/*
+Create secret to access docker registry
+*/}}
+{{- define "imagePullSecret" }}
+{{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.image.pullSecrets.registry (printf "%s:%s" .Values.image.pullSecrets.username .Values.image.pullSecrets.password | b64enc) | b64enc }}
 {{- end }}
