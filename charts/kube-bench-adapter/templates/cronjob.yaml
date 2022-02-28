@@ -24,13 +24,12 @@ spec:
             {{- with .Values.resources }}
             resources: {{ tpl (toYaml .) $ | nindent 12 }}
             {{- end }}
-            livenessProbe:
-              exec:
-                command:
-                - ./{{ .Values.kubeBench.command }}
-              exec:
-                command:
-                - ./{{ .Values.kubeBench.command }}
+            {{- with .Values.livenessProbe }}
+            livenessProbe: {{ tpl (toYaml .) $ | nindent 12 }}
+            {{- end }}
+            {{- with .Values.readinessProbe }}
+            readinessProbe: {{ tpl (toYaml .) $ | nindent 12 }}
+            {{- end }}
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
