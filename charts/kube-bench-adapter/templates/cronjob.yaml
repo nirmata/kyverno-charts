@@ -10,6 +10,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+                {{- include "kube-bench.labels" . | nindent 12 }}
         spec:
           containers:
           - name: {{ include "kube-bench.fullname" . }}
