@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  namespace: {{ .Values.kubeBench.namespace}}
+  namespace: {{ .Values.kubeBench.namespace }}
   name: {{ include "kube-bench.fullname" . }}
   labels:
     {{- include "kube-bench.labels" . | nindent 4 }}
@@ -10,9 +10,6 @@ spec:
   jobTemplate:
     spec:
       template:
-        metadata:
-          labels:
-            {{- include "kube-bench.labels" . | nindent 4 }}
         spec:
           containers:
           - name: {{ include "kube-bench.fullname" . }}
@@ -27,13 +24,13 @@ spec:
             "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
             ]
             {{- with .Values.resources }}
-            resources: {{ tpl (toYaml .) $ | nindent 12 }}
+            resources: {{ tpl (toYaml .) $ | nindent 14 }}
             {{- end }}
             {{- with .Values.livenessProbe }}
-            livenessProbe: {{ tpl (toYaml .) $ | nindent 12 }}
+            livenessProbe: {{ tpl (toYaml .) $ | nindent 14 }}
             {{- end }}
             {{- with .Values.readinessProbe }}
-            readinessProbe: {{ tpl (toYaml .) $ | nindent 12 }}
+            readinessProbe: {{ tpl (toYaml .) $ | nindent 14 }}
             {{- end }}
             securityContext:
               allowPrivilegeEscalation: false
@@ -44,9 +41,9 @@ spec:
               runAsGroup: 1000
               runAsNonRoot: true
               runAsUser: 1000
-              {{- if .Values.image.pullSecrets.create }}
-              imagePullSecrets:
-              - name: {{ .Values.image.pullSecrets.name }}
-              {{- end }}
+          {{- if .Values.image.pullSecrets.create }}
+          imagePullSecrets:
+          - name: {{ .Values.image.pullSecrets.name }}
+          {{- end }}
           restartPolicy: Never
           serviceAccountName:   {{ include "kube-bench.fullname" . }}

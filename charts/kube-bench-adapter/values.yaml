@@ -89,7 +89,7 @@ resources:
 livenessProbe:
   exec:
     command:
-      ./policyreport
+    - ./policyreport
 
 ## Readiness Probe. The block is directly forwarded into the deployment, so you can use whatever readinessProbe configuration you want.
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
@@ -97,4 +97,4 @@ livenessProbe:
 readinessProbe:
   exec:
     command:
-      ./policyreport
+    - ./policyreport
