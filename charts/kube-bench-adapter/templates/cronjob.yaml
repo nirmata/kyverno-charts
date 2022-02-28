@@ -18,17 +18,12 @@ spec:
           - name: {{ include "kube-bench.fullname" . }}
             image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
             command: ["./{{ .Values.kubeBench.command }}"]
-            args: [
-            "-name","{{ .Values.kubeBench.name}}",
-            "-yaml", "{{ .Values.kubeBench.yaml }}",
-            "-category", "{{ .Values.kubeBench.category }}",
-            "-namespace", "{{ .Values.kubeBench.namespace }}",
-            "-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}",
-            "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
-            ]
-          {{- with .Values.resources }}
-          resources: {{ tpl (toYaml .) $ | nindent 12 }}
-          {{- end }}
+            {{- with .Values.extraArgs }}
+            args: {{ tpl (toYaml .) $ | nindent 12 }}
+            {{- end }}
+            {{- with .Values.resources }}
+            resources: {{ tpl (toYaml .) $ | nindent 12 }}
+            {{- end }}
             livenessProbe:
               exec:
                 command:
@@ -45,9 +40,9 @@ spec:
               runAsGroup: 1000
               runAsNonRoot: true
               runAsUser: 1000
-            {{- if .Values.image.pullSecrets.create }}
-          imagePullSecrets:
-          - name: {{ .Values.image.pullSecrets.name }}
-            {{- end }}
+              {{- if .Values.image.pullSecrets.create }}
+              imagePullSecrets:
+              - name: {{ .Values.image.pullSecrets.name }}
+              {{- end }}
           restartPolicy: Never
           serviceAccountName:   {{ include "kube-bench.fullname" . }}
