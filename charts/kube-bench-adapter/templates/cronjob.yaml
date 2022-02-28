@@ -26,20 +26,16 @@ spec:
             "-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}",
             "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
             ]
-            resources:
-              limits:
-                cpu: 100m
-                memory: 200Mi
-              requests:
-                cpu: 100m
-                memory: 200Mi
+           {{- with .Values.resources }}
+          resources: {{ tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
             livenessProbe:
               exec:
                 command:
-                - ./policyreport
+                - ./{{ .Values.kubeBench.command }}
               exec:
                 command:
-                - ./policyreport
+                - ./{{ .Values.kubeBench.command }}
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
@@ -50,6 +46,6 @@ spec:
               runAsNonRoot: true
               runAsUser: 1000
           imagePullSecrets:
-          - name: regcred
+          - name: {{values.image.pullSecret}}
           restartPolicy: Never
           serviceAccountName:   {{ include "kube-bench.fullname" . }}
