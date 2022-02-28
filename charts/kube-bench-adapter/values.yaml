@@ -57,12 +57,7 @@ kubeBench:
   # -- name of provider of YAML for kube-bench job, allowed values: job.yaml, job-master.yaml, job-node.yaml, job-ack.yaml, job-aks.yaml, job-eks-asff.yaml, job-eks.yaml, job-gke.yaml, job-iks.yaml
   yaml: "job.yaml"
 
-extraArgs: [ "-name","{{ .Values.kubeBench.name}}",
-            "-yaml", "{{ .Values.kubeBench.yaml }}",
-            "-category", "{{ .Values.kubeBench.category }}",
-            "-namespace", "{{ .Values.kubeBench.namespace }}",
-            "-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}",
-            "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",]
+extraArgs: ["-name","{{ .Values.kubeBench.name}}","-yaml", "{{ .Values.kubeBench.yaml }}","-category", "{{ .Values.kubeBench.category }}","-namespace", "{{ .Values.kubeBench.namespace }}","-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}","-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",]
 
 service:
   type: NodePort
