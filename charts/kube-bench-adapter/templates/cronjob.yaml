@@ -35,15 +35,9 @@ spec:
             {{- with .Values.readinessProbe }}
             readinessProbe: {{ tpl (toYaml .) $ | nindent 14 }}
             {{- end }}
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop:
-                - ALL
-              readOnlyRootFilesystem: true
-              runAsGroup: 1000
-              runAsNonRoot: true
-              runAsUser: 1000
+            {{- with .Values.securityContext }}
+            securityContext: {{ tpl (toYaml .) $ | nindent 14 }}
+            {{- end }}
           {{- if .Values.image.pullSecrets.create }}
           imagePullSecrets:
           - name: {{ .Values.image.pullSecrets.name }}
