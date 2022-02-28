@@ -26,7 +26,7 @@ spec:
             "-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}",
             "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
             ]
-           {{- with .Values.resources }}
+          {{- with .Values.resources }}
           resources: {{ tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
             livenessProbe:
