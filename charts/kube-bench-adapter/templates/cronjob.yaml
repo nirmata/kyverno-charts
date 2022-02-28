@@ -18,9 +18,14 @@ spec:
           - name: {{ include "kube-bench.fullname" . }}
             image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
             command: ["./{{ .Values.kubeBench.command }}"]
-            {{- with .Values.extraArgs }}
-            args: {{ tpl (toYaml .) $ | nindent 12 }}
-            {{- end }}
+            args: [
+            "-name","{{ .Values.kubeBench.name}}",
+            "-yaml", "{{ .Values.kubeBench.yaml }}",
+            "-category", "{{ .Values.kubeBench.category }}",
+            "-namespace", "{{ .Values.kubeBench.namespace }}",
+            "-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}",
+            "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
+            ]
             {{- with .Values.resources }}
             resources: {{ tpl (toYaml .) $ | nindent 12 }}
             {{- end }}
