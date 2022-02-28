@@ -25,7 +25,7 @@ spec:
       {{- end }}
     spec:
       {{- if .Values.image.pullSecrets.create }}
-      imagePullSecrets: 
+      imagePullSecrets:
       - name: {{ .Values.image.pullSecrets.name }}
       {{- end }}
       {{- with .Values.podSecurityContext }}

@@ -45,7 +45,9 @@ spec:
               runAsGroup: 1000
               runAsNonRoot: true
               runAsUser: 1000
+            {{- if .Values.image.pullSecrets.create }}
           imagePullSecrets:
-          - name: {{values.image.pullSecret.name}}
+          - name: {{ .Values.image.pullSecrets.name }}
+            {{- end }}
           restartPolicy: Never
           serviceAccountName:   {{ include "kube-bench.fullname" . }}
