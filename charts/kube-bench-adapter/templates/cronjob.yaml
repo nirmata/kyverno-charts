@@ -10,6 +10,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            {{- include "kube-bench.labels" . | nindent 4 }}
         spec:
           containers:
           - name: {{ include "kube-bench.fullname" . }}
@@ -23,5 +26,30 @@ spec:
             "-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}",
             "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
             ]
+            resources:
+              limits:
+                cpu: 100m
+                memory: 200Mi
+              requests:
+                cpu: 100m
+                memory: 200Mi
+            livenessProbe:
+              exec:
+                command:
+                - ./policyreport
+              exec:
+                command:
+                - ./policyreport
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              readOnlyRootFilesystem: true
+              runAsGroup: 1000
+              runAsNonRoot: true
+              runAsUser: 1000
+          imagePullSecrets:
+          - name: regcred
           restartPolicy: Never
           serviceAccountName:   {{ include "kube-bench.fullname" . }}
