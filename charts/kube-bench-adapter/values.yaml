@@ -89,6 +89,7 @@ resources:
 livenessProbe:
   exec:
     command:
+    - cat
     - ./policyreport
 
 ## Readiness Probe. The block is directly forwarded into the deployment, so you can use whatever readinessProbe configuration you want.
@@ -97,6 +98,7 @@ livenessProbe:
 readinessProbe:
   exec:
     command:
+    - cat
     - ./policyreport
 
 securityContext:
