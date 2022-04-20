@@ -16,7 +16,7 @@ rbac:
 image:
   repository: ghcr.io/nirmata/kyverno
   # Defaults to appVersion in Chart.yaml if omitted
-  tag: v1.5.8-n4kbuild.1
+  tag: v1.6.2-n4kbuild.1
   pullPolicy: IfNotPresent
   pullSecrets:
     registry: ghcr.io
@@ -31,7 +31,7 @@ image:
 initImage:
   repository: ghcr.io/nirmata/kyvernopre
   # If initImage.tag is missing, defaults to image.tag
-  tag: v1.5.8-n4kbuild.1
+  tag: v1.6.2-n4kbuild.1
   # If initImage.pullPolicy is missing, defaults to image.pullPolicy
   pullPolicy:
   # No pull secrets just for initImage; just add to image.pullSecrets
@@ -53,16 +53,31 @@ podAnnotations: {}
 
 podSecurityContext: {}
 
+# Optional priority class to be used for kyverno pods
+priorityClassName: ""
+
 antiAffinity:
-  # This can be disabled in a 1 node cluster.
+  # using this option will schedule pods on different nodes if possible
   enable: true
-  # By default this will make sure two pods don't end up on the same node
-  # Changing this to a region would allow you to spread pods across regions
-  topologyKey: "kubernetes.io/hostname"
+
+podAntiAffinity:
+  preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 1
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - kyverno
+        topologyKey: kubernetes.io/hostname
+
+podAffinity: {}
+
+nodeAffinity: {}
 
 podDisruptionBudget:
-  enabled: false
-  # minAvailable: 1
+  minAvailable: 1
   # maxUnavailable: 1
 
   # minAvailable and maxUnavailable can either be set to an integer (e.g. 1)
@@ -92,10 +107,10 @@ extraArgs: []
 
 resources:
   limits:
-    memory: 256Mi
+    memory: 384Mi
   requests:
     cpu: 100m
-    memory: 50Mi
+    memory: 128Mi
 
 initResources:
   limits:
@@ -153,7 +168,7 @@ config:
   - "[TokenReview,*,*]"
   - "[SubjectAccessReview,*,*]"
   - "[SelfSubjectAccessReview,*,*]"
-  - "[*,kyverno,*]"
+  - "[*,kyverno,kyverno*]"
   - "[Binding,*,*]"
   - "[ReplicaSet,*,*]"
   - "[ReportChangeRequest,*,*]"
@@ -170,7 +185,7 @@ config:
   webhooks:
   # webhooks: [{"namespaceSelector":{"matchExpressions":[{"key":"environment","operator":"In","values":["prod"]}]}}]
   generateSuccessEvents: 'false'
-  # existingConfig: init-config
+  # existingConfig: kyverno
   metricsConfig:
     namespaces: {
       "include": [],
@@ -255,7 +270,9 @@ installCRDs: true
 # policies in a default-deny setup.
 networkPolicy:
   enabled: false
-  namespaceExpressions: [{}]
-  namespaceLabels: {}
-  podExpressions: [{}]
-  podLabels: {}
+# A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies
+  ingressFrom: []
+
+webhooksCleanup:
+  enable: false
+  image: "bitnami/kubectl:latest"
