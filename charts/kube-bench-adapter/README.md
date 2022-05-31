@@ -29,7 +29,7 @@ kubectl get clusterpolicyreports
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"ghcr.io/nirmata/kube-bench-adapter"` | image repository of kube-bench-adapter |
-| image.tag | string | `"v0.1.4"` | tag of image repository of kube-bench-adapter |
+| image.tag | string | `"v0.1.5"` | tag of image repository of kube-bench-adapter |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |
