@@ -10,7 +10,7 @@ image:
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
    # --tag of image repository of kube-bench-adapter
-  tag: "v0.1.4"
+  tag: "v0.1.5"
   pullSecrets:
     registry:
     # Leave blank, if no ImagePullSecret is needed.
