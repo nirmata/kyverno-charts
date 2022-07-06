@@ -19,7 +19,7 @@ This chart bootstraps a Kyverno deployment on a [Kubernetes](http://kubernetes.i
 **Add the Kyverno Helm repository:**
 
 ```console
-helm repo add nirmata https://nirmata.github.io/kyverno-charts/
+$ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 ```
 
 **Note:** If you have open source Kyverno installed, please follow the instructions below to upgrade to the Nirmata Enterprise Subscription.
@@ -29,13 +29,13 @@ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 **Note:** You can skip this step if you have already creared the kyverno namespace.
 
 ```console
-kubectl create namespace kyverno
+$ kubectl create namespace kyverno
 ```
 
 **Install the Kyverno chart:**
 
 ```console
-helm install kyverno --namespace kyverno nirmata/kyverno --set image.pullSecrets.username=<user> --set image.pullSecrets.password=<token>
+$ helm install kyverno --namespace kyverno nirmata/kyverno --set image.pullSecrets.username=<user> --set image.pullSecrets.password=<token>
 ```
 
 The command deploys Kyverno on the Kubernetes cluster with default configuration. The [installation](https://kyverno.io/docs/installation/) guide lists the parameters that can be configured during installation.
@@ -97,72 +97,86 @@ kubectl get clusterrolebinding |grep kyverno
 
 The following table lists the configurable parameters of the kyverno chart and their default values.
 
-
-| Parameter | Description | Default |
-|--|--|--|
-| `antiAffinity.enable` | pod antiAffinities toggle. Enabled by default but can be disabled if you want to schedule pods to the same node | `true` |
-| `createSelfSignedCert` | generate a self signed cert and certificate authority. Kyverno defaults to using kube-controller-manager CA-signed certificate or existing cert secret if false. | `false` |
-| `config.existingConfig` | existing Kubernetes configmap to use for the resource filters configuration | `nil` |
-| `config.resourceFilters` | list of resource types to be skipped by kyverno policy engine. See [documentation](https://kyverno.io/docs/installation/#resource-filters) for details | `[Event,*,*][*,kube-system,*][*,kube-public,*][*,kube-node-lease,*][Node,*,*][APIService,*,*][TokenReview,*,*][SubjectAccessReview,*,*][SelfSubjectAccessReview,*,*][*,kyverno,kyverno*][Binding,*,*][ReplicaSet,*,*][ReportChangeRequest,*,*][ClusterReportChangeRequest,*,*]` |
-| `config.webhooks` | customize webhook configurations for both MutatingWebhookConfiguration and ValidatingWebhookConfiguration of Kubernetes resources, only `namespaceSelector` can be configured with Kyverno v1.4.0 | `nil` |
-| `customLabels` | Additional labels | `{}` |
-| `dnsPolicy` | Sets the DNS Policy which determines the manner in which DNS resolution happens across the cluster. For further reference, see [the official Kubernetes docs](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy) | `ClusterFirst` |
-| `envVarsInit` | Extra environment variables to pass to kyverno initContainers |
-| `envVars` | Extra environment variables to pass to Kyverno | `{}` |
-| `extraArgs` | object for extra arguments to give to the binary (`--set extraArgs={"-v=4"}`) | `{}` |
-| `fullnameOverride` | override the expanded name of the chart | `nil` |
-| `generatecontrollerExtraResources` | extra resource type Kyverno is allowed to generate | `[]` |
-| `hostNetwork` | Use the host network's namespace. Set it to `true` when dealing with a custom CNI over Amazon EKS | `false` |
-| `image.pullPolicy` | Image pull policy | `IfNotPresent` |
-| `image.pullSecrets` | Specify image pull secrets | `[]` (does not add image pull secrets to deployed pods) |
-| `image.repository` | Image repository | `ghcr.io/kyverno/kyverno` |
-| `image.tag` | Image tag | `nil` |
-| `initImage.pullPolicy` | Init image pull policy | `nil` |
-| `initImage.repository` | Init image repository | `ghcr.io/kyverno/kyvernopre` |
-| `initImage.tag` | Init image tag | `nil` |
-| `installCRDs` | Install the Kyverno CRDs | `true` |
-| `livenessProbe` | liveness probe configuration | `{}` |
-| `nameOverride` | override the name of the chart | `nil` |
-| `namespace` | namespace the chart deploy to | `nil` |
-| `networkPolicy.enabled` | when true, use a NetworkPolicy to grant access to the webhook. | `false` |
-| `networkPolicy.ingressFrom` | A list of valid from selectors. | `[]` |
-| `nodeAffinity` | node affinities. Empty by default. Can be added for nodeAffinities. | `nil` |
-| `nodeSelector` | node labels for pod assignment | `{}` |
-| `podAffinity` | pod affinities. Empty by default. Can be added for podAffinities. | `nil` |
-| `podAntiAffinity` | pod antiAffinities default values. can be overwrite | `Pod Anti Affinity` |
-| `podAnnotations` | annotations to add to each pod | `{}` |
-| `podLabels` | additional labels to add to each pod | `{}` |
-| `podSecurityContext` | security context for the pod | `{}` |
-| `podDisruptionBudget.minAvailable` | Configures the minimum available pods for kyverno disruptions. Cannot used if `maxUnavailable` is set. | `1` |
-| `podDisruptionBudget.maxUnavailable` | Configures the maximum unavailable pods for kyverno disruptions. Cannot used if `minAvailable` is set. | `nil` |
-| `priorityClassName` | priorityClassName | `nil` |
-| `rbac.create` | create ClusterRoles, ClusterRoleBindings, and ServiceAccount | `true` |
-| `rbac.serviceAccount.create` | create a ServiceAccount | `true` |
-| `rbac.serviceAccount.name` | the ServiceAccount name | `nil` |
-| `rbac.serviceAccount.annotations` | annotations for the ServiceAccount | `{}` |
-| `readinessProbe` | readiness probe configuration | `{}` |
-| `replicaCount` | desired number of pods | `0` |
-| `mode` | a mode for Kyverno installation | `standalone` |
-| `resources` | pod resource requests and limits | `{}` |
-| `securityContext` | security context configuration | `{}` |
-| `service.annotations` | annotations to add to the service | `{}` |
-| `service.nodePort` | node port | `nil` |
-| `service.port` | port for the service | `443` |
-| `service.type` | type of service | `ClusterIP` |
-| `serviceMonitor.enabled` | create a ServiceMonitor(Requires Prometheus) | `false` |
-| `serviceMonitor.namespace` | override namespace for ServiceMonitor (default is same than kyverno) | `false` |
-| `serviceMonitor.additionalLabels` | additional labels to add for ServiceMonitor | `nil` |
-| `serviceMonitor.interval` | interval to scrape metrics | `30s` |
-| `serviceMonitor.scrapeTimeout` | timeout if metrics can't be retrieved in given time interval | `25s` |
-| `serviceMonitor.secure` | is TLS required for endpoint | `false` |
-| `serviceMonitor.tlsConfig` | TLS Configuration for endpoint | `[]` |
-| `testImage.pullPolicy` | image pull policy for test image (defaults to `image.pullPolicy`) | `nil` |
-| `testImage.repository` | repository for chart test image | `busybox` |
-| `testImage.tag` | tag for chart test image | `nil` |
-| `tolerations` | list of node taints to tolerate | `[]` |
-| `topologySpreadConstraints` | node/pod topology spread constrains | `[]` |  |
-| `webhooksCleanup.enable` | create a helm pre-delete hook to cleanup webhooks | `false`|
-| `webhooksCleanup.image` | kubectl image to run commands for deleting webhooks| `bitnami/kubectl:latest`|
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| nameOverride | string | `nil` | Override the name of the chart |
+| fullnameOverride | string | `nil` | Override the expanded name of the chart |
+| namespace | string | `nil` | Namespace the chart deploys to |
+| customLabels | object | `{}` | Additional labels |
+| rbac.create | bool | `true` | Create ClusterRoles, ClusterRoleBindings, and ServiceAccount |
+| rbac.serviceAccount.create | bool | `true` | Create a ServiceAccount |
+| rbac.serviceAccount.name | string | `nil` | The ServiceAccount name |
+| rbac.serviceAccount.annotations | object | `{}` | Annotations for the ServiceAccount |
+| image.repository | string | `"ghcr.io/kyverno/kyverno"` | Image repository |
+| image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
+| image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| image.pullSecrets | list | `[]` | Image pull secrets |
+| initImage.repository | string | `"ghcr.io/kyverno/kyvernopre"` | Image repository |
+| initImage.tag | string | `nil` | Image tag If initImage.tag is missing, defaults to image.tag |
+| initImage.pullPolicy | string | `nil` | Image pull policy If initImage.pullPolicy is missing, defaults to image.pullPolicy |
+| testImage.repository | string | `nil` | Image repository Defaults to `busybox` if omitted |
+| testImage.tag | string | `nil` | Image tag Defaults to `latest` if omitted |
+| testImage.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
+| replicaCount | int | `nil` | Desired number of pods |
+| podLabels | object | `{}` | Additional labels to add to each pod |
+| podAnnotations | object | `{}` | Additional annotations to add to each pod |
+| podSecurityContext | object | `{}` | Security context for the pod |
+| securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the containers |
+| priorityClassName | string | `""` | Optional priority class to be used for kyverno pods |
+| antiAffinity.enable | bool | `true` | Pod antiAffinities toggle. Enabled by default but can be disabled if you want to schedule pods to the same node. |
+| podAntiAffinity | object | See [values.yaml](values.yaml) | Pod anti affinity constraints. |
+| podAffinity | object | `{}` | Pod affinity constraints. |
+| nodeAffinity | object | `{}` | Node affinity constraints. |
+| podDisruptionBudget.minAvailable | int | `1` | Configures the minimum available pods for kyverno disruptions. Cannot be used if `maxUnavailable` is set. |
+| podDisruptionBudget.maxUnavailable | string | `nil` | Configures the maximum unavailable pods for kyverno disruptions. Cannot be used if `minAvailable` is set. |
+| nodeSelector | object | `{}` | Node labels for pod assignment |
+| tolerations | list | `[]` | List of node taints to tolerate |
+| hostNetwork | bool | `false` | Change `hostNetwork` to `true` when you want the kyverno's pod to share its host's network namespace. Useful for situations like when you end up dealing with a custom CNI over Amazon EKS. Update the `dnsPolicy` accordingly as well to suit the host network mode. |
+| dnsPolicy | string | `"ClusterFirst"` | `dnsPolicy` determines the manner in which DNS resolution happens in the cluster. In case of `hostNetwork: true`, usually, the `dnsPolicy` is suitable to be `ClusterFirstWithHostNet`. For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy. |
+| envVarsInit | object | `{}` | Env variables for initContainers. |
+| envVars | object | `{}` | Env variables for containers. |
+| extraArgs | list | `["--autogenInternals=false"]` | Extra arguments to give to the binary. |
+| imagePullSecrets | object | `{}` | Image pull secrets for image verify and imageData policies. This will define the `--imagePullSecrets` Kyverno argument. |
+| resources.limits | object | `{"memory":"384Mi"}` | Pod resource limits |
+| resources.requests | object | `{"cpu":"100m","memory":"128Mi"}` | Pod resource requests |
+| initResources.limits | object | `{"cpu":"100m","memory":"256Mi"}` | Pod resource limits |
+| initResources.requests | object | `{"cpu":"10m","memory":"64Mi"}` | Pod resource requests |
+| livenessProbe | object | See [values.yaml](values.yaml) | Liveness probe. The block is directly forwarded into the deployment, so you can use whatever livenessProbe configuration you want. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/ |
+| readinessProbe | object | See [values.yaml](values.yaml) | Readiness Probe. The block is directly forwarded into the deployment, so you can use whatever readinessProbe configuration you want. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/ |
+| generatecontrollerExtraResources | string | `nil` |  |
+| excludeKyvernoNamespace | bool | `true` | Exclude Kyverno namespace Determines if default Kyverno namespace exclusion is enabled for webhooks and resourceFilters |
+| config.resourceFilters | list | See [values.yaml](values.yaml) | Resource types to be skipped by the Kyverno policy engine. Make sure to surround each entry in quotes so that it doesn't get parsed as a nested YAML list. These are joined together without spaces, run through `tpl`, and the result is set in the config map. |
+| config.existingConfig | string | `""` | Name of an existing config map (ignores default/provided resourceFilters) |
+| config.excludeGroupRole | string | `nil` | Exclude group role |
+| config.excludeUsername | string | `nil` | Exclude username |
+| config.webhooks | string | `nil` | Defines the `namespaceSelector` in the webhook configurations. Note that it takes a list of `namespaceSelector` and/or `objectSelector` in the JSON format, and only the first element will be forwarded to the webhook configurations. The Kyverno namespace is excluded if `excludeKyvernoNamespace` is `true` (default) |
+| config.generateSuccessEvents | bool | `false` | Generate success events. |
+| config.metricsConfig | object | `{"namespaces":{"exclude":[],"include":[]}}` | Metrics config. |
+| updateStrategy | object | See [values.yaml](values.yaml) | Deployment update strategy. Ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy |
+| service.port | int | `443` | Service port. |
+| service.type | string | `"ClusterIP"` | Service type. |
+| service.nodePort | string | `nil` | Service node port. Only used if `service.type` is `NodePort`. |
+| service.annotations | object | `{}` | Service annotations. |
+| topologySpreadConstraints | list | `[]` | Topology spread constraints. |
+| metricsService.create | bool | `true` | Create service. |
+| metricsService.port | int | `8000` | Service port. Kyverno's metrics server will be exposed at this port. |
+| metricsService.type | string | `"ClusterIP"` | Service type. |
+| metricsService.nodePort | string | `nil` | Service node port. Only used if `metricsService.type` is `NodePort`. |
+| metricsService.annotations | object | `{}` | Service annotations. |
+| serviceMonitor.enabled | bool | `false` | Create a `ServiceMonitor` to collect Prometheus metrics. |
+| serviceMonitor.additionalLabels | string | `nil` | Additional labels |
+| serviceMonitor.namespace | string | `nil` | Override namespace (default is the same as kyverno) |
+| serviceMonitor.interval | string | `"30s"` | Interval to scrape metrics |
+| serviceMonitor.scrapeTimeout | string | `"25s"` | Timeout if metrics can't be retrieved in given time interval |
+| serviceMonitor.secure | bool | `false` | Is TLS required for endpoint |
+| serviceMonitor.tlsConfig | object | `{}` | TLS Configuration for endpoint |
+| createSelfSignedCert | bool | `false` | Kyverno requires a certificate key pair and corresponding certificate authority to properly register its webhooks. This can be done in one of 3 ways: 1) Use kube-controller-manager to generate a CA-signed certificate (preferred) 2) Provide your own CA and cert.    In this case, you will need to create a certificate with a specific name and data structure.    As long as you follow the naming scheme, it will be automatically picked up.    kyverno-svc.(namespace).svc.kyverno-tls-ca (with data entry named rootCA.crt)    kyverno-svc.kyverno.svc.kyverno-tls-pair (with data entries named tls.key and tls.crt) 3) Let Helm generate a self signed cert, by setting createSelfSignedCert true If letting Kyverno create its own CA or providing your own, make createSelfSignedCert is false |
+| installCRDs | bool | `true` | Whether to have Helm install the Kyverno CRDs. If the CRDs are not installed by Helm, they must be added before policies can be created. |
+| networkPolicy.enabled | bool | `false` | When true, use a NetworkPolicy to allow ingress to the webhook This is useful on clusters using Calico and/or native k8s network policies in a default-deny setup. |
+| networkPolicy.ingressFrom | list | `[]` | A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies. |
+| webhooksCleanup.enable | bool | `false` | Create a helm pre-delete hook to cleanup webhooks. |
+| webhooksCleanup.image | string | `"bitnami/kubectl:latest"` | `kubectl` image to run commands for deleting webhooks. |
+| tufRootMountPath | string | `"/.sigstore"` | A writable volume to use for the TUF root initialization |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
@@ -184,6 +198,43 @@ $ helm install --namespace kyverno kyverno ./charts/kyverno -f values.yaml
 If `createSelfSignedCert` is `true`, Helm will take care of the steps of creating an external self-signed certificate described in option 2 of the [installation documentation](https://kyverno.io/docs/installation/#option-2-use-your-own-ca-signed-certificate)
 
 If `createSelfSignedCert` is `false`, Kyverno will generate a self-signed CA and a certificate, or you can provide your own TLS CA and signed-key pair and create the secret yourself as described in the [documentation](https://kyverno.io/docs/installation/#customize-the-installation-of-kyverno).
+
+## Default resource filters
+
+[Kyverno resource filters](https://kyverno.io/docs/installation/#resource-filters) are a used to exclude resources from the Kyverno engine rules processing.
+
+This chart comes with default resource filters that apply exclusions on a couple of namespaces and resource kinds:
+- all resources in `kube-system`, `kube-public` and `kube-node-lease` namespaces
+- all resources in all namespaces for the following resource kinds:
+  - `Event`
+  - `Node`
+  - `APIService`
+  - `TokenReview`
+  - `SubjectAccessReview`
+  - `SelfSubjectAccessReview`
+  - `Binding`
+  - `ReplicaSet`
+  - `ReportChangeRequest`
+  - `ClusterReportChangeRequest`
+- all resources created by this chart itself
+
+Those default exclusions are there to prevent disruptions as much as possible.
+Under the hood, Kyverno installs an admission controller for critical cluster resources.
+A cluster can become unresponsive if Kyverno is not up and running, ultimately preventing pods to be scheduled in the cluster.
+
+You can however override the default resource filters by setting the `config.resourceFilters` stanza.
+It contains an array of string templates that are passed through the `tpl` Helm function and joined together to produce the final `resourceFilters` written in the Kyverno config map.
+
+Please consult the [values.yaml](./values.yaml) file before overriding `config.resourceFilters` and use the apropriate templates to build your desired exclusions list.
+
+## High availability
+
+Running a highly-available Kyverno installation is crucial in a production environment.
+
+In order to run Kyverno in high availability mode, you should set `replicaCount` to `3` or more.
+You should also pay attention to anti affinity rules, spreading pods across nodes and availability zones.
+
+Please see https://kyverno.io/docs/installation/#security-vs-operability for more informations.
 
 ## Kyverno CLI
 
