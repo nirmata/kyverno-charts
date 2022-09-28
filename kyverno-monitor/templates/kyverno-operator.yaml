@@ -1,0 +1,11 @@
+apiVersion: operator.kyverno.io/v1
+kind: KyvernoOperator
+metadata:
+  name: kyvernooperator
+  namespace: {{ .Values.namespace }}
+spec:
+  enableAntiAffinity: true
+  image: {{ .Values.validKyvernoImages }}
+  minReplicas: 3
+  pdbMinAvailable: 1
+  pdbMaxUnavailable: 1
