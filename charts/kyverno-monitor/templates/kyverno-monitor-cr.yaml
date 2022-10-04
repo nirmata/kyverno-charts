@@ -9,13 +9,11 @@ metadata:
     app.kubernetes.io/created-by: kyverno-monitor
   name: kyvernomonitor
   namespace: {{ .Release.Namespace }}
-
 spec:
 # isRunning
   image: {{ .Values.validKyvernoImages }}
   pdbMinAvailable: 1
   pdbMaxUnavailable: 1
-
 # isHA
   enableAntiAffinity: true
   minReplicas: 3
