@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: serviceaccount
     app.kubernetes.io/part-of: kyverno-monitor
   name: kyverno-monitor
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/name: role
     app.kubernetes.io/part-of: kyverno-monitor
   name: kyverno-monitor-leader-election-role
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 rules:
 - apiGroups:
   - ""
@@ -170,7 +170,7 @@ metadata:
     app.kubernetes.io/name: rolebinding
     app.kubernetes.io/part-of: kyverno-monitor
   name: kyverno-monitor-leader-election-rolebinding
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -178,7 +178,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kyverno-monitor
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -198,7 +198,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kyverno-monitor
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -218,7 +218,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kyverno-monitor
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 ---
 apiVersion: v1
 kind: Service
@@ -232,7 +232,7 @@ metadata:
     app.kubernetes.io/part-of: kyverno-monitor
     control-plane: controller-manager
   name: kyverno-monitor-metrics-service
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   ports:
   - name: https
@@ -253,7 +253,7 @@ metadata:
     app.kubernetes.io/name: service
     app.kubernetes.io/part-of: kyverno-monitor
   name: kyverno-monitor-webhook-service
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   ports:
   - port: 443
@@ -274,7 +274,7 @@ metadata:
     app.kubernetes.io/part-of: kyverno-monitor
     control-plane: controller-manager
   name: kyverno-monitor
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
