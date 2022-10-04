@@ -14,4 +14,3 @@ maintainers:
   - name: Nirmata
     url: https://nirmata.com/
 kubeVersion: ">=1.22.0-0"
-
