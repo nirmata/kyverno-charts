@@ -6,34 +6,30 @@
 
 This chart bootstraps a Kyverno Monitor on a [Kubernetes](http://kubernetes.io) cluster with [Kyverno](https://kyverno.io) installed, using the [Helm](https://helm.sh) package manager.
 
-## Installing the Chart
+## Installation
 
-**Add the Kyverno Helm repository:**
-
-```console
-$ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 ```
+# 1. Add Kyverno Helm Repository
 
-**Note:** If you have open source Kyverno installed, please follow the instructions below to upgrade to the Nirmata Enterprise Subscription.
+helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 
-**Create a namespace:**
+# 2. Install kyverno-monitor from nirmata helm repo with desired parameters.
 
-**Note:** You can skip this step if you have already created the kyverno namespace.
+helm install kyverno-monitor nirmata/kyverno-monitor --set namespace=<namespace>
 
-```console
-$ kubectl create namespace kyverno
+# 3. Check pods are running
+kubectl -n <namespace> get pods 
+
+# 4. Check CRD is created
+kubectl -n <namespace> get KyvernoMonitor
 ```
-
-**Install the Kyverno chart:**
-
-Install the Kyverno Chart using documentation [here](https://github.com/nirmata/kyverno-charts/blob/main/charts/nirmata/README.md)
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `kyverno` deployment:
+To uninstall/delete the `kyverno-monitor` deployment:
 
 ```console
-helm delete -n kyverno kyverno
+helm -n <namespace> kyverno-monitor
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -44,18 +40,5 @@ The following table lists the configurable parameters of the kyverno chart and t
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| namespace | string | `nirmata` | Namespace to install kyverno-monitor resources |
-
-Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
-
-```console
-$ helm install --namespace nirmata kyverno-monitor ./charts/kyverno-monitor \
-  --set=namespace=kyverno-monitor
-```
-
-Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
-
-```console
-$ helm install --namespace nirmata kyverno-monitor ./charts/kyverno-monitor -f values.yaml
-```
-
+| namespace | string | `nirmata-kyverno-monitor` | Namespace to install kyverno-monitor resources |
+| validKyvernoImages | string | `ghcr.io/nirmata/kyverno-monitor:xxx` | Valid images separated by pipe |

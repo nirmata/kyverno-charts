@@ -2,22 +2,32 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.8.0
-  creationTimestamp: null
-  name: kyvernooperators.operator.kyverno.io
+    cert-manager.io/inject-ca-from: kyverno-monitor-system/kyverno-monitor-serving-cert
+    controller-gen.kubebuilder.io/version: v0.9.2
+  name: kyvernomonitors.security.nirmata.io
 spec:
-  group: operator.kyverno.io
+  conversion:
+    strategy: Webhook
+    webhook:
+      clientConfig:
+        service:
+          name: kyverno-monitor-webhook-service
+          namespace: kyverno-monitor-system
+          path: /convert
+      conversionReviewVersions:
+      - v1
+  group: security.nirmata.io
   names:
-    kind: KyvernoOperator
-    listKind: KyvernoOperatorList
-    plural: kyvernooperators
-    singular: kyvernooperator
+    kind: KyvernoMonitor
+    listKind: KyvernoMonitorList
+    plural: kyvernomonitors
+    singular: kyvernomonitor
   scope: Namespaced
   versions:
   - name: v1
     schema:
       openAPIV3Schema:
-        description: KyvernoOperator is the Schema for the kyvernooperators API
+        description: KyvernoMonitor is the Schema for the kyvernomonitors API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
@@ -28,13 +38,13 @@ spec:
           metadata:
             type: object
           spec:
-            description: KyvernoOperatorSpec defines the desired state of KyvernoOperator
+            description: KyvernoMonitorSpec defines the desired state of KyvernoMonitor
             properties:
               enableAntiAffinity:
-                description: Whether to enable pod anti affinity, true/false
+                description: Whether to consider pod anti affinity to determine HA
                 type: boolean
               image:
-                description: Kyverno image
+                description: Valid Kyverno images separated by |. Use 'xxx' to match any version
                 type: string
               minNodes:
                 description: Kyverno min nodes for HA mode
@@ -46,44 +56,68 @@ spec:
                 description: Kyverno PDB min desired constraint
                 type: integer
               pdbMinAvailable:
-                description: Kyverno PDB min desired constraint
+                description: Kyverno PDB min desired constraint to determnie
                 type: integer
             type: object
           status:
-            description: KyvernoOperatorStatus defines the observed state of KyvernoOperator
+            description: KyvernoMonitorStatus defines the observed state of KyvernoMonitor
             properties:
               kyvernoState:
                 description: Status record for Kyverno engine
                 properties:
-                  healthGapMsg:
-                    description: Message corresponding to overall health Gap if overall status is not Healthy
-                    type: string
                   isHA:
-                    description: Is engine in HA? true/false
+                    description: Is engine running in HA as per spec? true/false
                     type: boolean
                   isProcessingPolicies:
                     description: Is engine processing policies? true/false
                     type: boolean
                   isRunning:
-                    description: Is kyverno running? true/false
+                    description: Is kyverno running as per spec? true/false
                     type: boolean
+                  kyvernoImage:
+                    description: Kyverno image
+                    type: string
+                  kyvernoNamespace:
+                    description: Kyverno namespace
+                    type: string
+                  kyvernoVersion:
+                    description: Kyverno version
+                    type: string
                   lastModifiedAt:
                     description: Time of engine state modification
                     format: date-time
                     type: string
-                  overallHealth:
-                    description: Overall engine health based on application of various criteria. Healthy/Degraded/Failed
-                    type: string
+                  validateEngineManifestsEnabled:
+                    description: Is kyverno validate manifest policy on for kyverno engine? true/false (Future)
+                    type: boolean
+                  validateManifestsEnabled:
+                    description: Is kyverno validate manifest policy set? true/false (Future)
+                    type: boolean
+                  validatePolicyManifestsEnabled:
+                    description: Is kyverno validate manifest policy on for policies? true/false (Future)
+                    type: boolean
                 required:
                 - isHA
                 - isProcessingPolicies
                 - isRunning
+                - kyvernoImage
+                - kyvernoNamespace
+                - kyvernoVersion
+                - validateEngineManifestsEnabled
+                - validateManifestsEnabled
+                - validatePolicyManifestsEnabled
                 type: object
               lastClusterRoleBindingModified:
                 description: Particulars of most recent Kyverno cluster rolebinding modified. Interim field till kyverno watches policy changes
                 properties:
+                  currentVersion:
+                    description: Resource version after change
+                    type: string
+                  delta:
+                    description: Resource change, diff between the two versions
+                    type: string
                   modifiedBy:
-                    description: User modifying it. Empty for now. Available after Kyverno watches modifications
+                    description: User modifying it.
                     type: string
                   namespace:
                     description: Kyverno engine resource namespace
@@ -91,17 +125,14 @@ spec:
                   operation:
                     description: Operation on resource Add, Modifiy, Delete
                     type: string
+                  previousVersion:
+                    description: Resource version after change
+                    type: string
                   resourceName:
                     description: Kyverno engine resource name
                     type: string
                   resourceType:
-                    description: Kyverno engine resource type. ClusterPolicy, Deployment, Service, etc.
-                    type: string
-                  resourceVersionCurr:
-                    description: Resource version after change
-                    type: string
-                  resourceVersionPrev:
-                    description: Resource version before change
+                    description: Kyverno engine resource group, version, kind. ClusterPolicy, Deployment, Service, etc.
                     type: string
                   timestamp:
                     description: Time of change
@@ -111,8 +142,14 @@ spec:
               lastClusterRoleModified:
                 description: Particulars of most recent kyverno cluster role modified. Interim field till kyverno watches policy changes
                 properties:
+                  currentVersion:
+                    description: Resource version after change
+                    type: string
+                  delta:
+                    description: Resource change, diff between the two versions
+                    type: string
                   modifiedBy:
-                    description: User modifying it. Empty for now. Available after Kyverno watches modifications
+                    description: User modifying it.
                     type: string
                   namespace:
                     description: Kyverno engine resource namespace
@@ -120,17 +157,14 @@ spec:
                   operation:
                     description: Operation on resource Add, Modifiy, Delete
                     type: string
+                  previousVersion:
+                    description: Resource version after change
+                    type: string
                   resourceName:
                     description: Kyverno engine resource name
                     type: string
                   resourceType:
-                    description: Kyverno engine resource type. ClusterPolicy, Deployment, Service, etc.
-                    type: string
-                  resourceVersionCurr:
-                    description: Resource version after change
-                    type: string
-                  resourceVersionPrev:
-                    description: Resource version before change
+                    description: Kyverno engine resource group, version, kind. ClusterPolicy, Deployment, Service, etc.
                     type: string
                   timestamp:
                     description: Time of change
@@ -140,8 +174,14 @@ spec:
               lastDeployModified:
                 description: Particulars of most recent Kyverno deployment resource modified. Interim field till kyverno watches policy changes
                 properties:
+                  currentVersion:
+                    description: Resource version after change
+                    type: string
+                  delta:
+                    description: Resource change, diff between the two versions
+                    type: string
                   modifiedBy:
-                    description: User modifying it. Empty for now. Available after Kyverno watches modifications
+                    description: User modifying it.
                     type: string
                   namespace:
                     description: Kyverno engine resource namespace
@@ -149,17 +189,14 @@ spec:
                   operation:
                     description: Operation on resource Add, Modifiy, Delete
                     type: string
+                  previousVersion:
+                    description: Resource version after change
+                    type: string
                   resourceName:
                     description: Kyverno engine resource name
                     type: string
                   resourceType:
-                    description: Kyverno engine resource type. ClusterPolicy, Deployment, Service, etc.
-                    type: string
-                  resourceVersionCurr:
-                    description: Resource version after change
-                    type: string
-                  resourceVersionPrev:
-                    description: Resource version before change
+                    description: Kyverno engine resource group, version, kind. ClusterPolicy, Deployment, Service, etc.
                     type: string
                   timestamp:
                     description: Time of change
@@ -169,8 +206,14 @@ spec:
               lastPolicyModified:
                 description: Particulars of most recent Kyverno policy modified. Interim field till kyverno watches policy changes
                 properties:
+                  currentVersion:
+                    description: Resource version after change
+                    type: string
+                  delta:
+                    description: Resource change, diff between the two versions
+                    type: string
                   modifiedBy:
-                    description: User modifying it. Empty for now. Available after Kyverno watches modifications
+                    description: User modifying it.
                     type: string
                   namespace:
                     description: Kyverno engine resource namespace
@@ -178,17 +221,14 @@ spec:
                   operation:
                     description: Operation on resource Add, Modifiy, Delete
                     type: string
+                  previousVersion:
+                    description: Resource version after change
+                    type: string
                   resourceName:
                     description: Kyverno engine resource name
                     type: string
                   resourceType:
-                    description: Kyverno engine resource type. ClusterPolicy, Deployment, Service, etc.
-                    type: string
-                  resourceVersionCurr:
-                    description: Resource version after change
-                    type: string
-                  resourceVersionPrev:
-                    description: Resource version before change
+                    description: Kyverno engine resource group, version, kind. ClusterPolicy, Deployment, Service, etc.
                     type: string
                   timestamp:
                     description: Time of change
@@ -198,8 +238,14 @@ spec:
               lastServiceModified:
                 description: Particulars of most recent Kyverno service resource modified. Interim field till kyverno watches policy changes
                 properties:
+                  currentVersion:
+                    description: Resource version after change
+                    type: string
+                  delta:
+                    description: Resource change, diff between the two versions
+                    type: string
                   modifiedBy:
-                    description: User modifying it. Empty for now. Available after Kyverno watches modifications
+                    description: User modifying it.
                     type: string
                   namespace:
                     description: Kyverno engine resource namespace
@@ -207,17 +253,14 @@ spec:
                   operation:
                     description: Operation on resource Add, Modifiy, Delete
                     type: string
+                  previousVersion:
+                    description: Resource version after change
+                    type: string
                   resourceName:
                     description: Kyverno engine resource name
                     type: string
                   resourceType:
-                    description: Kyverno engine resource type. ClusterPolicy, Deployment, Service, etc.
-                    type: string
-                  resourceVersionCurr:
-                    description: Resource version after change
-                    type: string
-                  resourceVersionPrev:
-                    description: Resource version before change
+                    description: Kyverno engine resource group, version, kind. ClusterPolicy, Deployment, Service, etc.
                     type: string
                   timestamp:
                     description: Time of change
@@ -232,9 +275,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []

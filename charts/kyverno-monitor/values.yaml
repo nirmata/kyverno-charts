@@ -1,5 +1,8 @@
 # -- Namespace to deploy chart objects to
-namespace: nirmata
+namespace: nirmata-kyverno-monitor
 
 # -- Valid Kyverno images separated by |. 'xxx' to match any version
 validKyvernoImages: "ghcr.io/nirmata/kyverno:xxx|ghcr.io/nirmata/kyverno/kyverno:xxx|ghcr.io/kyverno/kyverno:xxx"
+
+# -- Enable admission webhook to insert change events in K8s event stream?
+webhookEnabled: false
