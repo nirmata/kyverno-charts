@@ -15,7 +15,7 @@ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 
 # 2. Install kyverno-monitor from nirmata helm repo in the nirmata-kyverno-monitor namespace, with desired parameters.
 
-helm install kyverno-monitor nirmata/kyverno-monitor --namespace nirmata-kyverno-monitor --create-namespace
+helm install kyverno-monitor nirmata/kyverno-monitor --namespace nirmata-kyverno-monitor --create-namespace --set imagePullSecret.username=someuser,imagePullSecret.password=somepassword
 
 
 # 3. Check pods are running
@@ -42,7 +42,7 @@ The following table lists the configurable parameters of the kyverno chart and t
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | namespace | string | `nirmata-kyverno-monitor` | Namespace to install kyverno-monitor resources |
-| imagePullSecret.name | string | `kyverno-monitor-registry` | Imagepull secret name that will store private image registry info |
+| imagePullSecret.name | string | `image-pull-secret` | Imagepull secret name that will store private image registry info |
 | imagePullSecret.create | boolean | `true` | Whether to create the image pullsecret. Need to specify the secret name, username, password |
 | imagePullSecret.username | string |  | Private registry username if secret is to be created |
 | imagePullSecret.password | string |  | Private registry password if secret is to be created |
