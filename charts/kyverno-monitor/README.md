@@ -40,4 +40,5 @@ The following table lists the configurable parameters of the kyverno chart and t
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| namespace | string | `nirmata-kyverno-monitor` | Namespace to install kyverno-monitor resources |
 | validKyvernoImages | string | `ghcr.io/nirmata/kyverno-monitor:xxx` | Valid images separated by pipe |
