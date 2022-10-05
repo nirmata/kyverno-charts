@@ -73,10 +73,12 @@ k run venafisignedpod --image=ghcr.io/some-user/some-image:signed-by-me
 To uninstall/delete the `venafi-adapter` deployment:
 
 ```console
-helm -n <namespace> venafi-monitor
+helm -n <namespace> uninstall venafi-monitor
 ```
 
-The command removes all the Kubernetes components associated with the chart and deletes the release.
+The command removes all the Kubernetes components associated with the chart and deletes the release. 
+
+Note: The crd `imagekeys.security.nirmata.io` needs to be deleted manually
 
 ## Configuration
 
