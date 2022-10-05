@@ -1,0 +1,20 @@
+apiVersion: security.nirmata.io/v1
+kind: KyvernoMonitor
+metadata:
+  labels:
+    app.kubernetes.io/name: kyvernomonitor
+    app.kubernetes.io/instance: kyvernomonitor-sample
+    app.kubernetes.io/part-of: kyverno-monitor
+    app.kuberentes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: kyverno-monitor
+  name: kyvernomonitor
+  namespace: {{ include "kyvernoMonitorNamespace" . }}
+spec:
+# isRunning
+  image: {{ .Values.validKyvernoImages }}
+  pdbMinAvailable: 1
+  pdbMaxUnavailable: 1
+# isHA
+  enableAntiAffinity: true
+  minReplicas: 3
+  minNodes: 2

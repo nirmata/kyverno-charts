@@ -1,0 +1,22 @@
+# -- Namespace to deploy chart objects to
+namespace: nirmata-kyverno-monitor
+
+# -- Valid Kyverno images separated by |. 'xxx' to match any version
+validKyvernoImages: "ghcr.io/nirmata/kyverno:xxx|ghcr.io/nirmata/kyverno/kyverno:xxx|ghcr.io/kyverno/kyverno:xxx"
+
+kyvernoMonitorImage: ghcr.io/nirmata/kyverno-monitor
+kyvernoMonitorImageTag: 0.1.0
+
+imagePullSecret:
+  registry: ghcr.io
+  # Leave blank, if no ImagePullSecret is needed.
+  name: image-pull-secret
+  # If set to false, the gerrit-master chart expects either a ImagePullSecret
+  # with the name configured above to be present on the cluster or that no
+  # credentials are needed.
+  create: true
+  username:
+  password:
+
+# -- Enable admission webhook to insert change events in K8s event stream?
+webhookEnabled: false
