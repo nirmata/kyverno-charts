@@ -244,6 +244,26 @@ entries:
     version: v1.1.0
   kyverno-monitor:
   - apiVersion: v1
+    appVersion: 0.1.0
+    created: "2022-10-05T13:55:02.423113487Z"
+    description: Kyverno Monitor
+    digest: 1a3022d9c26e1c4c46d4428669c3bcbb6e4398175681bed5d85aab4ab3a6086f
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - kyverno monitor
+    - admissions controller
+    kubeVersion: '>=1.22.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno-monitor
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-monitor-v0.1.1/kyverno-monitor-v0.1.1.tgz
+    version: v0.1.1
+  - apiVersion: v1
     appVersion: v0.2.0
     created: "2022-10-05T09:03:46.453018158Z"
     description: Kyverno Monitor
@@ -263,4 +283,24 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-monitor-v0.1.0/kyverno-monitor-v0.1.0.tgz
     version: v0.1.0
-generated: "2022-10-05T09:03:46.45305076Z"
+  nirmata-venafi-adapter:
+  - apiVersion: v1
+    appVersion: v0.1.0
+    created: "2022-10-05T13:55:02.686437209Z"
+    description: Nirmata Venafi Adapter
+    digest: 4391c9037baee0cd38e9c3c561c92fcd069153c65927e2fd50db7f1fd937eead
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - venafi adapter
+    kubeVersion: '>=1.22.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-venafi-adapter
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-venafi-adapter-v0.1.0/nirmata-venafi-adapter-v0.1.0.tgz
+    version: v0.1.0
+generated: "2022-10-05T13:55:02.686990351Z"
