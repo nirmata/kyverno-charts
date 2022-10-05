@@ -95,7 +95,7 @@ spec:
         - --metrics-bind-address=127.0.0.1:8080
         command:
         - /manager
-        image: ghcr.io/nirmata/kyverno-monitor:0.1.0
+        image: {{ .Values.kyvernoMonitorImage }}:{{ default .Chart.AppVersion .Values.kyvernoMonitorImageTag }}
         imagePullPolicy: Always
         livenessProbe:
           httpGet:

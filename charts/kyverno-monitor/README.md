@@ -15,7 +15,8 @@ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 
 # 2. Install kyverno-monitor from nirmata helm repo with desired parameters.
 
-helm install kyverno-monitor nirmata/kyverno-monitor --set namespace=<namespace>
+helm install kyverno-monitor nirmata/kyverno-monitor --set imagePullSecret.username=someuser,imagePullSecret.password=somepassword
+
 
 # 3. Check pods are running
 kubectl -n <namespace> get pods 

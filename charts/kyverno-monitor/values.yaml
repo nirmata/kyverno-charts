@@ -4,8 +4,10 @@ namespace: nirmata-kyverno-monitor
 # -- Valid Kyverno images separated by |. 'xxx' to match any version
 validKyvernoImages: "ghcr.io/nirmata/kyverno:xxx|ghcr.io/nirmata/kyverno/kyverno:xxx|ghcr.io/kyverno/kyverno:xxx"
 
+kyvernoMonitorImage: ghcr.io/nirmata/kyverno-monitor
+kyvernoMonitorImageTag: 0.1.0
+
 imagePullSecret:
-  registry: ghcr.io
   # Leave blank, if no ImagePullSecret is needed.
   name: kyverno-monitor-registry
   # If set to false, the gerrit-master chart expects either a ImagePullSecret
