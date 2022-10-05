@@ -8,6 +8,7 @@ metadata:
     app.kuberentes.io/managed-by: kustomize
     app.kubernetes.io/created-by: kyverno-monitor
   name: kyvernomonitor
+  namespace: {{ include "kyvernoMonitorNamespace" . }}
 spec:
 # isRunning
   image: {{ .Values.validKyvernoImages }}

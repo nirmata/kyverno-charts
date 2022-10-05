@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/part-of: kyverno-monitor
     control-plane: controller-manager
   name: kyverno-monitor
+  namespace: {{ include "kyvernoMonitorNamespace" . }}
 spec:
   replicas: 1
   selector:
@@ -30,6 +31,8 @@ spec:
         control-plane: controller-manager
         nirmata.io/container.type: system
     spec:
+      imagePullSecrets: 
+      - name: {{ .Values.imagePullSecret.name }}
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

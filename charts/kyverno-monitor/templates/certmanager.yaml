@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/name: certificate
     app.kubernetes.io/part-of: kyverno-monitor
   name: kyverno-monitor-serving-cert
+  namespace: {{ include "kyvernoMonitorNamespace" . }}
 spec:
   dnsNames:
   - kyverno-monitor-webhook-service.kyverno-monitor-system.svc
@@ -30,6 +31,7 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/part-of: kyverno-monitor
   name: kyverno-monitor-selfsigned-issuer
+  namespace: {{ include "kyvernoMonitorNamespace" . }}
 spec:
   selfSigned: {}
 ---
@@ -52,6 +54,7 @@ webhooks:
   clientConfig:
     service:
       name: kyverno-monitor-webhook-service
+      namespace: {{ include "kyvernoMonitorNamespace" . }}
       path: /validate-security-nirmata-io-v1-kyvernomonitor
   failurePolicy: Fail
   name: vkyvernomonitor.kb.io

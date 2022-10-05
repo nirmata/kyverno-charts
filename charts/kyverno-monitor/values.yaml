@@ -7,7 +7,7 @@ validKyvernoImages: "ghcr.io/nirmata/kyverno:xxx|ghcr.io/nirmata/kyverno/kyverno
 imagePullSecret:
   registry: ghcr.io
   # Leave blank, if no ImagePullSecret is needed.
-  name: image-pull-secret
+  name: kyverno-monitor-registry
   # If set to false, the gerrit-master chart expects either a ImagePullSecret
   # with the name configured above to be present on the cluster or that no
   # credentials are needed.

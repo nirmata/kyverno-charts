@@ -1,3 +1,13 @@
+{{/* Get the namespace name. */}}
+{{- define "kyvernoMonitorNamespace" -}}
+{{- if .Values.namespace -}}
+    {{- .Values.namespace -}}
+{{- else -}}
+    {{- .Release.Namespace -}}
+{{- end -}}
+{{- end -}}
+
+
 {{/*
 Create secret to access container registry
 */}}

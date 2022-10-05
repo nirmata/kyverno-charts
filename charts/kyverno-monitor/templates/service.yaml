@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/part-of: kyverno-monitor
     control-plane: controller-manager
   name: kyverno-monitor-metrics-service
+  namespace: {{ include "kyvernoMonitorNamespace" . }}
 spec:
   ports:
   - name: https
@@ -30,6 +31,7 @@ metadata:
     app.kubernetes.io/name: service
     app.kubernetes.io/part-of: kyverno-monitor
   name: kyverno-monitor-webhook-service
+  namespace: {{ include "kyvernoMonitorNamespace" . }}
 spec:
   ports:
   - port: 443
