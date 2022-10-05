@@ -47,6 +47,9 @@ helm delete -n<namespace> kyverno-monitor
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
+Note: The crd `kyvernomonitor.security.nirmata.io` needs to be deleted manually
+
+
 ## Configuration
 
 The following table lists the configurable parameters of the kyverno chart and their default values.
