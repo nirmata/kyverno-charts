@@ -42,7 +42,7 @@ kubectl -n kyverno scale deploy kyverno --replicas=0
 To uninstall/delete the `kyverno-monitor` deployment:
 
 ```console
-helm -n <namespace> kyverno-monitor
+helm delete -n<namespace> kyverno-monitor
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.

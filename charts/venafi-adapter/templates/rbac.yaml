@@ -1,0 +1,179 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: imagekey-controller
+  namespace: {{ include "venafiAdapterNamespace" . }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: imagekey-controller-leader-election-role
+  namespace: {{ include "venafiAdapterNamespace" . }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  creationTimestamp: null
+  name: imagekey-controller-manager-role
+  namespace: {{ include "venafiAdapterNamespace" . }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: imagekey-controller-manager-role
+rules:
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs/status
+  - jobs/status
+  verbs:
+  - get
+- apiGroups:
+  - security.nirmata.io
+  resources:
+  - imagekeys
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - security.nirmata.io
+  resources:
+  - imagekeys/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - security.nirmata.io
+  resources:
+  - imagekeys/status
+  verbs:
+  - get
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: imagekey-controller-metrics-reader
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: imagekey-controller-proxy-role
+rules:
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: imagekey-controller-leader-election-rolebinding
+  namespace: {{ include "venafiAdapterNamespace" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: imagekey-controller-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: imagekey-controller
+  namespace: {{ include "venafiAdapterNamespace" . }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: imagekey-controller-manager-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: imagekey-controller-manager-role
+subjects:
+- kind: ServiceAccount
+  name: imagekey-controller
+  namespace: {{ include "venafiAdapterNamespace" . }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: imagekey-controller-proxy-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: imagekey-controller-proxy-role
+subjects:
+- kind: ServiceAccount
+  name: imagekey-controller
+  namespace: {{ include "venafiAdapterNamespace" . }}

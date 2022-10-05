@@ -1,0 +1,18 @@
+# -- Namespace to deploy chart objects to
+namespace: nirmata-venafi-adapter
+
+# -- Venafi adapter registry image and tag
+venafiAdapterImage: ghcr.io/nirmata/nirmata-imagekey-controller
+venafiAdapterImageTag: v0.1
+
+# -- If image registry is private, provide registry details
+imagePullSecret:
+  registry: ghcr.io
+  # Leave blank, if no ImagePullSecret is needed.
+  name: image-pull-secret
+  # If set to false, the gerrit-master chart expects either a ImagePullSecret
+  # with the name configured above to be present on the cluster or that no
+  # credentials are needed.
+  create: true
+  username:
+  password:

@@ -1,0 +1,104 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.8.0
+  creationTimestamp: null
+  name: imagekeys.security.nirmata.io
+spec:
+  group: security.nirmata.io
+  names:
+    kind: ImageKey
+    listKind: ImageKeyList
+    plural: imagekeys
+    singular: imagekey
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: ImageKey is the Schema for the imagekeys API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ImageKeySpec defines the desired state of ImageKey
+            properties:
+              venafiPKCS11Config:
+                description: VenafiPKCS11Config contains the Venafi PKCS11 client configuration used to retrieve public keys.
+                properties:
+                  additionalCertSecretName:
+                    description: The resource name for a Secret in the current namespace that contains the additional trusted certificate to be configured in Venafi Trust Protection Platform (TPP) before obtaining the grant.
+                    type: string
+                  authURL:
+                    description: The authentication URL for the Venafi Trust Protection Platform (TPP).
+                    type: string
+                  configMap:
+                    description: A ConfigMap in which to store the label and retrieved public key. The label is used as the map key.
+                    type: string
+                  fetchType:
+                    description: Whether to fetch the publickey or certificate corresponding to other Venafi Trust Protection Platform (TPP) parameters provided. Either key (default) or certificate.
+                    type: string
+                  hostAlias:
+                    description: A host alias to access the Venafi Trust Protection Platform (TPP) system.
+                    type: string
+                  hsmURL:
+                    description: The HSM URL for the Venafi Trust Protection Platform (TPP).
+                    type: string
+                  imagepullsecret:
+                    description: Imagepullsecret to be used by venafi pod if any
+                    type: string
+                  interval:
+                    description: The time interval in minutes to check for new or updated keys.
+                    type: integer
+                  keyfetchClientRegistry:
+                    description: KeyfetchClientRegistry housing keyfetch client
+                    type: string
+                  label:
+                    description: The label to use for fetching public keys from the Venafi Trust Protection Platform (TPP) environment.
+                    type: string
+                  passwordSecretName:
+                    description: The resource name for a Secret in the current namespace that contains the password to access the Venafi Trust Protection Platform (TPP).
+                    type: string
+                  username:
+                    description: The username to access the Venafi Trust Protection Platform (TPP).
+                    type: string
+                required:
+                - authURL
+                - configMap
+                - hsmURL
+                - label
+                - passwordSecretName
+                - username
+                type: object
+            type: object
+          status:
+            description: ImageKeyStatus defines the observed state of ImageKey
+            properties:
+              venafiPKCS11Config:
+                description: VenafiPKCS11Config contains the Venafi PKCS11 client status
+                properties:
+                  cronJob:
+                    description: The name of the CronJob that
+                    type: string
+                required:
+                - cronJob
+                type: object
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

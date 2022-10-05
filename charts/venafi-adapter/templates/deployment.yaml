@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    control-plane: controller-manager
+  name: imagekey-controller
+  namespace: {{ include "venafiAdapterNamespace" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imagekey-controller
+      app.kubernetes.io/instance: nirmata
+      app.kubernetes.io/name: nirmata
+      control-plane: controller-manager
+      nirmata.io/container.type: system
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+      labels:
+        app: imagekey-controller
+        app.kubernetes.io/instance: nirmata
+        app.kubernetes.io/name: nirmata
+        control-plane: controller-manager
+        nirmata.io/container.type: system
+    spec:
+      imagePullSecrets: 
+      - name: {{ .Values.imagePullSecret.name }}
+      containers:
+      - args:
+        - --secure-listen-address=0.0.0.0:8443
+        - --upstream=http://127.0.0.1:8080/
+        - --logtostderr=true
+        - --v=0
+        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 15
+          periodSeconds: 600
+          successThreshold: 1
+          tcpSocket:
+            port: 8443
+          timeoutSeconds: 5
+        name: kube-rbac-proxy
+        ports:
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 600
+          successThreshold: 1
+          tcpSocket:
+            port: 8443
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: 500m
+            memory: 128Mi
+          requests:
+            cpu: 5m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+      - args:
+        - --health-probe-bind-address=:8081
+        - --metrics-bind-address=127.0.0.1:8080
+        command:
+        - /manager
+        image: {{ .Values.venafiAdapterImage }}:{{ default .Chart.AppVersion .Values.venafiAdapterImageTag }}
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        name: manager
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 500m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: imagekey-controller
+      terminationGracePeriodSeconds: 10
