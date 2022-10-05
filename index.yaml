@@ -245,6 +245,26 @@ entries:
   kyverno-monitor:
   - apiVersion: v1
     appVersion: 0.1.0
+    created: "2022-10-05T17:22:30.699015871Z"
+    description: Kyverno Monitor
+    digest: 5dd757d6ef458bdeec8120fa6e7f2a5d9aeada7e3aa784f4a1a2f01c8c757004
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - kyverno monitor
+    - admissions controller
+    kubeVersion: '>=1.22.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno-monitor
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-monitor-v0.1.2/kyverno-monitor-v0.1.2.tgz
+    version: v0.1.2
+  - apiVersion: v1
+    appVersion: 0.1.0
     created: "2022-10-05T13:55:02.423113487Z"
     description: Kyverno Monitor
     digest: 1a3022d9c26e1c4c46d4428669c3bcbb6e4398175681bed5d85aab4ab3a6086f
@@ -286,6 +306,25 @@ entries:
   nirmata-venafi-adapter:
   - apiVersion: v1
     appVersion: v0.1.0
+    created: "2022-10-05T17:22:30.856464951Z"
+    description: Nirmata Venafi Adapter
+    digest: 86577f0890415a7752f3ebd48c9596717b2984aff423d7503524a163372ee6b0
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - venafi adapter
+    kubeVersion: '>=1.22.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-venafi-adapter
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-venafi-adapter-v0.1.1/nirmata-venafi-adapter-v0.1.1.tgz
+    version: v0.1.1
+  - apiVersion: v1
+    appVersion: v0.1.0
     created: "2022-10-05T13:55:02.686437209Z"
     description: Nirmata Venafi Adapter
     digest: 4391c9037baee0cd38e9c3c561c92fcd069153c65927e2fd50db7f1fd937eead
@@ -303,4 +342,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-venafi-adapter-v0.1.0/nirmata-venafi-adapter-v0.1.0.tgz
     version: v0.1.0
-generated: "2022-10-05T13:55:02.686990351Z"
+generated: "2022-10-05T17:22:30.856501451Z"
