@@ -25,6 +25,18 @@ kubectl -n <namespace> get pods
 kubectl -n <namespace> get KyvernoMonitor
 ```
 
+## Testing the chart
+```
+# 1. Check that the isRunning status of the KyvernoMonitor CRD is true
+kubectl -n <namespace> get KyvernoMonitor -o yaml
+
+# 2. Change the kyverno deployment, say by reducing replicas to 0
+kubectl -n kyverno scale deploy kyverno --replicas=0
+
+# 3. Check the KyvernoMonitor CRD again, and see that the isRunning flag is set to false. Also check that the LastModified field for Deployment shows current time.
+
+# 4. Revert the kyverno replicas to previous number and check that the isRunning and LastModified fields are changed.
+```
 ## Uninstalling the Chart
 
 To uninstall/delete the `kyverno-monitor` deployment:
@@ -48,4 +60,4 @@ The following table lists the configurable parameters of the kyverno chart and t
 | imagePullSecret.password | string |  | Private registry password if secret is to be created |
 | validKyvernoImages | string | `ghcr.io/nirmata/kyverno:xxx` | Valid images separated by pipe symbol, xxx for any version |
 | kyvernoMonitorImage | string | `ghcr.io/nirmata/kyverno-monitor` | Kyverno monitor image |
-| kyvernoMonitorImageTag | string | `0.1.0` | Kyverno monitor image. If empty, appVersion in Chart.yaml is used |
+| kyvernoMonitorImageTag | string | `0.1.0` | Kyverno monitor image tag. If empty, appVersion in Chart.yaml is used |
