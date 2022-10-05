@@ -242,4 +242,25 @@ entries:
     urls:
     - https://nirmata.github.io/kyverno-charts/kyverno-v1.1.0.tgz
     version: v1.1.0
-generated: "2022-07-26T08:34:42.933805911Z"
+  kyverno-monitor:
+  - apiVersion: v1
+    appVersion: v0.2.0
+    created: "2022-10-05T09:03:46.453018158Z"
+    description: Kyverno Monitor
+    digest: aa243a5122d4c577ec220e6b78fb6ad445fb43ca7c6818879ccb1055388505d6
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - kyverno monitor
+    - admissions controller
+    kubeVersion: '>=1.22.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno-monitor
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-monitor-v0.1.0/kyverno-monitor-v0.1.0.tgz
+    version: v0.1.0
+generated: "2022-10-05T09:03:46.45305076Z"
