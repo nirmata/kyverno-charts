@@ -13,9 +13,9 @@ This chart bootstraps a Kyverno Monitor on a [Kubernetes](http://kubernetes.io) 
 
 helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 
-# 2. Install kyverno-monitor from nirmata helm repo with desired parameters.
+# 2. Install kyverno-monitor from nirmata helm repo in the nirmata-kyverno-monitor namespace, with desired parameters.
 
-helm install kyverno-monitor nirmata/kyverno-monitor --set imagePullSecret.username=someuser,imagePullSecret.password=somepassword
+helm install kyverno-monitor nirmata/kyverno-monitor --namespace nirmata-kyverno-monitor --create-namespace --set imagePullSecret.username=someuser,imagePullSecret.password=somepassword
 
 
 # 3. Check pods are running
@@ -42,4 +42,10 @@ The following table lists the configurable parameters of the kyverno chart and t
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | namespace | string | `nirmata-kyverno-monitor` | Namespace to install kyverno-monitor resources |
-| validKyvernoImages | string | `ghcr.io/nirmata/kyverno-monitor:xxx` | Valid images separated by pipe |
+| imagePullSecret.name | string | `kyverno-monitor-registry` | Imagepull secret name that will store private image registry info |
+| imagePullSecret.create | boolean | `true` | Whether to create the image pullsecret. Need to specify the secret name, username, password |
+| imagePullSecret.username | string |  | Private registry username if secret is to be created |
+| imagePullSecret.password | string |  | Private registry password if secret is to be created |
+| validKyvernoImages | string | `ghcr.io/nirmata/kyverno:xxx` | Valid images separated by pipe symbol, xxx for any version |
+| kyvernoMonitorImage | string | `ghcr.io/nirmata/kyverno-monitor` | Kyverno monitor image |
+| kyvernoMonitorImageTag | string | `0.1.0` | Kyverno monitor image. If empty, appVersion in Chart.yaml is used |
