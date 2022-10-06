@@ -1,4 +1,4 @@
-## Nirmata Kyverno  
+## Nirmata Kyverno Enterprise
 
 This page contains the list of Helm charts for Nirmata Kyverno Enterprise, the commercial distribution of Kyverno supported by Nirmata. 
 
