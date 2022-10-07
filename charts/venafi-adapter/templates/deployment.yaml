@@ -82,6 +82,11 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 20
         name: manager
+        env:
+        - name: POD_SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
         readinessProbe:
           httpGet:
             path: /readyz
