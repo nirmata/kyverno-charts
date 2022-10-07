@@ -122,6 +122,30 @@ entries:
     - https://github.com/nirmata/kyverno-charts/releases/download/kube-bench-adapter-v1.1.0/kube-bench-adapter-v1.1.0.tgz
     version: v1.1.0
   kyverno:
+  - apiVersion: v2
+    appVersion: v1.7.4-n4kbuild.1
+    created: "2022-10-07T04:33:29.228197267Z"
+    description: Kubernetes Native Policy Management
+    digest: d5df45bde7111256c6054fdcadbc81140da09165746191f54b2cb5ce4552f799
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy engine
+    - validating webhook
+    - admissions controller
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno
+    sources:
+    - https://github.com/kyverno/kyverno
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-v1.4.2/kyverno-v1.4.2.tgz
+    version: v1.4.2
   - apiVersion: v1
     appVersion: v1.7.2-n4kbuild.1
     created: "2022-07-26T08:34:42.933758211Z"
@@ -342,4 +366,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-venafi-adapter-v0.1.0/nirmata-venafi-adapter-v0.1.0.tgz
     version: v0.1.0
-generated: "2022-10-05T17:22:30.856501451Z"
+generated: "2022-10-07T04:33:29.228268168Z"
