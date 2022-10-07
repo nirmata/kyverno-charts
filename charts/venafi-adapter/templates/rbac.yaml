@@ -54,6 +54,7 @@ rules:
   resources:
   - secrets
   verbs:
+  - create
   - get
   - list
 ---
@@ -147,6 +148,20 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: imagekey-controller-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: imagekey-controller
+  namespace: {{ include "venafiAdapterNamespace" . }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: imagekey-controller-manager-rolebinding
+  namespace: {{ include "venafiAdapterNamespace" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: imagekey-controller-manager-role
 subjects:
 - kind: ServiceAccount
   name: imagekey-controller

@@ -29,7 +29,7 @@ For a sample use-case, create an imagekey CR, verify that it fetches venafi cert
 ```
 
 # 1 Create a password secret for venafi environment
-kubectl create secret generic venafi-pwd-secret -n nirmata-venafi-adapter --from-literal password=<your-password>
+kubectl create secret generic venafi-pwd-secret -n nirmata-venafi-adapter --from-literal password=<your-password> --as system:serviceaccount:<namespace>:imagekey-controller
 
 # 2. If needed, create an additional secret to convey to Venafi that an additional X.509 cert has to be trusted. Needed for some corner cases when enterprise customers use internal certificates. E.g. 
 kubectl create secret generic venafi-addl-cert-secret -n nirmata-venafi-adapter --from-file <addl-cert-key-filename>
