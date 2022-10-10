@@ -1,0 +1,13 @@
+apiVersion: security.nirmata.io/v1alpha1
+kind: AWSConfig
+metadata:
+  labels:
+    app.kubernetes.io/name: awsconfig
+    app.kubernetes.io/instance: awsconfig-resource
+    app.kubernetes.io/part-of: kyverno-aws-adapter
+    app.kubernetes.io/created-by: kyverno-aws-adapter
+  name: {{ .Values.eksCluster.name }}-config
+  namespace: {{ .Values.namespace.name }}
+spec:
+  name: {{ .Values.eksCluster.name }}
+  region: {{ .Values.eksCluster.region }}
