@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kyverno-aws-adapter.fullname" . }}
+  name: {{ include "nirmata-aws-adapter.fullname" . }}
   namespace: {{ .Values.namespace.name }}
   labels:
     control-plane: controller-manager
@@ -23,7 +23,7 @@ spec:
         control-plane: controller-manager
     spec:
       imagePullSecrets:
-      - name: {{ include "kyverno-aws-adapter.fullname" . }}
+      - name: {{ include "nirmata-aws-adapter.fullname" . }}
       containers:
       - command:
         - /manager
@@ -65,5 +65,5 @@ spec:
           requests:
             cpu: 10m
             memory: 64Mi
-      serviceAccountName: kyverno-aws-adapter-sa
+      serviceAccountName: nirmata-aws-adapter-sa
       terminationGracePeriodSeconds: 10

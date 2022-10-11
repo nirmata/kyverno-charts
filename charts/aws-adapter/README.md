@@ -1,16 +1,16 @@
-# kyverno-aws-adapter
+# nirmata-aws-adapter
 
 ## Description
-Kyverno AWS Adapter is a Kubernetes controller for the `AWSConfig` CRD. As of now, it observes the realtime state of an EKS cluster an reconciles it with the current state, but can be further expanded to other AWS services later on by extending the current API with the help of [AWS SDK for Go v2](https://github.com/aws/aws-sdk-go-v2).
+Nirmata AWS Adapter is a Kubernetes controller for the `AWSConfig` CRD. As of now, it observes the realtime state of an EKS cluster and reconciles it with the currently stored state, but can be further expanded to other AWS services later on by extending the current API with the help of [AWS SDK for Go v2](https://github.com/aws/aws-sdk-go-v2).
 
 ## Getting Started
 You’ll need an [EKS](https://aws.amazon.com/eks/) cluster to run against.
 
 ### Running on the EKS cluster
-1. Make sure that you have configured an [IAM role for the service account](#IAM-Role-for-Service-Account) `kyverno-aws-adapter-sa` in your desired namespace (configured in `values.yaml`) and specified the role's ARN in the `roleArn` field inside `values.yaml` file.
-2. Install the Helm chart after making any necessary changes to `config/helm/kyverno-aws-adapter/values.yaml`	
+1. Make sure that you have configured an [IAM role for the service account](#IAM-Role-for-Service-Account) `nirmata-aws-adapter-sa` in your desired namespace (configured in `values.yaml`) and specified the role's ARN in the `roleArn` field inside `values.yaml` file.
+2. Install the Helm chart after making any necessary changes to `charts/aws-adapter/values.yaml`
    ```sh
-   helm install kyverno-aws-adapter config/helm/kyverno-aws-adapter
+   helm install nirmata-aws-adapter charts/aws-adapter
    ```
 3. Check the `status` field of the `<cluster-name>-config` custom resource in the namespace specified in `values.yaml`. For instance, if the cluster name is `eks-test` and namespace is `nirmata`, then:
    ```sh
@@ -57,7 +57,7 @@ Currently supported values for the Helm chart are as follows:
 -- | ---
 | `namespace` | Namespace for installing the controller and CRD |
 | `eksCluster` | Configuration for EKS cluster's `name` and `region` |
-| `registryConfig` | ghcr.io username and password configuration for the image secret |
+| `registryConfig` | ghcr.io `username` and `password` configuration for the image secret |
 | `pollInterval` | Interval for controller reconciliation |
 | `image` | Configuration for image `name`, `tag` and `pullPolicy` |
 | `roleArn` | IAM Role ARN with required permissions for the EKS cluster |
