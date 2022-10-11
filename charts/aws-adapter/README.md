@@ -3,7 +3,7 @@
 ## Description
 Nirmata AWS Adapter is a Kubernetes controller for the `AWSConfig` CRD. As of now, it observes the realtime state of an EKS cluster and reconciles it with the currently stored state, but can be further expanded to other AWS services later on by extending the current API with the help of [AWS SDK for Go v2](https://github.com/aws/aws-sdk-go-v2).
 
-## Getting Started
+## Installation
 You’ll need an [EKS](https://aws.amazon.com/eks/) cluster to run against.
 
 ### Running on the EKS cluster
@@ -16,40 +16,6 @@ You’ll need an [EKS](https://aws.amazon.com/eks/) cluster to run against.
    ```sh
    kubectl get awsconfig eks-test-config -n nirmata -o yaml 
    ```
-
-## Modifying Source Code
-
-### How it works
-This project aims to follow the Kubernetes [Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
-
-It uses [Controllers](https://kubernetes.io/docs/concepts/architecture/controller/) 
-which provides a reconcile function responsible for synchronizing resources untile the desired state is reached on the cluster 
-
-### Test It Out
-1. Install the CRDs into the cluster:
-
-```sh
-make install
-```
-
-2. Run your controller (this will run in the foreground, so switch to a new terminal if you want to leave it running):
-
-```sh
-make run
-```
-
-**NOTE:** You can also run this in one step by running: `make install run`
-
-### Modifying the API definitions
-If you are editing the API definitions, generate the manifests such as CRs or CRDs using:
-
-```sh
-make manifests
-```
-
-**NOTE:** Run `make --help` for more information on all potential `make` targets
-
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
 
 ## Helm Values
 Currently supported values for the Helm chart are as follows:
@@ -66,7 +32,7 @@ Currently supported values for the Helm chart are as follows:
 
 
 ## IAM Role for Service Account
-This adapter utilizes the ARN of a user-defined IAM Role associated with any policy that has `Full: List, Read` permissions for the EKS service, including the following:
+This adapter utilizes the ARN of a user-defined IAM Role associated with any policy that has `Full: List, Read` permissions for the `EKS` service, including the following:
 
 | Permission |
 | --- |
