@@ -351,6 +351,27 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-monitor-v0.1.0/kyverno-monitor-v0.1.0.tgz
     version: v0.1.0
+  nirmata-aws-adapter:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-10-17T07:17:05.209600474Z"
+    description: Helm chart for the Nirmata AWS Adapter
+    digest: 725fb9eb85c836cb66548a9da96c94d747fe4fd4ca0affa407fb249c8d2e3b4b
+    keywords:
+    - kubernetes
+    - nirmata
+    - kyverno
+    - aws
+    - adapter
+    - policy
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-aws-adapter
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-aws-adapter-0.1.0/nirmata-aws-adapter-0.1.0.tgz
+    version: 0.1.0
   nirmata-venafi-adapter:
   - apiVersion: v1
     appVersion: v0.1.0
@@ -410,4 +431,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2022-10-11T14:36:44.71623192Z"
+generated: "2022-10-17T07:17:05.209639773Z"
