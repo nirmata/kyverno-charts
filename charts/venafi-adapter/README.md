@@ -20,8 +20,8 @@ helm install venafi-adapter nirmata/venafi-adapter --namespace nirmata-venafi-ad
 # 3. Check pods are running
 kubectl -n <namespace> get pods 
 
-# 4. Check CRD is created
-kubectl -n <namespace> get ImageKey
+# 4. Check CRD is created (should show imagekey)
+kubectl get crd
 ```
 
 ## Test a sample policy
@@ -59,12 +59,15 @@ spec:
 # 4. Apply the CR
 kubectl -n <namespace> create imagekey.yaml
 
-# 5. Ensure that the first job runs and downloads the specified key to configmap specified
+# 5. Check that the CR is created
+kubectl -n <namespace> get imagekey
+
+# 6. Ensure that the first job runs and downloads the specified key to configmap specified
 kubectl -n <namespace> get cm <config map name in CR> -o yaml
 
-# 6. Create a Kyverno imageverify policy referring to the configmap field. [See this](https://kyverno.io/policies/other/verify_image/)
+# 7. Create a Kyverno imageverify policy referring to the configmap field. [See this](https://kyverno.io/policies/other/verify_image/)
 
-# 7. Create pods and check that they are blocked or allowed based on whether they are signed using Venafi keys or not. 
+# 8. Create pods and check that they are blocked or allowed based on whether they are signed using Venafi keys or not. 
 k run venafisignedpod --image=ghcr.io/some-user/some-image:signed-by-me   
 ```
 
