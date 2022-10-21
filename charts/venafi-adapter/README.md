@@ -68,7 +68,7 @@ kubectl -n <namespace> get cm <config map name in CR> -o yaml
 # 7. Create a Kyverno imageverify policy referring to the configmap field. [See this](https://kyverno.io/policies/other/verify_image/)
 
 # 8. Create pods and check that they are blocked or allowed based on whether they are signed using Venafi keys or not. 
-k run venafisignedpod --image=ghcr.io/some-user/some-image:signed-by-me   
+kubectl run venafisignedpod --image=ghcr.io/some-user/some-image:signed-by-me   
 ```
 
 ## Uninstalling the Chart
@@ -76,7 +76,7 @@ k run venafisignedpod --image=ghcr.io/some-user/some-image:signed-by-me
 To uninstall/delete the `venafi-adapter` deployment:
 
 ```console
-helm -n <namespace> uninstall venafi-monitor
+helm -n <namespace> uninstall venafi-adapter
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release. 
