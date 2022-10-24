@@ -19,7 +19,7 @@ This chart bootstraps a Kyverno deployment on a [Kubernetes](http://kubernetes.i
 **Add the Kyverno Helm repository:**
 
 ```console
-$ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
+helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 ```
 
 **Note:** If you have open source Kyverno installed, please follow the instructions below to upgrade to the Nirmata Enterprise Subscription.
@@ -29,13 +29,13 @@ $ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 **Note:** You can skip this step if you have already creared the kyverno namespace.
 
 ```console
-$ kubectl create namespace kyverno
+kubectl create namespace kyverno
 ```
 
 **Install the Kyverno chart:**
 
 ```console
-$ helm install kyverno --namespace kyverno nirmata/kyverno --set image.pullSecrets.username=<user> --set image.pullSecrets.password=<token>
+helm install kyverno --namespace kyverno nirmata/kyverno --set image.pullSecrets.username=<user> --set image.pullSecrets.password=<token>
 ```
 
 The command deploys Kyverno on the Kubernetes cluster with default configuration. The [installation](https://kyverno.io/docs/installation/) guide lists the parameters that can be configured during installation.
@@ -181,14 +181,14 @@ The following table lists the configurable parameters of the kyverno chart and t
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```console
-$ helm install --namespace kyverno kyverno ./charts/kyverno \
+helm install --namespace kyverno kyverno ./charts/kyverno \
   --set=image.tag=v0.0.2,resources.limits.cpu=200m
 ```
 
 Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
 
 ```console
-$ helm install --namespace kyverno kyverno ./charts/kyverno -f values.yaml
+helm install --namespace kyverno kyverno ./charts/kyverno -f values.yaml
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
