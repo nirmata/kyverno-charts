@@ -27,7 +27,7 @@ image:
   repository: ghcr.io/nirmata/kyverno
   # -- Image tag
   # Defaults to appVersion in Chart.yaml if omitted
-  tag: v1.7.5-n4kbuild.1
+  tag: v1.8.1-n4kbuild.1
   # -- Image pull policy
   pullPolicy: IfNotPresent
   # -- Image pull secrets
@@ -46,15 +46,21 @@ initImage:
   repository: ghcr.io/nirmata/kyvernopre
   # -- Image tag
   # If initImage.tag is missing, defaults to image.tag
-  tag: v1.7.5-n4kbuild.1
+  tag: v1.8.1-n4kbuild.1
   # -- Image pull policy
   # If initImage.pullPolicy is missing, defaults to image.pullPolicy
   pullPolicy:
 
+initContainer:
+  # -- Extra arguments to give to the kyvernopre binary.
+  extraArgs:
+    - --loggingFormat=text
+
 testImage:
+  # -- Image registry
+  registry:
   # -- Image repository
-  # Defaults to `busybox` if omitted
-  repository:
+  repository: busybox
   # -- Image tag
   # Defaults to `latest` if omitted
   tag:
@@ -78,6 +84,20 @@ podSecurityContext: {}
 
 # -- Security context for the containers
 securityContext:
+  runAsNonRoot: true
+  privileged: false
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+  seccompProfile:
+    type: RuntimeDefault
+
+# -- Security context for the test containers
+testSecurityContext:
+  runAsUser: 65534
+  runAsGroup: 65534
   runAsNonRoot: true
   privileged: false
   allowPrivilegeEscalation: false
@@ -148,7 +168,22 @@ envVars: {}
 
 # -- Extra arguments to give to the binary.
 extraArgs:
-  - --autogenInternals=false
+  - --autogenInternals=true
+  - --loggingFormat=text
+
+# -- Array of extra init containers
+extraInitContainers: []
+# Example:
+# - name: init-container
+#   image: busybox
+#   command: ['sh', '-c', 'echo Hello']
+
+# -- Array of extra containers to run alongside kyverno
+extraContainers: []
+# Example:
+# - name: myapp-container
+#   image: busybox
+#   command: ['sh', '-c', 'echo Hello && sleep 3600']
 
 # -- Image pull secrets for image verify and imageData policies.
 # This will define the `--imagePullSecrets` Kyverno argument.
@@ -183,6 +218,29 @@ initResources:
     cpu: 10m
     memory: 64Mi
 
+testResources:
+  # -- Pod resource limits
+  limits:
+    cpu: 100m
+    memory: 256Mi
+  # -- Pod resource requests
+  requests:
+    cpu: 10m
+    memory: 64Mi
+
+# -- Startup probe.
+# The block is directly forwarded into the deployment, so you can use whatever startupProbes configuration you want.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+# @default -- See [values.yaml](values.yaml)
+startupProbe:
+  httpGet:
+    path: /health/liveness
+    port: 9443
+    scheme: HTTPS
+  failureThreshold: 12
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
 # -- Liveness probe.
 # The block is directly forwarded into the deployment, so you can use whatever livenessProbe configuration you want.
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
@@ -213,15 +271,18 @@ readinessProbe:
   failureThreshold: 6
   successThreshold: 1
 
-# TODO(mbarrien): Should we just list all resources for the
-# generatecontroller in here rather than having defaults hard-coded?
-generatecontrollerExtraResources:
+# -- Additional resources to be added to controller RBAC permissions.
+generatecontrollerExtraResources: []
 # - ResourceA
 # - ResourceB
 
 # -- Exclude Kyverno namespace
 # Determines if default Kyverno namespace exclusion is enabled for webhooks and resourceFilters
 excludeKyvernoNamespace: true
+
+# -- resourceFilter namespace exclude
+# Namespaces to exclude from the default resourceFilters
+resourceFiltersExcludeNamespaces: []
 
 config:
   # -- Resource types to be skipped by the Kyverno policy engine.
@@ -240,8 +301,10 @@ config:
   - '[SelfSubjectAccessReview,*,*]'
   - '[Binding,*,*]'
   - '[ReplicaSet,*,*]'
-  - '[ReportChangeRequest,*,*]'
-  - '[ClusterReportChangeRequest,*,*]'
+  - '[AdmissionReport,*,*]'
+  - '[ClusterAdmissionReport,*,*]'
+  - '[BackgroundScanReport,*,*]'
+  - '[ClusterBackgroundScanReport,*,*]'
   # exclude resources from the chart
   - '[ClusterRole,*,{{ template "kyverno.fullname" . }}:*]'
   - '[ClusterRoleBinding,*,{{ template "kyverno.fullname" . }}:*]'
@@ -262,9 +325,13 @@ config:
 
   # -- Name of an existing config map (ignores default/provided resourceFilters)
   existingConfig: ''
+  # -- Additional annotations to add to the configmap
+  annotations: {}
+    # example.com/annotation: foo
   # -- Exclude group role
   excludeGroupRole:
-#  - ""
+  # - ''
+  # -- Exclude username
   excludeUsername:
   # - ''
   # -- Defines the `namespaceSelector` in the webhook configurations.
@@ -290,6 +357,9 @@ config:
   generateSuccessEvents: false
   # -- Metrics config.
   metricsConfig:
+    # -- Additional annotations to add to the metricsconfigmap
+    annotations: {}
+      # example.com/annotation: foo
     namespaces: {
       "include": [],
       "exclude": []
@@ -362,7 +432,7 @@ serviceMonitor:
 # 2) Provide your own CA and cert.
 #    In this case, you will need to create a certificate with a specific name and data structure.
 #    As long as you follow the naming scheme, it will be automatically picked up.
-#    kyverno-svc.(namespace).svc.kyverno-tls-ca (with data entry named rootCA.crt)
+#    kyverno-svc.(namespace).svc.kyverno-tls-ca (with data entries named tls.key and tls.crt)
 #    kyverno-svc.kyverno.svc.kyverno-tls-pair (with data entries named tls.key and tls.crt)
 # 3) Let Helm generate a self signed cert, by setting createSelfSignedCert true
 # If letting Kyverno create its own CA or providing your own, make createSelfSignedCert is false
