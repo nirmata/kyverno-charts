@@ -4,11 +4,11 @@ metadata:
   labels:
     app.kuberentes.io/instance: controller-manager
     app.kubernetes.io/component: rbac
-    app.kubernetes.io/created-by: kyverno-monitor
+    app.kubernetes.io/created-by: kyverno-operator
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: serviceaccount
-    app.kubernetes.io/part-of: kyverno-monitor
-  name: kyverno-monitor
+    app.kubernetes.io/part-of: kyverno-operator
+  name: kyverno-operator
   namespace: {{ include "kyvernoMonitorNamespace" . }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -16,12 +16,12 @@ kind: Role
 metadata:
   labels:
     app.kubernetes.io/component: rbac
-    app.kubernetes.io/created-by: kyverno-monitor
+    app.kubernetes.io/created-by: kyverno-operator
     app.kubernetes.io/instance: leader-election-role
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: role
-    app.kubernetes.io/part-of: kyverno-monitor
-  name: kyverno-monitor-leader-election-role
+    app.kubernetes.io/part-of: kyverno-operator
+  name: kyverno-operator-leader-election-role
   namespace: {{ include "kyvernoMonitorNamespace" . }}
 rules:
 - apiGroups:
@@ -60,8 +60,16 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   creationTimestamp: null
-  name: kyverno-monitor-manager-role
+  name: kyverno-operator-manager-role
 rules:
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - validatingwebhookconfigurations
+  verbs:
+  - get
+  - watch
+  - list
 - apiGroups:
   - apps
   resources:
@@ -79,6 +87,14 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
   - services
   verbs:
   - get
@@ -93,7 +109,7 @@ rules:
 - apiGroups:
   - security.nirmata.io
   resources:
-  - kyvernomonitors
+  - kyvernooperators
   verbs:
   - create
   - delete
@@ -105,13 +121,13 @@ rules:
 - apiGroups:
   - security.nirmata.io
   resources:
-  - kyvernomonitors/finalizers
+  - kyvernooperators/finalizers
   verbs:
   - update
 - apiGroups:
   - security.nirmata.io
   resources:
-  - kyvernomonitors/status
+  - kyvernooperators/status
   verbs:
   - get
   - patch
@@ -122,12 +138,12 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/component: kube-rbac-proxy
-    app.kubernetes.io/created-by: kyverno-monitor
+    app.kubernetes.io/created-by: kyverno-operator
     app.kubernetes.io/instance: metrics-reader
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrole
-    app.kubernetes.io/part-of: kyverno-monitor
-  name: kyverno-monitor-metrics-reader
+    app.kubernetes.io/part-of: kyverno-operator
+  name: kyverno-operator-metrics-reader
 rules:
 - nonResourceURLs:
   - /metrics
@@ -139,12 +155,12 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/component: kube-rbac-proxy
-    app.kubernetes.io/created-by: kyverno-monitor
+    app.kubernetes.io/created-by: kyverno-operator
     app.kubernetes.io/instance: proxy-role
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrole
-    app.kubernetes.io/part-of: kyverno-monitor
-  name: kyverno-monitor-proxy-role
+    app.kubernetes.io/part-of: kyverno-operator
+  name: kyverno-operator-proxy-role
 rules:
 - apiGroups:
   - authentication.k8s.io
@@ -164,20 +180,20 @@ kind: RoleBinding
 metadata:
   labels:
     app.kubernetes.io/component: rbac
-    app.kubernetes.io/created-by: kyverno-monitor
+    app.kubernetes.io/created-by: kyverno-operator
     app.kubernetes.io/instance: leader-election-rolebinding
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: rolebinding
-    app.kubernetes.io/part-of: kyverno-monitor
-  name: kyverno-monitor-leader-election-rolebinding
+    app.kubernetes.io/part-of: kyverno-operator
+  name: kyverno-operator-leader-election-rolebinding
   namespace: {{ include "kyvernoMonitorNamespace" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: kyverno-monitor-leader-election-role
+  name: kyverno-operator-leader-election-role
 subjects:
 - kind: ServiceAccount
-  name: kyverno-monitor
+  name: kyverno-operator
   namespace: {{ include "kyvernoMonitorNamespace" . }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -185,19 +201,19 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app.kubernetes.io/component: rbac
-    app.kubernetes.io/created-by: kyverno-monitor
+    app.kubernetes.io/created-by: kyverno-operator
     app.kubernetes.io/instance: manager-rolebinding
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrolebinding
-    app.kubernetes.io/part-of: kyverno-monitor
-  name: kyverno-monitor-manager-rolebinding
+    app.kubernetes.io/part-of: kyverno-operator
+  name: kyverno-operator-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: kyverno-monitor-manager-role
+  name: kyverno-operator-manager-role
 subjects:
 - kind: ServiceAccount
-  name: kyverno-monitor
+  name: kyverno-operator
   namespace: {{ include "kyvernoMonitorNamespace" . }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -205,17 +221,17 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app.kubernetes.io/component: kube-rbac-proxy
-    app.kubernetes.io/created-by: kyverno-monitor
+    app.kubernetes.io/created-by: kyverno-operator
     app.kubernetes.io/instance: proxy-rolebinding
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrolebinding
-    app.kubernetes.io/part-of: kyverno-monitor
-  name: kyverno-monitor-proxy-rolebinding
+    app.kubernetes.io/part-of: kyverno-operator
+  name: kyverno-operator-proxy-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: kyverno-monitor-proxy-role
+  name: kyverno-operator-proxy-role
 subjects:
 - kind: ServiceAccount
-  name: kyverno-monitor
+  name: kyverno-operator
   namespace: {{ include "kyvernoMonitorNamespace" . }}

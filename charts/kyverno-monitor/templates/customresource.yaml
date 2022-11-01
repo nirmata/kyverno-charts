@@ -1,13 +1,13 @@
 apiVersion: security.nirmata.io/v1
-kind: KyvernoMonitor
+kind: KyvernoOperator
 metadata:
   labels:
-    app.kubernetes.io/name: kyvernomonitor
-    app.kubernetes.io/instance: kyvernomonitor-sample
-    app.kubernetes.io/part-of: kyverno-monitor
+    app.kubernetes.io/name: kyvernooperator
+    app.kubernetes.io/instance: kyvernooperator
+    app.kubernetes.io/part-of: kyverno-operator
     app.kuberentes.io/managed-by: kustomize
-    app.kubernetes.io/created-by: kyverno-monitor
-  name: kyvernomonitor
+    app.kubernetes.io/created-by: kyverno-operator
+  name: kyvernooperator
   namespace: {{ include "kyvernoMonitorNamespace" . }}
 spec:
 # isRunning

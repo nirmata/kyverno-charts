@@ -2,32 +2,35 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from: kyverno-monitor-system/kyverno-monitor-serving-cert
+    cert-manager.io/inject-ca-from: nirmata-kyverno-operator/kyverno-operator-serving-cert
     controller-gen.kubebuilder.io/version: v0.9.2
-  name: kyvernomonitors.security.nirmata.io
+  name: kyvernooperators.security.nirmata.io
 spec:
   conversion:
     strategy: Webhook
     webhook:
       clientConfig:
         service:
-          name: kyverno-monitor-webhook-service
-          namespace: kyverno-monitor-system
+          name: kyverno-operator-webhook-service
+          # Cannot template CRD, current limitation of helm.
+          # Not relevant right now since we don't have multiple
+          # versions of the CRD
+          namespace: nirmata-kyverno-operator
           path: /convert
       conversionReviewVersions:
       - v1
   group: security.nirmata.io
   names:
-    kind: KyvernoMonitor
-    listKind: KyvernoMonitorList
-    plural: kyvernomonitors
-    singular: kyvernomonitor
+    kind: KyvernoOperator
+    listKind: KyvernoOperatorList
+    plural: kyvernooperators
+    singular: kyvernooperator
   scope: Namespaced
   versions:
   - name: v1
     schema:
       openAPIV3Schema:
-        description: KyvernoMonitor is the Schema for the kyvernomonitors API
+        description: KyvernoOperator is the Schema for the kyvernooperators API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
@@ -38,7 +41,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: KyvernoMonitorSpec defines the desired state of KyvernoMonitor
+            description: KyvernoOperatorSpec defines the desired state of KyvernoOperator
             properties:
               enableAntiAffinity:
                 description: Whether to consider pod anti affinity to determine HA
@@ -60,7 +63,7 @@ spec:
                 type: integer
             type: object
           status:
-            description: KyvernoMonitorStatus defines the observed state of KyvernoMonitor
+            description: KyvernoOperatorStatus defines the observed state of KyvernoOperator
             properties:
               kyvernoState:
                 description: Status record for Kyverno engine

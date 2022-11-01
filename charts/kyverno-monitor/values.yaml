@@ -1,11 +1,11 @@
 # -- Namespace to deploy chart objects to
-namespace: nirmata-kyverno-monitor
+namespace: nirmata-kyverno-operator
 
 # -- Valid Kyverno images separated by |. 'xxx' to match any version
 validKyvernoImages: "ghcr.io/nirmata/kyverno:xxx|ghcr.io/nirmata/kyverno/kyverno:xxx|ghcr.io/kyverno/kyverno:xxx"
 
-kyvernoMonitorImage: ghcr.io/nirmata/kyverno-monitor
-kyvernoMonitorImageTag: 0.1.0
+kyvernoOperatorImage: ghcr.io/nirmata/nirmata-kyverno-monitor
+kyvernoOperatorImageTag: 0.1.0
 
 imagePullSecret:
   registry: ghcr.io
@@ -18,5 +18,5 @@ imagePullSecret:
   username:
   password:
 
-# -- Enable admission webhook to insert change events in K8s event stream?
+# WIP. don't set to true right for now. Admission webhook to insert change events in K8s event stream
 webhookEnabled: false
