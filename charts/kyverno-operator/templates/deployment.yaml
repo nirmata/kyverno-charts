@@ -3,21 +3,21 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: manager
-    app.kubernetes.io/created-by: kyverno-monitor
+    app.kubernetes.io/created-by: kyverno-operator
     app.kubernetes.io/instance: controller-manager
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: deployment
-    app.kubernetes.io/part-of: kyverno-monitor
+    app.kubernetes.io/part-of: kyverno-operator
     control-plane: controller-manager
-  name: kyverno-monitor
+  name: kyverno-operator
   namespace: {{ include "kyvernoMonitorNamespace" . }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kyverno-monitor
-      app.kubernetes.io/instance: kyverno-monitor
-      app.kubernetes.io/name: kyverno-monitor
+      app: kyverno-operator
+      app.kubernetes.io/instance: kyverno-operator
+      app.kubernetes.io/name: kyverno-operator
       control-plane: controller-manager
       nirmata.io/container.type: system
   template:
@@ -25,9 +25,9 @@ spec:
       annotations:
         kubectl.kubernetes.io/default-container: manager
       labels:
-        app: kyverno-monitor
-        app.kubernetes.io/instance: kyverno-monitor
-        app.kubernetes.io/name: kyverno-monitor
+        app: kyverno-operator
+        app.kubernetes.io/instance: kyverno-operator
+        app.kubernetes.io/name: kyverno-operator
         control-plane: controller-manager
         nirmata.io/container.type: system
     spec:
@@ -55,7 +55,7 @@ spec:
         - --upstream=http://127.0.0.1:8080/
         - --logtostderr=true
         - --v=0
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.0
+        image: ghcr.io/nirmata/kube-rbac-proxy:v0.13.1
         livenessProbe:
           failureThreshold: 3
           initialDelaySeconds: 15
@@ -89,13 +89,14 @@ spec:
           capabilities:
             drop:
             - ALL
+            - CAP_NET_RAW
           readOnlyRootFilesystem: true
       - args:
         - --health-probe-bind-address=:8081
         - --metrics-bind-address=127.0.0.1:8080
         command:
         - /manager
-        image: {{ .Values.kyvernoMonitorImage }}:{{ default .Chart.AppVersion .Values.kyvernoMonitorImageTag }}
+        image: {{ .Values.kyvernoOperatorImage }}:{{ default .Chart.AppVersion .Values.kyvernoOperatorImageTag }}
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -126,6 +127,7 @@ spec:
           capabilities:
             drop:
             - ALL
+            - CAP_NET_RAW
         {{- if .Values.webhookEnabled }}
         volumeMounts:
         - mountPath: /tmp/k8s-webhook-server/serving-certs
@@ -134,7 +136,9 @@ spec:
         {{- end }}
       securityContext:
         runAsNonRoot: true
-      serviceAccountName: kyverno-monitor
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: kyverno-operator
       terminationGracePeriodSeconds: 10
       {{- if .Values.webhookEnabled }}
       volumes:
