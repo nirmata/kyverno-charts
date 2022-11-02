@@ -64,3 +64,4 @@ The following table lists the configurable parameters of the kyverno chart and t
 | validKyvernoImages | string | `ghcr.io/nirmata/kyverno:xxx` | Valid images separated by pipe symbol, xxx for any version |
 | kyvernoOperatorImage | string | `ghcr.io/nirmata/kyverno-monitor` | Kyverno operator image |
 | kyvernoOperatorImageTag | string | `0.1.0` | Kyverno operator image tag. If empty, appVersion in Chart.yaml is used |
+| extraEnvVars | list | `[]` | Array of extra environment variables to pod as key: xxx, value: xxx pairs |
