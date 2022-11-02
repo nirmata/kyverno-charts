@@ -16,3 +16,10 @@ imagePullSecret:
   create: true
   username:
   password:
+
+# Used to pass environment variables to the deployment pod. E.g.
+# - name: HTTP_PROXY
+#   value: http://test.com:8080
+# - name: HTTPS_PROXY
+#   value: https://test.com:8000
+extraEnvVars:
