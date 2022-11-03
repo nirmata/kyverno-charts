@@ -94,6 +94,13 @@ spec:
       - args:
         - --health-probe-bind-address=:8081
         - --metrics-bind-address=127.0.0.1:8080
+        env:
+        - name: POD_NAMESPACE
+          value: {{ include "kyvernoMonitorNamespace" . }}
+        {{- range .Values.extraEnvVars }}
+        - name: {{ .name }}
+          value: {{ .value }}
+        {{- end }}
         command:
         - /manager
         image: {{ .Values.kyvernoOperatorImage }}:{{ default .Chart.AppVersion .Values.kyvernoOperatorImageTag }}

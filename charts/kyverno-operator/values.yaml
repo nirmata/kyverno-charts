@@ -18,5 +18,12 @@ imagePullSecret:
   username:
   password:
 
+# Used to pass environment variables to the deployment pod. E.g.
+# - name: HTTP_PROXY
+#   value: http://test.com:8080
+# - name: HTTPS_PROXY
+#   value: https://test.com:8000
+extraEnvVars:
+
 # WIP. don't set to true right for now. Admission webhook to insert change events in K8s event stream
 webhookEnabled: false
