@@ -96,3 +96,5 @@ The following table lists the configurable parameters of the kyverno chart and t
 | imagePullSecret.password | string |  | Private registry password if secret is to be created |
 | venafiAdapterImage | string | `ghcr.io/nirmata/imagekey-controller` | Venafi adapter image |
 | venafiAdapterImageTag | string | `0.1.0` | Venafi adapter image tag. If empty, appVersion in Chart.yaml is used |
+| extraEnvVars | list | `[]` | Array of extra environment variables to pod as key: xxx, value: xxx pairs |
+
