@@ -378,6 +378,27 @@ entries:
   kyverno-operator:
   - apiVersion: v1
     appVersion: 0.1.0
+    created: "2022-11-03T07:40:00.321097354Z"
+    description: Kyverno Operator
+    digest: 70be14f17281e27cf164af68446d523c45f244b7967a49bf935f849264091f75
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - kyverno operator
+    - kyverno monitor
+    - admissions controller
+    kubeVersion: '>=1.22.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno-operator
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-operator-v0.1.4/kyverno-operator-v0.1.4.tgz
+    version: v0.1.4
+  - apiVersion: v1
+    appVersion: 0.1.0
     created: "2022-11-01T12:29:47.483307564Z"
     description: Kyverno Operator
     digest: e3eb98c6b3efbec10ace595d144fff2173067e14281102786a84636e3a57eb62
@@ -534,4 +555,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2022-11-03T07:38:54.954635942Z"
+generated: "2022-11-03T07:40:00.321146655Z"
