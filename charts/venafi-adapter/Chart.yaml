@@ -12,4 +12,4 @@ home: https://kyverno.io/
 maintainers:
   - name: Nirmata
     url: https://nirmata.com/
-kubeVersion: ">=1.22.0-0"
+#kubeVersion: ">=1.22.0-0"
