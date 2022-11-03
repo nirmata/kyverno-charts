@@ -33,11 +33,11 @@ spec:
         - --upstream=http://127.0.0.1:8080/
         - --logtostderr=true
         - --v=0
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+        image: ghcr.io/nirmata/kube-rbac-proxy:v0.13.1
         livenessProbe:
           failureThreshold: 3
           initialDelaySeconds: 15
-          periodSeconds: 600
+          periodSeconds: 30
           successThreshold: 1
           tcpSocket:
             port: 8443
@@ -50,7 +50,7 @@ spec:
         readinessProbe:
           failureThreshold: 3
           initialDelaySeconds: 5
-          periodSeconds: 600
+          periodSeconds: 30
           successThreshold: 1
           tcpSocket:
             port: 8443
@@ -67,6 +67,7 @@ spec:
           capabilities:
             drop:
             - ALL
+            - CAP_NET_RAW
           readOnlyRootFilesystem: true
       - args:
         - --health-probe-bind-address=:8081
@@ -109,8 +110,11 @@ spec:
           capabilities:
             drop:
             - ALL
+            - CAP_NET_RAW
           readOnlyRootFilesystem: true
       securityContext:
         runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: imagekey-controller
       terminationGracePeriodSeconds: 10
