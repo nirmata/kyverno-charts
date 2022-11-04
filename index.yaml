@@ -378,6 +378,27 @@ entries:
   kyverno-operator:
   - apiVersion: v1
     appVersion: 0.1.0
+    created: "2022-11-04T04:42:22.877231792Z"
+    description: Kyverno Operator
+    digest: 2d5db3381721073205ba1739640b0f3fa4ca9f86b9fb83a8032b2c2087c85c91
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - kyverno operator
+    - kyverno monitor
+    - admissions controller
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno-operator
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-operator-v0.1.5/kyverno-operator-v0.1.5.tgz
+    version: v0.1.5
+  - apiVersion: v1
+    appVersion: 0.1.0
     created: "2022-11-03T07:40:00.321097354Z"
     description: Kyverno Operator
     digest: 70be14f17281e27cf164af68446d523c45f244b7967a49bf935f849264091f75
@@ -481,6 +502,24 @@ entries:
   venafi-adapter:
   - apiVersion: v1
     appVersion: v0.1.0
+    created: "2022-11-04T04:42:23.127546654Z"
+    description: Nirmata Venafi Adapter
+    digest: ae037d51dc6285666d8a48624039c1d3be937f7cb15f2d4bc8cabed1fcc8c267
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - venafi adapter
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: venafi-adapter
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.7/venafi-adapter-v0.1.7.tgz
+    version: v0.1.7
+  - apiVersion: v1
+    appVersion: v0.1.0
     created: "2022-11-03T13:44:50.371797393Z"
     description: Nirmata Venafi Adapter
     digest: 240a910667311091183c68aaf8e13fee08eb78ad81ac2c5f36e030e1b660ea8d
@@ -574,4 +613,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2022-11-03T13:44:50.371862994Z"
+generated: "2022-11-04T04:42:23.127675555Z"
