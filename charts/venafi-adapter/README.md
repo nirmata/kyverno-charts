@@ -23,7 +23,7 @@ Create the namespace if needed with kubectl create namespace nirmata-venafi-adap
 helm install venafi-adapter nirmata/venafi-adapter --namespace nirmata-venafi-adapter --create-namespace --set imagePullSecret.username=someuser,imagePullSecret.password=somepassword
 
 Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
---set customCAConfigMap=<e.g. ca-store-cm> --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
+--set customCAConfigMap=<e.g. ca-store-cm> --set systemCertPath=<e.g. /etc/ssl/certs>  --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
 
 # 4. Check pods are running
 kubectl -n <namespace> get pods 
