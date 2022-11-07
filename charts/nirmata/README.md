@@ -41,6 +41,9 @@ kubectl -n kyverno create configmap <e.g. ca-store-cm> —-from-file=custom-ca.p
 helm install kyverno --namespace kyverno nirmata/kyverno --set image.pullSecrets.username=<user> --set image.pullSecrets.password=<token>
 ```
 
+**(Optional)** Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided to the above command as needed. E.g.
+--set customCAConfigMap=<e.g. ca-store-cm> --set systemCertPath=<e.g. /etc/ssl/certs> --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
+
 The command deploys Kyverno on the Kubernetes cluster with default configuration. The [installation](https://kyverno.io/docs/installation/) guide lists the parameters that can be configured during installation.
 
 ## Installing the YAML
