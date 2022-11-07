@@ -466,4 +466,3 @@ customCAConfigMap:
 
 # -- Path containing ssl certs within the container. Used only if customCAConfigMap is used
 systemCertPath: /etc/ssl/certs
-
