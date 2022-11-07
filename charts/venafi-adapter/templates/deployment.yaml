@@ -76,6 +76,13 @@ spec:
         - /manager
         image: {{ .Values.venafiAdapterImage }}:{{ default .Chart.AppVersion .Values.venafiAdapterImageTag }}
         imagePullPolicy: Always
+        {{- if .Values.customCAConfigMap }}
+        volumeMounts:
+        - name: custom-ca-store
+          mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
+          subPath: custom-ca.pem
+          readOnly: false
+        {{- end}}
         livenessProbe:
           httpGet:
             path: /healthz
@@ -116,5 +123,11 @@ spec:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
+      {{- if .Values.customCAConfigMap }}
+      volumes:
+      - name: custom-ca-store
+        configMap:
+          name: {{ .Values.customCAConfigMap }}
+      {{- end}}
       serviceAccountName: imagekey-controller
       terminationGracePeriodSeconds: 10
