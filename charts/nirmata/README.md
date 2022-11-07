@@ -31,6 +31,8 @@ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 ```console
 kubectl create namespace kyverno
 ```
+**(Optional) If a custom CA is used, create a configmap corresponding to the same with key *custom-ca.pem*. E.g.
+kubectl -n kyverno create configmap <e.g. ca-store-cm> —-from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
 
 **Install the Kyverno chart:**
 
@@ -250,6 +252,8 @@ The following table lists the configurable parameters of the kyverno chart and t
 | webhooksCleanup.enable | bool | `false` | Create a helm pre-delete hook to cleanup webhooks. |
 | webhooksCleanup.image | string | `"bitnami/kubectl:latest"` | `kubectl` image to run commands for deleting webhooks. |
 | tufRootMountPath | string | `"/.sigstore"` | A writable volume to use for the TUF root initialization |
+| customCAConfigMap | string | | Configmap storing custom CA certificate |
+| systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 

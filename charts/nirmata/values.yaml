@@ -460,3 +460,10 @@ webhooksCleanup:
 
 # -- A writable volume to use for the TUF root initialization
 tufRootMountPath: /.sigstore
+
+# -- Configmap storing custom CA certificate
+customCAConfigMap:
+
+# -- Path containing ssl certs within the container. Used only if customCAConfigMap is used
+systemCertPath: /etc/ssl/certs
+
