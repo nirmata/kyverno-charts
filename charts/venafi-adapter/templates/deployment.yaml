@@ -34,6 +34,13 @@ spec:
         - --logtostderr=true
         - --v=0
         image: ghcr.io/nirmata/kube-rbac-proxy:v0.13.1
+        {{- if .Values.customCAConfigMap }}
+        volumeMounts:
+        - name: custom-ca-store
+          mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
+          subPath: custom-ca.pem
+          readOnly: false
+        {{- end}}
         livenessProbe:
           failureThreshold: 3
           initialDelaySeconds: 15
@@ -76,6 +83,12 @@ spec:
         - /manager
         image: {{ .Values.venafiAdapterImage }}:{{ default .Chart.AppVersion .Values.venafiAdapterImageTag }}
         imagePullPolicy: Always
+        {{- if .Values.customCAConfigMap }}
+        volumeMounts:
+        - name: custom-ca-store
+          mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
+          subPath: custom-ca.pem
+        {{- end}}
         livenessProbe:
           httpGet:
             path: /healthz
@@ -88,6 +101,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.serviceAccountName
+        - name: CUSTOM_CA_CONFMAP
+          value: {{ .Values.customCAConfigMap }}
+        - name: SYSTEM_CERT_PATH
+          value: {{ .Values.systemCertPath }}
         {{- range .Values.extraEnvVars }}
         - name: {{ .name }}
           value: {{ .value }}
@@ -116,5 +133,11 @@ spec:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
+      {{- if .Values.customCAConfigMap }}
+      volumes:
+      - name: custom-ca-store
+        configMap:
+          name: {{ .Values.customCAConfigMap }}
+      {{- end}}
       serviceAccountName: imagekey-controller
       terminationGracePeriodSeconds: 10

@@ -13,14 +13,22 @@ This chart bootstraps a Venafi Adapter (a.k.a. ImageKey controller) on a [Kubern
 
 helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 
-# 2. Install venafi-adapter from nirmata helm repo in the nirmata-kyverno-monitor namespace, with desired parameters.
+# 2. (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
+kubectl -n nirmata-venafi-adapter create configmap <e.g. ca-store-cm> —-from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
+
+Create the namespace if needed with kubectl create namespace nirmata-venafi-adapter
+
+# 3. Install venafi-adapter from nirmata helm repo in the nirmata-kyverno-monitor namespace, with desired parameters.
 
 helm install venafi-adapter nirmata/venafi-adapter --namespace nirmata-venafi-adapter --create-namespace --set imagePullSecret.username=someuser,imagePullSecret.password=somepassword
 
-# 3. Check pods are running
+Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
+--set customCAConfigMap=<e.g. ca-store-cm> --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
+
+# 4. Check pods are running
 kubectl -n <namespace> get pods 
 
-# 4. Check CRD is created (should show imagekey)
+# 5. Check CRD is created (should show imagekey)
 kubectl get crd
 ```
 
@@ -97,4 +105,5 @@ The following table lists the configurable parameters of the kyverno chart and t
 | venafiAdapterImage | string | `ghcr.io/nirmata/imagekey-controller` | Venafi adapter image |
 | venafiAdapterImageTag | string | `0.1.0` | Venafi adapter image tag. If empty, appVersion in Chart.yaml is used |
 | extraEnvVars | list | `[]` | Array of extra environment variables to pod as key: xxx, value: xxx pairs |
-
+| customCAConfigMap | string | | Configmap storing custom CA certificate |
+| systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |
