@@ -161,6 +161,16 @@ spec:
           volumeMounts:
             - mountPath: {{ .Values.tufRootMountPath }}
               name: sigstore
+            {{- if .Values.customCAConfigMap }}
+            - name: custom-ca-store
+              mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
+              subPath: custom-ca.pem
+            {{- end}}
       volumes:
       - name: sigstore
         emptyDir: {}
+      {{- if .Values.customCAConfigMap }}
+      - name: custom-ca-store
+        configMap:
+          name: {{ .Values.customCAConfigMap }}
+      {{- end}}
