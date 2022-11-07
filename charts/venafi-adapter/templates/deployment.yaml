@@ -88,7 +88,6 @@ spec:
         - name: custom-ca-store
           mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
           subPath: custom-ca.pem
-          readOnly: false
         {{- end}}
         livenessProbe:
           httpGet:
