@@ -1,4 +1,4 @@
-**Steps for image verification
+**Steps for image verification**
 
 Below are the steps to verify images before deployment to Kubernetes runtime environments - 
 
@@ -12,7 +12,7 @@ Confirm image verification based on policy pass/fail.
 
 
 
-**Location and Credentials to access N4K images
+**Location and Credentials to access N4K images**
 
 Please download the Kyverno and adapter images below - 
 
@@ -27,10 +27,10 @@ Please use the below credentials provided to you to access N4K images -
 Username: nirmata-enterprise-for-kyverno
 Password: xx
 
-**Kyverno Installation
+**Kyverno Installation**
 
 
-Install the Helm charts by following the instructions here. The necessary credentials for the image repo must be passed during installation of the Helm repo to authenticate with the customer’s container registry. Set the image registry using the parameters below
+Install the Helm charts by following the instructions [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#installing-the-chart). The necessary credentials for the image repo must be passed during installation of the Helm repo to authenticate with the customer’s container registry. Set the image registry using the parameters below
  	
 --set image.repository=<registry_name>>
 --set image.pullSecrets.registry=<<registry_name>>
@@ -40,15 +40,15 @@ Install the Helm charts by following the instructions here. The necessary creden
 
 
 For custom certs, follow the custom cert section in the [installation](https://github.com/nirmata/kyverno-charts/tree/main/charts/venafi-adapter#installation) guide and use the parameters below to set the right ca bundle path and configmap. 
-``
+
  --set systemCertPath=/etc/pki/tls/certs
  --set customCAConfigMap=<<configmap_name>>
-``
-
-**Nirmata Venafi Adapter installation 
 
 
-Install the Helm charts by following the instructions here. The necessary credentials for the image repo must be passed during installation of the Helm repo to authenticate with the customer’s container registry. Set the image registry using the parameters below
+**Nirmata Venafi Adapter installation** 
+
+
+Install the Helm charts by following the instructions [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/venafi-adapter). The necessary credentials for the image repo must be passed during installation of the Helm repo to authenticate with the customer’s container registry. Set the image registry using the parameters below
 
 
 
@@ -62,7 +62,7 @@ Install the Helm charts by following the instructions here. The necessary creden
 
 
 
-For custom certs, follow the custom cert section in the installation guide and use the parameters below to set the right ca bundle path and configmap.
+For custom certs, follow the custom cert section in the [installation](https://github.com/nirmata/kyverno-charts/tree/main/charts/venafi-adapter#installation) guide and use the parameters below to set the right ca bundle path and configmap.
 
 
 
@@ -72,10 +72,10 @@ For custom certs, follow the custom cert section in the installation guide and u
 
 
 
-**Validate signed images with Venafi adapter
+**Validate signed images with Venafi adapter**
 
 
-Refer the steps here to create a password secret and CR yaml imagekey.yaml
+Refer the steps [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/venafi-adapter#test-a-sample-policy) to create a password secret and CR yaml imagekey.yaml
 Ensure the first job runs and downloads the specified key to configmap specified
-Refer the sample policy to create a Kyverno imageverify policy referring to the configmap field
+Refer the sample [policy](https://github.com/dolisss/kyverno_policies/blob/main/supply-chain/verify_image_venafi.yaml) to create a Kyverno imageverify policy referring to the configmap field
 Validate  whether pods are blocked or allowed based on whether they are signed with Venafi keys.
