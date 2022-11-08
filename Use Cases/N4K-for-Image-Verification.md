@@ -1,4 +1,4 @@
-#Steps for image verification
+**Steps for image verification
 
 Below are the steps to verify images before deployment to Kubernetes runtime environments - 
 
@@ -12,7 +12,7 @@ Confirm image verification based on policy pass/fail.
 
 
 
-Location and Credentials to access N4K images
+**Location and Credentials to access N4K images
 
 Please download the Kyverno and adapter images below - 
 
@@ -22,12 +22,12 @@ Please download the Kyverno and adapter images below -
         ghcr.io/nirmata/nirmata-imagekey-controller:v0.1
 
 
-Please use the below credentials to access N4K images - 
+Please use the below credentials provided to you to access N4K images - 
 
 Username: nirmata-enterprise-for-kyverno
-Password: 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
+Password: xx
 
-Kyverno Installation
+**Kyverno Installation
 
 
 Install the Helm charts by following the instructions here. The necessary credentials for the image repo must be passed during installation of the Helm repo to authenticate with the customer’s container registry. Set the image registry using the parameters below
@@ -40,12 +40,12 @@ Install the Helm charts by following the instructions here. The necessary creden
 
 
 For custom certs, follow the custom cert section in the [installation](https://github.com/nirmata/kyverno-charts/tree/main/charts/venafi-adapter#installation) guide and use the parameters below to set the right ca bundle path and configmap. 
-
+``
  --set systemCertPath=/etc/pki/tls/certs
  --set customCAConfigMap=<<configmap_name>>
+``
 
-
-Nirmata Venafi Adapter installation: 
+**Nirmata Venafi Adapter installation 
 
 
 Install the Helm charts by following the instructions here. The necessary credentials for the image repo must be passed during installation of the Helm repo to authenticate with the customer’s container registry. Set the image registry using the parameters below
@@ -72,7 +72,7 @@ For custom certs, follow the custom cert section in the installation guide and u
 
 
 
-Validate signed images with Venafi adapter
+**Validate signed images with Venafi adapter
 
 
 Refer the steps here to create a password secret and CR yaml imagekey.yaml
