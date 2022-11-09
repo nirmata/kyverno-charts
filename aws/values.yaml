@@ -1,6 +1,6 @@
 nameOverride:
 fullnameOverride:
-namespace:
+namespace: kyverno
 
 # -- Additional labels
 customLabels: {}
@@ -8,8 +8,8 @@ customLabels: {}
 rbac:
   create: true
   serviceAccount:
-    create: false
-    name: 
+    create: true
+    name: kyverno
     annotations: {}
     #   example.com/annotation: value
 
