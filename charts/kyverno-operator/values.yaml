@@ -18,6 +18,12 @@ imagePullSecret:
   username:
   password:
 
+# -- Config map storing custom CA certificate
+customCAConfigMap:
+
+# -- Path containing ssl certs within the container. Used only if customCAConfigMap is used
+systemCertPath: /etc/ssl/certs
+
 # Used to pass environment variables to the deployment pod. E.g.
 # - name: HTTP_PROXY
 #   value: http://test.com:8080

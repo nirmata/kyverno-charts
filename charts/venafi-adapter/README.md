@@ -14,7 +14,7 @@ This chart bootstraps a Venafi Adapter (a.k.a. ImageKey controller) on a [Kubern
 helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 
 # 2. (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
-kubectl -n nirmata-venafi-adapter create configmap <e.g. ca-store-cm> —-from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
+kubectl -n nirmata-venafi-adapter create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
 
 Create the namespace if needed with kubectl create namespace nirmata-venafi-adapter
 
