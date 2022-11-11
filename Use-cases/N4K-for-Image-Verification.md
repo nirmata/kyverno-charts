@@ -16,48 +16,48 @@ Below are the steps to verify images before deployment to Kubernetes runtime env
 
 Please download the Kyverno and adapter images below - 
 
-        ghcr.io/nirmata/kyverno:v1.8.1-n4kbuild.1
-        ghcr.io/nirmata/kyvernopre:v1.8.1-n4kbuild.1
-        ghcr.io/nirmata/kube-rbac-proxy:v0.13.1
-        ghcr.io/nirmata/nirmata-imagekey-controller:v0.1
+        ghcr.io/nirmata/kyverno
+        ghcr.io/nirmata/kyvernopre
+        ghcr.io/nirmata/kube-rbac-proxy
+        ghcr.io/nirmata/nirmata-imagekey-controller
 
 
 Please use the below credentials provided to you to access N4K images - 
-
+```
 Username: nirmata-enterprise-for-kyverno
-Password: xx
-
+Password: <token-provided-by-nirmata>
+```
 ## Kyverno Installation
 
 
-Install the Helm charts by following the instructions [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#installing-the-chart). The necessary credentials for the image repo must be passed during installation of the Helm repo to authenticate with the customer’s container registry. Set the image registry using the parameters below
+Install the Helm charts by following the instructions [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#installing-the-chart). The necessary credentials for the image repo must be passed during installation of the Helm chart to authenticate with the customer’s container registry. Set the image registry using the parameters below
 ``` 	
---set image.repository=<registry_name>>
---set image.pullSecrets.registry=<<registry_name>>
+--set image.repository=<registry_name>
+--set image.pullSecrets.registry=<registry_name>
 --set image.pullSecrets.username=<user> 
 --set image.pullSecrets.password=<password>
 ```
 
 
-For custom certs, follow the custom cert section in the [installation](https://github.com/nirmata/kyverno-charts/tree/main/charts/venafi-adapter#installation) guide and use the parameters below to set the right ca bundle path and configmap. 
+For custom Root CA, follow the custom certificates section in the [installation](https://github.com/nirmata/kyverno-charts/tree/main/charts/venafi-adapter#installation) guide and use the parameters below to set the right ca bundle path and configmap. 
 ```
  --set systemCertPath=/etc/pki/tls/certs
- --set customCAConfigMap=<<configmap_name>>
+ --set customCAConfigMap=<configmap_name>
 ```
 
 ## Nirmata Venafi Adapter installation
 
 
-Install the Helm charts by following the instructions [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/venafi-adapter). The necessary credentials for the image repo must be passed during installation of the Helm repo to authenticate with the customer’s container registry. Set the image registry using the parameters below
+Install the Helm charts by following the instructions [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/venafi-adapter). The necessary credentials for the image repo must be passed during installation of the Helm chart to authenticate with the customer’s container registry. Set the image registry using the parameters below
 
 
 
 
 ```
---set venafiAdapterImage=<<nirmata-imagekey-controller_image_full_path>>
---set imagePullSecret.registry=<<registry_name>>
---set imagePullSecret.username=<<user>> 
---set imagePullSecret.password=<<password>>
+--set venafiAdapterImage=<nirmata-imagekey-controller_image_full_path>
+--set imagePullSecret.registry=<registry_name>
+--set imagePullSecret.username=<user>
+--set imagePullSecret.password=<password>
 ```
 
 
@@ -66,7 +66,7 @@ For custom certs, follow the custom cert section in the [installation](https://g
 
 ```
  --set systemCertPath=/etc/pki/tls/certs
- --set customCAConfigMap=<<configmap_name>>
+ --set customCAConfigMap=<configmap_name>
 ```
 
 
