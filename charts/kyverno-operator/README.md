@@ -13,15 +13,22 @@ This chart bootstraps a Kyverno Operator on a [Kubernetes](http://kubernetes.io)
 
 helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 
-# 2. Install kyverno-operator from nirmata helm repo in the nirmata-kyverno-operator namespace, with desired parameters.
+# 2. (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
+kubectl -n nirmata-kyverno-operator create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
+
+Create the namespace if needed with kubectl create namespace nirmata-kyverno-operator
+
+# 3. Install kyverno-operator from nirmata helm repo in the nirmata-kyverno-operator namespace, with desired parameters.
 
 helm install kyverno-operator nirmata/kyverno-operator --namespace nirmata-kyverno-operator --create-namespace --set imagePullSecret.username=someuser,imagePullSecret.password=somepassword
 
+Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
+--set customCAConfigMap=<e.g. ca-store-cm> --set systemCertPath=<e.g. /etc/ssl/certs>  --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
 
-# 3. Check pods are running
+# 4. Check pods are running
 kubectl -n <namespace> get pods 
 
-# 4. Check CRD is created
+# 5. Check CRD is created
 kubectl -n <namespace> get KyvernoOperator
 ```
 
@@ -65,3 +72,5 @@ The following table lists the configurable parameters of the kyverno chart and t
 | kyvernoOperatorImage | string | `ghcr.io/nirmata/kyverno-monitor` | Kyverno operator image |
 | kyvernoOperatorImageTag | string | `0.1.0` | Kyverno operator image tag. If empty, appVersion in Chart.yaml is used |
 | extraEnvVars | list | `[]` | Array of extra environment variables to pod as key: xxx, value: xxx pairs |
+| customCAConfigMap | string | | Configmap storing custom CA certificate |
+| systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |

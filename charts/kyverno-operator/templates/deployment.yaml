@@ -56,6 +56,13 @@ spec:
         - --logtostderr=true
         - --v=0
         image: ghcr.io/nirmata/kube-rbac-proxy:v0.13.1
+        {{- if .Values.customCAConfigMap }}
+        volumeMounts:
+        - name: custom-ca-store
+          mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
+          subPath: custom-ca.pem
+          readOnly: false
+        {{- end}}
         livenessProbe:
           failureThreshold: 3
           initialDelaySeconds: 15
@@ -105,6 +112,12 @@ spec:
         - /manager
         image: {{ .Values.kyvernoOperatorImage }}:{{ default .Chart.AppVersion .Values.kyvernoOperatorImageTag }}
         imagePullPolicy: Always
+        {{- if .Values.customCAConfigMap }}
+        volumeMounts:
+        - name: custom-ca-store
+          mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
+          subPath: custom-ca.pem
+        {{- end}}
         livenessProbe:
           httpGet:
             path: /healthz
@@ -145,6 +158,12 @@ spec:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
+      {{- if .Values.customCAConfigMap }}
+      volumes:
+      - name: custom-ca-store
+        configMap:
+          name: {{ .Values.customCAConfigMap }}
+      {{- end}}
       serviceAccountName: kyverno-operator
       terminationGracePeriodSeconds: 10
       {{- if .Values.webhookEnabled }}
