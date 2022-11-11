@@ -52,6 +52,11 @@ initImage:
   # If initImage.pullPolicy is missing, defaults to image.pullPolicy
   pullPolicy:
 
+initContainer:
+  # -- Extra arguments to give to the kyvernopre binary.
+  extraArgs:
+    - --loggingFormat=text
+
 licensemanagerImage:
   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/awslm
   # If licensemanagerImage.tag is missing, defaults to image.tag
@@ -61,6 +66,8 @@ licensemanagerImage:
   # No pull secrets just for licensemanagerImage; just add to image.pullSecrets
 
 testImage:
+  # -- Image registry
+  registry:
   # -- Image repository
   repository: busybox
   # -- Image tag
