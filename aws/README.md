@@ -33,7 +33,7 @@ $ kubectl create namespace kyverno
 ```console
 
 $ eksctl create iamserviceaccount \
---name <service-account-name> \
+--name kyverno \
 --namespace kyverno \
 --cluster <cluster-name> \
 --attach-policy-arn "arn:aws:iam::aws:policy/servicerole/
@@ -41,7 +41,7 @@ AWSLicenseManagerConsumptionPolicy" \
 --approve \
 --override-existing-serviceaccounts
 
-$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/aws --set rbac.create=true --set rbac.serviceAccount.name=<service-account-name> --set rbac.serviceAccount.annotations."eks\.amazonaws\.com\/role-arn"=<role-arn>
+$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/aws --set rbac.create=true --set rbac.serviceAccount.name=kyverno --set rbac.serviceAccount.annotations."eks\.amazonaws\.com\/role-arn"=<role-arn>
 ```
 
 **Install the Kyverno chart on EKS-Anywhere (on-prem) cluster:**
