@@ -6,8 +6,6 @@ fullnameOverride:
 # -- Namespace the chart deploys to
 namespace: kyverno
 
-namespace:
-
 # -- Additional labels
 customLabels: {}
 
