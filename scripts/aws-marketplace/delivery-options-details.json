@@ -11,14 +11,14 @@
         "HelmChartUri": "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno-chart:v1.10.0-01-aws",
         "Description": "Deploy Kyverno using Helm",
         "UsageInstructions": "Once the Helm chart is installed successfully, verify that the Kyverno pod is running:\n```kubectl get pods -n kyverno```",
-        "MarketplaceServiceAccountName": "awslm-service-account",
+        "MarketplaceServiceAccountName": "kyverno",
         "QuickLaunchEnabled": true,
         "ReleaseName": "kyverno",
         "Namespace": "kyverno",
         "OverrideParameters": [
           {
             "Key": "rbac.serviceAccount.create",
-            "DefaultValue": "false",
+            "DefaultValue": "true",
             "Metadata": {
               "Label": "Create service account",
               "Description": "Set the flag to true for helm to create the service account. For use with EKS clusters only"
