@@ -4,6 +4,7 @@ nameOverride:
 # -- Override the expanded name of the chart
 fullnameOverride:
 # -- Namespace the chart deploys to
+createnamespace: true
 namespace: kyverno
 
 # -- Additional labels
