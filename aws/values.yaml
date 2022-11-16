@@ -77,7 +77,8 @@ testImage:
   pullPolicy:
 
 # -- (int) Desired number of pods
-replicaCount: ~
+replicaCount: 1
+# For high availability a replica count of 3 is recommended
 
 # -- Additional labels to add to each pod
 podLabels: {}
