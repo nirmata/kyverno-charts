@@ -12,13 +12,13 @@ You need token to download the images. Please contact <support@nirmata.com> to g
 
 ## Installation
 
-# 1. Add Kyverno Helm Repository
+### 1. Add Kyverno Helm Repository
 ```console
 helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 helm repo update nirmata
 ```
 
-# 2. (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
+### 2. (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
 Create the namespace
 ```console
 kubectl create namespace nirmata-kyverno-operator
@@ -28,7 +28,7 @@ Create configmap in the namespace
 kubectl -n nirmata-kyverno-operator create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
 ```
 
-# 3. Install kyverno-operator from nirmata helm repo in the nirmata-kyverno-operator namespace, with desired parameters.
+### 3. Install kyverno-operator from nirmata helm repo in the nirmata-kyverno-operator namespace, with desired parameters.
 ```console
 helm install kyverno-operator nirmata/kyverno-operator --namespace nirmata-kyverno-operator --create-namespace --set imagePullSecret.username=nirmata-enterprise-for-kyverno,imagePullSecret.password=<token>
 ```
@@ -38,34 +38,34 @@ Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be 
 --set customCAConfigMap=<e.g. ca-store-cm> --set systemCertPath=<e.g. /etc/ssl/certs>  --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
 ```
 
-# 4. Check pods are running
+### 4. Check pods are running
 ```console
 kubectl -n nirmata-kyverno-operator get pods
 ```
 
-# 5. Check CRD is created
+### 5. Check CRD is created
 ```console
 kubectl -n nirmata-kyverno-operator get KyvernoOperator
 ```
 
 ## Testing the chart
 
-# 1. Check that the isRunning status of the KyvernoOperator CRD is true
+### 1. Check that the isRunning status of the KyvernoOperator CRD is true
 ```console
 kubectl -n nirmata-kyverno-operator get KyvernoOperator -o yaml | grep -e isRunning
 ```
 
-# 2. Change the kyverno deployment, say by reducing replicas to 0
+### 2. Change the kyverno deployment, say by reducing replicas to 0
 ```console
 kubectl -n kyverno scale deploy kyverno --replicas=0
 ```
 
-# 3. Check the KyvernoOperator CRD again, and see that the isRunning flag is set to false. Also check that the LastModified field for Deployment shows current time.
+### 3. Check the KyvernoOperator CRD again, and see that the isRunning flag is set to false. Also check that the LastModified field for Deployment shows current time.
 ```console
 kubectl -n nirmata-kyverno-operator get KyvernoOperator -o yaml | grep -e isRunning
 ```
 
-# 4. Revert the kyverno replicas to previous number and check that the isRunning and lastModifiedAt fields are changed.
+### 4. Revert the kyverno replicas to previous number and check that the isRunning and lastModifiedAt fields are changed.
 ```console
 kubectl -n kyverno scale deploy kyverno --replicas=1
 kubectl -n nirmata-kyverno-operator get KyvernoOperator -o yaml | grep -e isRunning -e lastModifiedAt
