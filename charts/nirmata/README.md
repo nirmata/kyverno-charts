@@ -8,11 +8,53 @@
 - View policy enforcement as events.
 - Scan existing resources for violations.
 
-Access the complete user documentation and guides at: https://kyverno.io.
+Access the complete user documentation and guides at: <https://kyverno.io>.
 
 ## Introduction
 
 This chart bootstraps a Kyverno deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+
+## Prerequisite
+### Get token from Nirmata support
+You need the token to download the images. Please contact <support@nirmata.com> to get the token.
+
+### Install kyverno operator
+
+#### 1. Add Kyverno Helm Repository
+```console
+helm repo add nirmata https://nirmata.github.io/kyverno-charts/
+helm repo update nirmata
+```
+
+#### 2. (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
+Create the namespace
+```console
+kubectl create namespace nirmata-kyverno-operator
+```
+Create configmap in the namespace
+```console
+kubectl -n nirmata-kyverno-operator create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
+```
+
+#### 3. Install kyverno-operator from nirmata helm repo in the nirmata-kyverno-operator namespace, with desired parameters.
+```console
+helm install kyverno-operator nirmata/kyverno-operator --namespace nirmata-kyverno-operator --create-namespace --set imagePullSecret.username=nirmata-enterprise-for-kyverno,imagePullSecret.password=<token>
+```
+
+Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
+```console
+--set customCAConfigMap=<e.g. ca-store-cm> --set systemCertPath=<e.g. /etc/ssl/certs>  --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
+```
+
+#### 4. Check pods are running
+```console
+kubectl -n nirmata-kyverno-operator get pods
+```
+
+#### 5. Check CRD is created
+```console
+kubectl -n nirmata-kyverno-operator get KyvernoOperator
+```
 
 ## Installing the Chart
 
@@ -20,13 +62,14 @@ This chart bootstraps a Kyverno deployment on a [Kubernetes](http://kubernetes.i
 
 ```console
 helm repo add nirmata https://nirmata.github.io/kyverno-charts/
+helm repo update nirmata
 ```
 
 **Note:** If you have open source Kyverno installed, please follow the instructions below to upgrade to the Nirmata Enterprise Subscription.
 
 **Create a namespace:**
 
-**Note:** You can skip this step if you have already creared the kyverno namespace.
+**Note:** You can skip this step if you have already created the kyverno namespace.
 
 ```console
 kubectl create namespace kyverno
@@ -38,11 +81,13 @@ kubectl -n kyverno create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem
 **Install the Kyverno chart:**
 
 ```console
-helm install kyverno --namespace kyverno nirmata/kyverno --set image.pullSecrets.username=<user> --set image.pullSecrets.password=<token>
+helm install kyverno --namespace kyverno --create-namespace nirmata/kyverno --set image.pullSecrets.username=nirmata-enterprise-for-kyverno --set image.pullSecrets.password=<token>
 ```
 
 **(Optional)** Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided to the above command as needed. E.g.
+```console
 --set customCAConfigMap=<e.g. ca-store-cm> --set systemCertPath=<e.g. /etc/ssl/certs> --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
+```
 
 The command deploys Kyverno on the Kubernetes cluster with default configuration. The [installation](https://kyverno.io/docs/installation/) guide lists the parameters that can be configured during installation.
 
@@ -52,7 +97,7 @@ If you do not want to use "helm install" to install the chart, you can generate 
 Add the Kyverno Helm repository as described above. Then create the namespace for kyverno. Once the namespace is created, generate the kyverno YAML file using the helm template command
 
 ```console
-helm template kyverno --namespace=kyverno nirmata/kyverno --set image.pullSecrets.username=<user> --set image.pullSecrets.password=<token> > kyverno.yaml
+helm template kyverno --namespace=kyverno nirmata/kyverno --create-namespace --set image.pullSecrets.username=nirmata-enterprise-for-kyverno --set image.pullSecrets.password=<token> > kyverno.yaml
 
 kubectl create -f kyverno.yaml
 ```
@@ -130,9 +175,12 @@ helm upgrade kyverno --namespace kyverno nirmata/kyverno --set image.pullSecrets
 You can install the curated Kyverno policies by following the instructions [here](https://github.com/nirmata/kyverno-policies)
 
 ## Uninstalling the Chart
+To uninstall/delete the `kyverno-operator` deployment:
+```console
+helm delete -n nirmata-kyverno-operator kyverno-operator
+```
 
 To uninstall/delete the `kyverno` deployment:
-
 ```console
 helm delete -n kyverno kyverno
 ```
