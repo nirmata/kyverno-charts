@@ -14,4 +14,4 @@ aws marketplace-catalog start-change-set \
     "Details": '"${DETAILS_JSON_STRING}"'
   }
 ]' \
---region us-east-1 --profile default
+--region us-east-1
