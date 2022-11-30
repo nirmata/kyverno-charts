@@ -1,63 +1,93 @@
-# nirmata-aws-adapter
+# nirmata-kyverno-aws-adapter
 
 ## Description
-Nirmata AWS Adapter is a Kubernetes controller for the `AWSConfig` CRD. As of now, it observes the realtime state of an EKS cluster and reconciles it with the currently stored state, but can be further expanded to other AWS services later on by extending the current API with the help of [AWS SDK for Go v2](https://github.com/aws/aws-sdk-go-v2).
+The Nirmata AWS Adapter for Kyverno is a Kubernetes controller to collect the information from an EKS Cluster and generate Policy Reports for Kyverno policies that are applied on the cluster. To know more about the adapter and its implementation, checkout the repo https://github.com/nirmata/kyverno-aws-adapter
 
-## Installation
-You’ll need an [EKS](https://aws.amazon.com/eks/) cluster to run against.
+## Prerequisites
+To successfully complete this guide, you will need
+1. a running [EKS](https://docs.aws.amazon.com/eks/latest/userguide/create-cluster.html) cluster
+1. [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+1. [Helm CLI](https://helm.sh/docs/intro/install/)
 
-### Running on the EKS cluster
-1. Make sure that you have configured an [IAM role for the service account](#IAM-Role-for-Service-Account) `nirmata-aws-adapter-sa` in your desired namespace (configured in `values.yaml`) and specified the role's ARN in the `roleArn` field inside `values.yaml` file.
-2. Install the Helm chart after making any necessary changes to `charts/aws-adapter/values.yaml`
-   ```sh
-   helm install nirmata-aws-adapter charts/aws-adapter
-   ```
-3. Check the `status` field of the `<cluster-name>-config` custom resource in the namespace specified in `values.yaml`. For instance, if the cluster name is `eks-test` and namespace is `nirmata`, then:
-   ```sh
-   kubectl get awsconfig eks-test-config -n nirmata -o yaml 
-   ```
+Note: Make sure your kubeconfig context is pointing to the right EKS Cluster. You can get the kubeconfig of your EKS Cluster using `aws eks update-kubeconfig --region <region-code> --name <my-cluster>`
 
-## Helm Values
-Currently supported values for the Helm chart are as follows:
-| Value | Description |
--- | ---
-| `namespace` | Namespace for installing the controller and CRD |
-| `eksCluster` | Configuration for EKS cluster's `name` and `region` |
-| `registryConfig` | ghcr.io `username` and `password` configuration for the image secret |
-| `pollInterval` | Interval for controller reconciliation |
-| `image` | Configuration for image `name`, `tag` and `pullPolicy` |
-| `roleArn` | IAM Role ARN with required permissions for the EKS cluster |
-| `nameOverride` | Override the chart name |
-| `fullnameOverride` | Override the entire generated name |
+## Installing the AWS adapter
+### Create namespace
+We will perform all actions in the `nirmata` namespace. Create a new namespace if it does not exist already.
+```bash
+cat >my-namespace.yaml <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nirmata
+EOF
+kubectl apply -f my-namespace.yaml
+```
 
+### Configure IAM Role for the Service Account
+The Helm chart will create a `nirmata-aws-adapter-sa` for you with necessary Roles and ClusterRoles. If you have an existing Service Account that you want to use, configure the roles appropriately.
 
-## IAM Role for Service Account
-This adapter utilizes the ARN of a user-defined IAM Role associated with any policy that has `Full: List, Read` permissions for the `EKS` service, including the following:
+For detailed instructions on how to configure the IAM role for service account, check out the official AWS documentation on [IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html)
 
-| Permission |
-| --- |
-| ListAddons |
-| ListClusters |
-| ListFargateProfiles |
-| ListIdentityProviderConfigs |
-| ListNodeGroups |
-| ListUpdates |
-| AccessKubernetesApi |
-| DescribeAddon |
-| DescribeAddonVersions |
-| DescribeCluster |
-| DescribeFargateProfile |
-| DescribeIdentityProviderConfig |
-| DescribeNodegroup |
-| DescribeUpdate |
-| ListTagsForResource |
-
-You can specify the Role's ARN in the `roleArn` field inside the Helm chart's `values.yaml` file.
-
-Please ensure that the trust relationship policy for your IAM role resembles the following format:
-```json
+Below are selected snippets from the official AWS documentation that you can follow to configure the IAM Role for `nirmata-aws-adapter-sa` service account.
+#### Create a policy with necessary permissions
+Create a new policy with the following permissions that the IAM Role will be attached to
+```bash
+cat >my-policy.json <<EOF
 {
-  "Version": "YYYY-MM-DD",
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "eks:AccessKubernetesApi",
+                  "eks:DescribeAddon",
+                  "eks:DescribeAddonVersions",
+                  "eks:DescribeCluster",
+                  "eks:DescribeFargateProfile",
+                  "eks:DescribeIdentityProviderConfig",
+                  "eks:DescribeNodegroup",
+                  "eks:DescribeUpdate",
+                  "eks:ListAddons",
+                  "eks:ListClusters",
+                  "eks:ListFargateProfiles",
+                  "eks:ListIdentityProviderConfigs",
+                  "eks:ListNodegroups",
+                "eks:ListTagsForResource",
+                "eks:ListUpdates"
+            ],
+            "Resource": [
+                "arn:aws:eks:*:844333597536:identityproviderconfig/*/*/*/*",
+                "arn:aws:eks:*:844333597536:fargateprofile/*/*/*",
+                "arn:aws:eks:*:844333597536:nodegroup/*/*/*",
+                "arn:aws:eks:*:844333597536:cluster/*",
+                "arn:aws:eks:*:844333597536:addon/*/*/*"
+            ]
+        }
+    ]
+}
+EOF
+aws iam create-policy --policy-name kyverno-aws-adapter-policy --policy-document file://my-policy.json
+```
+
+#### Export the necessary variables
+```bash
+aws_region=<region-of-your-eks-cluster>
+cluster_name=<name-of-your-eks-cluster>
+account_id=$(aws sts get-caller-identity --query "Account" --output text)
+
+oidc_provider=$(aws eks describe-cluster --name $cluster_name --region $aws_region --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
+
+export namespace=nirmata
+
+export service_account=nirmata-aws-adapter-sa
+```
+
+#### Create a trust relationship file
+```bash
+cat >trust-relationship.json <<EOF
+{
+  "Version": "2012-10-17",
   "Statement": [
     {
       "Effect": "Allow",
@@ -74,9 +104,49 @@ Please ensure that the trust relationship policy for your IAM role resembles the
     }
   ]
 }
+EOF
 ```
 
-For detailed instructions on how to configure the IAM role for service account, check out the official AWS documentation on [IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html).
+#### Create the IAM Role
+```bash
+aws iam create-role --role-name kyverno-aws-adapter-role --assume-role-policy-document file://trust-relationship.json --description "iam role for the nirmata aws adapter for kyverno"
+```
+
+#### Attach policy to the role
+Attach the policy that we created earlier to this newly created role
+
+```bash
+aws iam attach-role-policy --role-name kyverno-aws-adapter-role  --policy-arn=arn:aws:iam::$account_id:policy/kyverno-aws-adapter-policy
+```
+
+### Update values.yaml
+Configure the variables in `charts/aws-adapter/values.yaml`
+- set the namespace to `nirmata`
+- set create namespace to `false` (because we have already created the namespace above)
+- `roleArn` is the arn of the role created above `kyverno-aws-adapter-role`. You can either get this value from the AWS Management Console or using the AWS CLI by running `aws iam get-role --role-name kyverno-aws-adapter-role`
+- set the EKS cluster name and region
+- registryConfig `username` is your GitHub username
+- registryConfig `password` is your GitHub Personal Access Token (See how to create a token [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token))
+
+### Clone the charts repo
+Clone the Nirmata charts repo if not already done
+```bash
+git clone git@github.com:nirmata/kyverno-charts.git
+cd kyverno-charts
+```
+
+### Install the Helm Chart
+```bash
+helm install nirmata-kyverno-aws-adapter charts/aws-adapter
+```
+
+### Verify if the installation is successful
+Check the `status` field of the `<cluster-name>-config` Custom Resource in the `nirmata` namespace. For instance, if the cluster name is `eks-test`, then
+```sh
+kubectl get awsconfig eks-test-config -n nirmata
+NAME                     CLUSTER ID   CLUSTER NAME      REGION       STATUS   KUBERNETES VERSION   PLATFORM VERSION   LAST UPDATED   LAST POLLED   LAST POLLED STATUS
+eks-test-config                eks-test   ap-south-1   ACTIVE   1.24                 eks.3              37m            37m           success
+```
 
 ## License
 
