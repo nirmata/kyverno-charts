@@ -4,7 +4,7 @@ nameOverride:
 # -- Override the expanded name of the chart
 fullnameOverride:
 # -- Namespace the chart deploys to
-createnamespace: true
+createnamespace: false
 namespace: kyverno
 
 # -- Additional labels
@@ -15,7 +15,7 @@ rbac:
   create: true
   serviceAccount:
     # -- Create a ServiceAccount
-    create: true
+    create: false
     # -- The ServiceAccount name
     name: kyverno
     # -- Annotations for the ServiceAccount
