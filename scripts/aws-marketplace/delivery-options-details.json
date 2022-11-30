@@ -1,14 +1,14 @@
 {
   "Version": {
     "ReleaseNotes": "Kyverno v1.8.1 for AWS EKS and on-prem",
-    "VersionTitle": "v1.8.1-03"
+    "VersionTitle": "v1.8.1-04"
   },
   "DeliveryOptions": [{
     "Details": {
       "HelmDeliveryOptionDetails": {
         "CompatibleServices": ["EKS", "EKS-Anywhere"],
         "ContainerImages": ["709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno:v1.8.1-n4kbuild.1","709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyvernopre:v1.8.1-n4kbuild.1", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/awslm:0.1-rc1"],
-        "HelmChartUri": "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno-chart:v1.10.0-02-aws",
+        "HelmChartUri": "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno-chart:v1.10.0-03-aws",
         "Description": "Deploy Kyverno using Helm",
         "UsageInstructions": "Once the Helm chart is installed successfully, verify that the Kyverno pod is running:\n```kubectl get pods -n kyverno```",
         "MarketplaceServiceAccountName": "kyverno",
@@ -26,7 +26,7 @@
           },
           {
             "Key": "rbac.serviceAccount.create",
-            "DefaultValue": "true",
+            "DefaultValue": "false",
             "Metadata": {
               "Label": "Create service account",
               "Description": "Set the flag to true for helm to create the service account. For use with EKS clusters only"
