@@ -1,7 +1,7 @@
 apiVersion: v2
 name: kyverno
-version: v1.5.4
-appVersion: v1.8.1-n4kbuild.1
+version: v1.5.5
+appVersion: v1.8.3-n4kbuild.1
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
