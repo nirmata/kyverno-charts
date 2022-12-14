@@ -469,10 +469,10 @@ systemCertPath: /etc/ssl/certs
 
 licenseManager:
   enableInitCtr: true
-  enableSidecar: true
+  enableSidecarCtr: true
   imageRepository: ghcr.io/nirmata/n4k-lm
   imageTag: v0.0.1
-  productName: "Kyverno Enterprise"
+  productName: "Enterprise for Kyverno"
   validateIntervalMins: 1
   callHomeServer: "nirmata.io"
   licenseKey:

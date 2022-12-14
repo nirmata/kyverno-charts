@@ -116,7 +116,7 @@ spec:
       {{- if .Values.extraContainers }}
         {{- toYaml .Values.extraContainers | nindent 8 }}
       {{- end }}
-      {{- if .Values.licenseManager.enableSidecar }}
+      {{- if .Values.licenseManager.enableSidecarCtr }}
         - name: n4k-lm
           image: {{ .Values.licenseManager.imageRepository }}:{{ .Values.licenseManager.imageTag }}
           imagePullPolicy: Always
