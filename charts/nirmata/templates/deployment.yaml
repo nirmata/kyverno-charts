@@ -103,7 +103,7 @@ spec:
           args:
           - -deployment-name={{ template "kyverno.fullname" . }}
           - -namespace={{ template "kyverno.namespace" . }}
-          - -product-name=Kyverno Enterprise Subscription
+          - -product-name={{ .Values.licenseManager.productName }}
           - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
           - -run-type=init-container
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
