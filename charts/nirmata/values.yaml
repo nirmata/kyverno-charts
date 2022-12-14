@@ -468,11 +468,10 @@ customCAConfigMap:
 systemCertPath: /etc/ssl/certs
 
 licenseManager:
-  enable: false
+  enable: true
   imageRepository: ghcr.io/nirmata/n4k-lm
   imageTag: v0.0.1
-  productName: "Kyverno Enterprise Subscription"
+  productName: "Kyverno Enterprise"
   validateIntervalMins: 1
-  licenseKey:
-  apiKey:
-  envDev: true
+  licenseKey: "7EKTmF8HiGs3guakOxfsSXRvPwR5OBaI4v4PxEvuohI4RxObqTOgouJ8ANt7a+fc+Zj+kA1rpNDDI8RHkexiZAVpUfSpfU+fL272MrUPpsxaoZbh1vg9v/MvHsHmmcXDsA20vnbUvvAE9mqroSHf7b0thCq5MmjwCd1KGhf/yTmIOTHKC2vGzXCIy/updqiFn1R00pepaQAVVOKpVjn5cNNORRxNk36cEsrIFjihd2A="
+  apiKey: "/5i7EuPcsK2pvd4KtseWX+IKUHGbN9l2nQ9fcZ9UbOvMQS7izFdMHXt5Jq07NyfbL8pEFNzP/DSgAC0A7CFy+A=="

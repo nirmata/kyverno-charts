@@ -97,7 +97,7 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
       {{- if .Values.licenseManager.enable }}
-        - name: n4k-lm
+        - name: n4k-lm-init
           image: {{ .Values.licenseManager.imageRepository }}:{{ .Values.licenseManager.imageTag }}
           imagePullPolicy: {{ default .Values.image.pullPolicy .Values.initImage.pullPolicy }}
           args:
@@ -109,11 +109,6 @@ spec:
           - -api-key={{ .Values.licenseManager.apiKey }}
           {{- if .Values.securityContext }}
           securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
-          {{- end }}
-          env:
-          {{- if .Values.licenseManager.envDev }}
-          - name: ENV_DEV
-            value: true
           {{- end }}
       {{- end }}
       containers:
@@ -134,11 +129,6 @@ spec:
           - -api-key={{ .Values.licenseManager.apiKey }}
           {{- if .Values.securityContext }}
           securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
-          {{- end }}
-          env:
-          {{- if .Values.licenseManager.envDev }}
-          - name: ENV_DEV
-            value: true
           {{- end }}
       {{- end }}
         - name: kyverno
