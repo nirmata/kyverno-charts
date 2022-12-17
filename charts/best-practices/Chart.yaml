@@ -1,17 +1,16 @@
-apiVersion: v1
-name: best-practice-policies
-version: v0.1.8
-appVersion: 0.1.1
-icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
-description: best-practice-policies
+apiVersion: v2
+name: best-practise-policy
+description: Best Practise policy 
+type: application
+version: 0.1.0
+appVersion: 0.1.0
 keywords:
   - kubernetes
   - nirmata
-  - kyverno operator
-  - kyverno monitor
-  - admissions controller
-home: https://kyverno.io/
+  - kyverno
+  - aws
+  - adapter
+  - policy
 maintainers:
   - name: Nirmata
     url: https://nirmata.com/
-kubeVersion: ">=1.20.0-0"
