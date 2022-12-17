@@ -1,7 +1,7 @@
 apiVersion: v1
 name: best-practice-policies
 version: v0.1.7
-appVersion: 0.1.0
+appVersion: 0.1.1
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: best-practice-policies
 keywords:
