@@ -1,0 +1,16 @@
+apiVersion: v2
+name: pod-security-policies
+description: Pod Security Policy Set
+type: application
+version: 0.1.0
+appVersion: 0.1.0
+keywords:
+  - kubernetes
+  - nirmata
+  - kyverno
+  - aws
+  - adapter
+  - policy
+maintainers:
+  - name: Nirmata
+    url: https://nirmata.com/
