@@ -1,6 +1,6 @@
 apiVersion: v2
 name: pod-security-policies
-description: Pos Security Policy Set
+description: Pod Security Policy Set
 type: application
 version: 0.1.0
 appVersion: 0.1.0
