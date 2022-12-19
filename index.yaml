@@ -640,6 +640,27 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-venafi-adapter-v0.1.0/nirmata-venafi-adapter-v0.1.0.tgz
     version: v0.1.0
+  pod-security-policies:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-12-19T17:58:10.77520923Z"
+    description: Pod Security Policy Set
+    digest: 9c53433624c132ac5e8a30711cdd02df2e9a5dbccb79db93dd98f9841040af0f
+    keywords:
+    - kubernetes
+    - nirmata
+    - kyverno
+    - aws
+    - adapter
+    - policy
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: pod-security-policies
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/pod-security-policies-0.1.0/pod-security-policies-0.1.0.tgz
+    version: 0.1.0
   venafi-adapter:
   - apiVersion: v1
     appVersion: v0.1.0
@@ -790,4 +811,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2022-12-19T15:52:35.120670936Z"
+generated: "2022-12-19T17:58:10.775418533Z"
