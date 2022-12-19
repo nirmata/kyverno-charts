@@ -1,6 +1,6 @@
 apiVersion: v2
-name: best-practice-policy
-description: Best Practice policy
+name: best-practice-policies
+description: Best Practice policy set
 type: application
 version: 0.1.0
 appVersion: 0.1.0
