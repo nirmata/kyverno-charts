@@ -1,5 +1,26 @@
 apiVersion: v1
 entries:
+  best-practice-policies:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-12-19T15:36:18.814417592Z"
+    description: Best Practice policy set
+    digest: 62f28ba07573258d1780d2038de68c54415d7c5ff682b79f9a1cce74fd6e8c1d
+    keywords:
+    - kubernetes
+    - nirmata
+    - kyverno
+    - aws
+    - adapter
+    - policy
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: best-practice-policies
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/best-practice-policies-0.1.0/best-practice-policies-0.1.0.tgz
+    version: 0.1.0
   kube-bench-adapter:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -745,4 +766,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2022-12-13T14:03:47.915000483Z"
+generated: "2022-12-19T15:36:18.81451439Z"
