@@ -466,3 +466,13 @@ customCAConfigMap:
 
 # -- Path containing ssl certs within the container. Used only if customCAConfigMap is used
 systemCertPath: /etc/ssl/certs
+
+licenseManager:
+  enable: false
+  imageRepository: ghcr.io/nirmata/n4k-lm
+  imageTag: v0.0.1
+  productName: "Enterprise for Kyverno"
+  validateIntervalMins: 1
+  callHomeServer: "nirmata.io"
+  licenseKey:
+  apiKey:
