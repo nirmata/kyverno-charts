@@ -96,7 +96,7 @@ spec:
           {{- with .Values.envVarsInit }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-      {{- if .Values.licenseManager.enableInitCtr }}
+      {{- if .Values.licenseManager.enable }}
         - name: n4k-lm-init
           image: {{ .Values.licenseManager.imageRepository }}:{{ .Values.licenseManager.imageTag }}
           imagePullPolicy: Always
@@ -116,7 +116,7 @@ spec:
       {{- if .Values.extraContainers }}
         {{- toYaml .Values.extraContainers | nindent 8 }}
       {{- end }}
-      {{- if .Values.licenseManager.enableSidecarCtr }}
+      {{- if .Values.licenseManager.enable }}
         - name: n4k-lm
           image: {{ .Values.licenseManager.imageRepository }}:{{ .Values.licenseManager.imageTag }}
           imagePullPolicy: Always
