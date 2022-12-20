@@ -1,13 +1,13 @@
 {
   "Version": {
-    "ReleaseNotes": "Kyverno v1.8.4 for AWS EKS and on-prem",
-    "VersionTitle": "v1.8.4-01"
+    "ReleaseNotes": "Kyverno v1.8.5 for AWS EKS and on-prem",
+    "VersionTitle": "v1.8.5-01"
   },
   "DeliveryOptions": [{
     "Details": {
       "HelmDeliveryOptionDetails": {
         "CompatibleServices": ["EKS", "EKS-Anywhere"],
-        "ContainerImages": ["709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno:v1.8.4-n4kbuild.1","709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyvernopre:v1.8.4-n4kbuild.1", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/awslm:0.1-rc1"],
+        "ContainerImages": ["709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno:v1.8.5-n4kbuild.1","709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyvernopre:v1.8.5-n4kbuild.1", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/awslm:0.1-rc1"],
         "HelmChartUri": "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno-chart:v1.10.0-05-aws",
         "Description": "Deploy Kyverno using Helm",
         "UsageInstructions": "Once the Helm chart is installed successfully, verify that the Kyverno pod is running:\n```kubectl get pods -n kyverno```",
