@@ -144,6 +144,30 @@ entries:
     version: v1.1.0
   kyverno:
   - apiVersion: v2
+    appVersion: v1.8.5-n4kbuild.1
+    created: "2022-12-22T06:10:39.787469731Z"
+    description: Kubernetes Native Policy Management
+    digest: b87d9123b77e76ad182db8e76a95e33b2ed4ce19e2f115c3442a41b546d9e803
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy engine
+    - validating webhook
+    - admissions controller
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno
+    sources:
+    - https://github.com/kyverno/kyverno
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-v1.5.9/kyverno-v1.5.9.tgz
+    version: v1.5.9
+  - apiVersion: v2
     appVersion: v1.8.4-n4kbuild.1
     created: "2022-12-20T09:30:37.794014495Z"
     description: Kubernetes Native Policy Management
@@ -543,6 +567,27 @@ entries:
   kyverno-operator:
   - apiVersion: v1
     appVersion: 0.1.0
+    created: "2022-12-22T06:10:39.570976494Z"
+    description: Kyverno Operator
+    digest: b320977eea2692997f6caef3d7e4f778337e38d288130364f603b92ad4cff04d
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - kyverno operator
+    - kyverno monitor
+    - admissions controller
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno-operator
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-operator-v0.1.8/kyverno-operator-v0.1.8.tgz
+    version: v0.1.8
+  - apiVersion: v1
+    appVersion: 0.1.0
     created: "2022-11-04T04:42:22.877231792Z"
     description: Kyverno Operator
     digest: 2d5db3381721073205ba1739640b0f3fa4ca9f86b9fb83a8032b2c2087c85c91
@@ -835,4 +880,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2022-12-20T09:30:37.794456202Z"
+generated: "2022-12-22T06:10:39.787627432Z"
