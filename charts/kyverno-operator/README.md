@@ -6,6 +6,10 @@
 
 This chart bootstraps a Kyverno Operator on a [Kubernetes](http://kubernetes.io) cluster with [Kyverno](https://kyverno.io) installed, using the [Helm](https://helm.sh) package manager.
 
+## Prerequisite
+### Get token from Nirmata support
+You need token to download the images. Please contact <support@nirmata.com> to get it.
+
 ## Installation
 
 ### 1. Add Kyverno Helm Repository
@@ -26,7 +30,7 @@ kubectl -n nirmata-kyverno-operator create configmap <e.g. ca-store-cm> --from-f
 
 ### 3. Install kyverno-operator from nirmata helm repo in the nirmata-kyverno-operator namespace, with desired parameters.
 ```console
-helm install kyverno-operator nirmata/kyverno-operator --namespace nirmata-kyverno-operator --create-namespace
+helm install kyverno-operator nirmata/kyverno-operator --namespace nirmata-kyverno-operator --create-namespace --set imagePullSecret.username=nirmata-enterprise-for-kyverno,imagePullSecret.password=<token>
 ```
 
 Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
