@@ -25,7 +25,7 @@ image:
     # If set to false, the gerrit-master chart expects either a ImagePullSecret
     # with the name configured above to be present on the cluster or that no
     # credentials are needed.
-    create: true
+    create: false
     username:
     password:
 initImage:

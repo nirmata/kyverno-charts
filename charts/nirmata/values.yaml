@@ -38,7 +38,7 @@ image:
     # If set to false, the gerrit-master chart expects either a ImagePullSecret
     # with the name configured above to be present on the cluster or that no
     # credentials are needed.
-    create: true
+    create: false
     username:
     password:
 initImage:
@@ -467,12 +467,21 @@ customCAConfigMap:
 # -- Path containing ssl certs within the container. Used only if customCAConfigMap is used
 systemCertPath: /etc/ssl/certs
 
+# -- License manager configs
 licenseManager:
-  enable: false
+  # -- Whether to use license manager
+  enable: true
+  # -- License manager repo
   imageRepository: ghcr.io/nirmata/kyverno-license-manager
+  # -- Image tag
   imageTag: v0.0.1
+  # -- Product name to be present in license
   productName: "Enterprise for Kyverno"
-  validateIntervalMins: 1
+  # -- Validation interval in mins
+  validateIntervalMins: 60
+  # -- License server
   callHomeServer: "nirmata.io"
+  # -- License key
   licenseKey:
+  # -- License server API key
   apiKey:
