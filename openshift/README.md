@@ -31,7 +31,7 @@ $ kubectl create namespace kyverno
 **Install the Kyverno chart:**
 
 ```console
-$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/nirmata
+$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/nirmata --set licenseManager.licenseKey=<license key obtained from Nirmata support or SAAS>,licenseManager.apiKey=<api key obtained from Nirmata support or SAAS>
 ```
 
 The command deploys Kyverno on the Kubernetes cluster with default configuration. The [installation](https://kyverno.io/docs/installation/) guide lists the parameters that can be configured during installation.
