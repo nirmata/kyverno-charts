@@ -20,7 +20,7 @@ Create the namespace if needed with kubectl create namespace nirmata-venafi-adap
 
 # 3. Install venafi-adapter from nirmata helm repo in the nirmata-kyverno-monitor namespace, with desired parameters.
 
-helm install venafi-adapter nirmata/venafi-adapter --namespace nirmata-venafi-adapter --create-namespace --set imagePullSecret.username=someuser,imagePullSecret.password=somepassword
+helm install venafi-adapter nirmata/venafi-adapter --namespace nirmata-venafi-adapter --create-namespace
 
 Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
 --set customCAConfigMap=<e.g. ca-store-cm> --set systemCertPath=<e.g. /etc/ssl/certs>  --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
@@ -99,7 +99,7 @@ The following table lists the configurable parameters of the kyverno chart and t
 |-----|------|---------|-------------|
 | namespace | string | `nirmata-kyverno-monitor` | Namespace to install kyverno-monitor resources |
 | imagePullSecret.name | string | `image-pull-secret` | Imagepull secret name that will store private image registry info |
-| imagePullSecret.create | boolean | `true` | Whether to create the image pullsecret. Need to specify the secret name, username, password |
+| imagePullSecret.create | boolean | `false` | Whether to create the image pullsecret. Need to specify the secret name, username, password |
 | imagePullSecret.username | string |  | Private registry username if secret is to be created |
 | imagePullSecret.password | string |  | Private registry password if secret is to be created |
 | venafiAdapterImage | string | `ghcr.io/nirmata/imagekey-controller` | Venafi adapter image |

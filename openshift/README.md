@@ -31,7 +31,7 @@ $ kubectl create namespace kyverno
 **Install the Kyverno chart:**
 
 ```console
-$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/nirmata --set image.pullSecrets.username=<username> --set image.pullSecrets.password=<token>
+$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/nirmata
 ```
 
 The command deploys Kyverno on the Kubernetes cluster with default configuration. The [installation](https://kyverno.io/docs/installation/) guide lists the parameters that can be configured during installation.
