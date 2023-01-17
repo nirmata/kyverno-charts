@@ -81,7 +81,7 @@ kubectl -n kyverno create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem
 **Install the Kyverno chart:**
 
 ```console
-helm install kyverno --namespace kyverno --create-namespace nirmata/kyverno --set licenseManager.licenseKey=<license key obtained from Nirmata support or SAAS>,licenseManager.apiKey=<api key obtained from Nirmata support or SAAS>
+helm install kyverno --namespace kyverno --create-namespace nirmata/kyverno --set licenseManager.licenseKey=<license key obtained from Nirmata support or SAAS>[,licenseManager.apiKey=<api key obtained from Nirmata support or SAAS>]
 ```
 
 **(Optional)** Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided to the above command as needed. E.g.
@@ -97,7 +97,7 @@ If you do not want to use "helm install" to install the chart, you can generate 
 Add the Kyverno Helm repository as described above. Then create the namespace for kyverno. Once the namespace is created, generate the kyverno YAML file using the helm template command
 
 ```console
-helm template kyverno --namespace=kyverno nirmata/kyverno --create-namespace --set licenseManager.licenseKey=<license key obtained from Nirmata support or SAAS>,licenseManager.apiKey=<api key obtained from Nirmata support or SAAS> > kyverno.yaml
+helm template kyverno --namespace=kyverno nirmata/kyverno --create-namespace --set licenseManager.licenseKey=<license key obtained from Nirmata support or SAAS>[,licenseManager.apiKey=<api key obtained from Nirmata support or SAAS>] > kyverno.yaml
 
 kubectl create -f kyverno.yaml
 ```
@@ -167,7 +167,7 @@ spec:
 If you are running open source Kyverno 1.5.0 or above in your cluster, you can directly upgrade to Nirmata Enterprise Subscription
 
 ```console
-helm upgrade kyverno --namespace kyverno nirmata/kyverno --set licenseManager.licenseKey=<license key obtained from Nirmata support or SAAS>,licenseManager.apiKey=<api key obtained from Nirmata support or SAAS>
+helm upgrade kyverno --namespace kyverno nirmata/kyverno --set licenseManager.licenseKey=<license key obtained from Nirmata support or SAAS>[,licenseManager.apiKey=<api key obtained from Nirmata support or SAAS>]
 ```
 
 ## Installing policies
