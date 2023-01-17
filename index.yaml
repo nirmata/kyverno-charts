@@ -145,6 +145,30 @@ entries:
   kyverno:
   - apiVersion: v2
     appVersion: v1.8.5-n4kbuild.1
+    created: "2023-01-17T03:43:30.4096375Z"
+    description: Kubernetes Native Policy Management
+    digest: 374ffba195ab1f3fa6eb34da4396dd41a984b4b164684f738579a4c451c0aaf4
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy engine
+    - validating webhook
+    - admissions controller
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno
+    sources:
+    - https://github.com/kyverno/kyverno
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-v1.5.11/kyverno-v1.5.11.tgz
+    version: v1.5.11
+  - apiVersion: v2
+    appVersion: v1.8.5-n4kbuild.1
     created: "2023-01-13T05:09:30.70930221Z"
     description: Kubernetes Native Policy Management
     digest: 6c65521bbbf9eb1b4145cfeb40106e6b758bb8c2be3f65ecef49fd4ec55b9f10
@@ -943,4 +967,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-01-13T05:09:30.943001171Z"
+generated: "2023-01-17T03:43:30.410105807Z"
