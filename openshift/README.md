@@ -14,6 +14,11 @@ Access the complete user documentation and guides at: https://kyverno.io.
 
 This chart bootstraps a Kyverno deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
+## Prerequisite
+
+### Get license key
+You need a license key to run Kyverno. If you are using Nirmata SAAS, it is available in the UI. Else contact <support@nirmata.com>.
+
 ## Installing the Chart
 
 **Add the Kyverno Helm repository:**
@@ -31,7 +36,7 @@ $ kubectl create namespace kyverno
 **Install the Kyverno chart:**
 
 ```console
-$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/nirmata
+$ helm install kyverno --namespace kyverno kyverno ./kyverno-charts/nirmata --set licenseManager.licenseKey=<license key>[,licenseManager.apiKey=<api key>]
 ```
 
 The command deploys Kyverno on the Kubernetes cluster with default configuration. The [installation](https://kyverno.io/docs/installation/) guide lists the parameters that can be configured during installation.

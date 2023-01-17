@@ -107,7 +107,7 @@ spec:
           - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
           - -run-type=init-container
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
-          - -api-key={{ required "licenseManager.apiKey is required" .Values.licenseManager.apiKey }}
+          - -api-key={{ .Values.licenseManager.apiKey }}
           {{- if .Values.securityContext }}
           securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
           {{- end }}
@@ -128,7 +128,7 @@ spec:
           - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
           - -run-type=sidecar
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
-          - -api-key={{ required "licenseManager.apiKey is required" .Values.licenseManager.apiKey }}
+          - -api-key={{ .Values.licenseManager.apiKey }}
           {{- if .Values.securityContext }}
           securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
           {{- end }}
