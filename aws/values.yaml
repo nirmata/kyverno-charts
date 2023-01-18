@@ -15,7 +15,7 @@ rbac:
   create: true
   serviceAccount:
     # -- Create a ServiceAccount
-    create: false
+    create: true
     # -- The ServiceAccount name
     name: kyverno
     # -- Annotations for the ServiceAccount
