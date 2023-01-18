@@ -17,7 +17,7 @@ This chart bootstraps a Kyverno deployment on a [Kubernetes](http://kubernetes.i
 ## Prerequisite
 
 ### Get license key
-You need a license key to run Kyverno. If you are using Nirmata SAAS, it is available in the UI. Else contact <support@nirmata.com>.
+You need a license key to run Kyverno. If you are using Nirmata Enterprise for Kyverno, it is available in the UI. Else contact <support@nirmata.com>.
 
 ## Installing the Chart
 
