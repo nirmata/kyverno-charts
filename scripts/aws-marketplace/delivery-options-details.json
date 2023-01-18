@@ -1,7 +1,7 @@
 {
   "Version": {
     "ReleaseNotes": "Kyverno v1.8.5 for AWS EKS and on-prem",
-    "VersionTitle": "v1.8.5-01"
+    "VersionTitle": "v1.8.5-02"
   },
   "DeliveryOptions": [{
     "Details": {
@@ -26,7 +26,7 @@
           },
           {
             "Key": "rbac.serviceAccount.create",
-            "DefaultValue": "true",
+            "DefaultValue": "false",
             "Metadata": {
               "Label": "Create service account",
               "Description": "Set the flag to true for helm to create the service account. For use with EKS clusters only"
