@@ -30,7 +30,7 @@ kubectl -n nirmata-kyverno-operator create configmap <e.g. ca-store-cm> --from-f
 
 ### 3. Install kyverno-operator from nirmata helm repo in the nirmata-kyverno-operator namespace, with desired parameters.
 ```console
-helm install kyverno-operator nirmata/kyverno-operator --namespace nirmata-kyverno-operator --create-namespace --set imagePullSecret.username=nirmata-enterprise-for-kyverno,imagePullSecret.password=<token>
+helm install kyverno-operator nirmata/kyverno-operator --namespace nirmata-kyverno-operator --create-namespace
 ```
 
 Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
@@ -91,7 +91,7 @@ The following table lists the configurable parameters of the kyverno chart and t
 |-----|------|---------|-------------|
 | namespace | string | `nirmata-kyverno-operator` | Namespace to install kyverno-operator resources |
 | imagePullSecret.name | string | `image-pull-secret` | Imagepull secret name that will store private image registry info |
-| imagePullSecret.create | boolean | `true` | Whether to create the image pullsecret. Need to specify the secret name, username, password |
+| imagePullSecret.create | boolean | `false` | Whether to create the image pullsecret. Need to specify the secret name, username, password |
 | imagePullSecret.username | string |  | Private registry username if secret is to be created |
 | imagePullSecret.password | string |  | Private registry password if secret is to be created |
 | validKyvernoImages | string | `ghcr.io/nirmata/kyverno:xxx` | Valid images separated by pipe symbol, xxx for any version |

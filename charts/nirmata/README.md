@@ -15,8 +15,9 @@ Access the complete user documentation and guides at: <https://kyverno.io>.
 This chart bootstraps a Kyverno deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisite
-### Get token from Nirmata support
-You need the token to download the images. Please contact <support@nirmata.com> to get the token.
+
+### Get license key
+You need a license key to run Kyverno. If you are using Nirmata Enterprise for Kyverno, it is available in the UI. Else contact <support@nirmata.com>.
 
 ### Install kyverno operator
 
@@ -38,7 +39,7 @@ kubectl -n nirmata-kyverno-operator create configmap <e.g. ca-store-cm> --from-f
 
 #### 3. Install kyverno-operator from nirmata helm repo in the nirmata-kyverno-operator namespace, with desired parameters.
 ```console
-helm install kyverno-operator nirmata/kyverno-operator --namespace nirmata-kyverno-operator --create-namespace --set imagePullSecret.username=nirmata-enterprise-for-kyverno,imagePullSecret.password=<token>
+helm install kyverno-operator nirmata/kyverno-operator --namespace nirmata-kyverno-operator --create-namespace
 ```
 
 Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
@@ -81,7 +82,7 @@ kubectl -n kyverno create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem
 **Install the Kyverno chart:**
 
 ```console
-helm install kyverno --namespace kyverno --create-namespace nirmata/kyverno --set image.pullSecrets.username=nirmata-enterprise-for-kyverno --set image.pullSecrets.password=<token>
+helm install kyverno --namespace kyverno --create-namespace nirmata/kyverno --set licenseManager.licenseKey=<license key>[,licenseManager.apiKey=<api key>]
 ```
 
 **(Optional)** Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided to the above command as needed. E.g.
@@ -97,7 +98,7 @@ If you do not want to use "helm install" to install the chart, you can generate 
 Add the Kyverno Helm repository as described above. Then create the namespace for kyverno. Once the namespace is created, generate the kyverno YAML file using the helm template command
 
 ```console
-helm template kyverno --namespace=kyverno nirmata/kyverno --create-namespace --set image.pullSecrets.username=nirmata-enterprise-for-kyverno --set image.pullSecrets.password=<token> > kyverno.yaml
+helm template kyverno --namespace=kyverno nirmata/kyverno --create-namespace --set licenseManager.licenseKey=<license key>[,licenseManager.apiKey=<api key>] > kyverno.yaml
 
 kubectl create -f kyverno.yaml
 ```
@@ -167,7 +168,7 @@ spec:
 If you are running open source Kyverno 1.5.0 or above in your cluster, you can directly upgrade to Nirmata Enterprise Subscription
 
 ```console
-helm upgrade kyverno --namespace kyverno nirmata/kyverno --set image.pullSecrets.username=<user> --set image.pullSecrets.password=<token>
+helm upgrade kyverno --namespace kyverno nirmata/kyverno --set licenseManager.licenseKey=<license key >[,licenseManager.apiKey=<api key>]
 ```
 
 ## Installing policies
@@ -306,6 +307,15 @@ The following table lists the configurable parameters of the kyverno chart and t
 | tufRootMountPath | string | `"/.sigstore"` | A writable volume to use for the TUF root initialization |
 | customCAConfigMap | string | | Configmap storing custom CA certificate |
 | systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |
+| licenceManager.enable | bool | `true` | Whether to use license manager |
+| licenceManager.imageRepository | string | `ghcr.io/nirmata/kyverno-license-manager` | License manager repository |
+| licenceManager.imageTag | string | `v0.0.1` | License manager image tag |
+| licenceManager.productName | string | `true` | Product name to be present in license |
+| licenceManager.validateIntervalMins | int | `60` | License validation interval in mins|
+| licenceManager.callHomeServer | string | `nirmata.io` | License server hostname:port |
+| licenceManager.licenseKey | string | | License key (required) |
+| licenceManager.apiKey | string | | License server API key (required) |
+
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 

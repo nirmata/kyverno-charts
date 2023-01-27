@@ -1,7 +1,7 @@
 apiVersion: v1
 name: kyverno-chart
-version: v1.10.0-05-aws
-appVersion: v1.8.3
+version: v1.10.0-06-aws
+appVersion: v1.8.5
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
@@ -17,4 +17,4 @@ maintainers:
   - name: Nirmata
     url: https://kyverno.io/
 engine: gotpl
-kubeVersion: ">=1.16.0-0"
+kubeVersion: ">=1.20.0-0"
