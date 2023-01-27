@@ -23,6 +23,21 @@ entries:
     version: 0.1.0
   kube-bench-adapter:
   - apiVersion: v2
+    appVersion: v0.2.0
+    created: "2023-01-27T09:59:23.900245131Z"
+    description: The kube-bench adapter periodically runs a CIS benchmark check using
+      cron-job with a tool called kube-bench and produces a cluster-wide policy report
+      based on the Policy Report Custom Resource Definition
+    digest: 1a50dc14a1a803f5a718e532af0f2ea67923fad3a4f8bfdca8fca89b85f92085
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kube-bench-adapter
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kube-bench-adapter-v1.2.0/kube-bench-adapter-v1.2.0.tgz
+    version: v1.2.0
+  - apiVersion: v2
     appVersion: 1.0.0
     created: "2023-01-25T17:36:34.68600846Z"
     description: The kube-bench adapter periodically runs a CIS benchmark check using
@@ -1006,4 +1021,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-01-25T17:36:34.686403564Z"
+generated: "2023-01-27T09:59:23.900401935Z"
