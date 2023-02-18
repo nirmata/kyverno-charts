@@ -314,7 +314,9 @@ The following table lists the configurable parameters of the kyverno chart and t
 | licenceManager.validateIntervalMins | int | `60` | License validation interval in mins|
 | licenceManager.callHomeServer | string | `nirmata.io` | License server hostname:port |
 | licenceManager.licenseKey | string | | License key (required) |
-| licenceManager.apiKey | string | | License server API key (required) |
+| licenceManager.apiKey | string | | License server API key |
+| licenceManager.clusterId | string | | Cluster Id to use. If not provided, uid of kube-system namnespace |
+| licenceManager.clusterName | string | | Cluster Name to use. Auto-generated if not provided |
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
