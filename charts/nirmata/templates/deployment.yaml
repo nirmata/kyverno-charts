@@ -108,6 +108,8 @@ spec:
           - -run-type=init-container
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
           - -api-key={{ .Values.licenseManager.apiKey }}
+          - -cluster-id={{ .Values.licenseManager.clusterId }}
+          - -cluster-name={{ .Values.licenseManager.clusterName }}
           {{- if .Values.securityContext }}
           securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
           {{- end }}
@@ -129,6 +131,8 @@ spec:
           - -run-type=sidecar
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
           - -api-key={{ .Values.licenseManager.apiKey }}
+          - -cluster-id={{ .Values.licenseManager.clusterId }}
+          - -cluster-name={{ .Values.licenseManager.clusterName }}
           {{- if .Values.securityContext }}
           securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
           {{- end }}
