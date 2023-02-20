@@ -25,6 +25,7 @@ spec:
             "-namespace", "{{ .Values.kubeBench.namespace }}",
             "-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}",
             "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
+            "-kube-bench-targets", "{{ .Values.kubeBench.kubeBenchTargets }}",
             ]
             {{- with .Values.resources }}
             resources: {{ tpl (toYaml .) $ | nindent 14 }}
