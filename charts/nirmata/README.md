@@ -326,6 +326,9 @@ The following table lists the configurable parameters of the kyverno chart and t
 | licenceManager.validateIntervalMins | int | `60` | License validation interval in mins|
 | licenceManager.callHomeServer | string | `nirmata.io` | License server hostname:port |
 | licenceManager.licenseKey | string | | License key (required) |
+| licenceManager.apiKey | string | | License server API key |
+| licenceManager.clusterId | string | | Cluster Id to use. If not provided, uid of kube-system namnespace |
+| licenceManager.clusterName | string | | Cluster Name to use. Auto-generated if not provided |
 | licenceManager.apiKey | string | | License server API key (required) |
 | grafana.enabled | bool | `false` | Enable grafana dashboard creation. |
 | grafana.namespace | string | `nil` | Namespace to create the grafana dashboard configmap. If not set, it will be created in the same namespace where the chart is deployed. |
@@ -388,6 +391,21 @@ The following table lists the configurable parameters of the kyverno chart and t
 | cleanupController.metering.port | int | `8000` | Prometheus endpoint port |
 | cleanupController.metering.collector | string | `""` | Otel collector endpoint |
 | cleanupController.metering.creds | string | `""` | Otel collector credentials |
+
+Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
+
+```console
+helm install --namespace kyverno kyverno ./charts/kyverno \
+  --set=image.tag=v0.0.2,resources.limits.cpu=200m
+```
+
+Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
+
+```console
+helm install --namespace kyverno kyverno ./charts/kyverno -f values.yaml
+```
+
+> **Tip**: You can use the default [values.yaml](values.yaml)
 
 ## TLS Configuration
 
