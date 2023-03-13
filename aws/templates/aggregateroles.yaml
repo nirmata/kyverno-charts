@@ -3,9 +3,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ template "kyverno.fullname" . }}:admin-policies
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
     app: kyverno
+    {{- include "kyverno.labels" . | nindent 4 }}
 rules:
 - apiGroups:
   - kyverno.io
@@ -24,9 +25,9 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    app: kyverno
+    {{- include "kyverno.labels" . | nindent 4 }}
   name: {{ template "kyverno.fullname" . }}:admin-policyreport
 rules:
   - apiGroups:
@@ -46,9 +47,9 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    app: kyverno
+    {{- include "kyverno.labels" . | nindent 4 }}
   name: {{ template "kyverno.fullname" . }}:admin-reports
 rules:
 - apiGroups:
@@ -70,9 +71,9 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    app: kyverno
+    {{- include "kyverno.labels" . | nindent 4 }}
   name: {{ template "kyverno.fullname" . }}:admin-generaterequest
 rules:
 - apiGroups:
@@ -91,9 +92,9 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    app: kyverno
+    {{- include "kyverno.labels" . | nindent 4 }}
   name: {{ template "kyverno.fullname" . }}:admin-updaterequest
 rules:
 - apiGroups:
