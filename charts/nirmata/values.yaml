@@ -555,7 +555,7 @@ cleanupController:
     repository: ghcr.io/nirmata/cleanup-controller  # kyverno: replaced in e2e tests
     # -- Image tag
     # Defaults to appVersion in Chart.yaml if omitted
-    tag:  # replaced in e2e tests
+    tag: v1.9.1-n4kbuild.1
     # -- Image pull policy
     pullPolicy: IfNotPresent
     # -- Image pull secrets
