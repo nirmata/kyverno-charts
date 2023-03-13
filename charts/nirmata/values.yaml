@@ -39,7 +39,7 @@ image:
   repository: ghcr.io/nirmata/kyverno
   # -- Image tag
   # Defaults to appVersion in Chart.yaml if omitted
-  tag: v1.9.0-n4kbuild.3
+  tag: v1.9.1-n4kbuild.1
   # -- Image pull policy
   pullPolicy: IfNotPresent
   # -- Image pull secrets
@@ -55,7 +55,7 @@ initImage:
   repository: ghcr.io/nirmata/kyvernopre
   # -- Image tag
   # If initImage.tag is missing, defaults to image.tag
-  tag: v1.9.0-n4kbuild.3
+  tag: v1.9.1-n4kbuild.1
   # -- Image pull policy
   # If initImage.pullPolicy is missing, defaults to image.pullPolicy
   pullPolicy:
