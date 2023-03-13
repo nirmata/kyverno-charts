@@ -329,7 +329,6 @@ The following table lists the configurable parameters of the kyverno chart and t
 | licenceManager.apiKey | string | | License server API key |
 | licenceManager.clusterId | string | | Cluster Id to use. If not provided, uid of kube-system namnespace |
 | licenceManager.clusterName | string | | Cluster Name to use. Auto-generated if not provided |
-| licenceManager.apiKey | string | | License server API key (required) |
 | grafana.enabled | bool | `false` | Enable grafana dashboard creation. |
 | grafana.namespace | string | `nil` | Namespace to create the grafana dashboard configmap. If not set, it will be created in the same namespace where the chart is deployed. |
 | grafana.annotations | object | `{}` | Grafana dashboard configmap annotations. |
