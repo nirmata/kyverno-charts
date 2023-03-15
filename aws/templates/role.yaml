@@ -4,7 +4,8 @@ kind: Role
 metadata:
   name: {{ template "kyverno.fullname" . }}:leaderelection
   namespace: {{ template "kyverno.namespace" . }}
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  labels:
+    {{- include "kyverno.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:

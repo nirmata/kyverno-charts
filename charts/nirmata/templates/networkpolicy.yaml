@@ -2,13 +2,15 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  labels:
+    {{- include "kyverno.labels" . | nindent 4 }}
     app: kyverno
   name: {{ template "kyverno.fullname" . }}
   namespace: {{ template "kyverno.namespace" . }}
 spec:
   podSelector:
     matchLabels:
+      {{- include "kyverno.matchLabels" . | nindent 6 }}
       app: kyverno
   policyTypes:
   - Ingress

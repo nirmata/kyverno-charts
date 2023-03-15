@@ -1,7 +1,8 @@
 apiVersion: v2
+type: application
 name: kyverno
-version: v1.5.13
-appVersion: v1.8.5-n4kbuild.1
+version: 1.6.1
+appVersion: v1.9.1-n4k.nirmata.1
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
@@ -17,5 +18,16 @@ sources:
 maintainers:
   - name: Nirmata
     url: https://nirmata.com/
-engine: gotpl
 kubeVersion: ">=1.16.0-0"
+annotations:
+  artifacthub.io/operator: "false"
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://kyverno.io/docs
+  # valid kinds are: added, changed, deprecated, removed, fixed and security
+  artifacthub.io/changes: |
+    - kind: changed
+      description: Syntax change for webhooksCleanup switch to match with the rest of the file
+    - kind: fixed
+      description: Handle multiple extraArgs in init container
