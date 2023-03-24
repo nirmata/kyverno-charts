@@ -24,6 +24,27 @@ entries:
   enterprise-kyverno-operator:
   - apiVersion: v2
     appVersion: v0.1.0-rc.1
+    created: "2023-03-24T17:48:52.472490022Z"
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: af80ea480361fecdb46a93884b4662c7e4d373dc05f05703d1139fbf4b3edfe0
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: enterprise-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/enterprise-kyverno-operator-v0.1.0-rc.2/enterprise-kyverno-operator-v0.1.0-rc.2.tgz
+    version: v0.1.0-rc.2
+  - apiVersion: v2
+    appVersion: v0.1.0-rc.1
     created: "2023-03-24T12:19:21.671335396Z"
     description: Helm Chart for Enterprise Kyverno Operator
     digest: 33c39f5ec19a1beb00fdc55516456acc6ae88300ea8621e249bee7d87ae39d01
@@ -225,6 +246,42 @@ entries:
     - https://github.com/nirmata/kyverno-charts/releases/download/kube-bench-adapter-v1.1.0/kube-bench-adapter-v1.1.0.tgz
     version: v1.1.0
   kyverno:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: Syntax change for webhooksCleanup switch to match with the rest of the file
+        - kind: fixed
+          description: Handle multiple extraArgs in init container
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: v1.9.1-n4k.nirmata.1
+    created: "2023-03-24T17:48:52.641460873Z"
+    description: Kubernetes Native Policy Management
+    digest: 4d9e2abaa9fa8e53bc7110c0a4dc8d1781cadda58e9be819e54ed3c327699c2f
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy engine
+    - validating webhook
+    - admissions controller
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno
+    sources:
+    - https://github.com/kyverno/kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-1.6.2/kyverno-1.6.2.tgz
+    version: 1.6.2
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
@@ -1133,4 +1190,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-03-24T12:19:21.671477596Z"
+generated: "2023-03-24T17:48:52.64168188Z"
