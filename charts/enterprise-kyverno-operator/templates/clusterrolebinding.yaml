@@ -1,0 +1,29 @@
+{{- if .Values.rbac.create }}
+{{- if .Values.rbac.operatorHasAdminPerms }}
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ template "enterprise-kyverno.fullname" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: {{ template "enterprise-kyverno.rbac.serviceAccountName" . }}
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+{{- else }}
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ template "enterprise-kyverno.fullname" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "enterprise-kyverno.fullname" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ template "enterprise-kyverno.rbac.serviceAccountName" . }}
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,16 @@
+{{- if .Values.enableWebhook }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "enterprise-kyverno.fullname" . }}
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+  labels:
+    {{- include "enterprise-kyverno.labels" . | nindent 4 }}
+spec:
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 9443
+  selector:
+    {{- include "enterprise-kyverno.selectorLabels" . | nindent 4 }}
+{{- end }}

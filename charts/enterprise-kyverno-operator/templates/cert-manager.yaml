@@ -1,0 +1,37 @@
+{{- if .Values.enableWebhook }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  labels:
+    app.kubernetes.io/component: certificate
+    app.kubernetes.io/created-by: kyverno-operator
+    app.kubernetes.io/instance: serving-cert
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: certificate
+    app.kubernetes.io/part-of: kyverno-operator
+  name: kyverno-operator-serving-cert
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+spec:
+  dnsNames:
+  - {{ include "enterprise-kyverno.fullname" . }}.{{ template "enterprise-kyverno.namespace" . }}.svc
+  - {{ include "enterprise-kyverno.fullname" . }}.{{ template "enterprise-kyverno.namespace" . }}.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: kyverno-operator-selfsigned-issuer
+  secretName: webhook-server-cert
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  labels:
+    app.kuberentes.io/name: issuer
+    app.kubernetes.io/component: certificate
+    app.kubernetes.io/created-by: kyverno-operator
+    app.kubernetes.io/instance: selfsigned-issuer
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/part-of: kyverno-operator
+  name: kyverno-operator-selfsigned-issuer
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+spec:
+  selfSigned: {}
+{{- end }}

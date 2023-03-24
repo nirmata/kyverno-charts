@@ -1,0 +1,10 @@
+apiVersion: v2
+name: kyverno-operator
+description: Helm Chart for Kyverno Operator
+
+type: application
+
+version: v0.0.1-alpha.4
+
+appVersion: "n4kv1.8"
+

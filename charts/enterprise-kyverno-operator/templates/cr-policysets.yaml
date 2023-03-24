@@ -1,0 +1,21 @@
+{{ range $policySet := .Values.policies.policySets }}
+---
+apiVersion: security.nirmata.io/v1alpha1
+kind: PolicySet
+metadata:
+  annotations:
+  labels:
+    app.kubernetes.io/name: policyset
+    app.kubernetes.io/instance: {{ .name }}
+    app.kubernetes.io/part-of: enterprise-kyverno-operator
+  name: {{ .name }}
+  namespace: {{ template "enterprise-kyverno.namespace" $ }}
+spec:
+  {{ if eq .type "helm" }}
+  source:
+    helm:
+      chartRepo: {{ .chartRepo }}
+      chartName: {{ .chartName }}
+      version: {{ .version }}
+  {{ end }}
+{{ end }}
