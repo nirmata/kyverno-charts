@@ -64,8 +64,8 @@ kubectl -n nirmata-kyverno-operator get KyvernoOperator
 **Add the Kyverno Helm repository:**
 
 ```console
-$ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
-$ helm repo update nirmata
+helm repo add nirmata https://nirmata.github.io/kyverno-charts/
+helm repo update nirmata
 ```
 
 **Note:** If you have open source Kyverno installed, please follow the instructions below to upgrade to the Nirmata Enterprise Subscription.
@@ -77,7 +77,7 @@ $ helm repo update nirmata
 You can install Kyverno in any namespace. The examples use `kyverno` as the namespace.
 
 ```console
-$ kubectl create namespace kyverno
+kubectl create namespace kyverno
 ```
 
 **(Optional)** If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
@@ -86,7 +86,7 @@ kubectl -n kyverno create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem
 **Install the Kyverno chart:**
 
 ```console
-$ install kyverno --namespace kyverno --create-namespace nirmata/kyverno --set licenseManager.licenseKey=<license key>[,licenseManager.apiKey=<api key>]
+helm install kyverno --namespace kyverno --create-namespace nirmata/kyverno --set licenseManager.licenseKey=<license key>[,licenseManager.apiKey=<api key>]
 ```
 
 **(Optional)** Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided to the above command as needed. E.g.
@@ -105,7 +105,7 @@ If you do not want to use "helm install" to install the chart, you can generate 
 Add the Kyverno Helm repository as described above. Then create the namespace for kyverno. Once the namespace is created, generate the kyverno YAML file using the helm template command
 
 ```console
-$ helm template kyverno --namespace=kyverno nirmata/kyverno --create-namespace --set licenseManager.licenseKey=<license key>[,licenseManager.apiKey=<api key>] > kyverno.yaml
+helm template kyverno --namespace=kyverno nirmata/kyverno --create-namespace --set licenseManager.licenseKey=<license key>[,licenseManager.apiKey=<api key>] > kyverno.yaml
 
 kubectl create -f kyverno.yaml
 ```
@@ -191,7 +191,7 @@ helm delete -n nirmata-kyverno-operator kyverno-operator
 To uninstall/delete the `kyverno` deployment:
 
 ```console
-$ helm delete -n kyverno kyverno
+helm delete -n kyverno kyverno
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
