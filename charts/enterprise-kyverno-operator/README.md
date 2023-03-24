@@ -24,11 +24,11 @@ helm install kyverno-operator nirmata/enterprise-kyverno-operator -n kyverno-ope
 
 View various Resources created
 ```bash
-k -n kyverno-operator get kyvernoes.security.nirmata.io 
-k -n kyverno-operator get policysets.security.nirmata.io 
+kubectl -n kyverno-operator get kyvernoes.security.nirmata.io 
+kubectl -n kyverno-operator get policysets.security.nirmata.io 
 
-k -n kyverno get po (should show Kyverno pods getting ready)
-k get cpol (should show policies installed by initial policysets)
+kubectl -n kyverno get po (should show Kyverno pods getting ready)
+kubectl get cpol (should show policies installed by initial policysets)
 ```
 
 Modify config by changing CRs directly or via Helm Upgrade
