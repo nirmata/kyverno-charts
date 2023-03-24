@@ -13,19 +13,17 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 
 ## Getting Started
 Add the chart repository and install the chart
-
-NOTE: Currently the helm chart is private. Chart can be installed through the repo only after it is released publicly. Till then, clone the github repo and use `./charts/enterprise-kyverno` instead of using the helm repo as below.
 ```bash
 helm repo add nirmata https://nirmata.github.io/kyverno-charts
 helm repo update nirmata
 
-helm install kyverno-operator nirmata/enterprise-kyverno-operator -n kyverno-operator --create-namespace --set licenseKey=<licenseKey>
+helm install enterprise-kyverno-operator nirmata/enterprise-kyverno-operator -n enterprise-kyverno-operator --create-namespace --set licenseKey=<licenseKey>
 ```
 
 View various Resources created
 ```bash
-kubectl -n kyverno-operator get kyvernoes.security.nirmata.io 
-kubectl -n kyverno-operator get policysets.security.nirmata.io 
+kubectl -n enterprise-kyverno-operator get kyvernoes.security.nirmata.io
+kubectl -n enterprise-kyverno-operator get policysets.security.nirmata.io
 
 kubectl -n kyverno get po (should show Kyverno pods getting ready)
 kubectl get cpol (should show policies installed by initial policysets)
@@ -33,19 +31,19 @@ kubectl get cpol (should show policies installed by initial policysets)
 
 Modify config by changing CRs directly or via Helm Upgrade
 ```bash
-kubectl -n kyverno-operator edit kyvernoes.security.nirmata.io kyverno (and set replicas to 3)
+kubectl -n enterprise-kyverno-operator edit kyvernoes.security.nirmata.io kyverno (and set replicas to 3)
 
-helm upgrade kyverno-operator nirmata/enterprise-kyverno-operator -n kyverno-operator --create-namespace --set licenseKey=<licenseKey> --set kyverno.replicas=3
+helm upgrade enterprise-kyverno-operator nirmata/enterprise-kyverno-operator -n enterprise-kyverno-operator --create-namespace --set licenseKey=<licenseKey> --set kyverno.replicas=3
 ```
 
 Remove a Policy Set 
 ```bash
-kubectl -n kyverno-operator delete policysets best-practices
+kubectl -n enterprise-kyverno-operator delete policysets best-practices
 ```
 
 To remove Enterprise Kyverno and components
 ```bash
-helm uninstall -n kyverno-operator kyverno-operator
+helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 ```
 
 ## Helm Chart Values
