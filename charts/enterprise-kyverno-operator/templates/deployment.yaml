@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "enterprise-kyverno.fullname" . }}
+  labels:
+    {{- include "enterprise-kyverno.labels" . | nindent 4 }}
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "enterprise-kyverno.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "enterprise-kyverno.selectorLabels" . | nindent 8 }}
+    spec:
+      imagePullSecrets: 
+      - name: {{ .Values.image.pullSecrets.name }}
+      serviceAccountName: {{ include "enterprise-kyverno.rbac.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: webhook-server
+              containerPort: 9443
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          - name: OPERATOR_NAMESPACE
+            value: {{ template "enterprise-kyverno.namespace" . }}
+          - name: OPERATOR_NAME
+            value: {{ include "enterprise-kyverno.fullname" . }}
+          - name: STORAGE_PATH
+            value: "/var/local"
+          args:
+            - --profile={{- .Values.profile | default "prod" }}
+            - --enable-webhook={{- .Values.enableWebhook | default false}}
+            - --install-rbac={{- .Values.rbac.operatorHasAdminPerms | default false }}
+          volumeMounts:
+          - mountPath: /var/local
+            name: local-vol
+          - mountPath: /home
+            name: home-vol
+          {{- if .Values.enableWebhook }}
+          - mountPath: /tmp/k8s-webhook-server/serving-certs
+            name: cert
+            readOnly: true
+          {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - name: home-vol
+        emptyDir:
+          sizeLimit: 100Mi
+      - name: local-vol
+        emptyDir:
+          sizeLimit: 100Mi
+      {{- if .Values.enableWebhook }}
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: webhook-server-cert
+      {{- end }}

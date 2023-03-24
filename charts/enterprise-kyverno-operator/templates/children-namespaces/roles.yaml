@@ -1,0 +1,11 @@
+{{- if .Values.kyverno.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace:  {{ include "kyverno.namespace" . }}
+  name: {{ include "kyverno.name" . }}-installer
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+{{- end }}

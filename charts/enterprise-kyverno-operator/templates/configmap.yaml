@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "enterprise-kyverno.fullname" . }}
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+data:
+  kyvernoLatestRepository: https://kyverno.github.io/kyverno
+  kyvernoLatestVersion: 2.7.0-rc.2
+  kyvernoStableRepository: https://kyverno.github.io/kyverno
+  kyvernoStableVersion: 2.6.5

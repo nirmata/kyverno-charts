@@ -1,0 +1,6 @@
+{{- if .Values.kyverno.rbac.create }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "kyverno.namespace" . }}
+{{- end }}
