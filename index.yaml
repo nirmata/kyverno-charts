@@ -21,6 +21,28 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/best-practice-policies-0.1.0/best-practice-policies-0.1.0.tgz
     version: 0.1.0
+  enterprise-kyverno-operator:
+  - apiVersion: v2
+    appVersion: v0.1.0-rc.1
+    created: "2023-03-24T12:19:21.671335396Z"
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: 33c39f5ec19a1beb00fdc55516456acc6ae88300ea8621e249bee7d87ae39d01
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: enterprise-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/enterprise-kyverno-operator-v0.1.0-rc.1/enterprise-kyverno-operator-v0.1.0-rc.1.tgz
+    version: v0.1.0-rc.1
   kube-bench-adapter:
   - apiVersion: v2
     appVersion: v0.2.1
@@ -1111,4 +1133,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-03-15T05:22:44.686648643Z"
+generated: "2023-03-24T12:19:21.671477596Z"
