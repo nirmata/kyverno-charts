@@ -2,7 +2,11 @@
 Enterprise Kyverno is a Kubernetes Operator to manage lifecycle of Kyverno, Adapters and Nirmata supported policies. 
 
 ## Prerequisites
-Install cert-manager by following instructions [here](https://cert-manager.io/docs/installation/). Typically,
+### Get license key
+You need a license key to run Enterprise Kyverno. If you are using Nirmata Enterprise for Kyverno, it is available in the UI. Else contact support@nirmata.com.
+
+### Install cert-manager 
+Follow instructions [here](https://cert-manager.io/docs/installation/). Typically,
 ```bash
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
 ```
@@ -34,7 +38,12 @@ kubectl -n kyverno-operator edit kyvernoes.security.nirmata.io kyverno (and set 
 helm upgrade kyverno-operator nirmata/enterprise-kyverno-operator -n kyverno-operator --create-namespace --set licenseKey=<licenseKey> --set kyverno.replicas=3
 ```
 
-To remove Enterprise Kyverno
+Remove a Policy Set 
+```bash
+kubectl -n kyverno-operator delete policysets best-practices
+```
+
+To remove Enterprise Kyverno and components
 ```bash
 helm uninstall -n kyverno-operator kyverno-operator
 ```
