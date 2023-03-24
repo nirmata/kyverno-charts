@@ -1,5 +1,5 @@
 Chart version: {{ .Chart.Version }}
-Kyverno version: {{ default .Chart.AppVersion .Values.kyverno.image.tag }}
+Kyverno version: {{ required "Kyverno image tag is required" .Values.kyverno.image.tag }}
 
 Thank you for installing {{ .Chart.Name }}! Your release is named {{ .Release.Name }}.
 

@@ -2,17 +2,20 @@
 Enterprise Kyverno is a Kubernetes Operator to manage lifecycle of Kyverno, Adapters and Nirmata supported policies. 
 
 ## Prerequisites
-Install cert-manager by following instructions [here](https://cert-manager.io/docs/installation/)
+Install cert-manager by following instructions [here](https://cert-manager.io/docs/installation/). Typically,
+```bash
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
+```
 
 ## Getting Started
 Add the chart repository and install the chart
 
 NOTE: Currently the helm chart is private. Chart can be installed through the repo only after it is released publicly. Till then, clone the github repo and use `./charts/enterprise-kyverno` instead of using the helm repo as below.
 ```bash
-helm repo add kyverno-operator https://nirmata.github.io/enterprise-kyverno-operator
-helm repo update kyverno-operator
+helm repo add nirmata https://nirmata.github.io/kyverno-charts
+helm repo update nirmata
 
-helm install kyverno-operator ./charts/enterprise-kyverno -n kyverno-operator --create-namespace --set licenseKey=<licenseKey>
+helm install kyverno-operator nirmata/enterprise-kyverno-operator -n kyverno-operator --create-namespace --set licenseKey=<licenseKey>
 ```
 
 View various Resources created
@@ -28,7 +31,7 @@ Modify config by changing CRs directly or via Helm Upgrade
 ```bash
 kubectl -n kyverno-operator edit kyvernoes.security.nirmata.io kyverno (and set replicas to 3)
 
-helm upgrade kyverno-operator ./charts/enterprise-kyverno -n kyverno-operator --create-namespace --set licenseKey=<licenseKey> --set kyverno.replicas=3
+helm upgrade kyverno-operator nirmata/enterprise-kyverno-operator -n kyverno-operator --create-namespace --set licenseKey=<licenseKey> --set kyverno.replicas=3
 ```
 
 To remove Enterprise Kyverno
@@ -48,7 +51,7 @@ helm uninstall -n kyverno-operator kyverno-operator
 | rbac.serviceAccount.name | string | `nil` | Service account name when `rbac.create` is set to `false` |
 | image.repository | string | `"ghcr.io/nirmata/enterprise-kyverno-operator"` | Image repository |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| image.tag | string | `v0.0.1-alpha.1` | Image tag (defaults to chart app version) |
+| image.tag | string | `nil` | Image tag (defaults to chart app version) |
 | image.imagePullSecrets.registry | string | `ghcr.io` | Image pull secret registry |
 | image.imagePullSecrets.name | string | `image-pull-secret` | Image pull secret name |
 | image.imagePullSecrets.create | bool | `false` | Whether to create image pull secret |
@@ -65,3 +68,4 @@ helm uninstall -n kyverno-operator kyverno-operator
 | kyverno.image.pullPolicy | string | `"IfNotPresent"` | Kyverno Image pull policy |
 | kyverno.image.tag | string | `v1.8.5-n4k-build.1` | Image tag (defaults to chart app version) |
 | kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart |
+| kyverno.policies.policySets | list | `[{name: best-practices, type: helm, chartRepo: https://nirmata.github.io/kyverno-charts, chartName: best-practice-policies, version: 0.1.0}, {name: pod-security, type: helm, chartRepo: https://nirmata.github.io/kyverno-charts, chartName: pod-security-policies, version: 0.1.0}]` | Initial policy sets to install along with operator |
