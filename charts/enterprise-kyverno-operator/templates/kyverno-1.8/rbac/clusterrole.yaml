@@ -2,19 +2,19 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno.fullname" . }}
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  name: {{ template "kyverno18.fullname" . }}
+  labels: {{ include "kyverno18.labels" . | nindent 4 }}
     app: kyverno
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
-      {{- include "kyverno.matchLabels" . | nindent 6 }}
+      {{- include "kyverno18.matchLabels" . | nindent 6 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno.fullname" . }}:userinfo
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  name: {{ template "kyverno18.fullname" . }}:userinfo
+  labels: {{ include "kyverno18.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:
@@ -31,8 +31,8 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno.fullname" . }}:policies
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  name: {{ template "kyverno18.fullname" . }}:policies
+  labels: {{ include "kyverno18.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:
@@ -80,8 +80,8 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno.fullname" . }}:view
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  name: {{ template "kyverno18.fullname" . }}:view
+  labels: {{ include "kyverno18.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:
@@ -96,8 +96,8 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno.fullname" . }}:generate
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  name: {{ template "kyverno18.fullname" . }}:generate
+  labels: {{ include "kyverno18.labels" . | nindent 4 }}
     app: kyverno
 rules:
   - apiGroups:
@@ -150,8 +150,8 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno.fullname" . }}:events
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  name: {{ template "kyverno18.fullname" . }}:events
+  labels: {{ include "kyverno18.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:
@@ -167,8 +167,8 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno.fullname" . }}:webhook
-  labels: {{ include "kyverno.labels" . | nindent 4 }}
+  name: {{ template "kyverno18.fullname" . }}:webhook
+  labels: {{ include "kyverno18.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:
