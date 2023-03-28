@@ -73,6 +73,6 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 | kyverno.generatecontrollerExtraResources | list | `[]]` | Additional resources to be added to kyverno controller RBAC permissions |
 | kyverno.image.repository | string | `"ghcr.io/nirmata/kyverno"` | Kyverno Image repository |
 | kyverno.image.pullPolicy | string | `"IfNotPresent"` | Kyverno Image pull policy |
-| kyverno.image.tag | string | `v1.9.2-n4k.nirmata.1` | Image tag (defaults to chart app version) |
+| kyverno.image.tag | string | `v1.9.1-n4k.nirmata.1` | Image tag (defaults to chart app version) |
 | kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart |
 | kyverno.policies.policySets | list | `[{name: best-practices, type: helm, chartRepo: https://nirmata.github.io/kyverno-charts, chartName: best-practice-policies, version: 0.1.0}, {name: pod-security, type: helm, chartRepo: https://nirmata.github.io/kyverno-charts, chartName: pod-security-policies, version: 0.1.0}]` | Initial policy sets to install along with operator |
