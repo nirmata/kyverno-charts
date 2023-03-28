@@ -1,7 +1,7 @@
 apiVersion: v1
 name: kyverno-chart
-version: v1.11.0-06-aws
-appVersion: v1.9.1
+version: v1.11.2-01-aws
+appVersion: v1.9.2
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
