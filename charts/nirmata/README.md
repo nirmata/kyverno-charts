@@ -21,45 +21,12 @@ Access the complete user documentation and guides at: https://kyverno.io.
 ### Get license key
 You need a license key to run Kyverno. If you are using Nirmata Enterprise for Kyverno, it is available in the UI. Else contact <support@nirmata.com>.
 
-### Install kyverno operator
+### Manage Kyverno lifecycle through Operator
 
-#### 1. Add Kyverno Helm Repository
-```console
-helm repo add nirmata https://nirmata.github.io/kyverno-charts/
-helm repo update nirmata
-```
+Install the Enterprise Kyverno Operator following instructions [here](https://github.com/nirmata/kyverno-charts/blob/main/charts/enterprise-kyverno-operator/README.md). The operator will also manage Kyverno lifecycle.
 
-#### 2. (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
-Create the namespace
-```console
-kubectl create namespace nirmata-kyverno-operator
-```
-Create configmap in the namespace
-```console
-kubectl -n nirmata-kyverno-operator create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
-```
 
-#### 3. Install kyverno-operator from nirmata helm repo in the nirmata-kyverno-operator namespace, with desired parameters.
-```console
-helm install kyverno-operator nirmata/kyverno-operator --namespace nirmata-kyverno-operator --create-namespace
-```
-
-Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
-```console
---set customCAConfigMap=<e.g. ca-store-cm> --set systemCertPath=<e.g. /etc/ssl/certs>  --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
-```
-
-#### 4. Check pods are running
-```console
-kubectl -n nirmata-kyverno-operator get pods
-```
-
-#### 5. Check CRD is created
-```console
-kubectl -n nirmata-kyverno-operator get KyvernoOperator
-```
-
-## Installing the Chart
+## Installing Kyverno without operator
 
 **Add the Kyverno Helm repository:**
 
