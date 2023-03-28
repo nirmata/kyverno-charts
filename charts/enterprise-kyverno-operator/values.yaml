@@ -8,6 +8,8 @@ namespace:
 
 replicaCount: 1
 
+envVars: []
+
 image:
   repository: ghcr.io/nirmata/enterprise-kyverno-operator
   # Defaults to chart appVersion

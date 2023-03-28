@@ -11,6 +11,16 @@ Follow instructions [here](https://cert-manager.io/docs/installation/). Typicall
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
 ```
 
+### (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
+Create the namespace
+```console
+kubectl create namespace enterprise-kyverno-operator
+```
+Create configmap in the namespace
+```console
+kubectl -n nirmata-kyverno-operator create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
+```
+
 ## Getting Started
 Add the chart repository and install the chart
 ```bash
@@ -20,13 +30,18 @@ helm repo update nirmata
 helm install enterprise-kyverno-operator nirmata/enterprise-kyverno-operator -n enterprise-kyverno-operator --create-namespace --set licenseKey=<licenseKey>
 ```
 
+Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
+```console
+--set customCAConfigMap=<e.g. ca-store-cm> --set systemCertPath=<e.g. /etc/ssl/certs>  --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
+```
+
 View various Resources created
 ```bash
 kubectl -n enterprise-kyverno-operator get kyvernoes.security.nirmata.io
 kubectl -n enterprise-kyverno-operator get policysets.security.nirmata.io
 
-kubectl -n kyverno get po (should show Kyverno pods getting ready)
-kubectl get cpol (should show policies installed by initial policysets)
+kubectl -n kyverno get po #(should show Kyverno pods getting ready)
+kubectl get cpol #(should show policies installed by initial policysets)
 ```
 
 Modify config by changing CRs directly or via Helm Upgrade
@@ -74,5 +89,5 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 | kyverno.image.repository | string | `"ghcr.io/nirmata/kyverno"` | Kyverno Image repository |
 | kyverno.image.pullPolicy | string | `"IfNotPresent"` | Kyverno Image pull policy |
 | kyverno.image.tag | string | `v1.9.1-n4k.nirmata.1` | Image tag (defaults to chart app version) |
-| kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart |
+| kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#values) |
 | kyverno.policies.policySets | list | `[{name: best-practices, type: helm, chartRepo: https://nirmata.github.io/kyverno-charts, chartName: best-practice-policies, version: 0.1.0}, {name: pod-security, type: helm, chartRepo: https://nirmata.github.io/kyverno-charts, chartName: pod-security-policies, version: 0.1.0}]` | Initial policy sets to install along with operator |

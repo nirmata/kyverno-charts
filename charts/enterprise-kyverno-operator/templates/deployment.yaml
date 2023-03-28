@@ -45,6 +45,9 @@ spec:
             value: {{ include "enterprise-kyverno.fullname" . }}
           - name: STORAGE_PATH
             value: "/var/local"
+          {{- with .Values.envVars }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
           args:
             - --profile={{- .Values.profile | default "prod" }}
             - --enable-webhook={{- .Values.enableWebhook | default false}}
