@@ -1,13 +1,13 @@
-{{- if .Values.kyverno.rbac.create }}
+{{- if and (eq .Values.kyverno.rbac.create true) (eq .Values.kyverno.majorVersion "1.9")}}
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ template "kyverno.name" . }}-installer
+  name: {{ template "kyverno19.name" . }}-installer
   namespace: {{ include "kyverno.namespace" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "kyverno.name" . }}-installer
+  name: {{ include "kyverno19.name" . }}-installer
 subjects:
 - kind: ServiceAccount
   name: {{ template "enterprise-kyverno.rbac.serviceAccountName" . }}
