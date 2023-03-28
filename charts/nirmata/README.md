@@ -21,12 +21,10 @@ Access the complete user documentation and guides at: https://kyverno.io.
 ### Get license key
 You need a license key to run Kyverno. If you are using Nirmata Enterprise for Kyverno, it is available in the UI. Else contact <support@nirmata.com>.
 
-### Manage Kyverno lifecycle through Operator
-
+### Manage Kyverno through Operator
 Install the Enterprise Kyverno Operator following instructions [here](https://github.com/nirmata/kyverno-charts/blob/main/charts/enterprise-kyverno-operator/README.md). The operator will also manage Kyverno lifecycle.
 
-
-## Installing Kyverno without operator
+## Managing Kyverno without operator
 
 **Add the Kyverno Helm repository:**
 
