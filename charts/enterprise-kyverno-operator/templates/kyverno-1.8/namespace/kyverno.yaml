@@ -1,4 +1,4 @@
-{{- if .Values.kyverno.rbac.create }}
+{{- if and (eq .Values.kyverno.rbac.create true) (eq .Values.kyverno.majorVersion "1.8") }}
 apiVersion: v1
 kind: Namespace
 metadata:

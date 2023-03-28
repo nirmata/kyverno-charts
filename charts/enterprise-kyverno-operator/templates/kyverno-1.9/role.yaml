@@ -1,10 +1,11 @@
-{{- if and (eq .Values.kyverno.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) (eq .Values.kyverno.majorVersion "1.8") }}
+{{- if and (eq .Values.kyverno.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) (eq .Values.kyverno.majorVersion "1.9") -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ template "kyverno18.fullname" . }}:leaderelection
+  name: {{ template "kyverno19.fullname" . }}:leaderelection
   namespace: {{ template "kyverno.namespace" . }}
-  labels: {{ include "kyverno18.labels" . | nindent 4 }}
+  labels:
+    {{- include "kyverno19.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:

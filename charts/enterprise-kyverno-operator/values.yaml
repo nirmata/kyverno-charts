@@ -36,7 +36,7 @@ enableWebhook: true
 
 # Component configurations
 kyverno:
-  majorVersion: "1.8"
+  majorVersion: "1.9"
   createCR: true
   replicaCount: 1
   rbac:
@@ -46,6 +46,25 @@ kyverno:
     clusterRole:
       # -- Extra resource permissions to add in the cluster role
       extraResources: []
+  templating:
+    enabled: false
+    image: bitnami/kubectl:latest
+  webhooksCleanup:
+    enable: false
+  crds:
+    annotations: []
+  cleanupController:
+    # -- Enable cleanup controller.
+    enabled: true
+    rbac:
+      # -- Create RBAC resources
+      create: true
+      serviceAccount:
+        # -- Service account name
+        name:
+      clusterRole:
+        # -- Extra resource permissions to add in the cluster role
+        extraResources: []
 
   nameOverride: "kyverno"
   fullnameOverride: "kyverno"
@@ -57,7 +76,7 @@ kyverno:
     # -- Image repository
     repository: ghcr.io/nirmata/kyverno
     # -- Image tag
-    tag: v1.8.5-n4kbuild.1
+    tag: v1.9.2-n4k.nirmata.1
 
   # Additional parameters for Kyverno from Kyverno Helm Chart
   helm:

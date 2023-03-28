@@ -1,24 +1,26 @@
-{{- if and (eq .Values.kyverno.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) (eq .Values.kyverno.majorVersion "1.8") }}
+{{- if and (eq .Values.kyverno.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) (eq .Values.kyverno.majorVersion "1.9") -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno18.fullname" . }}
-  labels: {{ include "kyverno18.labels" . | nindent 4 }}
+  name: {{ template "kyverno19.fullname" . }}
+  labels:
+    {{- include "kyverno19.labels" . | nindent 4 }}
     app: kyverno
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
-      {{- include "kyverno18.matchLabels" . | nindent 6 }}
+      {{- include "kyverno19.matchLabels" . | nindent 6 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno18.fullname" . }}:userinfo
-  labels: {{ include "kyverno18.labels" . | nindent 4 }}
+  name: {{ template "kyverno19.fullname" . }}:userinfo
+  labels:
+    {{- include "kyverno19.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:
-  - "rbac.authorization.k8s.io"
+  - rbac.authorization.k8s.io
   resources:
   - roles
   - clusterroles
@@ -31,8 +33,9 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno18.fullname" . }}:policies
-  labels: {{ include "kyverno18.labels" . | nindent 4 }}
+  name: {{ template "kyverno19.fullname" . }}:policies
+  labels:
+    {{- include "kyverno19.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:
@@ -60,28 +63,28 @@ rules:
     - watch
     - deletecollection
 - apiGroups:
-  - wgpolicyk8s.io
+    - wgpolicyk8s.io
   resources:
-  - policyreports
-  - policyreports/status
-  - clusterpolicyreports
-  - clusterpolicyreports/status
+    - policyreports
+    - policyreports/status
+    - clusterpolicyreports
+    - clusterpolicyreports/status
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-  - deletecollection
-
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+    - deletecollection
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno18.fullname" . }}:view
-  labels: {{ include "kyverno18.labels" . | nindent 4 }}
+  name: {{ template "kyverno19.fullname" . }}:view
+  labels:
+    {{- include "kyverno19.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:
@@ -96,8 +99,9 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno18.fullname" . }}:generate
-  labels: {{ include "kyverno18.labels" . | nindent 4 }}
+  name: {{ template "kyverno19.fullname" . }}:generate
+  labels:
+    {{- include "kyverno19.labels" . | nindent 4 }}
     app: kyverno
 rules:
   - apiGroups:
@@ -112,7 +116,7 @@ rules:
       - patch
       - delete
   - apiGroups:
-      - ""
+      - ''
     resources:
       - namespaces
       - configmaps
@@ -136,7 +140,7 @@ rules:
       - delete
   {{- if .Values.kyverno.generatecontrollerExtraResources }}
   - apiGroups:
-      - "*"
+      - '*'
     resources:
     {{- range .Values.kyverno.generatecontrollerExtraResources }}
       - {{ . }}
@@ -150,12 +154,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno18.fullname" . }}:events
-  labels: {{ include "kyverno18.labels" . | nindent 4 }}
+  name: {{ template "kyverno19.fullname" . }}:events
+  labels:
+    {{- include "kyverno19.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:
-  - "*"
+  - ''
+  - events.k8s.io
   resources:
   - events
   verbs:
@@ -167,12 +173,13 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno18.fullname" . }}:webhook
-  labels: {{ include "kyverno18.labels" . | nindent 4 }}
+  name: {{ template "kyverno19.fullname" . }}:webhook
+  labels:
+    {{- include "kyverno19.labels" . | nindent 4 }}
     app: kyverno
 rules:
 - apiGroups:
-  - 'admissionregistration.k8s.io'
+  - admissionregistration.k8s.io
   resources:
   - mutatingwebhookconfigurations
   - validatingwebhookconfigurations
@@ -184,5 +191,5 @@ rules:
   - patch
   - update
   - watch
-
+  - deletecollection
 {{- end }}
