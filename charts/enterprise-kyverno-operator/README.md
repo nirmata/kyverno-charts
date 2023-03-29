@@ -5,19 +5,21 @@ Enterprise Kyverno is a Kubernetes Operator to manage lifecycle of Kyverno, Adap
 ### Get license key
 You need a license key to run Enterprise Kyverno. If you are using Nirmata Enterprise for Kyverno, it is available in the UI. Else contact support@nirmata.com.
 
-### Install cert-manager 
-Follow instructions [here](https://cert-manager.io/docs/installation/). Typically,
+### (Optional) Install cert-manager
+Kyverno Operator uses webhooks to provide enhanced functionality such as logging user information in resource change events logged into the Kubernetes event stream, and some enhanced semantic checks for custom resources. By default, Kyverno Operator does not install webhooks. 
+
+But if webhooks are to be enabled for this enhanced functionality, then it needs an installation of `cert-manager` for webhook certificate management. Install cert-manager by following instructions [here](https://cert-manager.io/docs/installation/). Typically,
 ```bash
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
-```
+``` 
 
 ### (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
 Create the namespace
-```console
+```bash
 kubectl create namespace enterprise-kyverno-operator
 ```
 Create configmap in the namespace
-```console
+```bash
 kubectl -n nirmata-kyverno-operator create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
 ```
 
@@ -29,9 +31,10 @@ helm repo update nirmata
 
 helm install enterprise-kyverno-operator nirmata/enterprise-kyverno-operator -n enterprise-kyverno-operator --create-namespace --set licenseKey=<licenseKey>
 ```
+Helm Chart parameters for further fine-tuning the above helm install are described in the [Helm Chart Values](#helm-chart-values) section below.
 
-Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
-```console
+Additional parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be provided as needed. E.g.
+```bash
 --set customCAConfigMap=<e.g. ca-store-cm> --set systemCertPath=<e.g. /etc/ssl/certs>  --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
 ```
 
