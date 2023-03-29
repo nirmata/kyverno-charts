@@ -11,7 +11,7 @@ Kyverno Operator uses webhooks to provide enhanced functionality such as logging
 But if webhooks are to be enabled for this enhanced functionality, then it needs an installation of `cert-manager` for webhook certificate management. Install cert-manager by following instructions [here](https://cert-manager.io/docs/installation/). Typically,
 ```bash
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
-``` 
+```
 
 ### (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
 Create the namespace
