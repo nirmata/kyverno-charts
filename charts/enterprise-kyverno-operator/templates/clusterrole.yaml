@@ -11,6 +11,8 @@ rules:
   - kyvernoes/status
   - policysets
   - policysets/status
+  - kyvernoadapters
+  - kyvernoadapters/status
   verbs:
   - watch
   - list
@@ -18,6 +20,14 @@ rules:
   - create
   - update
   - delete
+- apiGroups:
+  - security.nirmata.io
+  resources:
+  - kyvernoes/finalizers
+  - policysets/finalizers
+  - kyvernoadapters/finalizers
+  verbs:
+  - update
 - apiGroups:
   - admissionregistration.k8s.io
   resources:

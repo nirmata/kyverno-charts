@@ -38,7 +38,6 @@ enableWebhook: false
 
 # Component configurations
 kyverno:
-  majorVersion: "1.9"
   createCR: true
   replicaCount: 1
   rbac:
@@ -62,8 +61,7 @@ kyverno:
       # -- Create RBAC resources
       create: true
       serviceAccount:
-        # -- Service account name
-        name:
+        create: true
       clusterRole:
         # -- Extra resource permissions to add in the cluster role
         extraResources: []
@@ -105,6 +103,26 @@ policies:
     chartRepo: https://nirmata.github.io/kyverno-charts
     chartName: pod-security-policies
     version: 0.1.0
+
+awsAdapter:
+  createCR: true
+  majorVersion: "0.2"
+  namespace: kyverno-aws-adapter
+  image:
+    repository: ghcr.io/nirmata/kyverno-aws-adapter
+    tag: v0.2.0
+  rbac:
+    create: true
+    serviceAccount:
+      name:
+  roleArn:
+  nameOverride: "kyverno-aws-adapter"
+  fullnameOverride: "kyverno-aws-adapter"
+  helm:
+    eksCluster:
+      name: eks-cluster1
+      region: us-west2
+
 
 # Items after this are general chart parameters. Set/Modify as per need.
 imagePullSecrets: []

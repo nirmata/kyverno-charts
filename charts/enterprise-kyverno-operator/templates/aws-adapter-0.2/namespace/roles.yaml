@@ -1,0 +1,11 @@
+{{- if and (eq .Values.awsAdapter.rbac.create true) (contains "v0.2" .Values.awsAdapter.image.tag)}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace:  {{ include "kyverno-aws-adapter.namespace" . }}
+  name: {{ include "kyverno-aws-adapter.name" . }}-installer
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+{{- end}}
