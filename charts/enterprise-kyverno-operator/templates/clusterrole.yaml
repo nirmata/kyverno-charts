@@ -85,4 +85,16 @@ rules:
   - update
   - patch
   - delete
+- apiGroups:
+  - security.nirmata.io
+  resources:
+  - awsadapterconfigs
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
 {{- end }}
