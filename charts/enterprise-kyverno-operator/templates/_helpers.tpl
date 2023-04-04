@@ -97,7 +97,7 @@ Create secret to access container registry
 
 {{- define "enterprise-kyverno.policysets" -}}
 {{- if .Values.policies.policySets }}
-{{- range .Values.policies.policySets }}{{(print .name " ") }} {{- end }}
+{{- range .Values.policies.policySets }}{{(print . " ") }} {{- end }}
 {{- else -}}
 {{- "" -}}
 {{- end -}}

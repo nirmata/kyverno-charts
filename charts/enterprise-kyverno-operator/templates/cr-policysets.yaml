@@ -1,4 +1,26 @@
-{{ if eq .Values.policies.enableBestPractices true }}
+{{ range $pol := .Values.policies.policySets }}
+
+{{- $psetName := "invalid" -}}
+{{- $psetType := "" -}}
+{{- $chartRepo := "" -}}
+{{- $chartName := "" -}}
+{{- $version := "" -}}
+
+{{- if eq $pol "bestPractices" -}}
+  {{- $psetName = "best-practices" -}}
+  {{- $psetType = "helm" -}}
+  {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
+  {{- $chartName = "best-practice-policies" -}}
+  {{- $version = "0.1.0" -}}
+{{- else if eq $pol "podSecurity" -}}
+  {{- $psetName = "pod-security" -}}
+  {{- $psetType = "helm" -}}
+  {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
+  {{- $chartName = "pod-security-policies" -}}
+  {{- $version = "0.1.0" -}}
+{{- end -}}
+
+{{- if ne $psetName "invalid" -}}
 ---
 apiVersion: security.nirmata.io/v1alpha1
 kind: PolicySet
@@ -6,33 +28,18 @@ metadata:
   annotations:
   labels:
     app.kubernetes.io/name: policyset
-    app.kubernetes.io/instance: best-practices
+    app.kubernetes.io/instance: {{ $psetName }}
     app.kubernetes.io/part-of: enterprise-kyverno-operator
-  name: best-practices
+  name: {{ $psetName }}
   namespace: {{ template "enterprise-kyverno.namespace" $ }}
 spec:
+  {{ if eq $psetType "helm" }}
   source:
     helm:
-      chartRepo: https://nirmata.github.io/kyverno-charts
-      chartName: best-practice-policies
-      version: 0.1.0
+      chartRepo: {{ $chartRepo }}
+      chartName: {{ $chartName }}
+      version: {{ $version }}
+  {{ end }}
+
 {{ end }}
-{{ if eq .Values.policies.enablePodSecurity true }}
----
-apiVersion: security.nirmata.io/v1alpha1
-kind: PolicySet
-metadata:
-  annotations:
-  labels:
-    app.kubernetes.io/name: policyset
-    app.kubernetes.io/instance: pod-security
-    app.kubernetes.io/part-of: enterprise-kyverno-operator
-  name: pod-security
-  namespace: {{ template "enterprise-kyverno.namespace" $ }}
-spec:
-  source:
-    helm:
-      chartRepo: https://nirmata.github.io/kyverno-charts
-      chartName: pod-security-policies
-      version: 0.1.0
 {{ end }}
