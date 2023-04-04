@@ -82,7 +82,6 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 | image.imagePullSecrets.create | bool | `false` | Whether to create image pull secret |
 | image.imagePullSecrets.username | string | `nil` | Username for image pull secret registry |
 | image.imagePullSecrets.password | string | `nil` | Password for image pull secret registry |
-| kyverno.majorVersion | string | `1.9` | Kyverno major version |
 | kyverno.createCR | bool | `true` | Create a CR that describes Kyverno to be managed by operator |
 | kyverno.replicaCount | int | `1` | Kyverno replicas |
 | kyverno.rbac.create | bool | `true` | Enable Kyverno RBAC resources creation |
@@ -94,3 +93,5 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 | kyverno.image.tag | string | `v1.9.1-n4k.nirmata.1` | Image tag (defaults to chart app version) |
 | kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#values) |
 | policies.policySets | list | `[{name: best-practices, type: helm, chartRepo: https://nirmata.github.io/kyverno-charts, chartName: best-practice-policies, version: 0.1.0}, {name: pod-security, type: helm, chartRepo: https://nirmata.github.io/kyverno-charts, chartName: pod-security-policies, version: 0.1.0}]` | Default policy sets to install along with operator |
+| awsAdapter.rbac.create | bool | false | Create RBAC resources for Kyverno AWS Adapter, if AWS Adapter is going to be enabled now (through the awsAdapter.createCR helm param below) or later |
+| awsAdapter.createCR | bool | false | Enable AWS Adapter by creating its Adapter Config CR |

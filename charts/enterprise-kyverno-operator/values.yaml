@@ -108,14 +108,13 @@ policies:
     version: 0.1.0
 
 awsAdapter:
-  createCR: true
-  majorVersion: "0.2"
+  createCR: false
   namespace: kyverno-aws-adapter
   image:
     repository: ghcr.io/nirmata/kyverno-aws-adapter
     tag: v0.2.0
   rbac:
-    create: true
+    create: false
     serviceAccount:
       name:
   roleArn:
