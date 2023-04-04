@@ -16,5 +16,7 @@ spec:
 
   helm:
     values:
-      {{- toYaml .Values.awsAdapter.helm | nindent 6 }}
+      eksCluster:
+        name: {{ .Values.awsAdapter.eksCluster.name }}
+        region: {{ .Values.awsAdapter.eksCluster.region }}
 {{- end }}

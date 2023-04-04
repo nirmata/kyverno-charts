@@ -96,3 +96,7 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 | policies.policySets | list | `["bestPractices", "podSecurity"]` | Default policy sets to be installed along with operator |
 | awsAdapter.rbac.create | bool | false | Create RBAC resources for Kyverno AWS Adapter, if AWS Adapter is going to be enabled now (through the awsAdapter.createCR helm param below) or later |
 | awsAdapter.createCR | bool | false | Enable AWS Adapter by creating its Adapter Config CR |
+| awsAdapter.eksCluster.name | string | `nil` | EKS Cluster name. Needed only if awsAdapter.createCR is true |
+| awsAdapter.eksCluster.region | string | `nil` | EKS Cluster region. Needed only if awsAdapter.createCR is true |
+| awsAdapter.eksCluster.roleARN | string | `nil` | EKS Cluster roleARN. Needed only if awsAdapter.createCR is true |
+| awsAdapter.helm | object | `nil` | Free form yaml section with helm parameters in Kyverno AWS Adapter Helm chart. Needed only if awsAdapter.createCR is true. See all parameters [here](https://github.com/nirmata/kyverno-aws-adapter/tree/main/charts/kyverno-aws-adapter#values) |

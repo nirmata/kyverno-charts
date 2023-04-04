@@ -112,11 +112,9 @@ awsAdapter:
   roleArn:
   nameOverride: "kyverno-aws-adapter"
   fullnameOverride: "kyverno-aws-adapter"
-  helm:
-    eksCluster:
-      name: eks-cluster1
-      region: us-west2
-
+  eksCluster:
+    name:
+    region:
 
 # Items after this are general chart parameters. Set/Modify as per need.
 imagePullSecrets: []
