@@ -18,4 +18,10 @@ spec:
   helm:
     values:
       {{- toYaml .Values.kyverno.helm | nindent 6 }}
+      {{- if and (eq .Values.kyverno.enablePolicyExceptions true) (contains "v1.9" .Values.kyverno.image.tag) }}
+      extraArgs:
+      - --enablePolicyException=true
+      - --loggingFormat=text
+      - --exceptionNamespace={{ include "kyverno.namespace" . }}
+      {{- end }}
 {{- end }}
