@@ -85,6 +85,9 @@ kyverno:
     rbac:
       serviceAccount:
         name: kyverno
+    licenseManager:
+      imageTag: "v0.0.2"
+      productName: ""
 
 
 policies:

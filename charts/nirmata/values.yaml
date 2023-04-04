@@ -496,8 +496,8 @@ licenseManager:
   imageRepository: ghcr.io/nirmata/kyverno-license-manager
   # -- Image tag
   imageTag: v0.0.1
-  # -- Product name to be present in license
-  productName: "Enterprise for Kyverno"
+  # -- Product name to be present in license, empty to ignore check
+  productName: ""
   # -- Validation interval in mins
   validateIntervalMins: 60
   # -- License server
