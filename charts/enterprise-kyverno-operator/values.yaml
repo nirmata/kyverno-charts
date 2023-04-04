@@ -86,6 +86,12 @@ kyverno:
     licenseManager:
       imageTag: "v0.0.2"
       productName: ""
+    cleanupController:
+      image:
+        tag: v1.9.2-n4k.nirmata.1
+    initImage:
+      tag: v1.9.2-n4k.nirmata.1
+
 
 
 policies:
