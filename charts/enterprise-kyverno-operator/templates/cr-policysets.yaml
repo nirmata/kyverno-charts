@@ -1,4 +1,4 @@
-{{ range $policySet := .Values.policies.policySets }}
+{{ if eq .Values.policies.enableBestPractices true }}
 ---
 apiVersion: security.nirmata.io/v1alpha1
 kind: PolicySet
@@ -6,16 +6,33 @@ metadata:
   annotations:
   labels:
     app.kubernetes.io/name: policyset
-    app.kubernetes.io/instance: {{ .name }}
+    app.kubernetes.io/instance: best-practices
     app.kubernetes.io/part-of: enterprise-kyverno-operator
-  name: {{ .name }}
+  name: best-practices
   namespace: {{ template "enterprise-kyverno.namespace" $ }}
 spec:
-  {{ if eq .type "helm" }}
   source:
     helm:
-      chartRepo: {{ .chartRepo }}
-      chartName: {{ .chartName }}
-      version: {{ .version }}
-  {{ end }}
+      chartRepo: https://nirmata.github.io/kyverno-charts
+      chartName: best-practice-policies
+      version: 0.1.0
+{{ end }}
+{{ if eq .Values.policies.enablePodSecurity true }}
+---
+apiVersion: security.nirmata.io/v1alpha1
+kind: PolicySet
+metadata:
+  annotations:
+  labels:
+    app.kubernetes.io/name: policyset
+    app.kubernetes.io/instance: pod-security
+    app.kubernetes.io/part-of: enterprise-kyverno-operator
+  name: pod-security
+  namespace: {{ template "enterprise-kyverno.namespace" $ }}
+spec:
+  source:
+    helm:
+      chartRepo: https://nirmata.github.io/kyverno-charts
+      chartName: pod-security-policies
+      version: 0.1.0
 {{ end }}

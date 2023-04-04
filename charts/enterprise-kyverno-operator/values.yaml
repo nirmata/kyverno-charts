@@ -93,25 +93,9 @@ kyverno:
       tag: v1.9.2-n4k.nirmata.1
 
 
-
 policies:
-  enableBasicPodSecurity: true
-  # For the policy and manifest signing, keys are in corresponding
-  # keys of the operatorSecrets above
-  enableSignedPolicies: true
-  enableSignedManifests: true
-
-  policySets:
-  - name: best-practices
-    type: helm
-    chartRepo: https://nirmata.github.io/kyverno-charts
-    chartName: best-practice-policies
-    version: 0.1.0
-  - name: pod-security
-    type: helm
-    chartRepo: https://nirmata.github.io/kyverno-charts
-    chartName: pod-security-policies
-    version: 0.1.0
+  enableBestPractices: true
+  enablePodSecurity: true 
 
 awsAdapter:
   createCR: false
