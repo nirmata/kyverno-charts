@@ -39,6 +39,7 @@ enableWebhook: false
 # Component configurations
 kyverno:
   createCR: true
+  enablePolicyExceptions: false
   replicaCount: 1
   rbac:
     create: true
