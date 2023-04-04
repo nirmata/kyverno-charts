@@ -17,6 +17,6 @@ spec:
   helm:
     values:
       eksCluster:
-        name: {{ .Values.awsAdapter.eksCluster.name }}
-        region: {{ .Values.awsAdapter.eksCluster.region }}
+        name: {{ required "awsAdapter.eksCluster.name  is required" .Values.awsAdapter.eksCluster.name }}
+        region: {{ required "awsAdapter.eksCluster.region  is required" .Values.awsAdapter.eksCluster.region }}
 {{- end }}
