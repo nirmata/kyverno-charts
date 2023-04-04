@@ -35,6 +35,9 @@ spec:
               do 
                 kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete PolicySet $i; 
               done;
+              {{- if .Values.awsAdapter.createCR }}
+              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoadapters aws-adapter-config;
+              {{- end }}
               {{- if .Values.kyverno.createCR }}
               kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoes kyverno;
               sleep 10;

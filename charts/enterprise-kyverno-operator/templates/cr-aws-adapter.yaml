@@ -1,0 +1,22 @@
+{{- if .Values.awsAdapter.createCR }}
+apiVersion: security.nirmata.io/v1alpha1
+kind: KyvernoAdapter
+metadata:
+  annotations:
+  labels:
+    {{- include "enterprise-kyverno.labels" . | nindent 4 }}
+  name: aws-adapter-config
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+spec:
+  adapterType: AWS
+  namespace: {{ include "kyverno-aws-adapter.namespace" . }}
+  repository: {{ .Values.awsAdapter.image.repository }}
+  version: {{ .Values.awsAdapter.image.tag }}
+  replicas: {{ .Values.awsAdapter.replicas }}
+
+  helm:
+    values:
+      eksCluster:
+        name: {{ required "awsAdapter.eksCluster.name  is required" .Values.awsAdapter.eksCluster.name }}
+        region: {{ required "awsAdapter.eksCluster.region  is required" .Values.awsAdapter.eksCluster.region }}
+{{- end }}

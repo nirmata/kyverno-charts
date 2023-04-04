@@ -79,6 +79,15 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
+{{/* Get the namespace name. */}}
+{{- define "kyverno-aws-adapter.namespace" -}}
+{{- if .Values.awsAdapter.namespace -}}
+    {{- .Values.awsAdapter.namespace -}}
+{{- else -}}
+    {{- "kyverno-aws-adapter" -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Create secret to access container registry
 */}}
@@ -88,7 +97,7 @@ Create secret to access container registry
 
 {{- define "enterprise-kyverno.policysets" -}}
 {{- if .Values.policies.policySets }}
-{{- range .Values.policies.policySets }}{{(print .name " ") }} {{- end }}
+{{- range .Values.policies.policySets }}{{(print . " ") }} {{- end }}
 {{- else -}}
 {{- "" -}}
 {{- end -}}

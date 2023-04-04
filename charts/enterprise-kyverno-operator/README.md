@@ -70,7 +70,9 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 |-----|------|---------|-------------|
 | nameOverride | string | `nil` | Override the name of the chart |
 | fullnameOverride | string | `nil` | Override the expanded name of the chart |
-| enableWebhook | bool | `true` | Enable operator webhooks for enhanced error checks and user info in audit log |
+| enableWebhook | bool | `false` | Enable operator webhooks for enhanced error checks and user info in audit log |
+| licenseKey | string | `nil`| License key (required) |
+| apiKey | string | `nil` | License server API key |
 | rbac.create | bool | `true` | Enable RBAC resources creation |
 | rbac.operatorHasAdminPerms | bool | `false` | Whether operator has admin permissions to install CRD and RBAC |
 | rbac.serviceAccount.name | string | `nil` | Service account name when `rbac.create` is set to `false` |
@@ -82,7 +84,6 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 | image.imagePullSecrets.create | bool | `false` | Whether to create image pull secret |
 | image.imagePullSecrets.username | string | `nil` | Username for image pull secret registry |
 | image.imagePullSecrets.password | string | `nil` | Password for image pull secret registry |
-| kyverno.majorVersion | string | `1.9` | Kyverno major version |
 | kyverno.createCR | bool | `true` | Create a CR that describes Kyverno to be managed by operator |
 | kyverno.replicaCount | int | `1` | Kyverno replicas |
 | kyverno.rbac.create | bool | `true` | Enable Kyverno RBAC resources creation |
@@ -92,5 +93,12 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 | kyverno.image.repository | string | `"ghcr.io/nirmata/kyverno"` | Kyverno Image repository |
 | kyverno.image.pullPolicy | string | `"IfNotPresent"` | Kyverno Image pull policy |
 | kyverno.image.tag | string | `v1.9.1-n4k.nirmata.1` | Image tag (defaults to chart app version) |
+| kyverno.enablePolicyExceptions| bool | `false` | Enable policyexceptions feature in Kyverno 1.9+ |
 | kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#values) |
-| policies.policySets | list | `[{name: best-practices, type: helm, chartRepo: https://nirmata.github.io/kyverno-charts, chartName: best-practice-policies, version: 0.1.0}, {name: pod-security, type: helm, chartRepo: https://nirmata.github.io/kyverno-charts, chartName: pod-security-policies, version: 0.1.0}]` | Default policy sets to install along with operator |
+| policies.policySets | list | `["bestPractices", "podSecurity"]` | Default policy sets to be installed along with operator |
+| awsAdapter.rbac.create | bool | false | Create RBAC resources for Kyverno AWS Adapter, if AWS Adapter is going to be enabled now (through the awsAdapter.createCR helm param below) or later |
+| awsAdapter.createCR | bool | false | Enable AWS Adapter by creating its Adapter Config CR |
+| awsAdapter.eksCluster.name | string | `nil` | EKS Cluster name. Required if awsAdapter.createCR is true |
+| awsAdapter.eksCluster.region | string | `nil` | EKS Cluster region. Required if awsAdapter.createCR is true |
+| awsAdapter.eksCluster.roleARN | string | `nil` | EKS Cluster roleARN. Required if awsAdapter.createCR is true |
+| awsAdapter.helm | object | `nil` | Free form yaml section with helm parameters in Kyverno AWS Adapter Helm chart. Needed only if awsAdapter.createCR is true. See all parameters [here](https://github.com/nirmata/kyverno-aws-adapter/tree/main/charts/kyverno-aws-adapter#values) |

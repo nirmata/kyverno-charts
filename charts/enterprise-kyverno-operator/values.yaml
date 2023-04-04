@@ -38,8 +38,8 @@ enableWebhook: false
 
 # Component configurations
 kyverno:
-  majorVersion: "1.9"
   createCR: true
+  enablePolicyExceptions: false
   replicaCount: 1
   rbac:
     create: true
@@ -62,8 +62,7 @@ kyverno:
       # -- Create RBAC resources
       create: true
       serviceAccount:
-        # -- Service account name
-        name:
+        create: true
       clusterRole:
         # -- Extra resource permissions to add in the cluster role
         extraResources: []
@@ -88,26 +87,34 @@ kyverno:
     licenseManager:
       imageTag: "v0.0.2"
       productName: ""
+    cleanupController:
+      image:
+        tag: v1.9.2-n4k.nirmata.1
+    initImage:
+      tag: v1.9.2-n4k.nirmata.1
 
 
 policies:
-  enableBasicPodSecurity: true
-  # For the policy and manifest signing, keys are in corresponding
-  # keys of the operatorSecrets above
-  enableSignedPolicies: true
-  enableSignedManifests: true
-
   policySets:
-  - name: best-practices
-    type: helm
-    chartRepo: https://nirmata.github.io/kyverno-charts
-    chartName: best-practice-policies
-    version: 0.1.0
-  - name: pod-security
-    type: helm
-    chartRepo: https://nirmata.github.io/kyverno-charts
-    chartName: pod-security-policies
-    version: 0.1.0
+  - bestPractices
+  - podSecurity
+
+awsAdapter:
+  createCR: false
+  namespace: kyverno-aws-adapter
+  image:
+    repository: ghcr.io/nirmata/kyverno-aws-adapter
+    tag: v0.2.0
+  rbac:
+    create: false
+    serviceAccount:
+      name:
+  roleArn:
+  nameOverride: "kyverno-aws-adapter"
+  fullnameOverride: "kyverno-aws-adapter"
+  eksCluster:
+    name:
+    region:
 
 # Items after this are general chart parameters. Set/Modify as per need.
 imagePullSecrets: []
