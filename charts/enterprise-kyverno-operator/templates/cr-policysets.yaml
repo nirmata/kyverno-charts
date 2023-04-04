@@ -1,4 +1,26 @@
-{{ range $policySet := .Values.policies.policySets }}
+{{ range $pol := .Values.policies.policySets }}
+
+{{- $psetName := "invalid" -}}
+{{- $psetType := "" -}}
+{{- $chartRepo := "" -}}
+{{- $chartName := "" -}}
+{{- $version := "" -}}
+
+{{- if eq $pol "bestPractices" -}}
+  {{- $psetName = "best-practices" -}}
+  {{- $psetType = "helm" -}}
+  {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
+  {{- $chartName = "best-practice-policies" -}}
+  {{- $version = "0.1.0" -}}
+{{- else if eq $pol "podSecurity" -}}
+  {{- $psetName = "pod-security" -}}
+  {{- $psetType = "helm" -}}
+  {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
+  {{- $chartName = "pod-security-policies" -}}
+  {{- $version = "0.1.0" -}}
+{{- end -}}
+
+{{- if ne $psetName "invalid" -}}
 ---
 apiVersion: security.nirmata.io/v1alpha1
 kind: PolicySet
@@ -6,16 +28,18 @@ metadata:
   annotations:
   labels:
     app.kubernetes.io/name: policyset
-    app.kubernetes.io/instance: {{ .name }}
+    app.kubernetes.io/instance: {{ $psetName }}
     app.kubernetes.io/part-of: enterprise-kyverno-operator
-  name: {{ .name }}
+  name: {{ $psetName }}
   namespace: {{ template "enterprise-kyverno.namespace" $ }}
 spec:
-  {{ if eq .type "helm" }}
+  {{ if eq $psetType "helm" }}
   source:
     helm:
-      chartRepo: {{ .chartRepo }}
-      chartName: {{ .chartName }}
-      version: {{ .version }}
+      chartRepo: {{ $chartRepo }}
+      chartName: {{ $chartName }}
+      version: {{ $version }}
   {{ end }}
+
+{{ end }}
 {{ end }}
