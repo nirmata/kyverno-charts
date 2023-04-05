@@ -111,6 +111,7 @@ spec:
           args:
             - --interval=0
             - --check-node-count=false
+            - --type=PROVISIONAL
           env:
             - name: AWS_REGION
               value: {{ .Values.aws.region }}
@@ -195,6 +196,7 @@ spec:
           args:
             - --interval=60m
             - --check-node-count=false
+            - --type=PROVISIONAL
           env:
           - name: AWS_REGION
             value: {{ .Values.aws.region }}
