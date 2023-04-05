@@ -22,6 +22,9 @@ rbac:
     annotations: {}
       # example.com/annotation: value
 
+aws:
+  region: us-east-1
+
 image:
   # -- Image repository
   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno
@@ -349,13 +352,13 @@ config:
   # The Kyverno namespace is excluded if `excludeKyvernoNamespace` is `true` (default)
   webhooks:
     # Exclude namespaces
-    # - namespaceSelector:
-    #     matchExpressions:
-    #     - key: kubernetes.io/metadata.name
-    #       operator: NotIn
-    #       values:
-    #         - kube-system
-    #         - kyverno
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - kube-system
+            - kyverno
     # Exclude objects
     # - objectSelector:
     #     matchExpressions:

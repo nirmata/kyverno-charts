@@ -1,16 +1,16 @@
 {
   "Version": {
     "ReleaseNotes": "Kyverno v1.8.5 for AWS EKS and on-prem",
-    "VersionTitle": "v1.8.5-02"
+    "VersionTitle": "v1.8.5-03"
   },
   "DeliveryOptions": [{
     "Details": {
       "HelmDeliveryOptionDetails": {
         "CompatibleServices": ["EKS", "EKS-Anywhere"],
         "ContainerImages": ["709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno:v1.8.5-n4kbuild.1","709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyvernopre:v1.8.5-n4kbuild.1", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/awslm:0.1-rc1"],
-        "HelmChartUri": "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno-chart:v1.10.0-06-aws",
+        "HelmChartUri": "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno-chart:v1.10.0-07-aws",
         "Description": "Deploy Kyverno using Helm",
-        "UsageInstructions": "Once the Helm chart is installed successfully, verify that the Kyverno pod is running:\n```kubectl get pods -n kyverno```",
+        "UsageInstructions": "Detailed usage instructions are here: https://docs.nirmata.io/n4k/provider-integrations/amazon-eks/\n",
         "MarketplaceServiceAccountName": "kyverno",
         "QuickLaunchEnabled": false,
         "ReleaseName": "kyverno",
