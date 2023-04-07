@@ -96,8 +96,8 @@ kyverno:
 
 policies:
   policySets:
-  - bestPractices
-  - podSecurity
+  - best-practices
+  - pod-security
 
 awsAdapter:
   createCR: false
