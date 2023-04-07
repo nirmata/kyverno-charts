@@ -1232,6 +1232,20 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-aws-adapter-0.1.0/nirmata-aws-adapter-0.1.0.tgz
     version: 0.1.0
+  nirmata-cluster-registrator-chart:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-04-07T10:20:33.162190963Z"
+    description: A Helm chart for Nirmata Kubernetes Controller Registrator
+    digest: c21be9cc635d1d75b810998899aa1a0c90e7a67a5344e14aecd68e8d5b36fa6a
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-cluster-registrator-chart
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-cluster-registrator-chart-0.1.0/nirmata-cluster-registrator-chart-0.1.0.tgz
+    version: 0.1.0
   nirmata-venafi-adapter:
   - apiVersion: v1
     appVersion: v0.1.0
@@ -1460,4 +1474,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-04-07T02:10:11.508107118Z"
+generated: "2023-04-07T10:20:33.162506961Z"
