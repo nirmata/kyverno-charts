@@ -1,0 +1,17 @@
+# Default values for cluster registrator chart
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+NirmataURL: "https://nirmata.io"
+
+cluster:
+  name:
+  type: "default-policy-manager-type"
+
+apiToken:
+
+proxy:
+  httpProxy: ""
+  httpsProxy: ""
+  noProxy: ""
+
+tlsCert: ""

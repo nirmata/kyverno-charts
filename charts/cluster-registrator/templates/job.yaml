@@ -1,0 +1,236 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nirmata
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+  labels: {{ include "nirmata-cluster-registrator-chart.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nirmata:cluster-registrator
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - namespaces
+    verbs:
+      - create
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterrolebindings
+      - clusterroles
+    verbs:
+      - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nirmata:cluster-registrator-nirmata-readonly
+rules:
+- apiGroups:
+  - kyverno.io
+  - operator.kyverno.io
+  - security.nirmata.io
+  resources:
+  - policies
+  - clusterpolicies
+  - cleanuppolicies
+  - clustercleanuppolicies
+  - kyvernoes
+  - kyvernoes/status
+  - policyexceptions
+  - reportchangerequests
+  - clusterreportchangerequests
+  - kyvernooperators/status
+  - kyvernooperators
+  - imagekeys
+  - imagekeys/status
+  - imagekeys/finalizers
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - wgpolicyk8s.io/v1alpha1
+  - wgpolicyk8s.io/v1alpha2
+  resources:
+  - policyreports
+  - clusterpolicyreports
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - '*'
+  resources:
+  - policies
+  - policies/status
+  - clusterpolicies
+  - clusterpolicies/status
+  - policyreports
+  - policyreports/status
+  - clusterpolicyreports
+  - clusterpolicyreports/status
+  - generaterequests
+  - generaterequests/status
+  - reportchangerequests
+  - reportchangerequests/status
+  - clusterreportchangerequests
+  - clusterreportchangerequests/status
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - '*'
+  resources:
+  - nodes
+  - pods
+  - pods/log
+  - namespaces
+  - networkpolicies
+  - secrets
+  - configmaps
+  - resourcequotas
+  - limitranges
+  - deployments
+  - services
+  - serviceaccounts
+  - roles
+  - rolebindings
+  - clusterroles
+  - clusterrolebindings
+  - events
+  - mutatingwebhookconfigurations
+  - validatingwebhookconfigurations
+  - certificatesigningrequests
+  - certificatesigningrequests/approval
+  - poddisruptionbudgets
+  - componentstatuses
+  - endpoints
+  - storageclasses
+  - priorityclasses
+  - clusterissuers
+  - podsecuritypolicies
+  - persistentvolumes
+  - replicasets
+  verbs:
+  - list
+  - get
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata:cluster-registrator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nirmata:cluster-registrator
+subjects:
+- kind: ServiceAccount
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata:cluster-registrator-readonly
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nirmata:cluster-registrator-nirmata-readonly
+subjects:
+- kind: ServiceAccount
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata:cluster-registrator-nirmata-readonly
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nirmata:cluster-registrator-ns-admin
+  namespace: nirmata
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+- kind: ServiceAccount
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+  labels: {{ include "nirmata-cluster-registrator-chart.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      containers:
+      - name: cluster-registrator
+        image: ghcr.io/nirmata/cluster-registrator:v0.0.1
+        args:
+        - "--cluster-name"
+        - "{{ .Values.cluster.name }}"
+        env:
+        - name: CLUSTER_NAME
+          value: "{{ .Values.cluster.name }}"
+        - name: NIRMATA_TOKEN
+          value: "{{ .Values.apiToken }}"
+        - name: NIRMATA_URL
+          value: "{{ .Values.NirmataURL }}"
+        - name: NIRMATA_CLUSTER_TYPE
+          value: "{{ .Values.cluster.type }}"
+        - name: HTTP_PROXY
+          value: "{{ .Values.proxy.httpProxy }}"
+        - name: HTTPS_PROXY
+          value: "{{ .Values.proxy.httpsProxy }}"
+        - name: NO_PROXY
+          value: "{{ .Values.proxy.noProxy }}"
+        - name: TLS_CERT
+          value: "{{ .Values.tlsCert }}"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - "ALL"
+          readOnlyRootFilesystem: true
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 1000
+          seccompProfile:
+            type: "RuntimeDefault"
+      serviceAccountName: nirmata-cluster-registrator
+      restartPolicy: Never
+  backoffLimit: 0

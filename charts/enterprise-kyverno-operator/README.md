@@ -95,7 +95,7 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 | kyverno.image.tag | string | `v1.9.1-n4k.nirmata.1` | Image tag (defaults to chart app version) |
 | kyverno.enablePolicyExceptions| bool | `false` | Enable policyexceptions feature in Kyverno 1.9+ |
 | kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#values) |
-| policies.policySets | list | `["bestPractices", "podSecurity"]` | Default policy sets to be installed along with operator |
+| policies.policySets | list | `["best-practices", "pod-security"]` | Default policy sets to be installed along with operator |
 | awsAdapter.rbac.create | bool | false | Create RBAC resources for Kyverno AWS Adapter, if AWS Adapter is going to be enabled now (through the awsAdapter.createCR helm param below) or later |
 | awsAdapter.createCR | bool | false | Enable AWS Adapter by creating its Adapter Config CR |
 | awsAdapter.eksCluster.name | string | `nil` | EKS Cluster name. Required if awsAdapter.createCR is true |

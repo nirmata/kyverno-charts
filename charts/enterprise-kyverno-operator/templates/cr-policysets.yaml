@@ -6,13 +6,13 @@
 {{- $chartName := "" -}}
 {{- $version := "" -}}
 
-{{- if eq $pol "bestPractices" -}}
+{{- if eq $pol "best-practices" -}}
   {{- $psetName = "best-practices" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
   {{- $chartName = "best-practice-policies" -}}
   {{- $version = "0.1.0" -}}
-{{- else if eq $pol "podSecurity" -}}
+{{- else if eq $pol "pod-security" -}}
   {{- $psetName = "pod-security" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
