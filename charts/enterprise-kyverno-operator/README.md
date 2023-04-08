@@ -65,6 +65,8 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 ```
 
 ## Configure Adapters
+Note: Currently available as a Release Candidate, use the `--devel` flag in helm install.
+
 Adapters such as AWS, CIS and others can be configured by setting appropriate flags corresponding to that adapter. In general, we need to provide 2 flags
 - Flags to create RBAC resources such as clusterroles, bindings, serviceaccounts. E.g. `--set awsAdapter.rbac.create=true` or `--set cisAdapter.serviceAccount.create=true`
 - Flags to create the CR for that adapter at chart install time itself. E.g. `--set awsAdapter.createCR=true`
