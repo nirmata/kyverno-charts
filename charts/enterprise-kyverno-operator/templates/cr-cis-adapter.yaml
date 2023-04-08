@@ -16,6 +16,6 @@ spec:
 
   helm:
     values:
-      fullNameOverride: {{ .Values.cisAdapter.fullNameOverride }}
+      fullnameOverride: {{ .Values.cisAdapter.fullnameOverride }}
       nameOverride: {{ .Values.cisAdapter.nameOverride }}
 {{- end }}
