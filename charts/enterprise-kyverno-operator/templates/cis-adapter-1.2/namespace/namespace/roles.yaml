@@ -1,0 +1,11 @@
+{{- if .Values.cisAdapter.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace:  {{ include "kube-bench.namespace" . }}
+  name: {{ include "kube-bench.name" . }}-installer
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+{{- end }}

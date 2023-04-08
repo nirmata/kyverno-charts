@@ -29427,6 +29427,8 @@ spec:
     subresources:
       status: {}
 ---
+# Wg policy reports is now a top level crd since it is needed by multiple adapters
+{{ if eq true false }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -29793,7 +29795,10 @@ spec:
     served: true
     storage: true
     subresources: {}
+{{ end }}
 ---
+# Wg policy reports is now a top level crd since it is needed by multiple adapters
+{{ if eq true false }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -30159,4 +30164,5 @@ spec:
     served: true
     storage: true
     subresources: {}
+{{- end }}
 {{- end }}
