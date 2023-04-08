@@ -1,0 +1,16 @@
+{{- if .Values.cisAdapter.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "kube-bench.fullname" . }}
+  labels:
+    {{- include "kube-bench.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kube-bench.fullname" . }} # Name of the ServiceAccount
+  namespace: {{.Values.cisAdapter.namespace}}
+roleRef:
+  kind: ClusterRole # This must be Role or ClusterRole
+  name: {{ include "kube-bench.fullname" . }} # This must match the name of the Role or ClusterRole you wish to bind to
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

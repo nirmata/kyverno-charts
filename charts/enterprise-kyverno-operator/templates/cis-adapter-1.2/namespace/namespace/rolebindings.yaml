@@ -1,0 +1,15 @@
+{{- if .Values.cisAdapter.rbac.create }}
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ template "kube-bench.name" . }}-installer
+  namespace: {{ include "kube-bench.namespace" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "kube-bench.name" . }}-installer
+subjects:
+- kind: ServiceAccount
+  name: {{ template "enterprise-kyverno.rbac.serviceAccountName" . }}
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+{{- end }}

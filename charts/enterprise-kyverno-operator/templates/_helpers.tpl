@@ -88,6 +88,15 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
+{{/* Get the namespace name. */}}
+{{- define "kube-bench.namespace" -}}
+{{- if .Values.cisAdapter.namespace -}}
+    {{- .Values.cisAdapter.namespace -}}
+{{- else -}}
+    {{- "cis-adapter" -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Create secret to access container registry
 */}}
