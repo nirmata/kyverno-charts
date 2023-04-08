@@ -64,6 +64,14 @@ To remove Enterprise Kyverno and components
 helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 ```
 
+## Configure Adapters
+Adapters such as AWS, CIS and others can be configured by setting appropriate flags corresponding to that adapter. In general, we need to provide 2 flags
+- Flags to create RBAC resources such as clusterroles, bindings, serviceaccounts. E.g. `--set awsAdapter.rbac.create=true` or `--set cisAdapter.serviceAccount.create=true`
+- Flags to create the CR for that adapter at chart install time itself. E.g. `--set awsAdapter.createCR=true`
+
+See the Helm chart values below for specifics.
+
+
 ## Helm Chart Values
 
 | Key | Type | Default | Description |
@@ -102,3 +110,7 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 | awsAdapter.eksCluster.region | string | `nil` | EKS Cluster region. Required if awsAdapter.createCR is true |
 | awsAdapter.eksCluster.roleARN | string | `nil` | EKS Cluster roleARN. Required if awsAdapter.createCR is true |
 | awsAdapter.helm | object | `nil` | Free form yaml section with helm parameters in Kyverno AWS Adapter Helm chart. Needed only if awsAdapter.createCR is true. See all parameters [here](https://github.com/nirmata/kyverno-aws-adapter/tree/main/charts/kyverno-aws-adapter#values) |
+| cisAdapter.rbac.create | bool | false | Create RBAC resources for CIS Adapter, if CIS Adapter is going to be enabled now (through the cisAdapter.createCR param below) or later |
+| cisAdapter.serviceAccount.create | bool | false | Create Service Account for CIS Adapter, if CIS Adapter is going to be enabled now (through the cisAdapter.createCR param below) or later |
+| cisAdapter.createCR | bool | false | Enable CIS Adapter by creating its Adapter Config CR |
+| cisAdapter.helm | object | `nil` | Free form yaml section with helm parameters in CIS Adapter Helm chart. Needed only if cisAdapter.createCR is true. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/kube-bench-adapter#values) |
