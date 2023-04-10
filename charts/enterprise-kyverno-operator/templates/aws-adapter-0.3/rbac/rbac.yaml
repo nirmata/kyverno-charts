@@ -1,4 +1,4 @@
-{{- if and (eq .Values.awsAdapter.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) (contains "v0.2" .Values.awsAdapter.image.tag) }}
+{{- if and (eq .Values.awsAdapter.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) }}
 # permissions for end users to edit awsadapterconfigs.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole

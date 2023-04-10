@@ -105,7 +105,7 @@ awsAdapter:
   replicas: 1
   image:
     repository: ghcr.io/nirmata/kyverno-aws-adapter
-    tag: v0.2.0
+    tag: v0.3.0
   rbac:
     create: false
     serviceAccount:
@@ -131,6 +131,9 @@ cisAdapter:
     name:
   nameOverride: "cis-adapter"
   fullnameOverride: "cis-adapter"
+  helm:
+    cronjob:
+      schedule: '"@weekly"'
 
 # Items after this are general chart parameters. Set/Modify as per need.
 imagePullSecrets: []

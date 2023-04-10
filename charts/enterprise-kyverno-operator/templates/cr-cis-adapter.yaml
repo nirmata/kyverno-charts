@@ -16,6 +16,7 @@ spec:
 
   helm:
     values:
+      {{- toYaml .Values.cisAdapter.helm | nindent 6 }}
       fullnameOverride: {{ .Values.cisAdapter.fullnameOverride }}
       nameOverride: {{ .Values.cisAdapter.nameOverride }}
 {{- end }}
