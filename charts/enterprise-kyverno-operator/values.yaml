@@ -133,7 +133,7 @@ cisAdapter:
   fullnameOverride: "cis-adapter"
   helm:
     cronjob:
-      schedule: '"@daily"'
+      schedule: '"@weekly"'
 
 # Items after this are general chart parameters. Set/Modify as per need.
 imagePullSecrets: []
