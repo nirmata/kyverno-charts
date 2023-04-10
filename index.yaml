@@ -3,6 +3,26 @@ entries:
   best-practice-policies:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2023-04-10T14:33:47.778474038Z"
+    description: Best Practice policy set
+    digest: 6b708bf8cf81148e992e6a1a432d7ee84317b1c21cbf0b51bf718f45afd0c6b4
+    keywords:
+    - kubernetes
+    - nirmata
+    - kyverno
+    - aws
+    - adapter
+    - policy
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: best-practice-policies
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/best-practice-policies-0.1.1/best-practice-policies-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-12-19T15:36:18.814417592Z"
     description: Best Practice policy set
     digest: 62f28ba07573258d1780d2038de68c54415d7c5ff682b79f9a1cce74fd6e8c1d
@@ -22,6 +42,27 @@ entries:
     - https://github.com/nirmata/kyverno-charts/releases/download/best-practice-policies-0.1.0/best-practice-policies-0.1.0.tgz
     version: 0.1.0
   enterprise-kyverno-operator:
+  - apiVersion: v2
+    appVersion: v0.1.3
+    created: "2023-04-10T14:33:48.011972519Z"
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: c702670490fc215ab61315d6737967d80f3034e3a36f409b41fa81cf46845944
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: enterprise-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/enterprise-kyverno-operator-v0.1.2-rc.4/enterprise-kyverno-operator-v0.1.2-rc.4.tgz
+    version: v0.1.2-rc.4
   - apiVersion: v2
     appVersion: v0.1.3
     created: "2023-04-10T12:40:44.353815724Z"
@@ -1516,4 +1557,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-04-10T12:40:44.354237625Z"
+generated: "2023-04-10T14:33:48.012225534Z"
