@@ -68,8 +68,8 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 Note: CIS Adapter is currently available within Kyverno Operator as a Release Candidate only. Use the `--devel` flag in helm commands to exercise the CIS Adapter feature.
 
 Adapters such as AWS, CIS and others can be configured by setting appropriate flags corresponding to that adapter. In general, we need to provide 2 flags
-- Flags to create RBAC resources such as clusterroles, bindings, serviceaccounts. E.g. `--set awsAdapter.rbac.create=true` or `--set cisAdapter.serviceAccount.create=true`
-- Flags to create the CR for that adapter at chart install time itself. E.g. `--set awsAdapter.createCR=true`
+- Flags to create RBAC resources such as clusterroles, bindings, serviceaccounts. E.g. for CIS Adapter provide `--set cisAdapter.rbac.create=true --set cisAdapter.serviceAccount.create=true`.
+- Flags to create the CR for that adapter at chart install time itself. E.g. for CIS Adapter `--set cisAdapter.createCR=true`
 
 See the Helm chart values below for specifics.
 
