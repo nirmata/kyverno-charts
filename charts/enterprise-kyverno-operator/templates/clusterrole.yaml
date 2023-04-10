@@ -51,6 +51,22 @@ rules:
   verbs:
   - get
 - apiGroups:
+  - batch
+  - extensions
+  resources:
+  - cronjobs
+  - jobs
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - batch/v1
+  resources:
+  - cronjobs/status
+  verbs:
+  - get
+- apiGroups:
   - ""
   resources:
   - configmaps

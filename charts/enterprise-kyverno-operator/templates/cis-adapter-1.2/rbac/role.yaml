@@ -1,0 +1,18 @@
+{{- if .Values.cisAdapter.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kube-bench.fullname" . }}
+  labels:
+    {{- include "kube-bench.labels" . | nindent 4 }}
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["pods","pods/log"]
+  verbs: ["get", "list", "watch", "delete"]
+- apiGroups: ["batch", "extensions"]
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["wgpolicyk8s.io"]
+  resources: ["policyreports", "clusterpolicyreports"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+{{- end }}

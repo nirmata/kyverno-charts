@@ -102,6 +102,7 @@ policies:
 awsAdapter:
   createCR: false
   namespace: kyverno-aws-adapter
+  replicas: 1
   image:
     repository: ghcr.io/nirmata/kyverno-aws-adapter
     tag: v0.2.0
@@ -115,6 +116,21 @@ awsAdapter:
   eksCluster:
     name:
     region:
+
+cisAdapter:
+  createCR: false
+  namespace: cis-adapter
+  replicas: 1
+  image:
+    repository: ghcr.io/nirmata/kube-bench-adapter
+    tag: v0.2.1
+  rbac:
+    create: false
+  serviceAccount:
+    create: false
+    name:
+  nameOverride: "cis-adapter"
+  fullnameOverride: "cis-adapter"
 
 # Items after this are general chart parameters. Set/Modify as per need.
 imagePullSecrets: []
