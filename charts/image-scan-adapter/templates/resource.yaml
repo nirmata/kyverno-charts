@@ -10,3 +10,4 @@ spec:
   outputFormat: {{ .Values.outputFormat }}
   scanInterval: {{ .Values.scanInterval }}
   scanAll: {{ .Values.scanAll }}
+

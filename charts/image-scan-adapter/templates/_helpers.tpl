@@ -62,3 +62,4 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "image-scan-adapter.image" -}}
 {{ printf "%s:%s" (required "An image repository is required" .Values.image.repository) (default .Chart.AppVersion .Values.image.tag) }}
 {{- end }}
+
