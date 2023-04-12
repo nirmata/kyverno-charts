@@ -1,0 +1,52 @@
+# Default values for image-scan-adapter.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Override the name of the chart
+nameOverride:
+
+# -- Override the expanded name of the chart
+fullnameOverride:
+
+# -- Severities to include in the generated scan result
+severity: []
+
+# -- The prefix for policy report file name
+policyReportPrefix: image-scan
+
+# -- Scanner engine to use, "grype" by default
+scannerEngine: grype
+
+# -- Output format of scan result, "PolicyReport" by default
+outputFormat: PolicyReport
+
+# -- Interval after which scan will run automatically
+scanInterval: 12h
+
+# -- Disable selective scan, "false" by default
+scanAll: false
+
+selectors:
+  # -- Namespaces to run image scan on, by default adapter will scan all namespaces
+  namespaces: []
+
+rbac:
+  # -- Enable RBAC resources creation
+  create: true
+
+  serviceAccount:
+    # -- Service account name, you MUST provide one when `rbac.create` is set to `false`
+    name:
+
+image:
+  # -- Image repository
+  repository: ghcr.io/nirmata/image-scan-adapter
+
+  # -- Image pull policy
+  pullPolicy: Always
+
+  # -- Image tag (defaults to chart app version)
+  tag:
+
+  # -- Image pull secrets
+  imagePullSecrets: []
