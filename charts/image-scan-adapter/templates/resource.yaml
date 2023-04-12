@@ -1,0 +1,12 @@
+apiVersion: security.nirmata.io/v1alpha1
+kind: ImageScanAdapterConfig
+metadata:
+  name: {{ include "image-scan-adapter.fullname" . }}
+  labels:
+    {{- include "image-scan-adapter.labels" . | nindent 4 }}
+spec:
+  policyReportPrefix: {{ .Values.policyReportPrefix }}
+  scannerEngine: {{ .Values.scannerEngine }}
+  outputFormat: {{ .Values.outputFormat }}
+  scanInterval: {{ .Values.scanInterval }}
+  scanAll: {{ .Values.scanAll }}
