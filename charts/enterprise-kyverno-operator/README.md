@@ -110,7 +110,7 @@ See the Helm chart values below for specifics.
 | awsAdapter.createCR | bool | false | Enable AWS Adapter by creating its Adapter Config CR |
 | awsAdapter.eksCluster.name | string | `nil` | EKS Cluster name. Required if awsAdapter.createCR is true |
 | awsAdapter.eksCluster.region | string | `nil` | EKS Cluster region. Required if awsAdapter.createCR is true |
-| awsAdapter.eksCluster.roleARN | string | `nil` | EKS Cluster roleARN. Required if awsAdapter.createCR is true |
+| awsAdapter.roleArn | string | `nil` | EKS Cluster roleARN. Required if awsAdapter.createCR is true |
 | awsAdapter.helm | object | `nil` | Free form yaml section with helm parameters in Kyverno AWS Adapter Helm chart. Needed only if awsAdapter.createCR is true. See all parameters [here](https://github.com/nirmata/kyverno-aws-adapter/tree/main/charts/kyverno-aws-adapter#values) |
 | cisAdapter.rbac.create | bool | false | Create RBAC resources for CIS Adapter, if CIS Adapter is going to be enabled now (through the cisAdapter.createCR param below) or later |
 | cisAdapter.serviceAccount.create | bool | false | Create Service Account for CIS Adapter, if CIS Adapter is going to be enabled now (through the cisAdapter.createCR param below) or later |

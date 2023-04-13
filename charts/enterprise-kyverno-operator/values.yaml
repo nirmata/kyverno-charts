@@ -35,6 +35,7 @@ rbac:
     name: ""
 
 enableWebhook: false
+useCertManager: false
 
 # Component configurations
 kyverno:
