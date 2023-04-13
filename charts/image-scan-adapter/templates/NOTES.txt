@@ -1,0 +1,8 @@
+Chart version: {{ .Chart.Version }}
+Image-scan-adapter version: {{ default .Chart.AppVersion .Values.image.tag }}
+
+Thank you for installing {{ .Chart.Name }} ! Your release is named {{ .Release.Name }}.
+
+You can check the status of your configuration with:
+
+    kubectl get isacfg -n {{ .Release.Namespace }} {{ include "image-scan-adapter.fullname" . }} -o yaml

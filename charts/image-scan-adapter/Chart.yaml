@@ -1,16 +1,17 @@
 apiVersion: v2
-name: best-practice-policies
-description: Best Practice policy set
+name: image-scan-adapter
+description: A Helm chart for Kubernetes
 type: application
-version: 0.1.1
-appVersion: 0.1.0
+version: "v0.1.0"
+appVersion: "v0.1.0"
 keywords:
   - kubernetes
   - nirmata
-  - kyverno
-  - aws
+  - image
+  - scan
   - adapter
   - policy
+  - report
 maintainers:
   - name: Nirmata
     url: https://nirmata.com/
