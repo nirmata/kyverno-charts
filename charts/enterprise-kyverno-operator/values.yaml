@@ -35,7 +35,8 @@ rbac:
     name: ""
 
 enableWebhook: false
-useCertManager: false
+# Whether certificate management is done by "cert-manager", "operator", "other"
+certManager: operator
 
 # Component configurations
 kyverno:

@@ -52,6 +52,7 @@ spec:
             - --profile={{- .Values.profile | default "prod" }}
             - --enable-webhook={{- .Values.enableWebhook | default false}}
             - --install-rbac={{- .Values.rbac.operatorHasAdminPerms | default false }}
+            - --manage-certs={{- include "enterprise-kyverno.managecerts" . }}
           volumeMounts:
           - mountPath: /var/local
             name: local-vol

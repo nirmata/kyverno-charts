@@ -2,7 +2,7 @@
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
-  {{- if .Values.useCertManager }}
+  {{- if eq .Values.certManager "cert-manager" }}
   annotations:
     cert-manager.io/inject-ca-from: {{ template "enterprise-kyverno.namespace" . }}/kyverno-operator-serving-cert
   {{- end}}
@@ -18,6 +18,9 @@ webhooks:
 - admissionReviewVersions:
   - v1
   clientConfig:
+    {{- if eq .Values.certManager "other" }}
+    caBundle: {{ .Values.caBundle }}
+    {{- end}}
     service:
       name: {{ include "enterprise-kyverno.fullname" . }}
       namespace: {{ template "enterprise-kyverno.namespace" . }}
@@ -41,6 +44,9 @@ webhooks:
   - v1alpha1
   - v1beta1
   clientConfig:
+    {{- if eq .Values.certManager "other" }}
+    caBundle: {{ .Values.caBundle }}
+    {{- end}}
     service:
       name: {{ include "enterprise-kyverno.fullname" . }}
       namespace: {{ template "enterprise-kyverno.namespace" . }}
