@@ -5,13 +5,20 @@ Enterprise Kyverno is a Kubernetes Operator to manage lifecycle of Kyverno, Adap
 ### Get license key
 You need a license key to run Enterprise Kyverno. If you are using Nirmata Enterprise for Kyverno, it is available in the UI. Else contact support@nirmata.com.
 
-### (Optional) Install cert-manager
-Kyverno Operator uses webhooks to provide enhanced functionality such as logging user information in resource change events logged into the Kubernetes event stream, and some enhanced semantic checks for custom resources. By default, Kyverno Operator does not install webhooks. 
+### (Optional) External certificate management for webhooks
+Kyverno Operator uses webhooks to provide enhanced functionality such as logging user information in resource change events logged into the Kubernetes event stream, and some enhanced semantic checks for custom resources.
 
-But if webhooks are to be enabled for this enhanced functionality, then it needs an installation of `cert-manager` for webhook certificate management. Install cert-manager by following instructions [here](https://cert-manager.io/docs/installation/). Typically,
+Webhooks need a few SSL key-certificates to work properly. By default, kyverno operator manages the creation and rotation of these. But alternatively these can be managed using external tools like cert-manager or other custom mechanisms.
+
+####  Manual certificate management
+For this, one would need to manually create the secret containing certificate and keys needed by the operator webhook, and provide the base64 encoded CA bundle to helm install command below as well. The secret should be of type `kubernetes.io/tls`, with keys `tls.crt`, `tls.key`, and `ca.crt`. The value of `ca.crt` should also be provided to the helm install command (arg `--set certManager=other --set caBundle=...`) so that it gets added to the CABundle for needed webhook configurations.
+
+####  Certificate management through cert-manager
+If [cert-manager](https://cert-manager.io/) is selected as a tool for certificate management, it needs to be installed by following instructions [here](https://cert-manager.io/docs/installation/). Typically,
 ```bash
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
 ```
+And then, provide the argument `--set certManager=cert-manager` to the helm install command described below.
 
 ### (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
 Create the namespace
@@ -20,7 +27,7 @@ kubectl create namespace enterprise-kyverno-operator
 ```
 Create configmap in the namespace
 ```bash
-kubectl -n nirmata-kyverno-operator create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
+kubectl -n enterprise-kyverno-operator create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
 ```
 
 ## Getting Started
@@ -80,9 +87,12 @@ See the Helm chart values below for specifics.
 |-----|------|---------|-------------|
 | nameOverride | string | `nil` | Override the name of the chart |
 | fullnameOverride | string | `nil` | Override the expanded name of the chart |
-| enableWebhook | bool | `false` | Enable operator webhooks for enhanced error checks and user info in audit log |
+| enableWebhook | bool | `true` | Enable operator webhooks for enhanced error checks and user info in audit log |
+| certManager | string | `operator` | Webhook cert management mechanism. Valid values are "operator", "cert-manager", "other". |
 | licenseKey | string | `nil`| License key (required) |
 | apiKey | string | `nil` | License server API key |
+| customCAConfigMap | string | | Configmap storing custom CA certificate |
+| systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |
 | rbac.create | bool | `true` | Enable RBAC resources creation |
 | rbac.operatorHasAdminPerms | bool | `false` | Whether operator has admin permissions to install CRD and RBAC |
 | rbac.serviceAccount.name | string | `nil` | Service account name when `rbac.create` is set to `false` |
@@ -110,7 +120,7 @@ See the Helm chart values below for specifics.
 | awsAdapter.createCR | bool | false | Enable AWS Adapter by creating its Adapter Config CR |
 | awsAdapter.eksCluster.name | string | `nil` | EKS Cluster name. Required if awsAdapter.createCR is true |
 | awsAdapter.eksCluster.region | string | `nil` | EKS Cluster region. Required if awsAdapter.createCR is true |
-| awsAdapter.eksCluster.roleARN | string | `nil` | EKS Cluster roleARN. Required if awsAdapter.createCR is true |
+| awsAdapter.roleArn | string | `nil` | EKS Cluster roleARN. Required if awsAdapter.createCR is true |
 | awsAdapter.helm | object | `nil` | Free form yaml section with helm parameters in Kyverno AWS Adapter Helm chart. Needed only if awsAdapter.createCR is true. See all parameters [here](https://github.com/nirmata/kyverno-aws-adapter/tree/main/charts/kyverno-aws-adapter#values) |
 | cisAdapter.rbac.create | bool | false | Create RBAC resources for CIS Adapter, if CIS Adapter is going to be enabled now (through the cisAdapter.createCR param below) or later |
 | cisAdapter.serviceAccount.create | bool | false | Create Service Account for CIS Adapter, if CIS Adapter is going to be enabled now (through the cisAdapter.createCR param below) or later |

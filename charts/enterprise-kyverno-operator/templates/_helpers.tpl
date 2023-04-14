@@ -111,3 +111,11 @@ Create secret to access container registry
 {{- "" -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "enterprise-kyverno.managecerts" -}}
+{{- if eq .Values.certManager "operator" -}}
+    {{- true -}}
+{{- else -}}
+    {{- false -}}
+{{- end -}}
+{{- end -}}

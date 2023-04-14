@@ -15,4 +15,14 @@ rules:
   - update
   - patch
   - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace:  {{ include "enterprise-kyverno.namespace" . }}
+  name: {{ include "enterprise-kyverno.fullname" . }}-installer
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
 {{- end }}

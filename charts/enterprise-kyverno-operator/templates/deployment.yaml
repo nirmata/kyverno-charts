@@ -52,6 +52,7 @@ spec:
             - --profile={{- .Values.profile | default "prod" }}
             - --enable-webhook={{- .Values.enableWebhook | default false}}
             - --install-rbac={{- .Values.rbac.operatorHasAdminPerms | default false }}
+            - --manage-certs={{- include "enterprise-kyverno.managecerts" . }}
           volumeMounts:
           - mountPath: /var/local
             name: local-vol
@@ -62,6 +63,11 @@ spec:
             name: cert
             readOnly: true
           {{- end }}
+          {{- if .Values.customCAConfigMap }}
+          - name: custom-ca-store
+            mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
+            subPath: custom-ca.pem
+          {{- end}}
           readinessProbe:
             httpGet:
               path: /readyz
@@ -99,3 +105,8 @@ spec:
           defaultMode: 420
           secretName: webhook-server-cert
       {{- end }}
+      {{- if .Values.customCAConfigMap }}
+      - name: custom-ca-store
+        configMap:
+          name: {{ .Values.customCAConfigMap }}
+      {{- end}}
