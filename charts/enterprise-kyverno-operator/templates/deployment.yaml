@@ -63,6 +63,11 @@ spec:
             name: cert
             readOnly: true
           {{- end }}
+          {{- if .Values.customCAConfigMap }}
+          - name: custom-ca-store
+            mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
+            subPath: custom-ca.pem
+          {{- end}}
           readinessProbe:
             httpGet:
               path: /readyz
@@ -100,3 +105,8 @@ spec:
           defaultMode: 420
           secretName: webhook-server-cert
       {{- end }}
+      {{- if .Values.customCAConfigMap }}
+      - name: custom-ca-store
+        configMap:
+          name: {{ .Values.customCAConfigMap }}
+      {{- end}}

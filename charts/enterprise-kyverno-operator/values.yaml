@@ -34,7 +34,7 @@ rbac:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
 
-enableWebhook: false
+enableWebhook: true
 # Whether certificate management is done by "cert-manager", "operator", "other"
 certManager: operator
 
@@ -157,6 +157,11 @@ securityContext:
     drop:
     - ALL
     - CAP_NET_RAW
+
+# -- Configmap storing custom CA certificate if any
+customCAConfigMap:
+# -- Path containing ssl certs within the container. Used only if customCAConfigMap is used
+systemCertPath: /etc/ssl/certs
 
 service:
   type: ClusterIP
