@@ -31,7 +31,7 @@ spec:
           - /bin/sh
           - -c
           - >
-              for i in {{ include "enterprise-kyverno.policysets" . }}; 
+              for i in {{ include "enterprise-kyverno.policysetsStr" . }}; 
               do 
                 kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete PolicySet $i;
               done;

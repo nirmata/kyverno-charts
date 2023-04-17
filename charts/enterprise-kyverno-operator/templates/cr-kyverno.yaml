@@ -13,7 +13,7 @@ spec:
   namespace: {{ include "kyverno.namespace" . }}
   repository: {{ .Values.kyverno.image.repository }}
   version: {{ .Values.kyverno.image.tag }}
-  replicas: {{ .Values.kyverno.replicas }}
+  replicas: {{ include "enterprise-kyverno.kyvernoReplicas" . }}
 
   helm:
     values:
