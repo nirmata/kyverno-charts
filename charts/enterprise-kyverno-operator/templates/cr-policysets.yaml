@@ -1,4 +1,4 @@
-{{ range $pol := .Values.policies.policySets }}
+{{ range $pol := include "enterprise-kyverno.enabledPolicysets" . | split "," }}
 
 {{- $psetName := "invalid" -}}
 {{- $psetType := "" -}}
@@ -17,6 +17,12 @@
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
   {{- $chartName = "pod-security-policies" -}}
+  {{- $version = "0.1.0" -}}
+{{- else if eq $pol "rbac-best-practices" -}}
+  {{- $psetName = "rbac-best-practices" -}}
+  {{- $psetType = "helm" -}}
+  {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
+  {{- $chartName = "rbac-best-practice-policies" -}}
   {{- $version = "0.1.0" -}}
 {{- end -}}
 
