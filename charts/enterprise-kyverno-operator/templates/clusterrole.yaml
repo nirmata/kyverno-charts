@@ -36,6 +36,9 @@ rules:
   - get
   - list
   - watch
+  {{- if eq .Values.certManager "operator" }}
+  - update
+  {{- end}}
 - apiGroups:
   - apps
   resources:
