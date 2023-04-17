@@ -13,14 +13,14 @@ The Image Scan Adapter is a Kubernetes controller that integrates with image sca
 1. Add the Image Scan Adapter Helm repository:
 
 ```console
-helm repo add image-scan-adapter https://nirmata.github.io/image-scan-adapter/
-helm repo update image-scan-adapter
+helm repo add kyverno-charts https://nirmata.github.io/kyverno-charts/
+helm repo update kyverno-charts
 ```
 
 2. Install the Helm Chart:
 
 ```console
-helm install image-scan-adapter image-scan-adapter/image-scan-adapter --namespace image-scan-adapter --create-namespace
+helm install image-scan-adapter kyverno-charts/image-scan-adapter --namespace image-scan-adapter --create-namespace
 ```
 
 3. Verify the Image Scan Adapter installation:
