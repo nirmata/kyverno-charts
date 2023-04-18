@@ -17,7 +17,7 @@ spec:
   scanInterval: {{ .Values.scanInterval }}
   scanAll: {{ .Values.scanAll }}
   selectors:
-    {{- if .Values.severity }}
+    {{- if .Values.selectors.namespaces }}
     namespaces: 
       {{- range $val := .Values.selectors.namespaces }}
         - {{ $val }}
