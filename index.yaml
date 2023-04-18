@@ -41,6 +41,20 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/best-practice-policies-0.1.0/best-practice-policies-0.1.0.tgz
     version: 0.1.0
+  cluster-registrator:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-04-18T08:04:09.638851805Z"
+    description: A Helm chart for Nirmata Kubernetes Controller Registrator
+    digest: 8215fb723e91a7bbe3bd3c64e0a29d5de4ca79596074eb188699f465391b4631
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: cluster-registrator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/cluster-registrator-0.1.1/cluster-registrator-0.1.1.tgz
+    version: 0.1.1
   enterprise-kyverno-operator:
   - apiVersion: v2
     appVersion: v0.1.4
@@ -1642,4 +1656,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-04-18T04:44:55.473844575Z"
+generated: "2023-04-18T08:04:09.639243209Z"
