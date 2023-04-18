@@ -3,22 +3,7 @@ Enterprise Kyverno is a Kubernetes Operator to manage lifecycle of Kyverno, Adap
 
 ## Prerequisites
 ### Get license key
-You need a license key to run Enterprise Kyverno. If you are using Nirmata Enterprise for Kyverno, it is available in the UI. Else contact support@nirmata.com.
-
-### (Optional) External certificate management for webhooks
-Kyverno Operator uses webhooks to provide enhanced functionality such as logging user information in resource change events logged into the Kubernetes event stream, and some enhanced semantic checks for custom resources.
-
-Webhooks need a few SSL key-certificates to work properly. By default, kyverno operator manages the creation and rotation of these. But alternatively these can be managed using external tools like cert-manager or other custom mechanisms.
-
-####  Manual certificate management
-For this, one would need to manually create the secret containing certificate and keys needed by the operator webhook, and provide the base64 encoded CA bundle to helm install command below as well. The secret should be of type `kubernetes.io/tls`, with keys `tls.crt`, `tls.key`, and `ca.crt`. The value of `ca.crt` should also be provided to the helm install command (arg `--set certManager=other --set caBundle=...`) so that it gets added to the CABundle for needed webhook configurations.
-
-####  Certificate management through cert-manager
-If [cert-manager](https://cert-manager.io/) is selected as a tool for certificate management, it needs to be installed by following instructions [here](https://cert-manager.io/docs/installation/). Typically,
-```bash
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
-```
-And then, provide the argument `--set certManager=cert-manager` to the helm install command described below.
+You need a license key to run Enterprise Kyverno. If you are using Nirmata Enterprise for Kyverno, it is available in the UI. Else contact `support@nirmata.com`.
 
 ### (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
 Create the namespace
@@ -72,14 +57,23 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 ```
 
 ## Configure Adapters
-Note: CIS Adapter is currently available within Kyverno Operator as a Release Candidate only. Use the `--devel` flag in helm commands to exercise the CIS Adapter feature.
+*Note*: Image Scan Adapter is currently available within Kyverno Operator as a Release Candidate only. Use the `--devel` flag in helm commands to exercise this feature.
 
-Adapters such as AWS, CIS and others can be configured by setting appropriate flags corresponding to that adapter. In general, we need to provide 2 flags
+Adapters such as AWS, CIS, Image Scan and others can be configured by setting appropriate flags corresponding to that adapter. In general, we need to provide 2 flags
 - Flags to create RBAC resources such as clusterroles, bindings, serviceaccounts. E.g. for CIS Adapter provide `--set cisAdapter.rbac.create=true --set cisAdapter.serviceAccount.create=true`.
 - Flags to create the CR for that adapter at chart install time itself. E.g. for CIS Adapter `--set cisAdapter.createCR=true`
 
-See the Helm chart values below for specifics.
+See the Helm chart values below for specifics on each adapter.
 
+## Profiles
+*Note*: Profiles are currently available within Kyverno Operator as a Release Candidate only. Use the `--devel` flag in helm commands to exercise this feature.
+
+The chart allows specification of a `profile` which is like a shorthand for recommended settings while installing operator in various deployment and other environments. These are:
+- `nil`: Policy tamper detection on, non-HA mode for Kyverno, install policysets for workload best practices and pod security.
+- `dev`: Policy tamper detection off, non-HA mode for Kyverno, install policysets for workload best practices, pod security, and rbac best practices.
+- `prod`: Policy tamper detection on, HA mode for Kyverno with 3 replicas, install policysets for workload best practices, pod security, and rbac best practices.
+
+In case any argument determining the above profiles are explicitly provided, those will override the values inferred from profiles.
 
 ## Helm Chart Values
 
@@ -91,6 +85,7 @@ See the Helm chart values below for specifics.
 | certManager | string | `operator` | Webhook cert management mechanism. Valid values are "operator", "cert-manager", "other". |
 | licenseKey | string | `nil`| License key (required) |
 | apiKey | string | `nil` | License server API key |
+| profile | string | `nil` | Operator profile, one of `dev`, `prod`, `nil`. See description of profiles above.  |
 | customCAConfigMap | string | | Configmap storing custom CA certificate |
 | systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |
 | rbac.create | bool | `true` | Enable RBAC resources creation |
@@ -126,3 +121,21 @@ See the Helm chart values below for specifics.
 | cisAdapter.serviceAccount.create | bool | false | Create Service Account for CIS Adapter, if CIS Adapter is going to be enabled now (through the cisAdapter.createCR param below) or later |
 | cisAdapter.createCR | bool | false | Enable CIS Adapter by creating its Adapter Config CR |
 | cisAdapter.helm | object | `nil` | Free form yaml section with helm parameters in CIS Adapter Helm chart. Needed only if cisAdapter.createCR is true. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/kube-bench-adapter#values) |
+| imageScanAdapter.rbac.create | bool | false | Create RBAC resources for Image Scan Adapter, if it is going to be enabled now (through the imageScanAdapter.createCR helm param below) or later |
+| imageScanAdapter.createCR | bool | false | Enable Image Scan Adapter by creating its Adapter Config CR |
+| imageScanAdapter.helm | object | `scanAll: true` | Free form yaml section with helm parameters in Image Scan Adapter Helm chart. Needed only if imageScanAdapter.createCR is true. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/image-scan-adapter#values) |
+
+## (Optional) External certificate management for webhooks
+Kyverno Operator uses webhooks to provide enhanced functionality such as logging user information in resource change events logged into the Kubernetes event stream, and some enhanced semantic checks for custom resources.
+
+Webhooks need a few SSL key-certificates to work properly. By default, kyverno operator manages the creation and rotation of these. But alternatively these can be managed using external tools like cert-manager or other custom mechanisms.
+
+###  Manual certificate management
+For this, one would need to manually create the secret containing certificate and keys needed by the operator webhook, and provide the base64 encoded CA bundle to helm install command below as well. The secret should be of type `kubernetes.io/tls`, with keys `tls.crt`, `tls.key`, and `ca.crt`. The value of `ca.crt` should also be provided to the helm install command (arg `--set certManager=other --set caBundle=...`) so that it gets added to the CABundle for needed webhook configurations.
+
+###  Certificate management through cert-manager
+If [cert-manager](https://cert-manager.io/) is selected as a tool for certificate management, it needs to be installed by following instructions [here](https://cert-manager.io/docs/installation/). Typically,
+```bash
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
+```
+And then, provide the argument `--set certManager=cert-manager` to the helm install command described below.
