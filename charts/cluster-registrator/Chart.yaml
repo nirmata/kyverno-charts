@@ -1,5 +1,5 @@
 apiVersion: v2
-name: nirmata-cluster-registrator-chart
+name: cluster-registrator
 description: A Helm chart for Nirmata Kubernetes Controller Registrator
 
 # A chart can be either an 'application' or a 'library' chart.
