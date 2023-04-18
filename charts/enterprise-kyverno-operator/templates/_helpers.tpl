@@ -89,6 +89,15 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/* Get the namespace name. */}}
+{{- define "image-scan-adapter.namespace" -}}
+{{- if .Values.imageScanAdapter.namespace -}}
+    {{- .Values.imageScanAdapter.namespace -}}
+{{- else -}}
+    {{- "image-scan-adapter" -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Get the namespace name. */}}
 {{- define "kube-bench.namespace" -}}
 {{- if .Values.cisAdapter.namespace -}}
     {{- .Values.cisAdapter.namespace -}}

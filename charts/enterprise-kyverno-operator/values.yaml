@@ -117,6 +117,21 @@ awsAdapter:
     name:
     region:
 
+imageScanAdapter:
+  createCR: false
+  namespace: image-scan-adapter
+  replicas: 1
+  image:
+    repository: ghcr.io/nirmata/image-scan-adapter
+    tag: v0.1.0
+  rbac:
+    create: false
+    serviceAccount:
+      name:
+  roleArn:
+  nameOverride: "image-scan-adapter"
+  fullnameOverride: "image-scan-adapter"
+
 cisAdapter:
   createCR: false
   namespace: cis-adapter
