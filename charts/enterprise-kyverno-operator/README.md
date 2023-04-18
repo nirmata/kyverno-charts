@@ -128,14 +128,7 @@ In case any argument determining the above profiles are explicitly provided, tho
 ## (Optional) External certificate management for webhooks
 Kyverno Operator uses webhooks to provide enhanced functionality such as logging user information in resource change events logged into the Kubernetes event stream, and some enhanced semantic checks for custom resources.
 
-Webhooks need a few SSL key-certificates to work properly. By default, kyverno operator manages the creation and rotation of these. But alternatively these can be managed using external tools like cert-manager or other custom mechanisms.
+Webhooks need a few SSL key-certificates to work properly. By default, kyverno operator manages the creation and rotation of these. But alternatively these can be managed manually too.
 
 ###  Manual certificate management
 For this, one would need to manually create the secret containing certificate and keys needed by the operator webhook, and provide the base64 encoded CA bundle to helm install command below as well. The secret should be of type `kubernetes.io/tls`, with keys `tls.crt`, `tls.key`, and `ca.crt`. The value of `ca.crt` should also be provided to the helm install command (arg `--set certManager=other --set caBundle=...`) so that it gets added to the CABundle for needed webhook configurations.
-
-###  Certificate management through cert-manager
-If [cert-manager](https://cert-manager.io/) is selected as a tool for certificate management, it needs to be installed by following instructions [here](https://cert-manager.io/docs/installation/). Typically,
-```bash
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
-```
-And then, provide the argument `--set certManager=cert-manager` to the helm install command described below.
