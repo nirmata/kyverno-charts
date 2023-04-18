@@ -5,9 +5,21 @@ metadata:
   labels:
     {{- include "image-scan-adapter.labels" . | nindent 4 }}
 spec:
+  {{- if .Values.severity }}
+  severity: 
+    {{- range $val := .Values.severity }}
+      - {{ $val }}
+    {{- end }}
+  {{- end }}
   policyReportPrefix: {{ .Values.policyReportPrefix }}
   scannerEngine: {{ .Values.scannerEngine }}
   outputFormat: {{ .Values.outputFormat }}
   scanInterval: {{ .Values.scanInterval }}
   scanAll: {{ .Values.scanAll }}
-
+  selectors:
+    {{- if .Values.severity }}
+    namespaces: 
+      {{- range $val := .Values.selectors.namespaces }}
+        - {{ $val }}
+      {{- end }}
+    {{- end }}
