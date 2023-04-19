@@ -1,0 +1,15 @@
+{{- if .Values.imageScanAdapter.rbac.create }}
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ template "image-scan-adapter.name" . }}-installer
+  namespace: {{ include "image-scan-adapter.namespace" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "image-scan-adapter.name" . }}-installer
+subjects:
+- kind: ServiceAccount
+  name: {{ template "enterprise-kyverno.rbac.serviceAccountName" . }}
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+{{- end }}

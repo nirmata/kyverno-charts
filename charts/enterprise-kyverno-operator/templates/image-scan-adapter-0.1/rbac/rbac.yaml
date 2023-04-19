@@ -1,0 +1,80 @@
+{{- if and (eq .Values.imageScanAdapter.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "image-scan-adapter.fullname" . }}
+  labels:
+    {{- include "image-scan-adapter.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - security.nirmata.io
+  resources:
+  - imagescanadapterconfigs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - security.nirmata.io
+  resources:
+  - imagescanadapterconfigs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - security.nirmata.io
+  resources:
+  - imagescanadapterconfigs/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - wgpolicyk8s.io
+  resources:
+  - policyreports
+  verbs:
+  - get
+  - list
+  - create
+  - update
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "image-scan-adapter.serviceAccountName" . }}
+  namespace: {{ include "image-scan-adapter.namespace" . }}
+  labels:
+    {{- include "image-scan-adapter.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "image-scan-adapter.fullname" . }}
+  labels:
+    {{- include "image-scan-adapter.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "image-scan-adapter.fullname" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "image-scan-adapter.serviceAccountName" . }}
+  namespace: {{ include "image-scan-adapter.namespace" . }}
+{{- end }}

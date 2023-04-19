@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-profile:
+profile: ""
 
 namespace:
 
@@ -42,7 +42,7 @@ certManager: operator
 kyverno:
   createCR: true
   enablePolicyExceptions: false
-  replicaCount: 1
+  replicaCount:
   rbac:
     create: true
     serviceAccount:
@@ -98,8 +98,6 @@ kyverno:
 
 policies:
   policySets:
-  - best-practices
-  - pod-security
 
 awsAdapter:
   createCR: false
@@ -118,6 +116,21 @@ awsAdapter:
   eksCluster:
     name:
     region:
+
+imageScanAdapter:
+  createCR: false
+  namespace: image-scan-adapter
+  replicas: 1
+  image:
+    repository: ghcr.io/nirmata/image-scan-adapter
+    tag: v0.1.0
+  rbac:
+    create: false
+    serviceAccount:
+      name:
+  roleArn:
+  nameOverride: "image-scan-adapter"
+  fullnameOverride: "image-scan-adapter"
 
 cisAdapter:
   createCR: false
