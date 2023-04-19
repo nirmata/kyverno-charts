@@ -7,7 +7,7 @@
     "Details": {
       "HelmDeliveryOptionDetails": {
         "CompatibleServices": ["EKS", "EKS-Anywhere"],
-        "ContainerImages": ["709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno:v1.9.2-n4k.nirmata.1","709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyvernopre:v1.9.2-n4k.nirmata.1", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno-cleanup-controller:v1.9.2-n4k.nirmata.1", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/awslm:0.1-rc3"],
+        "ContainerImages": ["709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno:v1.9.2-n4k.nirmata.1","709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyvernopre:v1.9.2-n4k.nirmata.1", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/cleanup-controller:v1.9.2-n4k.nirmata.1", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/awslm:0.1-rc3"],
         "HelmChartUri": "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno-chart:v1.11.2-02-aws",
         "Description": "Deploy Kyverno using Helm",
         "UsageInstructions": "Detailed usage instructions are here: https://docs.nirmata.io/n4k/provider-integrations/amazon-eks/\n",
