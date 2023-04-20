@@ -1,7 +1,7 @@
 {
   "Version": {
     "ReleaseNotes": "Kyverno v1.9.2 for AWS EKS and on-prem",
-    "VersionTitle": "v1.9.2-01"
+    "VersionTitle": "v1.9.2-02"
   },
   "DeliveryOptions": [{
     "Details": {
