@@ -89,6 +89,15 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/* Get the namespace name. */}}
+{{- define "image-scan-adapter.namespace" -}}
+{{- if .Values.imageScanAdapter.namespace -}}
+    {{- .Values.imageScanAdapter.namespace -}}
+{{- else -}}
+    {{- "image-scan-adapter" -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Get the namespace name. */}}
 {{- define "kube-bench.namespace" -}}
 {{- if .Values.cisAdapter.namespace -}}
     {{- .Values.cisAdapter.namespace -}}
@@ -104,18 +113,44 @@ Create secret to access container registry
 {{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.image.pullSecrets.registry (printf "%s:%s" .Values.image.pullSecrets.username .Values.image.pullSecrets.password | b64enc) | b64enc }}
 {{- end }}
 
-{{- define "enterprise-kyverno.policysets" -}}
-{{- if .Values.policies.policySets }}
-{{- range .Values.policies.policySets }}{{(print . " ") }} {{- end }}
-{{- else -}}
-{{- "" -}}
-{{- end -}}
-{{- end -}}
-
 {{- define "enterprise-kyverno.managecerts" -}}
 {{- if eq .Values.certManager "operator" -}}
     {{- true -}}
 {{- else -}}
     {{- false -}}
 {{- end -}}
+{{- end -}}
+
+{{- define "enterprise-kyverno.kyvernoReplicas" -}}
+{{- if eq .Values.profile "dev" -}}
+    {{- default 1 .Values.kyverno.replicaCount -}}
+{{- else if eq .Values.profile "prod" -}}
+    {{- default 3 .Values.kyverno.replicaCount -}}
+{{- else -}}
+    {{- default 1 .Values.kyverno.replicaCount -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "enterprise-kyverno.detectPolicyTamper" -}}
+{{- if eq .Values.profile "dev" -}}
+    {{- default false .Values.detectPolicyTamper -}}
+{{- else if eq .Values.profile "prod" -}}
+    {{- default true .Values.detectPolicyTamper -}}
+{{- else -}}
+    {{- default true .Values.detectPolicyTamper -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "enterprise-kyverno.enabledPolicysets" -}}
+{{- if eq .Values.profile "dev" -}}
+    {{- default ("pod-security,rbac-best-practices,best-practices") (join "," .Values.policies.policySets) -}}
+{{- else if eq .Values.profile "prod" -}}
+    {{- default ("pod-security,rbac-best-practices,best-practices") (join "," .Values.policies.policySets) -}}
+{{- else -}}
+    {{- default ("pod-security,best-practices") (join "," .Values.policies.policySets) -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "enterprise-kyverno.policysetsStr" -}}
+{{- range (include "enterprise-kyverno.enabledPolicysets" . | split ",") }}{{(print . " ") }} {{- end }}
 {{- end -}}

@@ -61,7 +61,7 @@ initContainer:
 licensemanagerImage:
   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/awslm
   # If licensemanagerImage.tag is missing, defaults to image.tag
-  tag:  0.1-rc2
+  tag:  0.1-rc3
   # If licensemanagerImage.pullPolicy is missing, defaults to image.pullPolicy
   pullPolicy:
   # No pull secrets just for licensemanagerImage; just add to image.pullSecrets
@@ -179,8 +179,8 @@ envVars: {}
 
 # -- Extra arguments to give to the binary.
 extraArgs:
-  - --autogenInternals=true
   - --loggingFormat=text
+  - --exceptionNamespace=kyverno
 
 # -- Array of extra init containers
 extraInitContainers: []
@@ -509,6 +509,9 @@ cleanupController:
     create: true
 
     serviceAccount:
+      # -- Create Service account
+      create: true
+
       # -- Service account name
       name:
 

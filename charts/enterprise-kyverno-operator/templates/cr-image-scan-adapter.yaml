@@ -1,0 +1,20 @@
+{{- if .Values.imageScanAdapter.createCR }}
+apiVersion: security.nirmata.io/v1alpha1
+kind: KyvernoAdapter
+metadata:
+  annotations:
+  labels:
+    {{- include "enterprise-kyverno.labels" . | nindent 4 }}
+  name: image-scan-adapter-config
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+spec:
+  adapterType: Vulnerability
+  namespace: {{ include "image-scan-adapter.namespace" . }}
+  repository: {{ .Values.imageScanAdapter.image.repository }}
+  version: {{ .Values.imageScanAdapter.image.tag }}
+  replicas: {{ .Values.imageScanAdapter.replicas }}
+
+  helm:
+    values:
+      scanAll: true
+{{- end }}

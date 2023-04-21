@@ -1,0 +1,11 @@
+{{- if .Values.imageScanAdapter.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace:  {{ include "image-scan-adapter.namespace" . }}
+  name: {{ include "image-scan-adapter.name" . }}-installer
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+{{- end}}

@@ -1,0 +1,6 @@
+{{- if .Values.imageScanAdapter.rbac.create }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "image-scan-adapter.namespace" . }}
+{{- end}}
