@@ -2,7 +2,7 @@ apiVersion: v2
 name: enterprise-kyverno-operator
 description: Helm Chart for Enterprise Kyverno Operator
 type: application
-version: v0.2.1
+version: v0.2.2-rc.1
 appVersion: v0.1.5
 
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
