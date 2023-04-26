@@ -43,6 +43,10 @@ kyverno:
   createCR: true
   enablePolicyExceptions: false
   replicaCount:
+  config:
+    name: ""
+  metricsConfig:
+    name: ""
   rbac:
     create: true
     serviceAccount:
@@ -83,6 +87,7 @@ kyverno:
       # -- Create RBAC resources
       create: true
       serviceAccount:
+        name:
       clusterRole:
         # -- Extra resource permissions to add in the cluster role
         extraResources: []
@@ -93,6 +98,7 @@ kyverno:
       # -- Create RBAC resources
       create: true
       serviceAccount:
+        name:
       clusterRole:
         # -- Extra resource permissions to add in the cluster role
         extraResources: []
