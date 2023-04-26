@@ -630,4 +630,3 @@ See: https://kyverno.io/docs/kyverno-cli/
 ## Requirements
 
 Kubernetes: `>=1.16.0-0`
-
