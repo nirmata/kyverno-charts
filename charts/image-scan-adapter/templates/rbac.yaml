@@ -38,6 +38,7 @@ rules:
   - namespaces
   verbs:
   - list
+  - watch
 - apiGroups:
   - ""
   resources:
@@ -45,6 +46,7 @@ rules:
   verbs:
   - get
   - list
+  - watch
 - apiGroups:
   - wgpolicyk8s.io
   resources:
@@ -54,6 +56,21 @@ rules:
   - list
   - create
   - update
+  - watch
+- apiGroups:
+  - kyverno.io
+  resources:
+  - clusterpolicies
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - kyverno.io
+  resources:
+  - policies
+  verbs:
+  - list
+  - watch
 ---
 apiVersion: v1
 kind: ServiceAccount
