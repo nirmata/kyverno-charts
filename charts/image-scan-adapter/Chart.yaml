@@ -3,7 +3,7 @@ name: image-scan-adapter
 description: A Helm chart for Kubernetes
 type: application
 version: "v0.1.5"
-appVersion: "v0.1.0"
+appVersion: "v0.1.1"
 keywords:
   - kubernetes
   - nirmata
