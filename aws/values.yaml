@@ -31,6 +31,7 @@ rbac:
 
 aws:
   region: us-east-1
+  licenseConfigSecretName:
 
 image:
   # -- Image repository
