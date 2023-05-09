@@ -24,7 +24,8 @@ rbac:
 
 aws:
   region: us-east-1
-
+  licenseConfigSecretName:
+  
 image:
   # -- Image repository
   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno
@@ -472,6 +473,3 @@ webhooksCleanup:
 
 # -- A writable volume to use for the TUF root initialization
 tufRootMountPath: /.sigstore
-
-aws:
-  licenseConfigSecretName:
