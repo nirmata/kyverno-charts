@@ -37,7 +37,7 @@ image:
   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno
   # -- Image tag
   # Defaults to appVersion in Chart.yaml if omitted
-  tag: v1.9.2-n4k.nirmata.1
+  tag: v1.9.3-n4k.nirmata.1
   # -- Image pull policy
   pullPolicy: IfNotPresent
   # -- Image pull secrets
@@ -48,7 +48,7 @@ initImage:
   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyvernopre
   # -- Image tag
   # If initImage.tag is missing, defaults to image.tag
-  tag: v1.9.2-n4k.nirmata.1
+  tag: v1.9.3-n4k.nirmata.1
   # -- Image pull policy
   # If initImage.pullPolicy is missing, defaults to image.pullPolicy
   pullPolicy:
@@ -537,7 +537,7 @@ cleanupController:
     repository: ghcr.io/nirmata/cleanup-controller  # kyverno: replaced in e2e tests
     # -- Image tag
     # Defaults to appVersion in Chart.yaml if omitted
-    tag: v1.9.2-n4k.nirmata.1
+    tag: v1.9.3-n4k.nirmata.1
     # -- Image pull policy
     pullPolicy: IfNotPresent
     # -- Image pull secrets
