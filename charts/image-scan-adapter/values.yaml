@@ -26,6 +26,9 @@ scanInterval: 12h
 # -- Disable selective scan, "false" by default
 scanAll: false
 
+# -- Memory limit for the resource, "128Mi" by default
+resourceMemoryLimit: 128Mi
+
 selectors:
   # -- Namespaces to run image scan on, by default adapter will scan all namespaces
   namespaces: []
