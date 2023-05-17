@@ -58,6 +58,27 @@ entries:
   enterprise-kyverno-operator:
   - apiVersion: v2
     appVersion: v0.1.7
+    created: "2023-05-17T11:54:59.166380154Z"
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: 801acad16744b0ca51555c14992cab9fc2963ed51291b72f802e3d2ded312c31
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: enterprise-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/enterprise-kyverno-operator-v0.2.4/enterprise-kyverno-operator-v0.2.4.tgz
+    version: v0.2.4
+  - apiVersion: v2
+    appVersion: v0.1.7
     created: "2023-05-12T08:36:41.384448343Z"
     description: Helm Chart for Enterprise Kyverno Operator
     digest: 8b385913caa55211c6d92e7f677d122e6a53ff1102d3ddd92132b52c30ef7051
@@ -722,6 +743,40 @@ entries:
     - https://github.com/nirmata/kyverno-charts/releases/download/kube-bench-adapter-v1.1.0/kube-bench-adapter-v1.1.0.tgz
     version: v1.1.0
   kyverno:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: support for webhook annotations in config map
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: v1.9.3-n4k.nirmata.1
+    created: "2023-05-17T11:54:59.46297051Z"
+    description: Kubernetes Native Policy Management
+    digest: c508f6d6df310616db3e2079c0e9254de25e059dc87a96b1dde97a4dfc313370
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy engine
+    - validating webhook
+    - admissions controller
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno
+    sources:
+    - https://github.com/kyverno/kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-1.6.7/kyverno-1.6.7.tgz
+    version: 1.6.7
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
@@ -1824,4 +1879,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-05-16T05:05:03.301753569Z"
+generated: "2023-05-17T11:54:59.463762012Z"
