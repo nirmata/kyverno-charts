@@ -29,4 +29,3 @@ annotations:
   artifacthub.io/changes: |
     - kind: added
       description: support for webhook annotations in config map
-
