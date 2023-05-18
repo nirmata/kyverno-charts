@@ -1,8 +1,8 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 1.6.6
-appVersion: v1.9.2-n4k.nirmata.1
+version: 1.6.7
+appVersion: v1.9.3-n4k.nirmata.1
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
@@ -27,7 +27,5 @@ annotations:
       url: https://kyverno.io/docs
   # valid kinds are: added, changed, deprecated, removed, fixed and security
   artifacthub.io/changes: |
-    - kind: changed
-      description: Syntax change for webhooksCleanup switch to match with the rest of the file
-    - kind: fixed
-      description: Handle multiple extraArgs in init container
+    - kind: added
+      description: support for webhook annotations in config map
