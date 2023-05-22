@@ -36,6 +36,18 @@
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "multitenancy-best-practice-policies" -}}
   {{- $version = "0.1.1" -}}
+{{- else if eq $pol "best-practices-legacy" -}}
+  {{- $psetName = "best-practices-legacy" -}}
+  {{- $psetType = "helm" -}}
+  {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
+  {{- $chartName = "best-practice-policies" -}}
+  {{- $version = "0.1.1" -}}
+{{- else if eq $pol "pod-security-legacy" -}}
+  {{- $psetName = "pod-security-legacy" -}}
+  {{- $psetType = "helm" -}}
+  {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
+  {{- $chartName = "pod-security-policies" -}}
+  {{- $version = "0.1.0" -}}
 {{- end -}}
 
 {{- if ne $psetName "invalid" -}}
