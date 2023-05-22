@@ -57,21 +57,18 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 ```
 
 ## Configure Adapters
-*Note*: Image Scan Adapter is currently available within Kyverno Operator as a Release Candidate only. Use the `--devel` flag in helm commands to exercise this feature.
-
 Adapters such as AWS, CIS, Image Scan and others can be configured by setting appropriate flags corresponding to that adapter. In general, we need to provide 2 flags
 - Flags to create RBAC resources such as clusterroles, bindings, serviceaccounts. E.g. for CIS Adapter provide `--set cisAdapter.rbac.create=true --set cisAdapter.serviceAccount.create=true`.
 - Flags to create the CR for that adapter at chart install time itself. E.g. for CIS Adapter `--set cisAdapter.createCR=true`
+- Similarly for other adapters, like `awsAdapter.`... and `imageScanAdapter.`...
 
 See the Helm chart values below for specifics on each adapter.
 
 ## Profiles
-*Note*: Profiles are currently available within Kyverno Operator as a Release Candidate only. Use the `--devel` flag in helm commands to exercise this feature.
-
 The chart allows specification of a `profile` which is like a shorthand for recommended settings while installing operator in various deployment and other environments. These are:
-- `nil`: Policy tamper detection on, non-HA mode for Kyverno, install policysets for workload best practices and pod security.
-- `dev`: Policy tamper detection off, non-HA mode for Kyverno, install policysets for workload best practices, pod security, and rbac best practices.
-- `prod`: Policy tamper detection on, HA mode for Kyverno with 3 replicas, install policysets for workload best practices, pod security, and rbac best practices.
+- `nil`: Policy tamper detection on, non-HA mode for Kyverno, policysets for k8s best practices and pod security.
+- `dev`: Policy tamper detection off, non-HA mode for Kyverno, policysets for k8s best practices, pod security, and rbac best practices.
+- `prod`: Policy tamper detection on, HA mode for Kyverno with 3 replicas, policysets for k8s best practices, pod security, and rbac best practices.
 
 In case any argument determining the above profiles are explicitly provided, those will override the values inferred from profiles.
 
@@ -110,7 +107,7 @@ In case any argument determining the above profiles are explicitly provided, tho
 | kyverno.image.tag | string | `v1.9.1-n4k.nirmata.1` | Image tag (defaults to chart app version) |
 | kyverno.enablePolicyExceptions| bool | `false` | Enable policyexceptions feature in Kyverno 1.9+ |
 | kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#values) |
-| policies.policySets | list | `["best-practices", "pod-security"]` | Default policy sets to be installed along with operator |
+| policies.policySets | list | `{k8s-best-practices,pod-security-baseline,pod-security-restricted}` | Default policy sets to be installed along with operator. Others are, `rbac-best-practices`, and `multitenancy-best-practices` |
 | awsAdapter.rbac.create | bool | false | Create RBAC resources for Kyverno AWS Adapter, if AWS Adapter is going to be enabled now (through the awsAdapter.createCR helm param below) or later |
 | awsAdapter.createCR | bool | false | Enable AWS Adapter by creating its Adapter Config CR |
 | awsAdapter.eksCluster.name | string | `nil` | EKS Cluster name. Required if awsAdapter.createCR is true |
