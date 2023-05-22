@@ -76,7 +76,7 @@ spec:
                 format: int32
                 type: integer
               repository:
-                default: ghcr.io/nirmata/kyverno
+                default: ghcr.io/nirmata
                 type: string
               secrets:
                 description: Secrets storing licenseKey, apiKey

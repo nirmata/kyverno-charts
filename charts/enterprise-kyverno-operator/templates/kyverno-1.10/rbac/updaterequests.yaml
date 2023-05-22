@@ -1,0 +1,37 @@
+{{- if and (eq .Values.kyverno.admissionController.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) (contains "v1.10" .Values.kyverno.image.tag) -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ template "kyverno110.rbac.roleName" . }}:admin:updaterequests
+  labels:
+    {{- include "kyverno110.rbac.labels.admin" . | nindent 4 }}
+rules:
+  - apiGroups:
+      - kyverno.io
+    resources:
+      - updaterequests
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ template "kyverno110.rbac.roleName" . }}:view:updaterequests
+  labels:
+    {{- include "kyverno110.rbac.labels.view" . | nindent 4 }}
+rules:
+  - apiGroups:
+      - kyverno.io
+    resources:
+      - updaterequests
+    verbs:
+      - get
+      - list
+      - watch
+{{- end -}}
