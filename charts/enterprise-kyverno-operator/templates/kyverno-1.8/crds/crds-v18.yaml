@@ -1105,7 +1105,7 @@ spec:
                                 description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                 type: string
                               reference:
-                                description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                 type: string
                             required:
                             - reference
@@ -2037,7 +2037,7 @@ spec:
                                           description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                           type: string
                                         reference:
-                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                           type: string
                                       required:
                                       - reference
@@ -2231,7 +2231,7 @@ spec:
                                           description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                           type: string
                                         reference:
-                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                           type: string
                                       required:
                                       - reference
@@ -2842,7 +2842,7 @@ spec:
                                     description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                     type: string
                                   reference:
-                                    description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                    description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                     type: string
                                 required:
                                 - reference
@@ -3774,7 +3774,7 @@ spec:
                                               description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                               type: string
                                             reference:
-                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                               type: string
                                           required:
                                           - reference
@@ -3968,7 +3968,7 @@ spec:
                                               description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                               type: string
                                             reference:
-                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                               type: string
                                           required:
                                           - reference
@@ -4652,7 +4652,7 @@ spec:
                                 description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                 type: string
                               reference:
-                                description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                 type: string
                             required:
                             - reference
@@ -5340,7 +5340,7 @@ spec:
                                           description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                           type: string
                                         reference:
-                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                           type: string
                                       required:
                                       - reference
@@ -5656,7 +5656,7 @@ spec:
                                           description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                           type: string
                                         reference:
-                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                           type: string
                                       required:
                                       - reference
@@ -6242,7 +6242,7 @@ spec:
                                     description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                     type: string
                                   reference:
-                                    description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                    description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                     type: string
                                 required:
                                 - reference
@@ -7174,7 +7174,7 @@ spec:
                                               description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                               type: string
                                             reference:
-                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                               type: string
                                           required:
                                           - reference
@@ -7368,7 +7368,7 @@ spec:
                                               description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                               type: string
                                             reference:
-                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                               type: string
                                           required:
                                           - reference
@@ -8257,7 +8257,7 @@ spec:
                                 description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                 type: string
                               reference:
-                                description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                 type: string
                             required:
                             - reference
@@ -9189,7 +9189,7 @@ spec:
                                           description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                           type: string
                                         reference:
-                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                           type: string
                                       required:
                                       - reference
@@ -9383,7 +9383,7 @@ spec:
                                           description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                           type: string
                                         reference:
-                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                           type: string
                                       required:
                                       - reference
@@ -9994,7 +9994,7 @@ spec:
                                     description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                     type: string
                                   reference:
-                                    description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                    description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                     type: string
                                 required:
                                 - reference
@@ -10926,7 +10926,7 @@ spec:
                                               description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                               type: string
                                             reference:
-                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                               type: string
                                           required:
                                           - reference
@@ -11120,7 +11120,7 @@ spec:
                                               description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                               type: string
                                             reference:
-                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                               type: string
                                           required:
                                           - reference
@@ -11804,7 +11804,7 @@ spec:
                                 description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                 type: string
                               reference:
-                                description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                 type: string
                             required:
                             - reference
@@ -12492,7 +12492,7 @@ spec:
                                           description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                           type: string
                                         reference:
-                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                           type: string
                                       required:
                                       - reference
@@ -12808,7 +12808,7 @@ spec:
                                           description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                           type: string
                                         reference:
-                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                          description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                           type: string
                                       required:
                                       - reference
@@ -13394,7 +13394,7 @@ spec:
                                     description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                     type: string
                                   reference:
-                                    description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                    description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                     type: string
                                 required:
                                 - reference
@@ -14326,7 +14326,7 @@ spec:
                                               description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                               type: string
                                             reference:
-                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                               type: string
                                           required:
                                           - reference
@@ -14520,7 +14520,7 @@ spec:
                                               description: JMESPath is an optional JSON Match Expression that can be used to transform the ImageData struct returned as a result of processing the image reference.
                                               type: string
                                             reference:
-                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/kyverno/kyverno:latest'
+                                              description: 'Reference is image reference to a container image in the registry. Example: ghcr.io/nirmata/kyverno:latest'
                                               type: string
                                           required:
                                           - reference
