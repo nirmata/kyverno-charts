@@ -632,7 +632,7 @@ admissionController:
       # -- Image registry
       registry: ghcr.io
       # -- Image repository
-      repository: kyverno/kyvernopre
+      repository: nirmata/kyvernopre
       # -- (string) Image tag
       # If missing, defaults to image.tag
       tag: ~
@@ -674,7 +674,7 @@ admissionController:
       # -- Image registry
       registry: ghcr.io
       # -- Image repository
-      repository: kyverno/kyverno
+      repository: nirmata/kyverno
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
@@ -830,9 +830,9 @@ backgroundController:
     registry: ~
     # If you want to manage the registry you should remove it from the repository
     # registry: ghcr.io
-    # repository: kyverno/background-controller
+    # repository: nirmata/background-controller
     # -- Image repository
-    repository: ghcr.io/kyverno/background-controller
+    repository: ghcr.io/nirmata/background-controller
     # -- Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag:  # replaced in e2e tests
@@ -1041,7 +1041,7 @@ cleanupController:
     # -- Image registry
     registry: ghcr.io
     # -- Image repository
-    repository: kyverno/cleanup-controller
+    repository: nirmata/cleanup-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -1300,7 +1300,7 @@ reportsController:
     # -- Image registry
     registry: ghcr.io
     # -- Image repository
-    repository: kyverno/reports-controller
+    repository: nirmata/reports-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
