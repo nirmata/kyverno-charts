@@ -11,31 +11,31 @@
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "kubernetes-best-practice-policies" -}}
-  {{- $version = "0.1.0" -}}
+  {{- $version = "0.1.2" -}}
 {{- else if eq $pol "pod-security-baseline" -}}
   {{- $psetName = "pod-security-baseline" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "pss-baseline-policies" -}}
-  {{- $version = "0.1.0" -}}
+  {{- $version = "0.1.1" -}}
 {{- else if eq $pol "pod-security-restricted" -}}
   {{- $psetName = "pod-security-restricted" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "pss-restricted-policies" -}}
-  {{- $version = "0.1.0" -}}
+  {{- $version = "0.1.1" -}}
 {{- else if eq $pol "rbac-best-practices" -}}
   {{- $psetName = "rbac-best-practices" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "rbac-best-practice-policies" -}}
-  {{- $version = "0.1.0" -}}
+  {{- $version = "0.1.1" -}}
 {{- else if eq $pol "multitenancy-best-practices" -}}
   {{- $psetName = "multitenancy-best-practices" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "multitenancy-best-practice-policies" -}}
-  {{- $version = "0.1.0" -}}
+  {{- $version = "0.1.1" -}}
 {{- else if eq $pol "best-practices-legacy" -}}
   {{- $psetName = "best-practices-legacy" -}}
   {{- $psetType = "helm" -}}
