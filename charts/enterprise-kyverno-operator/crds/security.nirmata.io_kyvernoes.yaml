@@ -82,7 +82,7 @@ spec:
                 description: Secrets storing licenseKey, apiKey
                 type: string
               version:
-                default: v1.9.1-n4k.nirmata.1
+                default: v1.9.4-n4k.nirmata.1
                 type: string
             type: object
           status:
