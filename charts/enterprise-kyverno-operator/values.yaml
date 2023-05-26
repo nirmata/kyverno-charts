@@ -79,7 +79,7 @@ kyverno:
     # -- Image repository
     repository: ghcr.io/nirmata/kyverno
     # -- Image tag
-     tag: v1.9.4-n4k.nirmata.1
+    tag: v1.9.4-n4k.nirmata.1
 
   # Additional parameters for Kyverno from Kyverno Helm Chart
   helm:
