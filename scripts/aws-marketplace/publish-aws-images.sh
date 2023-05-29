@@ -1,4 +1,4 @@
-N4K_VERSION="${N4K_VERSION:-v1.9.4-n4k.nirmata.1}"
+N4K_VERSION="${N4K_VERSION:-v1.9.5-n4k.nirmata.1}"
 
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 709825985650.dkr.ecr.us-east-1.amazonaws.com
 
