@@ -478,6 +478,27 @@ entries:
     version: v0.1.0-rc.1
   image-scan-adapter:
   - apiVersion: v2
+    appVersion: v0.1.2
+    created: "2023-06-05T10:34:24.134246347Z"
+    description: A Helm chart for Kubernetes
+    digest: d617f54047a0d466ae457b295903e79b08dc1f1ef53316b91d71782d587eea74
+    keywords:
+    - kubernetes
+    - nirmata
+    - image
+    - scan
+    - adapter
+    - policy
+    - report
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: image-scan-adapter
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/image-scan-adapter-v0.1.8/image-scan-adapter-v0.1.8.tgz
+    version: v0.1.8
+  - apiVersion: v2
     appVersion: v0.1.1
     created: "2023-05-26T08:06:51.796450045Z"
     description: A Helm chart for Kubernetes
@@ -1997,4 +2018,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-05-29T11:01:25.619927422Z"
+generated: "2023-06-05T10:34:24.134946291Z"
