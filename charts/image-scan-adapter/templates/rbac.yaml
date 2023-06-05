@@ -107,6 +107,16 @@ rules:
   - list
   - update
   - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - list
+  - create
+  - get
+  - update
+  - watch
 ---
 apiVersion: v1
 kind: ServiceAccount
