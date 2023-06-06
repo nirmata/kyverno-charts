@@ -16,10 +16,10 @@ spec:
   outputFormat: {{ .Values.outputFormat }}
   scanInterval: {{ .Values.scanInterval }}
   scanAll: {{ .Values.scanAll }}
+  {{- if gt (len .Values.selectors.namespaces) 0 }}
   selectors:
-    {{- if .Values.selectors.namespaces }}
     namespaces: 
       {{- range $val := .Values.selectors.namespaces }}
         - {{ $val }}
       {{- end }}
-    {{- end }}
+  {{- end }}
