@@ -57,6 +57,27 @@ entries:
     version: 0.1.1
   enterprise-kyverno-operator:
   - apiVersion: v2
+    appVersion: v0.1.8
+    created: "2023-06-06T11:46:16.00072497Z"
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: 550edd93f7c1f3098a3efcd1df40307b0720c3e3ef4510aa7503f99d381337c3
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: enterprise-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/enterprise-kyverno-operator-v0.2.8/enterprise-kyverno-operator-v0.2.8.tgz
+    version: v0.2.8
+  - apiVersion: v2
     appVersion: v0.1.7
     created: "2023-05-29T11:01:25.407576596Z"
     description: Helm Chart for Enterprise Kyverno Operator
@@ -477,6 +498,27 @@ entries:
     - https://github.com/nirmata/kyverno-charts/releases/download/enterprise-kyverno-operator-v0.1.0-rc.1/enterprise-kyverno-operator-v0.1.0-rc.1.tgz
     version: v0.1.0-rc.1
   image-scan-adapter:
+  - apiVersion: v2
+    appVersion: v0.1.2
+    created: "2023-06-06T11:46:16.179572024Z"
+    description: A Helm chart for Kubernetes
+    digest: 1783ed16deaf1b0ec01cfecda8b7ac310e7b6f4450a66d94829ece4f32664deb
+    keywords:
+    - kubernetes
+    - nirmata
+    - image
+    - scan
+    - adapter
+    - policy
+    - report
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: image-scan-adapter
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/image-scan-adapter-v0.1.10/image-scan-adapter-v0.1.10.tgz
+    version: v0.1.10
   - apiVersion: v2
     appVersion: v0.1.2
     created: "2023-06-05T11:00:00.467451124Z"
@@ -2039,4 +2081,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-06-05T11:00:00.467839854Z"
+generated: "2023-06-06T11:46:16.180506535Z"
