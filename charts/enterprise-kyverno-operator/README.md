@@ -66,9 +66,9 @@ See the Helm chart values below for specifics on each adapter.
 
 ## Profiles
 The chart allows specification of a `profile` which is like a shorthand for recommended settings while installing operator in various deployment and other environments. These are:
-- `nil`: Policy tamper detection on, non-HA mode for Kyverno, policysets for k8s best practices and pod security.
-- `dev`: Policy tamper detection off, non-HA mode for Kyverno, policysets for k8s best practices, pod security, and rbac best practices.
-- `prod`: Policy tamper detection on, HA mode for Kyverno with 3 replicas, policysets for k8s best practices, pod security, and rbac best practices.
+- `nil`: Policy tamper detection on, non-HA mode for Kyverno, policysets for pod security.
+- `dev`: Policy tamper detection off, non-HA mode for Kyverno, policysets for pod security, and rbac best practices.
+- `prod`: Policy tamper detection on, HA mode for Kyverno with 3 replicas, policysets for pod security, and rbac best practices.
 
 In case any argument determining the above profiles are explicitly provided, those will override the values inferred from profiles.
 
@@ -82,7 +82,7 @@ In case any argument determining the above profiles are explicitly provided, tho
 | certManager | string | `operator` | Webhook cert management mechanism. Valid values are "operator", "cert-manager", "other". |
 | licenseKey | string | `nil`| License key (required) |
 | apiKey | string | `nil` | License server API key |
-| profile | string | `nil` | Operator profile, one of `dev`, `prod`, `nil`. See description of profiles above.  |
+| profile | string | `prod` | Operator profile, one of `dev`, `prod`, `nil`. See description of profiles above.  |
 | customCAConfigMap | string | | Configmap storing custom CA certificate |
 | systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |
 | rbac.create | bool | `true` | Enable RBAC resources creation |

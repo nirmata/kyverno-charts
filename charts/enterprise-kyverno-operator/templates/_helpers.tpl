@@ -143,7 +143,7 @@ Create secret to access container registry
 
 {{- define "enterprise-kyverno.enabledPolicysets" -}}
 {{- if eq .Values.profile "dev" -}}
-    {{- default ("pod-security-restricted,rbac-best-practices") (join "," .Values.policies.policySets) -}}
+    {{- default ("pod-security-baseline,rbac-best-practices") (join "," .Values.policies.policySets) -}}
 {{- else if eq .Values.profile "prod" -}}
     {{- default ("pod-security-restricted,rbac-best-practices") (join "," .Values.policies.policySets) -}}
 {{- else -}}
