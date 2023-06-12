@@ -66,7 +66,7 @@ See the Helm chart values below for specifics on each adapter.
 
 ## Profiles
 The chart allows specification of a `profile` which is like a shorthand for recommended settings while installing operator in various deployment and other environments. These are:
-- `nil`: Policy tamper detection on, non-HA mode for Kyverno, policysets for pod security.
+- `nil`: Defaults to prod mode. Policy tamper detection on, non-HA mode for Kyverno, policysets for pod security.
 - `dev`: Policy tamper detection off, non-HA mode for Kyverno, policysets for pod security, and rbac best practices.
 - `prod`: Policy tamper detection on, HA mode for Kyverno with 3 replicas, policysets for pod security, and rbac best practices.
 
