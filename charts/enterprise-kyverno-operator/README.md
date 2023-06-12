@@ -107,7 +107,7 @@ In case any argument determining the above profiles are explicitly provided, tho
 | kyverno.image.tag | string | `v1.9.5-n4k.nirmata.1` | Image tag (defaults to chart app version) |
 | kyverno.enablePolicyExceptions| bool | `true` | Enable policyexceptions feature in Kyverno 1.9+ |
 | kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#values) |
-| policies.policySets | list | `{pod-security-restricted}` | Default policy sets to be installed along with operator. Others are, `pod-security-baseline`, `k8s-best-practices`, `rbac-best-practices`, and `multitenancy-best-practices` |
+| policies.policySets | list | `{pod-security-restricted, rbac-best-practices}` | Default policy sets to be installed along with operator. Others are, `pod-security-baseline`, `k8s-best-practices`, and `multitenancy-best-practices` |
 | awsAdapter.rbac.create | bool | false | Create RBAC resources for Kyverno AWS Adapter, if AWS Adapter is going to be enabled now (through the awsAdapter.createCR helm param below) or later |
 | awsAdapter.createCR | bool | false | Enable AWS Adapter by creating its Adapter Config CR |
 | awsAdapter.eksCluster.name | string | `nil` | EKS Cluster name. Required if awsAdapter.createCR is true |
