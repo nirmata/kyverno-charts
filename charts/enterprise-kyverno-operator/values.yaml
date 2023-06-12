@@ -41,7 +41,7 @@ certManager: operator
 # Component configurations
 kyverno:
   createCR: true
-  enablePolicyExceptions: false
+  enablePolicyExceptions: true
   replicaCount:
   rbac:
     create: true

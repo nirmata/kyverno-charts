@@ -105,7 +105,7 @@ In case any argument determining the above profiles are explicitly provided, tho
 | kyverno.image.repository | string | `"ghcr.io/nirmata/kyverno"` | Kyverno Image repository |
 | kyverno.image.pullPolicy | string | `"IfNotPresent"` | Kyverno Image pull policy |
 | kyverno.image.tag | string | `v1.9.5-n4k.nirmata.1` | Image tag (defaults to chart app version) |
-| kyverno.enablePolicyExceptions| bool | `false` | Enable policyexceptions feature in Kyverno 1.9+ |
+| kyverno.enablePolicyExceptions| bool | `true` | Enable policyexceptions feature in Kyverno 1.9+ |
 | kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#values) |
 | policies.policySets | list | `{k8s-best-practices,pod-security-baseline,pod-security-restricted}` | Default policy sets to be installed along with operator. Others are, `rbac-best-practices`, and `multitenancy-best-practices` |
 | awsAdapter.rbac.create | bool | false | Create RBAC resources for Kyverno AWS Adapter, if AWS Adapter is going to be enabled now (through the awsAdapter.createCR helm param below) or later |
