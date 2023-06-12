@@ -1,3 +1,21 @@
+{{- if contains "1.10" .Values.kyverno.image.tag -}}
+
+  {{- $namespace := "" -}}
+  {{- if .Values.namespace -}}
+    {{- $namespace = .Values.namespace -}}
+  {{- else -}}
+      {{- $namespace = .Release.Namespace -}}
+  {{- end -}}
+
+  {{- $lookupResult := lookup "security.nirmata.io/v1alpha1" "Kyverno" $namespace "kyverno" -}}
+  {{- if $lookupResult -}}
+    {{- if not (contains "1.10" $lookupResult.spec.version) -}}
+      {{- fail "upgrade from lower versions to 1.10 is not allowed. Please contact Nirmata's Customer Success team for assistance." -}}
+    {{- end -}}
+  {{- end -}}
+
+{{- end -}}
+
 {{- if .Values.kyverno.createCR }}
 apiVersion: security.nirmata.io/v1alpha1
 kind: Kyverno
