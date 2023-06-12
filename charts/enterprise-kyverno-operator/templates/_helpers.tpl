@@ -143,11 +143,11 @@ Create secret to access container registry
 
 {{- define "enterprise-kyverno.enabledPolicysets" -}}
 {{- if eq .Values.profile "dev" -}}
-    {{- default ("pod-security-baseline,pod-security-restricted,rbac-best-practices,k8s-best-practices") (join "," .Values.policies.policySets) -}}
+    {{- default ("pod-security-baseline,rbac-best-practices") (join "," .Values.policies.policySets) -}}
 {{- else if eq .Values.profile "prod" -}}
-    {{- default ("pod-security-baseline,pod-security-restricted,rbac-best-practices,k8s-best-practices") (join "," .Values.policies.policySets) -}}
+    {{- default ("pod-security-restricted,rbac-best-practices") (join "," .Values.policies.policySets) -}}
 {{- else -}}
-    {{- default ("pod-security-baseline,pod-security-restricted,k8s-best-practices") (join "," .Values.policies.policySets) -}}
+    {{- default ("pod-security-restricted") (join "," .Values.policies.policySets) -}}
 {{- end -}}
 {{- end -}}
 
