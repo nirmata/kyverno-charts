@@ -82,7 +82,7 @@ In case any argument determining the above profiles are explicitly provided, tho
 | certManager | string | `operator` | Webhook cert management mechanism. Valid values are "operator", "cert-manager", "other". |
 | licenseKey | string | `nil`| License key (required) |
 | apiKey | string | `nil` | License server API key |
-| profile | string | `prod` | Operator profile, one of `dev`, `prod`, `nil`. See description of profiles above. |
+| profile | string | `prod` | Operator profile, one of `dev`, `prod`, `nil`. See description of profiles above.|
 | customCAConfigMap | string | | Configmap storing custom CA certificate |
 | systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |
 | rbac.create | bool | `true` | Enable RBAC resources creation |
