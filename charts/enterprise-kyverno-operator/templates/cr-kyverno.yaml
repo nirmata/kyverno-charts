@@ -1,20 +1,33 @@
-{{- if contains "1.10" .Values.kyverno.image.tag -}}
+# Initialize oldVersion and NewVersion.
+{{- $newVersion := .Values.kyverno.image.tag }}
+{{- $oldVersion := "" }}
 
-  {{- $namespace := "" -}}
-  {{- if .Values.namespace -}}
-    {{- $namespace = .Values.namespace -}}
-  {{- else -}}
-      {{- $namespace = .Release.Namespace -}}
-  {{- end -}}
+{{- $namespace := "" }}
+{{- if .Values.namespace }}
+  {{- $namespace = .Values.namespace }}
+{{- else }}
+    {{- $namespace = .Release.Namespace }}
+{{- end }}
 
-  {{- $lookupResult := lookup "security.nirmata.io/v1alpha1" "Kyverno" $namespace "kyverno" -}}
-  {{- if $lookupResult -}}
-    {{- if not (contains "1.10" $lookupResult.spec.version) -}}
-      {{- fail "upgrade from lower versions to 1.10 is not allowed. Please contact Nirmata's Customer Success team for assistance." -}}
-    {{- end -}}
-  {{- end -}}
+{{- $lookupResult := lookup "security.nirmata.io/v1alpha1" "Kyverno" $namespace "kyverno" }}
+{{- if $lookupResult }}
+  {{- $oldVersion = $lookupResult.spec.version }}
+{{- end }}
 
-{{- end -}}
+# Prevent upgrade to breaking version "1.10".
+{{- if contains "1.10" $newVersion }}
+  {{- if not (contains "1.10" $oldVersion) }}
+    {{- fail "upgrade from lower versions to 1.10 is not allowed. Please contact Nirmata's Customer Success team for assistance at support@nirmata.com." }}
+  {{- end }}
+{{- end }}
+
+# Prevent skip upgrade.
+{{- $oldVersionNumber := (split "." $oldVersion)[1] | int }}
+{{- $newVersionNumber := (split "." $newVersion)[1] | int }}
+{{- if gt $newVersionNumber (add $oldVersionNumber 1) }}
+  {{- "skip upgrades are not allowed." }}
+{{- end }}
+
 
 {{- if .Values.kyverno.createCR }}
 apiVersion: security.nirmata.io/v1alpha1
