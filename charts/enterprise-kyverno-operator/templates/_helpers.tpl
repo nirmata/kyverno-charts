@@ -147,7 +147,7 @@ Create secret to access container registry
 {{- else if eq .Values.profile "prod" -}}
     {{- default ("pod-security-restricted,pod-security-baseline,rbac-best-practices") (join "," .Values.policies.policySets) -}}
 {{- else -}}
-    {{- default ("pod-security-restricted, pod-security-baseline") (join "," .Values.policies.policySets) -}}
+    {{- default ("pod-security-restricted,pod-security-baseline") (join "," .Values.policies.policySets) -}}
 {{- end -}}
 {{- end -}}
 
