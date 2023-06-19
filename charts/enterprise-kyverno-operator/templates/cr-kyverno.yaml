@@ -17,16 +17,16 @@ spec:
 
   helm:
     values:
-      {{- if eq .Values.platform "openshift" }}
+      {{- if eq .Values.cloudPlatform "openshift" }}
       securityContext: null
       {{- end}}
 
-      {{- if eq .Values.platform "aks" }}
+      {{- if eq .Values.cloudPlatform "aks" }}
       webhookAnnotations:
         'admissions.enforcer/disabled': 'true'
       {{- end}}
 
-      {{- if eq .Values.platform "eks" }}
+      {{- if eq .Values.cloudPlatform "eks" }}
       hostNetwork: true
       {{- end }}
 
