@@ -72,6 +72,12 @@ The chart allows specification of a `profile` which is like a shorthand for reco
 
 In case any argument determining the above profiles are explicitly provided, those will override the values inferred from profiles.
 
+## Cloud Platform (values.cloudPlatform)
+There are platform specific configurations in which the Kyverno Helm chart configuration varies. Refer to the complete [platform notes](https://kyverno.io/docs/installation/platform-notes) here. Default value is "". Cloud Platforms:
+- `aks`
+- `eks`
+- `openshift`
+
 ## Helm Chart Values
 
 | Key | Type | Default | Description |

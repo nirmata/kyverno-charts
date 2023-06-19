@@ -17,6 +17,32 @@ spec:
 
   helm:
     values:
+      {{- if eq .Values.platform "openshift" }}
+      securityContext: null
+      {{- else}}
+      securityContext:
+      runAsNonRoot: true
+      privileged: false
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault
+      {{- end}}
+
+      {{- if eq .Values.platform "aks" }}
+      webhookAnnotations:
+        'admissions.enforcer/disabled': 'true'
+      {{- else}}
+      webhookAnnotations: {}
+      {{- end}}
+
+      {{- if eq .Values.platform "eks" }}
+      hostNetwork: true
+      {{- end }}
+
       {{- toYaml .Values.kyverno.helm | nindent 6 }}
       cleanupController:
         image:

@@ -4,6 +4,8 @@
 
 profile: "prod"
 
+cloudPlatform: ""
+
 namespace:
 
 replicaCount: 1

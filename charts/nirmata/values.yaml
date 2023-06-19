@@ -14,9 +14,6 @@ fullnameOverride:
 # -- Namespace the chart deploys to
 namespace:
 
-# platform in which kyverno is deployed. Eg. openshift, eks, aks
-platform: ""
-
 # -- Additional labels
 customLabels: {}
 
@@ -96,9 +93,6 @@ podSecurityContext: {}
 
 # -- Security context for the containers
 securityContext:
-  {{- if eq .Values.platform "openshift" }}
-  null
-  {{- else}}
   runAsNonRoot: true
   privileged: false
   allowPrivilegeEscalation: false
@@ -108,7 +102,6 @@ securityContext:
       - ALL
   seccompProfile:
     type: RuntimeDefault
-  {{- end}}
 
 # -- Security context for the test containers
 testSecurityContext:
@@ -400,12 +393,9 @@ config:
 
 
   # -- Defines annotations to set on webhook configurations.
-  webhookAnnotations:
-    {{- if eq .Values.platform "aks" }}
-    'admissions.enforcer/disabled': 'true'
-    {{- else }}
-    {}
-    {{- end}}
+  webhookAnnotations: {}
+  # Example to disable admission enforcer on AKS:
+  # 'admissions.enforcer/disabled': 'true'
 
 
 # -- Deployment update strategy.
