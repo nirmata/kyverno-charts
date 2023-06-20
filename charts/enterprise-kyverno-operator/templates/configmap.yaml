@@ -8,3 +8,8 @@ data:
   kyvernoLatestVersion: 2.7.0-rc.2
   kyvernoStableRepository: https://kyverno.github.io/kyverno
   kyvernoStableVersion: 2.6.5
+  {{- if eq .Values.cloudPlatform "eks" }}
+  config.yaml: |
+    excludeNamespaces:
+    - kube-system
+  {{- end}}
