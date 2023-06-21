@@ -1,4 +1,4 @@
-# Initialize oldVersion and NewVersion.
+# Fail if there are skip kyverno version upgrades or from/to versions with breaking changes (1.10)
 {{- $newVersion := trimPrefix "v" .Values.kyverno.image.tag }}
 {{- $oldVersion := "" }}
 
@@ -7,7 +7,7 @@
 {{- if $lookupResult }}
   {{- $oldVersion = trimPrefix "v" (dig "spec" "version" "nothing" $lookupResult | toString )}}
 
-  # Prevent skip upgrade.
+  # Pull out variables
   {{- $bkgMajor := 1 }}
   {{- $bkgMinor := 10 }}
   {{- $oldMajor := (split "." $oldVersion)._0 | int }}
