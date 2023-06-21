@@ -154,3 +154,17 @@ Create secret to access container registry
 {{- define "enterprise-kyverno.policysetsStr" -}}
 {{- range (include "enterprise-kyverno.enabledPolicysets" . | split ",") }}{{(print . " ") }} {{- end }}
 {{- end -}}
+
+{{- define "verCmp" -}}
+    {{- $res := 0 }}
+    {{- if gt .major1 .major2 }}
+        {{- $res = 1 }}
+    {{- else if gt .major2 .major1 }}
+        {{- $res = -1 }}
+    {{- else if gt .minor1 .minor2 }}
+        {{- $res = 1 }}
+    {{- else if gt .minor2 .minor1 }}
+        {{- $res = -1 }}
+    {{- end }}
+    {{- $res }}
+{{- end -}}
