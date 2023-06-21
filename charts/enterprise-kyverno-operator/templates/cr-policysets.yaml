@@ -1,4 +1,9 @@
-{{ range $pol := include "enterprise-kyverno.enabledPolicysets" . | split "," }}
+{{ $polstr := include "enterprise-kyverno.enabledPolicysets" . }}
+{{ if and (contains "pod-security-restricted" $polstr) (not (contains "pod-security-baseline" $polstr)) }}
+  {{ $polstr = printf "%s,%s" "pod-security-baseline" $polstr }}
+{{ end }}
+
+{{ range $pol := $polstr | split "," }}
 
 {{- $psetName := "invalid" -}}
 {{- $psetType := "" -}}
@@ -17,13 +22,13 @@
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "pss-baseline-policies" -}}
-  {{- $version = "0.1.1" -}}
+  {{- $version = "0.2.2" -}}
 {{- else if eq $pol "pod-security-restricted" -}}
   {{- $psetName = "pod-security-restricted" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "pss-restricted-policies" -}}
-  {{- $version = "0.1.1" -}}
+  {{- $version = "0.2.2" -}}
 {{- else if eq $pol "rbac-best-practices" -}}
   {{- $psetName = "rbac-best-practices" -}}
   {{- $psetType = "helm" -}}

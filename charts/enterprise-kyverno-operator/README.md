@@ -66,11 +66,17 @@ See the Helm chart values below for specifics on each adapter.
 
 ## Profiles
 The chart allows specification of a `profile` which is like a shorthand for recommended settings while installing operator in various deployment and other environments. These are:
-- `nil`: Policy tamper detection on, non-HA mode for Kyverno, policysets for k8s best practices and pod security.
-- `dev`: Policy tamper detection off, non-HA mode for Kyverno, policysets for k8s best practices, pod security, and rbac best practices.
-- `prod`: Policy tamper detection on, HA mode for Kyverno with 3 replicas, policysets for k8s best practices, pod security, and rbac best practices.
+- `nil`: Defaults to prod mode. Policy tamper detection on, non-HA mode for Kyverno, policysets for pod security.
+- `dev`: Policy tamper detection off, non-HA mode for Kyverno, policysets for pod security, and rbac best practices.
+- `prod`: Policy tamper detection on, HA mode for Kyverno with 3 replicas, policysets for pod security, and rbac best practices.
 
 In case any argument determining the above profiles are explicitly provided, those will override the values inferred from profiles.
+
+## Cloud Platform (values.cloudPlatform)
+There are platform specific configurations in which the Kyverno Helm chart configuration varies. Refer to the complete [platform notes](https://kyverno.io/docs/installation/platform-notes) here. Default value is "". Cloud Platforms:
+- `aks`
+- `eks`
+- `openshift`
 
 ## Helm Chart Values
 
@@ -82,7 +88,7 @@ In case any argument determining the above profiles are explicitly provided, tho
 | certManager | string | `operator` | Webhook cert management mechanism. Valid values are "operator", "cert-manager", "other". |
 | licenseKey | string | `nil`| License key (required) |
 | apiKey | string | `nil` | License server API key |
-| profile | string | `nil` | Operator profile, one of `dev`, `prod`, `nil`. See description of profiles above.  |
+| profile | string | `prod` | Operator profile, one of `dev`, `prod`, `nil`. See description of profiles above.  |
 | customCAConfigMap | string | | Configmap storing custom CA certificate |
 | systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |
 | rbac.create | bool | `true` | Enable RBAC resources creation |
@@ -105,9 +111,9 @@ In case any argument determining the above profiles are explicitly provided, tho
 | kyverno.image.repository | string | `"ghcr.io/nirmata/kyverno"` | Kyverno Image repository |
 | kyverno.image.pullPolicy | string | `"IfNotPresent"` | Kyverno Image pull policy |
 | kyverno.image.tag | string | `v1.9.5-n4k.nirmata.1` | Image tag (defaults to chart app version) |
-| kyverno.enablePolicyExceptions| bool | `false` | Enable policyexceptions feature in Kyverno 1.9+ |
+| kyverno.enablePolicyExceptions| bool | `true` | Enable policyexceptions feature in Kyverno 1.9+ |
 | kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#values) |
-| policies.policySets | list | `{k8s-best-practices,pod-security-baseline,pod-security-restricted}` | Default policy sets to be installed along with operator. Others are, `rbac-best-practices`, and `multitenancy-best-practices` |
+| policies.policySets | list | `{pod-security-restricted, rbac-best-practices}` | Default policy sets to be installed along with operator. Others are, `pod-security-baseline`, `k8s-best-practices`, and `multitenancy-best-practices` |
 | awsAdapter.rbac.create | bool | false | Create RBAC resources for Kyverno AWS Adapter, if AWS Adapter is going to be enabled now (through the awsAdapter.createCR helm param below) or later |
 | awsAdapter.createCR | bool | false | Enable AWS Adapter by creating its Adapter Config CR |
 | awsAdapter.eksCluster.name | string | `nil` | EKS Cluster name. Required if awsAdapter.createCR is true |
