@@ -1,3 +1,33 @@
+# Fail if there are skip kyverno version upgrades or from/to versions with breaking changes (1.10)
+{{- $newVersion := trimPrefix "v" .Values.kyverno.image.tag }}
+{{- $oldVersion := "" }}
+
+{{- $namespace := include "enterprise-kyverno.namespace" . }}
+{{- $lookupResult := (lookup "security.nirmata.io/v1alpha1" "Kyverno" $namespace "kyverno") }}
+{{- if $lookupResult }}
+  {{- $oldVersion = trimPrefix "v" (dig "spec" "version" "nothing" $lookupResult | toString )}}
+
+  # Pull out variables
+  {{- $bkgMajor := 1 }}
+  {{- $bkgMinor := 10 }}
+  {{- $oldMajor := (split "." $oldVersion)._0 | int }}
+  {{- $oldMinor := (split "." $oldVersion)._1 | int }}
+  {{- $newMajor := (split "." $newVersion)._0 | int }}
+  {{- $newMinor := (split "." $newVersion)._1 | int }}
+
+  # Prevent upgrade from/to breaking version "1.10" and above
+  {{ $cmpRes1 := atoi (include "verCmp" (dict "major1" $oldMajor "minor1" $oldMinor "major2" $bkgMajor "minor2" $bkgMinor)) }}
+  {{ $cmpRes2 := atoi (include "verCmp" (dict "major1" $newMajor "minor1" $newMinor "major2" $bkgMajor "minor2" $bkgMinor)) }}
+  {{- if or (and (gt $cmpRes1 -1) (lt $cmpRes2 0)) (and (gt $cmpRes2 -1) (lt $cmpRes1 0)) }}
+    {{- fail (printf "upgrade from/to lower versions from/to v%d.%d, (%s->%s), is not allowed. Please contact Nirmata's Customer Success team for assistance at support@nirmata.com." $bkgMajor $bkgMinor $oldVersion $newVersion) }}
+  {{- end }}
+  
+  # Skip upgrades also not allowed
+  {{- if or (ne $oldMajor $newMajor) (gt $newMinor (add $oldMinor 1)) (gt $oldMinor (add $newMinor 1)) }}
+    {{- fail (printf "skip upgrades (%s->%s) are not allowed" $oldVersion $newVersion) }}
+  {{- end }}
+{{- end }}
+
 {{- if .Values.kyverno.createCR }}
 apiVersion: security.nirmata.io/v1alpha1
 kind: Kyverno
