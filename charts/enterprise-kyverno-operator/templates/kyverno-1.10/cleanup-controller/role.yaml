@@ -1,0 +1,43 @@
+{{- if .Values.kyverno.cleanupController.enabled -}}
+{{- if and (eq .Values.kyverno.cleanupController.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) (contains "v1.10" .Values.kyverno.image.tag) -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ template "kyverno110.cleanup-controller.roleName" . }}
+  labels:
+    {{- include "kyverno110.cleanup-controller.labels" . | nindent 4 }}
+  namespace: {{ template "kyverno.namespace" . }}
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+    resourceNames:
+      - {{ include "kyverno110.config.configMapName" . }}
+      - {{ include "kyverno110.config.metricsConfigMapName" . }}
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+      - update
+{{- end -}}
+{{- end -}}

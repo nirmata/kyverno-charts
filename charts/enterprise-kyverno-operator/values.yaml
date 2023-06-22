@@ -45,6 +45,10 @@ kyverno:
   createCR: true
   enablePolicyExceptions: true
   replicaCount:
+  config:
+    name: ""
+  metricsConfig:
+    name: ""
   rbac:
     create: true
     serviceAccount:
@@ -52,6 +56,14 @@ kyverno:
     clusterRole:
       # -- Extra resource permissions to add in the cluster role
       extraResources: []
+  admissionController:
+    rbac:
+      create: true
+      serviceAccount:
+        create: true
+      clusterRole:
+        # -- Extra resource permissions to add in the cluster role
+        extraResources: []
   templating:
     enabled: false
     image: bitnami/kubectl:latest
@@ -70,7 +82,30 @@ kyverno:
       clusterRole:
         # -- Extra resource permissions to add in the cluster role
         extraResources: []
-
+  reportsController:
+    # -- Enable reports controller.
+    enabled: true
+    rbac:
+      # -- Create RBAC resources
+      create: true
+      serviceAccount:
+        name:
+      clusterRole:
+        # -- Extra resource permissions to add in the cluster role
+        extraResources: []
+  backgroundController:
+    # -- Enable background controller.
+    enabled: true
+    rbac:
+      # -- Create RBAC resources
+      create: true
+      serviceAccount:
+        name:
+      clusterRole:
+        # -- Extra resource permissions to add in the cluster role
+        extraResources: []
+  kyverno:
+    customLabels: {}
   nameOverride: "kyverno"
   fullnameOverride: "kyverno"
   namespace: kyverno
@@ -79,7 +114,7 @@ kyverno:
   generatecontrollerExtraResources: []
   image:
     # -- Image repository
-    repository: ghcr.io/nirmata/kyverno
+    repository: ghcr.io/nirmata
     # -- Image tag
     tag: v1.9.5-n4k.nirmata.1
 

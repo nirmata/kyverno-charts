@@ -4,13 +4,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "kyverno.cleanup-controller.name" . }}
+  namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.cleanup-controller.labels" . | nindent 4 }}
-  namespace: {{ template "kyverno.namespace" . }}
 spec:
-  {{- with .Values.cleanupController.replicas }}
-  replicas: {{ . }}
-  {{- end }}
+  replicas: {{ template "kyverno.deployment.replicas" .Values.cleanupController.replicas }}
   {{- with .Values.cleanupController.updateStrategy }}
   strategy:
     {{- toYaml . | nindent 4 }}
@@ -23,7 +21,7 @@ spec:
       labels:
         {{- include "kyverno.cleanup-controller.labels" . | nindent 8 }}
     spec:
-      {{- with .Values.cleanupController.image.pullSecrets }}
+      {{- with .Values.cleanupController.imagePullSecrets }}
       imagePullSecrets: 
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
@@ -81,6 +79,7 @@ spec:
             name: metrics
             protocol: TCP
           args:
+            - --servicePort={{ .Values.cleanupController.service.port }}
             - --loggingFormat={{ .Values.cleanupController.logging.format }}
             {{- if .Values.cleanupController.tracing.enabled }}
             - --enableTracing
@@ -101,12 +100,14 @@ spec:
             - --transportCreds={{ . }}
             {{- end }}
             {{- end }}
-            {{- range .Values.cleanupController.extraArgs }}
-            - {{ . }}
+            {{- range $key, $value := .Values.cleanupController.extraArgs }}
+            {{- if $value }}
+            - --{{ $key }}={{ $value }}
+            {{- end }}
             {{- end }}
           env:
           - name: METRICS_CONFIG
-            value: {{ template "kyverno.metricsConfigMapName" . }}
+            value: {{ template "kyverno.config.metricsConfigMapName" . }}
           - name: KYVERNO_POD_NAME
             valueFrom:
               fieldRef:
@@ -120,8 +121,9 @@ spec:
           {{- with .Values.cleanupController.resources }}
           resources: {{ tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
-          {{- if .Values.cleanupController.securityContext }}
-          securityContext: {{ include "kyverno.cleanup-controller.securityContext" . | nindent 12 }}
+          {{- with .Values.cleanupController.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.cleanupController.startupProbe }}
           startupProbe:
