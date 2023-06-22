@@ -44,7 +44,9 @@ spec:
           - name: OPERATOR_NAME
             value: {{ include "enterprise-kyverno.fullname" . }}
           - name: STORAGE_PATH
-            value: "/var/local"
+            value: /var/local
+          - name: HELM_CACHE_HOME
+            value: /var/local/helmcache
           {{- with .Values.envVars }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
