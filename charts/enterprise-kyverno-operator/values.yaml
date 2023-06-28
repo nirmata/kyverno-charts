@@ -93,6 +93,7 @@ kyverno:
       productName: ""
 
 policies:
+  chartRepoUsername:
   policySets:
 
 awsAdapter:
