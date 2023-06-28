@@ -59,6 +59,8 @@ kyverno:
     enable: false
   crds:
     annotations: []
+  initImage:
+    repository:
   cleanupController:
     # -- Enable cleanup controller.
     enabled: true

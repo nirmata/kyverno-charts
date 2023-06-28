@@ -33,8 +33,10 @@ spec:
       {{- toYaml .Values.kyverno.helm | nindent 6 }}
       cleanupController:
         image:
+          repository: {{ .Values.kyverno.cleanupController.repository | default "ghcr.io/nirmata/cleanup-controller" }}
           tag: {{ .Values.kyverno.image.tag }}
       initImage:
+        repository: {{ .Values.kyverno.initImage.repository  | default "ghcr.io/nirmata/kyvernopre" }}
         tag: {{ .Values.kyverno.image.tag }}
       {{- if and (eq .Values.kyverno.enablePolicyExceptions true) (contains "v1.9" .Values.kyverno.image.tag) }}
       extraArgs:
