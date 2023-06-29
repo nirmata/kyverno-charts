@@ -14,7 +14,7 @@ spec:
   repository: {{ .Values.kyverno.image.repository }}
   version: {{ .Values.kyverno.image.tag }}
   replicas: {{ include "enterprise-kyverno.kyvernoReplicas" . }}
-  test: test1
+
   helm:
     values:
       {{- if eq .Values.cloudPlatform "openshift" }}
@@ -33,8 +33,13 @@ spec:
       {{- toYaml .Values.kyverno.helm | nindent 6 }}
       cleanupController:
         image:
-          repository: {{ .Values.kyverno.cleanupController.repository | default "ghcr.io/nirmata/cleanup-controller" }}
+          repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}cleanup-controller
           tag: {{ .Values.kyverno.image.tag }}
+          pullSecrets:
+          - name: imagepullsecret
+      image:
+        pullSecrets:
+        - name: imagepullsecret
       initImage:
         repository: {{ .Values.kyverno.initImage.repository  | default "ghcr.io/nirmata/kyvernopre" }}
         tag: {{ .Values.kyverno.image.tag }}
