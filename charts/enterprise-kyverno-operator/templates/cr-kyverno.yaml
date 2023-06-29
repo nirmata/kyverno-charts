@@ -41,7 +41,7 @@ spec:
         pullSecrets:
         - name: imagepullsecret
       initImage:
-        repository: {{ .Values.kyverno.initImage.repository  | default "ghcr.io/nirmata/kyvernopre" }}
+        repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}kyvernopre
         tag: {{ .Values.kyverno.image.tag }}
       {{- if and (eq .Values.kyverno.enablePolicyExceptions true) (contains "v1.9" .Values.kyverno.image.tag) }}
       extraArgs:
