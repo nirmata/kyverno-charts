@@ -65,7 +65,7 @@ spec:
       chartName: {{ $chartName }}
       version: {{ $version }}
       username: {{ $chartRepoUsername}}
-      passwordSecret: {{ include "enterprise-kyverno.namespace" $ }}/operator-params/chartRepoPassword 
+      passwordSecret: "{{ include "enterprise-kyverno.namespace" $ }}/operator-params/chartRepoPassword"
   {{ end }}
 
 {{ end }}
