@@ -56,4 +56,11 @@ spec:
       - --loggingFormat=text
       - --exceptionNamespace={{ include "kyverno.namespace" . }}
       {{- end }}
+      rbac:
+        serviceAccount:
+          name: kyverno
+      licenseManager:
+        imageRepository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}kyverno-license-manager
+        imageTag: "v0.1.1"
+        productName: ""
 {{- end }}
