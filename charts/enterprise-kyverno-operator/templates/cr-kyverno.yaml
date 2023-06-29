@@ -14,7 +14,7 @@ spec:
   repository: {{ .Values.kyverno.image.repository }}
   version: {{ .Values.kyverno.image.tag }}
   replicas: {{ include "enterprise-kyverno.kyvernoReplicas" . }}
-
+  test: test1
   helm:
     values:
       {{- if eq .Values.cloudPlatform "openshift" }}
