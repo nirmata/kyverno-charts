@@ -24,13 +24,13 @@
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "pss-baseline-policies" -}}
-  {{- $version = "0.2.2" -}}
+  {{- $version = "0.2.3" -}}
 {{- else if eq $pol "pod-security-restricted" -}}
   {{- $psetName = "pod-security-restricted" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "pss-restricted-policies" -}}
-  {{- $version = "0.2.2" -}}
+  {{- $version = "0.2.3" -}}
 {{- else if eq $pol "rbac-best-practices" -}}
   {{- $psetName = "rbac-best-practices" -}}
   {{- $psetType = "helm" -}}
