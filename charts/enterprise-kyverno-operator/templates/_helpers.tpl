@@ -154,3 +154,12 @@ Create secret to access container registry
 {{- define "enterprise-kyverno.policysetsStr" -}}
 {{- range (include "enterprise-kyverno.enabledPolicysets" . | split ",") }}{{(print . " ") }} {{- end }}
 {{- end -}}
+
+{{- define "kyverno.excludedNamespaces" -}}
+{{- $defaultNamespaces := list "kube-system" "nirmata" "nirmata-system" -}}
+{{- if eq .Values.cloudPlatform "openshift" -}}
+{{- $defaultNamespaces = append $defaultNamespaces "openshift-*" }}
+{{- end -}}
+{{- $excludedNamespaces := concat $defaultNamespaces .Values.kyverno.excludedNamespaces -}}
+{{ toJson $excludedNamespaces }}
+{{- end }}

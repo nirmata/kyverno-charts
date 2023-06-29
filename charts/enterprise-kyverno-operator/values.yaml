@@ -82,6 +82,8 @@ kyverno:
     repository: ghcr.io/nirmata/kyverno
     # -- Image tag
     tag: v1.9.5-n4k.nirmata.1
+  
+  excludedNamespaces: []
 
   # Kyverno Helm Chart customizations other than those already in kyverno CR
   helm:
