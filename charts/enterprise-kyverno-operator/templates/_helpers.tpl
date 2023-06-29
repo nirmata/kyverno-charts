@@ -160,6 +160,6 @@ Create secret to access container registry
 {{- if eq .Values.cloudPlatform "openshift" -}}
 {{- $defaultNamespaces = append $defaultNamespaces "openshift-*" }}
 {{- end -}}
-{{- $excludedNamespaces := concat $defaultNamespaces .Values.kyverno.excludedNamespaces -}}
+{{- $excludedNamespaces := concat $defaultNamespaces .Values.kyverno.excludedNamespacesForWebhook -}}
 {{ toJson $excludedNamespaces }}
 {{- end }}
