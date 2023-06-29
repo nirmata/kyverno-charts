@@ -23,7 +23,7 @@ spec:
 
       {{- if eq .Values.cloudPlatform "aks" }}
       webhookAnnotations:
-        admissions.enforcer/disabled: true
+        'admissions.enforcer/disabled': true
       {{- end}}
 
       {{- if eq .Values.cloudPlatform "eks" }}
