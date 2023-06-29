@@ -43,6 +43,13 @@ spec:
       initImage:
         repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}kyvernopre
         tag: {{ .Values.kyverno.image.tag }}
+      {{- if .Values.image.pullSecrets.create }}
+      imagePullSecrets:
+        imagepullsecret':
+          registry: {{.Values.image.pullSecrets.registry}}
+          username: {{.Values.image.pullSecrets.username}}
+          password: {{.Values.image.pullSecrets.password}}
+      {{- end}}
       {{- if and (eq .Values.kyverno.enablePolicyExceptions true) (contains "v1.9" .Values.kyverno.image.tag) }}
       extraArgs:
       - --enablePolicyException=true
