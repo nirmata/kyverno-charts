@@ -30,7 +30,9 @@ spec:
       hostNetwork: true
       {{- end }}
 
+      {{- if .Values.kyverno.helm }}
       {{- toYaml .Values.kyverno.helm | nindent 6 }}
+      {{- end}}
       cleanupController:
         image:
           repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}cleanup-controller
