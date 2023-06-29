@@ -23,7 +23,7 @@ spec:
 
       {{- if eq .Values.cloudPlatform "aks" }}
       webhookAnnotations:
-        'admissions.enforcer/disabled': true
+        'admissions.enforcer/disabled': 'true'
       {{- end}}
 
       {{- if eq .Values.cloudPlatform "eks" }}
@@ -36,16 +36,16 @@ spec:
           repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}cleanup-controller
           tag: {{ .Values.kyverno.image.tag }}
           pullSecrets:
-          - name: image-pull-secret
+          - name: imagepullsecret
       image:
         pullSecrets:
-        - name: image-pull-secret
+        - name: imagepullsecret
       initImage:
         repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}kyvernopre
         tag: {{ .Values.kyverno.image.tag }}
       {{- if .Values.image.pullSecrets.create }}
       imagePullSecrets:
-        'image-pull-secret':
+        imagepullsecret':
           registry: {{.Values.image.pullSecrets.registry}}
           username: {{.Values.image.pullSecrets.username}}
           password: {{.Values.image.pullSecrets.password}}
