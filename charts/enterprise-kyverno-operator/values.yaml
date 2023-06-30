@@ -87,6 +87,7 @@ kyverno:
   helm:
 
 policies:
+  chartRepoUsername:
   policySets:
 
 awsAdapter:

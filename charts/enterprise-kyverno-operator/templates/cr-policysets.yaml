@@ -3,6 +3,8 @@
   {{ $polstr = printf "%s,%s" "pod-security-baseline" $polstr }}
 {{ end }}
 
+{{ $chartRepoUsername := .Values.policies.chartRepoUsername }}
+
 {{ range $pol := $polstr | split "," }}
 
 {{- $psetName := "invalid" -}}
@@ -62,6 +64,8 @@ spec:
       chartRepo: {{ $chartRepo }}
       chartName: {{ $chartName }}
       version: {{ $version }}
+      username: {{ $chartRepoUsername}}
+      passwordSecret: "{{ include "enterprise-kyverno.namespace" $ }}/operator-params/chartRepoPassword"
   {{ end }}
 
 {{ end }}
