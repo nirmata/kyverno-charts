@@ -40,6 +40,14 @@ spec:
           spec:
             description: PolicySetSpec defines the desired state of PolicySet
             properties:
+              helm:
+                additionalProperties:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                description: Finer customizations for each component are provided
+                  in a generic object structure, typically matching the value.yaml
+                  of individual components
+                type: object
               source:
                 properties:
                   description:
