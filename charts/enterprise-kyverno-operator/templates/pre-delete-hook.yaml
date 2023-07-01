@@ -27,7 +27,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: kubectl
-          image: {{ .Values.predeletehookimage | default "k8s.gcr.io/hyperkube:v1.16.12" }}
+          image: {{ .Values.predeletehookimage | default "ghcr.io/nirmata/kubectl:1.24" }}
           imagePullPolicy: IfNotPresent
           command:
           - /bin/sh
