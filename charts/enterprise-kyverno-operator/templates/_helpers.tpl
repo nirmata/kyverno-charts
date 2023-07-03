@@ -131,13 +131,13 @@ Create secret to access container registry
 {{- end -}}
 {{- end -}}
 
-{{- define "enterprise-kyverno.detectPolicyTamper" -}}
+{{- define "enterprise-kyverno.preventPolicyTamper" -}}
 {{- if eq .Values.profile "dev" -}}
-    {{- default false .Values.detectPolicyTamper -}}
+    {{- default false .Values.preventPolicyTamper -}}
 {{- else if eq .Values.profile "prod" -}}
-    {{- default true .Values.detectPolicyTamper -}}
+    {{- default true .Values.preventPolicyTamper -}}
 {{- else -}}
-    {{- default true .Values.detectPolicyTamper -}}
+    {{- default true .Values.preventPolicyTamper -}}
 {{- end -}}
 {{- end -}}
 
