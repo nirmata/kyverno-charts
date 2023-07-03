@@ -17,6 +17,19 @@ spec:
 
   helm:
     values:
+      config:
+        webhooks:
+        #Exclude namespaces
+        - namespaceSelector:
+            matchExpressions:
+            - key: kubernetes.io/metadata.name
+              operator: NotIn
+              values:
+              {{- $excludedNamespaces := include "kyverno.excludedNamespaces" . | fromJsonArray }}
+              {{- range $excludedNamespaces}}
+              - {{.}}
+              {{- end }}
+        
       {{- if eq .Values.cloudPlatform "openshift" }}
       securityContext: null
       {{- end}}

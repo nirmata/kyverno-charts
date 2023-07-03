@@ -83,6 +83,9 @@ kyverno:
     # -- Image tag
     tag: v1.9.5-n4k.nirmata.1
 
+  # -- Override default exclude namespaces (default kyverno, kube-system, nirmata, nirmata-system, openshift-*, )
+  excludedNamespacesForWebhook: []
+
   # Kyverno Helm Chart customizations other than those already in kyverno CR
   helm:
 
