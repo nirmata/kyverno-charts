@@ -132,13 +132,22 @@ Create secret to access container registry
 {{- end -}}
 
 {{- define "enterprise-kyverno.preventPolicyTamper" -}}
-{{- if eq .Values.profile "dev" -}}
-    {{- default false .Values.preventPolicyTamper -}}
-{{- else if eq .Values.profile "prod" -}}
-    {{- default true .Values.preventPolicyTamper -}}
-{{- else -}}
-    {{- default true .Values.preventPolicyTamper -}}
-{{- end -}}
+{{- $polTamperStr := lower (toString .Values.preventPolicyTamper) }}
+
+{{- if eq $polTamperStr "false" }}
+    {{- false }}
+{{- else if eq $polTamperStr "true"}}
+    {{- true }}
+{{- else }}
+    {{- if eq .Values.profile "dev" -}}
+        {{- false }}
+    {{- else if eq .Values.profile "prod" -}}
+        {{- true }}
+    {{- else -}}
+        {{- true }}
+    {{- end -}}
+{{- end}}
+
 {{- end -}}
 
 {{- define "enterprise-kyverno.enabledPolicysets" -}}
