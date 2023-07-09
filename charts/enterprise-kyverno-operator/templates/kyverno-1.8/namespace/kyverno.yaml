@@ -1,4 +1,4 @@
-{{- if and (eq .Values.kyverno.rbac.create true) (contains "v1.8" .Values.kyverno.image.tag) (eq include "enterprise-kyverno.createKyvernoNamespace" "true") }}
+{{- if and (eq .Values.kyverno.rbac.create true) (contains "v1.8" .Values.kyverno.image.tag) (eq (include "enterprise-kyverno.createKyvernoNamespace" .) "true") }}
 apiVersion: v1
 kind: Namespace
 metadata:
