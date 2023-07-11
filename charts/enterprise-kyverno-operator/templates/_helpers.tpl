@@ -122,13 +122,13 @@ Create secret to access container registry
 {{- end -}}
 
 {{- define "enterprise-kyverno.kyvernoReplicas" -}}
-    {{- if eq .Values.profile "dev" -}}
-    {{- default 1 .Values.kyverno.replicaCount -}}
-    {{- else if eq .Values.profile "prod" -}}
-    {{- default 3 .Values.kyverno.replicaCount -}}
-    {{- else -}}
-    {{- default 1 .Values.kyverno.replicaCount -}}
-    {{- end -}}
+{{- if eq .Values.profile "dev" -}}
+{{- default 1 .Values.kyverno.replicaCount -}}
+{{- else if eq .Values.profile "prod" -}}
+{{- default 3 .Values.kyverno.replicaCount -}}
+{{- else -}}
+{{- default 1 .Values.kyverno.replicaCount -}}
+{{- end -}}
 {{- end -}}
 
 {{- define "enterprise-kyverno.preventPolicyTamper" -}}
@@ -177,9 +177,9 @@ Create secret to access container registry
 {{- end }}
 
 {{- define "enterprise-kyverno.createKyvernoNamespace" }}
-{{- $lkpOp := lookup "apps/v1" "Deployment" (include "kyverno.namespace" .) "" }}
+{{- $lkpOp := (lookup "apps/v1" "Deployment" (include "kyverno.namespace" .) "") }}
 {{- $lkpNsp := lookup "v1" "Namespace" "" (include "kyverno.namespace" .) }}
-{{- if and ($lkpOp) ($lkpOp.items) (gt 0 (len $lkpOp.items)) }}
+{{- if and ($lkpOp) (kindIs "slice" $lkpOp.items) (gt 0 (len $lkpOp.items)) }}
 {{- fail (printf "Kyverno namespace %s has deployments, cannot proceed" (include "kyverno.namespace" .)) }}
 {{- else if $lkpNsp }}
 {{- false -}}
