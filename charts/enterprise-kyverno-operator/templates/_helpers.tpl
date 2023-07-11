@@ -175,20 +175,3 @@ Create secret to access container registry
 {{- end -}}
 {{ toJson $excludedNamespaces }}
 {{- end }}
-
-{{- define "enterprise-kyverno.createKyvernoNamespace" }}
-{{- $numDeploys := 0 }}
-{{- $lkpOp := (lookup "apps/v1" "Deployment" (include "kyverno.namespace" .) "") }}
-{{- $deploys := $lkpOp.items }}
-{{- if kindIs "slice" $deploys }}
-    {{- $numDeploys = len $deploys }}
-{{- end }}
-{{- $lkpNsp := lookup "v1" "Namespace" "" (include "kyverno.namespace" .) }}
-{{- if gt 0 $numDeploys }}
-    {{- fail (printf "Kyverno namespace %s has deployments, cannot proceed" (include "kyverno.namespace" .)) }}
-{{- else if $lkpNsp }}
-    {{- false -}}
-{{- else -}}
-    {{- true -}}
-{{- end -}}
-{{- end -}}
