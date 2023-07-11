@@ -15,13 +15,6 @@ Create configmap in the namespace
 kubectl -n enterprise-kyverno-operator create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
 ```
 
-### (Optional) If a custom CA is used in Kyverno webhooks, create secrets with necessary keys and certs in kyverno namespace
-Create the namespace
-```bash
-kubectl create namespace kyverno
-```
-Configure secrets for CA and TLS certificate-key pair as described in [Kyverno documentation](https://kyverno.io/docs/installation/customization/#custom-certificates)
-
 ## Getting Started
 Add the chart repository and install the chart
 ```bash
