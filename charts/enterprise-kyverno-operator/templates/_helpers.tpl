@@ -123,11 +123,11 @@ Create secret to access container registry
 
 {{- define "enterprise-kyverno.kyvernoReplicas" -}}
 {{- if eq .Values.profile "dev" -}}
-{{- default 1 .Values.kyverno.replicaCount -}}
+    {{- default 1 .Values.kyverno.replicaCount -}}
 {{- else if eq .Values.profile "prod" -}}
-{{- default 3 .Values.kyverno.replicaCount -}}
+    {{- default 3 .Values.kyverno.replicaCount -}}
 {{- else -}}
-{{- default 1 .Values.kyverno.replicaCount -}}
+    {{- default 1 .Values.kyverno.replicaCount -}}
 {{- end -}}
 {{- end -}}
 
