@@ -54,7 +54,11 @@ spec:
           - name: image-pull-secret
       image:
         pullSecrets:
+        {{- if (contains "v1.9" .Values.kyverno.image.tag) }}
         - name: image-pull-secret
+        {{- else if (contains "v1.8" .Values.kyverno.image.tag)}}
+          name: image-pull-secret
+        {{- end }}
       initImage:
         repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}kyvernopre
         tag: {{ .Values.kyverno.image.tag }}
