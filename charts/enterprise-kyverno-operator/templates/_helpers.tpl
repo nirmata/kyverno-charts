@@ -168,9 +168,6 @@ Create secret to access container registry
 {{- $excludedNamespaces := .Values.kyverno.excludedNamespacesForWebhook }}
 {{- if eq 0 (len .Values.kyverno.excludedNamespacesForWebhook) }}
     {{- $defaultNamespaces := list "kube-system" "nirmata" "nirmata-system" -}}
-    {{- if eq .Values.cloudPlatform "openshift" -}}
-    {{- $defaultNamespaces = append $defaultNamespaces "openshift-*" }}
-    {{- end -}}
     {{- $excludedNamespaces = concat $defaultNamespaces .Values.kyverno.excludedNamespacesForWebhook -}}
 {{- end -}}
 {{ toJson $excludedNamespaces }}
