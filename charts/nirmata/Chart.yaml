@@ -9,7 +9,6 @@ keywords:
   - kubernetes
   - nirmata
   - policy agent
-  - policy engine
   - validating webhook
   - admissions controller
 home: https://kyverno.io/
@@ -17,7 +16,7 @@ sources:
   - https://github.com/kyverno/kyverno
 maintainers:
   - name: Nirmata
-    url: https://nirmata.com/
+    url: https://kyverno.io/
 kubeVersion: ">=1.16.0-0"
 annotations:
   artifacthub.io/operator: "false"
@@ -27,6 +26,8 @@ annotations:
       url: https://kyverno.io/docs
   # valid kinds are: added, changed, deprecated, removed, fixed and security
   artifacthub.io/changes: |
+    - kind: fixed
+      description: incorrect config map names
     - kind: added
       description: make sigstore volume configurable
     - kind: changed

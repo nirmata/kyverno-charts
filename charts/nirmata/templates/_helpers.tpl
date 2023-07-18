@@ -1,48 +1,32 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{/* Expand the name of the chart. */}}
-{{- define "kyverno.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{/*
-Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
-*/}}
-{{- define "kyverno.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- if contains $name .Release.Name -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
-
-{{/* Create chart name and version as used by the chart label. */}}
-{{- define "kyverno.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{/* Helm labels */}}
-{{- define "kyverno.helmLabels" -}}
-{{- if not .Values.templating.enabled -}}
-helm.sh/chart: {{ template "kyverno.chart" . }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end -}}
-{{- end -}}
-
-{{/* Version labels */}}
-{{- define "kyverno.versionLabels" -}}
+{{- define "kyverno.chartVersion" -}}
 {{- if .Values.templating.enabled -}}
-app.kubernetes.io/version: {{ required "templating.version is required when templating.enabled is true" .Values.templating.version | replace "+" "_" }}
+  {{- required "templating.version is required when templating.enabled is true" .Values.templating.version | replace "+" "_" -}}
 {{- else -}}
-app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" }}
+  {{- .Chart.Version | replace "+" "_" -}}
 {{- end -}}
+{{- end -}}
+
+{{- define "kyverno.features.flags" -}}
+{{- $flags := list -}}
+{{- with .admissionReports -}}
+  {{- $flags = append $flags (print "--admissionReports=" .enabled) -}}
+{{- end -}}
+{{- with .autoUpdateWebhooks -}}
+  {{- $flags = append $flags (print "--autoUpdateWebhooks=" .enabled) -}}
+{{- end -}}
+{{- with .backgroundScan -}}
+  {{- $flags = append $flags (print "--backgroundScan=" .enabled) -}}
+  {{- $flags = append $flags (print "--backgroundScanWorkers=" .backgroundScanWorkers) -}}
+  {{- $flags = append $flags (print "--backgroundScanInterval=" .backgroundScanInterval) -}}
+  {{- $flags = append $flags (print "--skipResourceFilters=" .skipResourceFilters) -}}
+{{- end -}}
+{{- with .configMapCaching -}}
+  {{- $flags = append $flags (print "--enableConfigMapCaching=" .enabled) -}}
+{{- end -}}
+{{- with .deferredLoading -}}
+  {{- $flags = append $flags (print "--enableDeferredLoading=" .enabled) -}}
 {{- end -}}
 
 {{/* CRD labels */}}

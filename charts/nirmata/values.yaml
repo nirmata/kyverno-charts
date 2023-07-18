@@ -672,6 +672,10 @@ admissionController:
     secure: false
     # -- TLS Configuration for endpoint
     tlsConfig: {}
+    # -- RelabelConfigs to apply to samples before scraping
+    relabelings: []
+    # -- MetricRelabelConfigs to apply to samples before ingestion.
+    metricRelabelings: []
 
   tracing:
     # -- Enable tracing
@@ -682,10 +686,6 @@ admissionController:
     port:
     # -- Traces receiver credentials
     creds: ''
-
-  logging:
-    # -- Logging format
-    format: text
 
   metering:
     # -- Disable metrics export

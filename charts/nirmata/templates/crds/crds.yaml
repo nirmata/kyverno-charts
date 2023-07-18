@@ -97,10 +97,10 @@ spec:
                     description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
                     type: string
                   name:
-                    description: 'Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names'
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names'
                     type: string
                   uid:
-                    description: 'UID of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#uids'
+                    description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids'
                     type: string
                 required:
                 - apiVersion
@@ -708,6 +708,9 @@ spec:
                           description: Key is the context entry (using JMESPath) for
                             conditional rule evaluation.
                           x-kubernetes-preserve-unknown-fields: true
+                        message:
+                          description: Message is an optional display message
+                          type: string
                         operator:
                           description: 'Operator is the conditional operation to perform.
                             Valid operators are: Equals, NotEquals, In, AnyIn, AllIn,
@@ -748,6 +751,9 @@ spec:
                           description: Key is the context entry (using JMESPath) for
                             conditional rule evaluation.
                           x-kubernetes-preserve-unknown-fields: true
+                        message:
+                          description: Message is an optional display message
+                          type: string
                         operator:
                           description: 'Operator is the conditional operation to perform.
                             Valid operators are: Equals, NotEquals, In, AnyIn, AllIn,
@@ -1848,10 +1854,10 @@ spec:
                     description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
                     type: string
                   name:
-                    description: 'Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names'
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names'
                     type: string
                   uid:
-                    description: 'UID of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#uids'
+                    description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids'
                     type: string
                 required:
                 - apiVersion
@@ -2459,6 +2465,9 @@ spec:
                           description: Key is the context entry (using JMESPath) for
                             conditional rule evaluation.
                           x-kubernetes-preserve-unknown-fields: true
+                        message:
+                          description: Message is an optional display message
+                          type: string
                         operator:
                           description: 'Operator is the conditional operation to perform.
                             Valid operators are: Equals, NotEquals, In, AnyIn, AllIn,
@@ -2499,6 +2508,9 @@ spec:
                           description: Key is the context entry (using JMESPath) for
                             conditional rule evaluation.
                           x-kubernetes-preserve-unknown-fields: true
+                        message:
+                          description: Message is an optional display message
+                          type: string
                         operator:
                           description: 'Operator is the conditional operation to perform.
                             Valid operators are: Equals, NotEquals, In, AnyIn, AllIn,
@@ -3646,6 +3658,25 @@ spec:
                               is stored in the context with the name for the context
                               entry.
                             properties:
+                              data:
+                                description: Data specifies the POST data sent to
+                                  the server.
+                                items:
+                                  description: RequestData contains the HTTP POST
+                                    data
+                                  properties:
+                                    key:
+                                      description: Key is a unique identifier for
+                                        the data value
+                                      type: string
+                                    value:
+                                      description: Value is the data value
+                                      x-kubernetes-preserve-unknown-fields: true
+                                  required:
+                                  - key
+                                  - value
+                                  type: object
+                                type: array
                               jmesPath:
                                 description: JMESPath is an optional JSON Match Expression
                                   that can be used to transform the JSON response
@@ -3700,10 +3731,11 @@ spec:
                                 type: object
                               urlPath:
                                 description: URLPath is the URL path to be used in
-                                  the HTTP GET request to the Kubernetes API server
-                                  (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                  the HTTP GET or POST request to the Kubernetes API
+                                  server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                   The format required is the same format used by the
-                                  `kubectl get --raw` command.
+                                  `kubectl get --raw` command. See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                  for details.
                                 type: string
                             type: object
                           configMap:
@@ -5305,6 +5337,25 @@ spec:
                                         The data returned is stored in the context
                                         with the name for the context entry.
                                       properties:
+                                        data:
+                                          description: Data specifies the POST data
+                                            sent to the server.
+                                          items:
+                                            description: RequestData contains the
+                                              HTTP POST data
+                                            properties:
+                                              key:
+                                                description: Key is a unique identifier
+                                                  for the data value
+                                                type: string
+                                              value:
+                                                description: Value is the data value
+                                                x-kubernetes-preserve-unknown-fields: true
+                                            required:
+                                            - key
+                                            - value
+                                            type: object
+                                          type: array
                                         jmesPath:
                                           description: JMESPath is an optional JSON
                                             Match Expression that can be used to transform
@@ -5362,11 +5413,13 @@ spec:
                                           type: object
                                         urlPath:
                                           description: URLPath is the URL path to
-                                            be used in the HTTP GET request to the
-                                            Kubernetes API server (e.g. "/api/v1/namespaces"
+                                            be used in the HTTP GET or POST request
+                                            to the Kubernetes API server (e.g. "/api/v1/namespaces"
                                             or  "/apis/apps/v1/deployments"). The
                                             format required is the same format used
-                                            by the `kubectl get --raw` command.
+                                            by the `kubectl get --raw` command. See
+                                            https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                            for details.
                                           type: string
                                       type: object
                                     configMap:
@@ -5434,6 +5487,15 @@ spec:
                                   that results in one or more elements to which the
                                   validation logic is applied.
                                 type: string
+                              order:
+                                description: Order defines the iteration order on
+                                  the list. Can be Ascending to iterate from first
+                                  to last element or Descending to iterate in from
+                                  last to first element.
+                                enum:
+                                - Ascending
+                                - Descending
+                                type: string
                               patchStrategicMerge:
                                 description: PatchStrategicMerge is a strategic merge
                                   patch used to modify resources. See https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
@@ -5465,6 +5527,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -5514,6 +5580,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -5586,6 +5656,25 @@ spec:
                                         The data returned is stored in the context
                                         with the name for the context entry.
                                       properties:
+                                        data:
+                                          description: Data specifies the POST data
+                                            sent to the server.
+                                          items:
+                                            description: RequestData contains the
+                                              HTTP POST data
+                                            properties:
+                                              key:
+                                                description: Key is a unique identifier
+                                                  for the data value
+                                                type: string
+                                              value:
+                                                description: Value is the data value
+                                                x-kubernetes-preserve-unknown-fields: true
+                                            required:
+                                            - key
+                                            - value
+                                            type: object
+                                          type: array
                                         jmesPath:
                                           description: JMESPath is an optional JSON
                                             Match Expression that can be used to transform
@@ -5643,11 +5732,13 @@ spec:
                                           type: object
                                         urlPath:
                                           description: URLPath is the URL path to
-                                            be used in the HTTP GET request to the
-                                            Kubernetes API server (e.g. "/api/v1/namespaces"
+                                            be used in the HTTP GET or POST request
+                                            to the Kubernetes API server (e.g. "/api/v1/namespaces"
                                             or  "/apis/apps/v1/deployments"). The
                                             format required is the same format used
-                                            by the `kubectl get --raw` command.
+                                            by the `kubectl get --raw` command. See
+                                            https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                            for details.
                                           type: string
                                       type: object
                                     configMap:
@@ -5965,6 +6056,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -6014,6 +6109,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -6640,6 +6739,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -6691,6 +6794,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -6994,6 +7101,8 @@ spec:
                             type: boolean
                         type: object
                       type: array
+                  required:
+                  - name
                   type: object
                 type: array
               schemaValidation:
@@ -7121,6 +7230,25 @@ spec:
                                   returned is stored in the context with the name
                                   for the context entry.
                                 properties:
+                                  data:
+                                    description: Data specifies the POST data sent
+                                      to the server.
+                                    items:
+                                      description: RequestData contains the HTTP POST
+                                        data
+                                      properties:
+                                        key:
+                                          description: Key is a unique identifier
+                                            for the data value
+                                          type: string
+                                        value:
+                                          description: Value is the data value
+                                          x-kubernetes-preserve-unknown-fields: true
+                                      required:
+                                      - key
+                                      - value
+                                      type: object
+                                    type: array
                                   jmesPath:
                                     description: JMESPath is an optional JSON Match
                                       Expression that can be used to transform the
@@ -7176,10 +7304,11 @@ spec:
                                     type: object
                                   urlPath:
                                     description: URLPath is the URL path to be used
-                                      in the HTTP GET request to the Kubernetes API
-                                      server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                      in the HTTP GET or POST request to the Kubernetes
+                                      API server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                       The format required is the same format used
-                                      by the `kubectl get --raw` command.
+                                      by the `kubectl get --raw` command. See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                      for details.
                                     type: string
                                 type: object
                               configMap:
@@ -8854,6 +8983,26 @@ spec:
                                             stored in the context with the name for
                                             the context entry.
                                           properties:
+                                            data:
+                                              description: Data specifies the POST
+                                                data sent to the server.
+                                              items:
+                                                description: RequestData contains
+                                                  the HTTP POST data
+                                                properties:
+                                                  key:
+                                                    description: Key is a unique identifier
+                                                      for the data value
+                                                    type: string
+                                                  value:
+                                                    description: Value is the data
+                                                      value
+                                                    x-kubernetes-preserve-unknown-fields: true
+                                                required:
+                                                - key
+                                                - value
+                                                type: object
+                                              type: array
                                             jmesPath:
                                               description: JMESPath is an optional
                                                 JSON Match Expression that can be
@@ -8914,11 +9063,13 @@ spec:
                                               type: object
                                             urlPath:
                                               description: URLPath is the URL path
-                                                to be used in the HTTP GET request
-                                                to the Kubernetes API server (e.g.
-                                                "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                                to be used in the HTTP GET or POST
+                                                request to the Kubernetes API server
+                                                (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                                 The format required is the same format
                                                 used by the `kubectl get --raw` command.
+                                                See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                                for details.
                                               type: string
                                           type: object
                                         configMap:
@@ -8991,6 +9142,15 @@ spec:
                                       that results in one or more elements to which
                                       the validation logic is applied.
                                     type: string
+                                  order:
+                                    description: Order defines the iteration order
+                                      on the list. Can be Ascending to iterate from
+                                      first to last element or Descending to iterate
+                                      in from last to first element.
+                                    enum:
+                                    - Ascending
+                                    - Descending
+                                    type: string
                                   patchStrategicMerge:
                                     description: PatchStrategicMerge is a strategic
                                       merge patch used to modify resources. See https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
@@ -9024,6 +9184,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -9075,6 +9239,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -9364,6 +9532,26 @@ spec:
                                             stored in the context with the name for
                                             the context entry.
                                           properties:
+                                            data:
+                                              description: Data specifies the POST
+                                                data sent to the server.
+                                              items:
+                                                description: RequestData contains
+                                                  the HTTP POST data
+                                                properties:
+                                                  key:
+                                                    description: Key is a unique identifier
+                                                      for the data value
+                                                    type: string
+                                                  value:
+                                                    description: Value is the data
+                                                      value
+                                                    x-kubernetes-preserve-unknown-fields: true
+                                                required:
+                                                - key
+                                                - value
+                                                type: object
+                                              type: array
                                             jmesPath:
                                               description: JMESPath is an optional
                                                 JSON Match Expression that can be
@@ -9424,11 +9612,13 @@ spec:
                                               type: object
                                             urlPath:
                                               description: URLPath is the URL path
-                                                to be used in the HTTP GET request
-                                                to the Kubernetes API server (e.g.
-                                                "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                                to be used in the HTTP GET or POST
+                                                request to the Kubernetes API server
+                                                (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                                 The format required is the same format
                                                 used by the `kubectl get --raw` command.
+                                                See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                                for details.
                                               type: string
                                           type: object
                                         configMap:
@@ -9548,6 +9738,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -9599,6 +9793,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -10257,6 +10455,10 @@ spec:
                                                     entry (using JMESPath) for conditional
                                                     rule evaluation.
                                                   x-kubernetes-preserve-unknown-fields: true
+                                                message:
+                                                  description: Message is an optional
+                                                    display message
+                                                  type: string
                                                 operator:
                                                   description: 'Operator is the conditional
                                                     operation to perform. Valid operators
@@ -10309,6 +10511,10 @@ spec:
                                                     entry (using JMESPath) for conditional
                                                     rule evaluation.
                                                   x-kubernetes-preserve-unknown-fields: true
+                                                message:
+                                                  description: Message is an optional
+                                                    display message
+                                                  type: string
                                                 operator:
                                                   description: 'Operator is the conditional
                                                     operation to perform. Valid operators
@@ -10621,6 +10827,8 @@ spec:
                                 type: boolean
                             type: object
                           type: array
+                      required:
+                      - name
                       type: object
                     type: array
                 type: object
@@ -10849,6 +11057,25 @@ spec:
                               is stored in the context with the name for the context
                               entry.
                             properties:
+                              data:
+                                description: Data specifies the POST data sent to
+                                  the server.
+                                items:
+                                  description: RequestData contains the HTTP POST
+                                    data
+                                  properties:
+                                    key:
+                                      description: Key is a unique identifier for
+                                        the data value
+                                      type: string
+                                    value:
+                                      description: Value is the data value
+                                      x-kubernetes-preserve-unknown-fields: true
+                                  required:
+                                  - key
+                                  - value
+                                  type: object
+                                type: array
                               jmesPath:
                                 description: JMESPath is an optional JSON Match Expression
                                   that can be used to transform the JSON response
@@ -10903,10 +11130,11 @@ spec:
                                 type: object
                               urlPath:
                                 description: URLPath is the URL path to be used in
-                                  the HTTP GET request to the Kubernetes API server
-                                  (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                  the HTTP GET or POST request to the Kubernetes API
+                                  server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                   The format required is the same format used by the
-                                  `kubectl get --raw` command.
+                                  `kubectl get --raw` command. See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                  for details.
                                 type: string
                             type: object
                           configMap:
@@ -12082,6 +12310,25 @@ spec:
                                         The data returned is stored in the context
                                         with the name for the context entry.
                                       properties:
+                                        data:
+                                          description: Data specifies the POST data
+                                            sent to the server.
+                                          items:
+                                            description: RequestData contains the
+                                              HTTP POST data
+                                            properties:
+                                              key:
+                                                description: Key is a unique identifier
+                                                  for the data value
+                                                type: string
+                                              value:
+                                                description: Value is the data value
+                                                x-kubernetes-preserve-unknown-fields: true
+                                            required:
+                                            - key
+                                            - value
+                                            type: object
+                                          type: array
                                         jmesPath:
                                           description: JMESPath is an optional JSON
                                             Match Expression that can be used to transform
@@ -12139,11 +12386,13 @@ spec:
                                           type: object
                                         urlPath:
                                           description: URLPath is the URL path to
-                                            be used in the HTTP GET request to the
-                                            Kubernetes API server (e.g. "/api/v1/namespaces"
+                                            be used in the HTTP GET or POST request
+                                            to the Kubernetes API server (e.g. "/api/v1/namespaces"
                                             or  "/apis/apps/v1/deployments"). The
                                             format required is the same format used
-                                            by the `kubectl get --raw` command.
+                                            by the `kubectl get --raw` command. See
+                                            https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                            for details.
                                           type: string
                                       type: object
                                     configMap:
@@ -12211,6 +12460,15 @@ spec:
                                   that results in one or more elements to which the
                                   validation logic is applied.
                                 type: string
+                              order:
+                                description: Order defines the iteration order on
+                                  the list. Can be Ascending to iterate from first
+                                  to last element or Descending to iterate in from
+                                  last to first element.
+                                enum:
+                                - Ascending
+                                - Descending
+                                type: string
                               patchStrategicMerge:
                                 description: PatchStrategicMerge is a strategic merge
                                   patch used to modify resources. See https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
@@ -12242,6 +12500,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -12291,6 +12553,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -12570,6 +12836,9 @@ spec:
                                 description: Key is the context entry (using JMESPath)
                                   for conditional rule evaluation.
                                 x-kubernetes-preserve-unknown-fields: true
+                              message:
+                                description: Message is an optional display message
+                                type: string
                               operator:
                                 description: 'Operator is the conditional operation
                                   to perform. Valid operators are: Equals, NotEquals,
@@ -12630,6 +12899,10 @@ spec:
                                         description: Key is the context entry (using
                                           JMESPath) for conditional rule evaluation.
                                         x-kubernetes-preserve-unknown-fields: true
+                                      message:
+                                        description: Message is an optional display
+                                          message
+                                        type: string
                                       operator:
                                         description: 'Operator is the conditional
                                           operation to perform. Valid operators are:
@@ -12673,6 +12946,10 @@ spec:
                                         description: Key is the context entry (using
                                           JMESPath) for conditional rule evaluation.
                                         x-kubernetes-preserve-unknown-fields: true
+                                      message:
+                                        description: Message is an optional display
+                                          message
+                                        type: string
                                       operator:
                                         description: 'Operator is the conditional
                                           operation to perform. Valid operators are:
@@ -12735,6 +13012,25 @@ spec:
                                         The data returned is stored in the context
                                         with the name for the context entry.
                                       properties:
+                                        data:
+                                          description: Data specifies the POST data
+                                            sent to the server.
+                                          items:
+                                            description: RequestData contains the
+                                              HTTP POST data
+                                            properties:
+                                              key:
+                                                description: Key is a unique identifier
+                                                  for the data value
+                                                type: string
+                                              value:
+                                                description: Value is the data value
+                                                x-kubernetes-preserve-unknown-fields: true
+                                            required:
+                                            - key
+                                            - value
+                                            type: object
+                                          type: array
                                         jmesPath:
                                           description: JMESPath is an optional JSON
                                             Match Expression that can be used to transform
@@ -12792,11 +13088,13 @@ spec:
                                           type: object
                                         urlPath:
                                           description: URLPath is the URL path to
-                                            be used in the HTTP GET request to the
-                                            Kubernetes API server (e.g. "/api/v1/namespaces"
+                                            be used in the HTTP GET or POST request
+                                            to the Kubernetes API server (e.g. "/api/v1/namespaces"
                                             or  "/apis/apps/v1/deployments"). The
                                             format required is the same format used
-                                            by the `kubectl get --raw` command.
+                                            by the `kubectl get --raw` command. See
+                                            https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                            for details.
                                           type: string
                                       type: object
                                     configMap:
@@ -12910,6 +13208,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -12959,6 +13261,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -13570,6 +13876,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -13621,6 +13931,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -13899,6 +14213,8 @@ spec:
                             type: boolean
                         type: object
                       type: array
+                  required:
+                  - name
                   type: object
                 type: array
               schemaValidation:
@@ -14026,6 +14342,25 @@ spec:
                                   returned is stored in the context with the name
                                   for the context entry.
                                 properties:
+                                  data:
+                                    description: Data specifies the POST data sent
+                                      to the server.
+                                    items:
+                                      description: RequestData contains the HTTP POST
+                                        data
+                                      properties:
+                                        key:
+                                          description: Key is a unique identifier
+                                            for the data value
+                                          type: string
+                                        value:
+                                          description: Value is the data value
+                                          x-kubernetes-preserve-unknown-fields: true
+                                      required:
+                                      - key
+                                      - value
+                                      type: object
+                                    type: array
                                   jmesPath:
                                     description: JMESPath is an optional JSON Match
                                       Expression that can be used to transform the
@@ -14081,10 +14416,11 @@ spec:
                                     type: object
                                   urlPath:
                                     description: URLPath is the URL path to be used
-                                      in the HTTP GET request to the Kubernetes API
-                                      server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                      in the HTTP GET or POST request to the Kubernetes
+                                      API server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                       The format required is the same format used
-                                      by the `kubectl get --raw` command.
+                                      by the `kubectl get --raw` command. See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                      for details.
                                     type: string
                                 type: object
                               configMap:
@@ -15759,6 +16095,26 @@ spec:
                                             stored in the context with the name for
                                             the context entry.
                                           properties:
+                                            data:
+                                              description: Data specifies the POST
+                                                data sent to the server.
+                                              items:
+                                                description: RequestData contains
+                                                  the HTTP POST data
+                                                properties:
+                                                  key:
+                                                    description: Key is a unique identifier
+                                                      for the data value
+                                                    type: string
+                                                  value:
+                                                    description: Value is the data
+                                                      value
+                                                    x-kubernetes-preserve-unknown-fields: true
+                                                required:
+                                                - key
+                                                - value
+                                                type: object
+                                              type: array
                                             jmesPath:
                                               description: JMESPath is an optional
                                                 JSON Match Expression that can be
@@ -15819,11 +16175,13 @@ spec:
                                               type: object
                                             urlPath:
                                               description: URLPath is the URL path
-                                                to be used in the HTTP GET request
-                                                to the Kubernetes API server (e.g.
-                                                "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                                to be used in the HTTP GET or POST
+                                                request to the Kubernetes API server
+                                                (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                                 The format required is the same format
                                                 used by the `kubectl get --raw` command.
+                                                See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                                for details.
                                               type: string
                                           type: object
                                         configMap:
@@ -15896,6 +16254,15 @@ spec:
                                       that results in one or more elements to which
                                       the validation logic is applied.
                                     type: string
+                                  order:
+                                    description: Order defines the iteration order
+                                      on the list. Can be Ascending to iterate from
+                                      first to last element or Descending to iterate
+                                      in from last to first element.
+                                    enum:
+                                    - Ascending
+                                    - Descending
+                                    type: string
                                   patchStrategicMerge:
                                     description: PatchStrategicMerge is a strategic
                                       merge patch used to modify resources. See https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
@@ -15929,6 +16296,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -15980,6 +16351,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -16269,6 +16644,26 @@ spec:
                                             stored in the context with the name for
                                             the context entry.
                                           properties:
+                                            data:
+                                              description: Data specifies the POST
+                                                data sent to the server.
+                                              items:
+                                                description: RequestData contains
+                                                  the HTTP POST data
+                                                properties:
+                                                  key:
+                                                    description: Key is a unique identifier
+                                                      for the data value
+                                                    type: string
+                                                  value:
+                                                    description: Value is the data
+                                                      value
+                                                    x-kubernetes-preserve-unknown-fields: true
+                                                required:
+                                                - key
+                                                - value
+                                                type: object
+                                              type: array
                                             jmesPath:
                                               description: JMESPath is an optional
                                                 JSON Match Expression that can be
@@ -16329,11 +16724,13 @@ spec:
                                               type: object
                                             urlPath:
                                               description: URLPath is the URL path
-                                                to be used in the HTTP GET request
-                                                to the Kubernetes API server (e.g.
-                                                "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                                to be used in the HTTP GET or POST
+                                                request to the Kubernetes API server
+                                                (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                                 The format required is the same format
                                                 used by the `kubectl get --raw` command.
+                                                See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                                for details.
                                               type: string
                                           type: object
                                         configMap:
@@ -16453,6 +16850,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -16504,6 +16905,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -17162,6 +17567,10 @@ spec:
                                                     entry (using JMESPath) for conditional
                                                     rule evaluation.
                                                   x-kubernetes-preserve-unknown-fields: true
+                                                message:
+                                                  description: Message is an optional
+                                                    display message
+                                                  type: string
                                                 operator:
                                                   description: 'Operator is the conditional
                                                     operation to perform. Valid operators
@@ -17214,6 +17623,10 @@ spec:
                                                     entry (using JMESPath) for conditional
                                                     rule evaluation.
                                                   x-kubernetes-preserve-unknown-fields: true
+                                                message:
+                                                  description: Message is an optional
+                                                    display message
+                                                  type: string
                                                 operator:
                                                   description: 'Operator is the conditional
                                                     operation to perform. Valid operators
@@ -17526,6 +17939,8 @@ spec:
                                 type: boolean
                             type: object
                           type: array
+                      required:
+                      - name
                       type: object
                     type: array
                 type: object
@@ -17781,6 +18196,25 @@ spec:
                               is stored in the context with the name for the context
                               entry.
                             properties:
+                              data:
+                                description: Data specifies the POST data sent to
+                                  the server.
+                                items:
+                                  description: RequestData contains the HTTP POST
+                                    data
+                                  properties:
+                                    key:
+                                      description: Key is a unique identifier for
+                                        the data value
+                                      type: string
+                                    value:
+                                      description: Value is the data value
+                                      x-kubernetes-preserve-unknown-fields: true
+                                  required:
+                                  - key
+                                  - value
+                                  type: object
+                                type: array
                               jmesPath:
                                 description: JMESPath is an optional JSON Match Expression
                                   that can be used to transform the JSON response
@@ -17835,10 +18269,11 @@ spec:
                                 type: object
                               urlPath:
                                 description: URLPath is the URL path to be used in
-                                  the HTTP GET request to the Kubernetes API server
-                                  (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                  the HTTP GET or POST request to the Kubernetes API
+                                  server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                   The format required is the same format used by the
-                                  `kubectl get --raw` command.
+                                  `kubectl get --raw` command. See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                  for details.
                                 type: string
                             type: object
                           configMap:
@@ -19440,6 +19875,25 @@ spec:
                                         The data returned is stored in the context
                                         with the name for the context entry.
                                       properties:
+                                        data:
+                                          description: Data specifies the POST data
+                                            sent to the server.
+                                          items:
+                                            description: RequestData contains the
+                                              HTTP POST data
+                                            properties:
+                                              key:
+                                                description: Key is a unique identifier
+                                                  for the data value
+                                                type: string
+                                              value:
+                                                description: Value is the data value
+                                                x-kubernetes-preserve-unknown-fields: true
+                                            required:
+                                            - key
+                                            - value
+                                            type: object
+                                          type: array
                                         jmesPath:
                                           description: JMESPath is an optional JSON
                                             Match Expression that can be used to transform
@@ -19497,11 +19951,13 @@ spec:
                                           type: object
                                         urlPath:
                                           description: URLPath is the URL path to
-                                            be used in the HTTP GET request to the
-                                            Kubernetes API server (e.g. "/api/v1/namespaces"
+                                            be used in the HTTP GET or POST request
+                                            to the Kubernetes API server (e.g. "/api/v1/namespaces"
                                             or  "/apis/apps/v1/deployments"). The
                                             format required is the same format used
-                                            by the `kubectl get --raw` command.
+                                            by the `kubectl get --raw` command. See
+                                            https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                            for details.
                                           type: string
                                       type: object
                                     configMap:
@@ -19569,6 +20025,15 @@ spec:
                                   that results in one or more elements to which the
                                   validation logic is applied.
                                 type: string
+                              order:
+                                description: Order defines the iteration order on
+                                  the list. Can be Ascending to iterate from first
+                                  to last element or Descending to iterate in from
+                                  last to first element.
+                                enum:
+                                - Ascending
+                                - Descending
+                                type: string
                               patchStrategicMerge:
                                 description: PatchStrategicMerge is a strategic merge
                                   patch used to modify resources. See https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
@@ -19600,6 +20065,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -19649,6 +20118,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -19925,6 +20398,25 @@ spec:
                                         The data returned is stored in the context
                                         with the name for the context entry.
                                       properties:
+                                        data:
+                                          description: Data specifies the POST data
+                                            sent to the server.
+                                          items:
+                                            description: RequestData contains the
+                                              HTTP POST data
+                                            properties:
+                                              key:
+                                                description: Key is a unique identifier
+                                                  for the data value
+                                                type: string
+                                              value:
+                                                description: Value is the data value
+                                                x-kubernetes-preserve-unknown-fields: true
+                                            required:
+                                            - key
+                                            - value
+                                            type: object
+                                          type: array
                                         jmesPath:
                                           description: JMESPath is an optional JSON
                                             Match Expression that can be used to transform
@@ -19982,11 +20474,13 @@ spec:
                                           type: object
                                         urlPath:
                                           description: URLPath is the URL path to
-                                            be used in the HTTP GET request to the
-                                            Kubernetes API server (e.g. "/api/v1/namespaces"
+                                            be used in the HTTP GET or POST request
+                                            to the Kubernetes API server (e.g. "/api/v1/namespaces"
                                             or  "/apis/apps/v1/deployments"). The
                                             format required is the same format used
-                                            by the `kubectl get --raw` command.
+                                            by the `kubectl get --raw` command. See
+                                            https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                            for details.
                                           type: string
                                       type: object
                                     configMap:
@@ -20100,6 +20594,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -20149,6 +20647,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -20775,6 +21277,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -20826,6 +21332,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -21129,6 +21639,8 @@ spec:
                             type: boolean
                         type: object
                       type: array
+                  required:
+                  - name
                   type: object
                 type: array
               schemaValidation:
@@ -21257,6 +21769,25 @@ spec:
                                   returned is stored in the context with the name
                                   for the context entry.
                                 properties:
+                                  data:
+                                    description: Data specifies the POST data sent
+                                      to the server.
+                                    items:
+                                      description: RequestData contains the HTTP POST
+                                        data
+                                      properties:
+                                        key:
+                                          description: Key is a unique identifier
+                                            for the data value
+                                          type: string
+                                        value:
+                                          description: Value is the data value
+                                          x-kubernetes-preserve-unknown-fields: true
+                                      required:
+                                      - key
+                                      - value
+                                      type: object
+                                    type: array
                                   jmesPath:
                                     description: JMESPath is an optional JSON Match
                                       Expression that can be used to transform the
@@ -21312,10 +21843,11 @@ spec:
                                     type: object
                                   urlPath:
                                     description: URLPath is the URL path to be used
-                                      in the HTTP GET request to the Kubernetes API
-                                      server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                      in the HTTP GET or POST request to the Kubernetes
+                                      API server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                       The format required is the same format used
-                                      by the `kubectl get --raw` command.
+                                      by the `kubectl get --raw` command. See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                      for details.
                                     type: string
                                 type: object
                               configMap:
@@ -22990,6 +23522,26 @@ spec:
                                             stored in the context with the name for
                                             the context entry.
                                           properties:
+                                            data:
+                                              description: Data specifies the POST
+                                                data sent to the server.
+                                              items:
+                                                description: RequestData contains
+                                                  the HTTP POST data
+                                                properties:
+                                                  key:
+                                                    description: Key is a unique identifier
+                                                      for the data value
+                                                    type: string
+                                                  value:
+                                                    description: Value is the data
+                                                      value
+                                                    x-kubernetes-preserve-unknown-fields: true
+                                                required:
+                                                - key
+                                                - value
+                                                type: object
+                                              type: array
                                             jmesPath:
                                               description: JMESPath is an optional
                                                 JSON Match Expression that can be
@@ -23050,11 +23602,13 @@ spec:
                                               type: object
                                             urlPath:
                                               description: URLPath is the URL path
-                                                to be used in the HTTP GET request
-                                                to the Kubernetes API server (e.g.
-                                                "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                                to be used in the HTTP GET or POST
+                                                request to the Kubernetes API server
+                                                (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                                 The format required is the same format
                                                 used by the `kubectl get --raw` command.
+                                                See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                                for details.
                                               type: string
                                           type: object
                                         configMap:
@@ -23127,6 +23681,15 @@ spec:
                                       that results in one or more elements to which
                                       the validation logic is applied.
                                     type: string
+                                  order:
+                                    description: Order defines the iteration order
+                                      on the list. Can be Ascending to iterate from
+                                      first to last element or Descending to iterate
+                                      in from last to first element.
+                                    enum:
+                                    - Ascending
+                                    - Descending
+                                    type: string
                                   patchStrategicMerge:
                                     description: PatchStrategicMerge is a strategic
                                       merge patch used to modify resources. See https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
@@ -23160,6 +23723,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -23500,6 +24067,26 @@ spec:
                                             stored in the context with the name for
                                             the context entry.
                                           properties:
+                                            data:
+                                              description: Data specifies the POST
+                                                data sent to the server.
+                                              items:
+                                                description: RequestData contains
+                                                  the HTTP POST data
+                                                properties:
+                                                  key:
+                                                    description: Key is a unique identifier
+                                                      for the data value
+                                                    type: string
+                                                  value:
+                                                    description: Value is the data
+                                                      value
+                                                    x-kubernetes-preserve-unknown-fields: true
+                                                required:
+                                                - key
+                                                - value
+                                                type: object
+                                              type: array
                                             jmesPath:
                                               description: JMESPath is an optional
                                                 JSON Match Expression that can be
@@ -23560,11 +24147,13 @@ spec:
                                               type: object
                                             urlPath:
                                               description: URLPath is the URL path
-                                                to be used in the HTTP GET request
-                                                to the Kubernetes API server (e.g.
-                                                "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                                to be used in the HTTP GET or POST
+                                                request to the Kubernetes API server
+                                                (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                                 The format required is the same format
                                                 used by the `kubectl get --raw` command.
+                                                See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                                for details.
                                               type: string
                                           type: object
                                         configMap:
@@ -23684,6 +24273,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -23735,6 +24328,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -24393,6 +24990,10 @@ spec:
                                                     entry (using JMESPath) for conditional
                                                     rule evaluation.
                                                   x-kubernetes-preserve-unknown-fields: true
+                                                message:
+                                                  description: Message is an optional
+                                                    display message
+                                                  type: string
                                                 operator:
                                                   description: 'Operator is the conditional
                                                     operation to perform. Valid operators
@@ -24445,6 +25046,10 @@ spec:
                                                     entry (using JMESPath) for conditional
                                                     rule evaluation.
                                                   x-kubernetes-preserve-unknown-fields: true
+                                                message:
+                                                  description: Message is an optional
+                                                    display message
+                                                  type: string
                                                 operator:
                                                   description: 'Operator is the conditional
                                                     operation to perform. Valid operators
@@ -24757,6 +25362,8 @@ spec:
                                 type: boolean
                             type: object
                           type: array
+                      required:
+                      - name
                       type: object
                     type: array
                 type: object
@@ -24986,6 +25593,25 @@ spec:
                               is stored in the context with the name for the context
                               entry.
                             properties:
+                              data:
+                                description: Data specifies the POST data sent to
+                                  the server.
+                                items:
+                                  description: RequestData contains the HTTP POST
+                                    data
+                                  properties:
+                                    key:
+                                      description: Key is a unique identifier for
+                                        the data value
+                                      type: string
+                                    value:
+                                      description: Value is the data value
+                                      x-kubernetes-preserve-unknown-fields: true
+                                  required:
+                                  - key
+                                  - value
+                                  type: object
+                                type: array
                               jmesPath:
                                 description: JMESPath is an optional JSON Match Expression
                                   that can be used to transform the JSON response
@@ -25040,10 +25666,11 @@ spec:
                                 type: object
                               urlPath:
                                 description: URLPath is the URL path to be used in
-                                  the HTTP GET request to the Kubernetes API server
-                                  (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                  the HTTP GET or POST request to the Kubernetes API
+                                  server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                   The format required is the same format used by the
-                                  `kubectl get --raw` command.
+                                  `kubectl get --raw` command. See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                  for details.
                                 type: string
                             type: object
                           configMap:
@@ -26219,6 +26846,25 @@ spec:
                                         The data returned is stored in the context
                                         with the name for the context entry.
                                       properties:
+                                        data:
+                                          description: Data specifies the POST data
+                                            sent to the server.
+                                          items:
+                                            description: RequestData contains the
+                                              HTTP POST data
+                                            properties:
+                                              key:
+                                                description: Key is a unique identifier
+                                                  for the data value
+                                                type: string
+                                              value:
+                                                description: Value is the data value
+                                                x-kubernetes-preserve-unknown-fields: true
+                                            required:
+                                            - key
+                                            - value
+                                            type: object
+                                          type: array
                                         jmesPath:
                                           description: JMESPath is an optional JSON
                                             Match Expression that can be used to transform
@@ -26276,11 +26922,13 @@ spec:
                                           type: object
                                         urlPath:
                                           description: URLPath is the URL path to
-                                            be used in the HTTP GET request to the
-                                            Kubernetes API server (e.g. "/api/v1/namespaces"
+                                            be used in the HTTP GET or POST request
+                                            to the Kubernetes API server (e.g. "/api/v1/namespaces"
                                             or  "/apis/apps/v1/deployments"). The
                                             format required is the same format used
-                                            by the `kubectl get --raw` command.
+                                            by the `kubectl get --raw` command. See
+                                            https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                            for details.
                                           type: string
                                       type: object
                                     configMap:
@@ -26348,6 +26996,15 @@ spec:
                                   that results in one or more elements to which the
                                   validation logic is applied.
                                 type: string
+                              order:
+                                description: Order defines the iteration order on
+                                  the list. Can be Ascending to iterate from first
+                                  to last element or Descending to iterate in from
+                                  last to first element.
+                                enum:
+                                - Ascending
+                                - Descending
+                                type: string
                               patchStrategicMerge:
                                 description: PatchStrategicMerge is a strategic merge
                                   patch used to modify resources. See https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
@@ -26379,6 +27036,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -26428,6 +27089,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -26666,6 +27331,9 @@ spec:
                                 description: Key is the context entry (using JMESPath)
                                   for conditional rule evaluation.
                                 x-kubernetes-preserve-unknown-fields: true
+                              message:
+                                description: Message is an optional display message
+                                type: string
                               operator:
                                 description: 'Operator is the conditional operation
                                   to perform. Valid operators are: Equals, NotEquals,
@@ -26707,6 +27375,9 @@ spec:
                                 description: Key is the context entry (using JMESPath)
                                   for conditional rule evaluation.
                                 x-kubernetes-preserve-unknown-fields: true
+                              message:
+                                description: Message is an optional display message
+                                type: string
                               operator:
                                 description: 'Operator is the conditional operation
                                   to perform. Valid operators are: Equals, NotEquals,
@@ -26767,6 +27438,10 @@ spec:
                                         description: Key is the context entry (using
                                           JMESPath) for conditional rule evaluation.
                                         x-kubernetes-preserve-unknown-fields: true
+                                      message:
+                                        description: Message is an optional display
+                                          message
+                                        type: string
                                       operator:
                                         description: 'Operator is the conditional
                                           operation to perform. Valid operators are:
@@ -26810,6 +27485,10 @@ spec:
                                         description: Key is the context entry (using
                                           JMESPath) for conditional rule evaluation.
                                         x-kubernetes-preserve-unknown-fields: true
+                                      message:
+                                        description: Message is an optional display
+                                          message
+                                        type: string
                                       operator:
                                         description: 'Operator is the conditional
                                           operation to perform. Valid operators are:
@@ -26872,6 +27551,25 @@ spec:
                                         The data returned is stored in the context
                                         with the name for the context entry.
                                       properties:
+                                        data:
+                                          description: Data specifies the POST data
+                                            sent to the server.
+                                          items:
+                                            description: RequestData contains the
+                                              HTTP POST data
+                                            properties:
+                                              key:
+                                                description: Key is a unique identifier
+                                                  for the data value
+                                                type: string
+                                              value:
+                                                description: Value is the data value
+                                                x-kubernetes-preserve-unknown-fields: true
+                                            required:
+                                            - key
+                                            - value
+                                            type: object
+                                          type: array
                                         jmesPath:
                                           description: JMESPath is an optional JSON
                                             Match Expression that can be used to transform
@@ -26929,11 +27627,13 @@ spec:
                                           type: object
                                         urlPath:
                                           description: URLPath is the URL path to
-                                            be used in the HTTP GET request to the
-                                            Kubernetes API server (e.g. "/api/v1/namespaces"
+                                            be used in the HTTP GET or POST request
+                                            to the Kubernetes API server (e.g. "/api/v1/namespaces"
                                             or  "/apis/apps/v1/deployments"). The
                                             format required is the same format used
-                                            by the `kubectl get --raw` command.
+                                            by the `kubectl get --raw` command. See
+                                            https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                            for details.
                                           type: string
                                       type: object
                                     configMap:
@@ -27047,6 +27747,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -27096,6 +27800,10 @@ spec:
                                           description: Key is the context entry (using
                                             JMESPath) for conditional rule evaluation.
                                           x-kubernetes-preserve-unknown-fields: true
+                                        message:
+                                          description: Message is an optional display
+                                            message
+                                          type: string
                                         operator:
                                           description: 'Operator is the conditional
                                             operation to perform. Valid operators
@@ -27707,6 +28415,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -27758,6 +28470,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -28036,6 +28752,8 @@ spec:
                             type: boolean
                         type: object
                       type: array
+                  required:
+                  - name
                   type: object
                 type: array
               schemaValidation:
@@ -28163,6 +28881,25 @@ spec:
                                   returned is stored in the context with the name
                                   for the context entry.
                                 properties:
+                                  data:
+                                    description: Data specifies the POST data sent
+                                      to the server.
+                                    items:
+                                      description: RequestData contains the HTTP POST
+                                        data
+                                      properties:
+                                        key:
+                                          description: Key is a unique identifier
+                                            for the data value
+                                          type: string
+                                        value:
+                                          description: Value is the data value
+                                          x-kubernetes-preserve-unknown-fields: true
+                                      required:
+                                      - key
+                                      - value
+                                      type: object
+                                    type: array
                                   jmesPath:
                                     description: JMESPath is an optional JSON Match
                                       Expression that can be used to transform the
@@ -28218,10 +28955,11 @@ spec:
                                     type: object
                                   urlPath:
                                     description: URLPath is the URL path to be used
-                                      in the HTTP GET request to the Kubernetes API
-                                      server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                      in the HTTP GET or POST request to the Kubernetes
+                                      API server (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                       The format required is the same format used
-                                      by the `kubectl get --raw` command.
+                                      by the `kubectl get --raw` command. See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                      for details.
                                     type: string
                                 type: object
                               configMap:
@@ -29896,6 +30634,26 @@ spec:
                                             stored in the context with the name for
                                             the context entry.
                                           properties:
+                                            data:
+                                              description: Data specifies the POST
+                                                data sent to the server.
+                                              items:
+                                                description: RequestData contains
+                                                  the HTTP POST data
+                                                properties:
+                                                  key:
+                                                    description: Key is a unique identifier
+                                                      for the data value
+                                                    type: string
+                                                  value:
+                                                    description: Value is the data
+                                                      value
+                                                    x-kubernetes-preserve-unknown-fields: true
+                                                required:
+                                                - key
+                                                - value
+                                                type: object
+                                              type: array
                                             jmesPath:
                                               description: JMESPath is an optional
                                                 JSON Match Expression that can be
@@ -29956,11 +30714,13 @@ spec:
                                               type: object
                                             urlPath:
                                               description: URLPath is the URL path
-                                                to be used in the HTTP GET request
-                                                to the Kubernetes API server (e.g.
-                                                "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                                to be used in the HTTP GET or POST
+                                                request to the Kubernetes API server
+                                                (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                                 The format required is the same format
                                                 used by the `kubectl get --raw` command.
+                                                See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                                for details.
                                               type: string
                                           type: object
                                         configMap:
@@ -30033,6 +30793,15 @@ spec:
                                       that results in one or more elements to which
                                       the validation logic is applied.
                                     type: string
+                                  order:
+                                    description: Order defines the iteration order
+                                      on the list. Can be Ascending to iterate from
+                                      first to last element or Descending to iterate
+                                      in from last to first element.
+                                    enum:
+                                    - Ascending
+                                    - Descending
+                                    type: string
                                   patchStrategicMerge:
                                     description: PatchStrategicMerge is a strategic
                                       merge patch used to modify resources. See https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
@@ -30066,6 +30835,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -30117,6 +30890,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -30406,6 +31183,26 @@ spec:
                                             stored in the context with the name for
                                             the context entry.
                                           properties:
+                                            data:
+                                              description: Data specifies the POST
+                                                data sent to the server.
+                                              items:
+                                                description: RequestData contains
+                                                  the HTTP POST data
+                                                properties:
+                                                  key:
+                                                    description: Key is a unique identifier
+                                                      for the data value
+                                                    type: string
+                                                  value:
+                                                    description: Value is the data
+                                                      value
+                                                    x-kubernetes-preserve-unknown-fields: true
+                                                required:
+                                                - key
+                                                - value
+                                                type: object
+                                              type: array
                                             jmesPath:
                                               description: JMESPath is an optional
                                                 JSON Match Expression that can be
@@ -30466,11 +31263,13 @@ spec:
                                               type: object
                                             urlPath:
                                               description: URLPath is the URL path
-                                                to be used in the HTTP GET request
-                                                to the Kubernetes API server (e.g.
-                                                "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
+                                                to be used in the HTTP GET or POST
+                                                request to the Kubernetes API server
+                                                (e.g. "/api/v1/namespaces" or  "/apis/apps/v1/deployments").
                                                 The format required is the same format
                                                 used by the `kubectl get --raw` command.
+                                                See https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls
+                                                for details.
                                               type: string
                                           type: object
                                         configMap:
@@ -30590,6 +31389,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -30641,6 +31444,10 @@ spec:
                                                 (using JMESPath) for conditional rule
                                                 evaluation.
                                               x-kubernetes-preserve-unknown-fields: true
+                                            message:
+                                              description: Message is an optional
+                                                display message
+                                              type: string
                                             operator:
                                               description: 'Operator is the conditional
                                                 operation to perform. Valid operators
@@ -31299,6 +32106,10 @@ spec:
                                                     entry (using JMESPath) for conditional
                                                     rule evaluation.
                                                   x-kubernetes-preserve-unknown-fields: true
+                                                message:
+                                                  description: Message is an optional
+                                                    display message
+                                                  type: string
                                                 operator:
                                                   description: 'Operator is the conditional
                                                     operation to perform. Valid operators
@@ -31351,6 +32162,10 @@ spec:
                                                     entry (using JMESPath) for conditional
                                                     rule evaluation.
                                                   x-kubernetes-preserve-unknown-fields: true
+                                                message:
+                                                  description: Message is an optional
+                                                    display message
+                                                  type: string
                                                 operator:
                                                   description: 'Operator is the conditional
                                                     operation to perform. Valid operators
@@ -31663,6 +32478,8 @@ spec:
                                 type: boolean
                             type: object
                           type: array
+                      required:
+                      - name
                       type: object
                     type: array
                 type: object
