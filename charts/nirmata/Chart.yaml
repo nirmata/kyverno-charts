@@ -13,10 +13,10 @@ keywords:
   - admissions controller
 home: https://kyverno.io/
 sources:
-  - https://github.com/kyverno/kyverno
+  - https://github.com/nirmata/kyverno
 maintainers:
   - name: Nirmata
-    url: https://kyverno.io/
+    url: https://nirmata.com/
 kubeVersion: ">=1.16.0-0"
 annotations:
   artifacthub.io/operator: "false"
