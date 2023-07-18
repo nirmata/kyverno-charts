@@ -1,15 +1,14 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 1.6.8
-appVersion: v1.9.5-n4k.nirmata.1
+version: 3.0.2
+appVersion: v1.10.1
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
   - kubernetes
   - nirmata
   - policy agent
-  - policy engine
   - validating webhook
   - admissions controller
 home: https://kyverno.io/
@@ -17,7 +16,7 @@ sources:
   - https://github.com/kyverno/kyverno
 maintainers:
   - name: Nirmata
-    url: https://nirmata.com/
+    url: https://kyverno.io/
 kubeVersion: ">=1.16.0-0"
 annotations:
   artifacthub.io/operator: "false"
@@ -27,5 +26,9 @@ annotations:
       url: https://kyverno.io/docs
   # valid kinds are: added, changed, deprecated, removed, fixed and security
   artifacthub.io/changes: |
+    - kind: fixed
+      description: incorrect config map names
     - kind: added
-      description: support for webhook annotations in config map
+      description: define resources for cleanupJobs
+    - kind: changed
+      description: change to enable webhook cleanup hook by default
