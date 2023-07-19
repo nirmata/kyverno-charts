@@ -122,7 +122,7 @@ spec:
           image: {{ .Values.licenseManager.imageRepository }}:{{ .Values.licenseManager.imageTag }}
           imagePullPolicy: Always
           args:
-          - -deployment-name={{ template "kyverno.fullname" . }}
+          - -deployment-name={{ template "kyverno.admission-controller.name" . }}
           - -namespace={{ template "kyverno.namespace" . }}
           - -product-name={{ .Values.licenseManager.productName }}
           - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
@@ -144,7 +144,7 @@ spec:
           image: {{ .Values.licenseManager.imageRepository }}:{{ .Values.licenseManager.imageTag }}
           imagePullPolicy: Always
           args:
-          - -deployment-name={{ template "kyverno.fullname" . }}
+          - -deployment-name={{ template "kyverno.admission-controller.name" . }}
           - -namespace={{ template "kyverno.namespace" . }}
           - -product-name={{ .Values.licenseManager.productName }}
           - -validate-interval={{ .Values.licenseManager.validateIntervalMins }}
