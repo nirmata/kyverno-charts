@@ -298,8 +298,7 @@ test:
       type: RuntimeDefault
 
 # -- Additional labels
-customLabels:
-  app: kyverno
+customLabels: {}
 
 webhooksCleanup:
   # -- Create a helm pre-delete hook to cleanup webhooks.
