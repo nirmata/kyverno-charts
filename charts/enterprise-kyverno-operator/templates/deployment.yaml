@@ -44,7 +44,9 @@ spec:
           - name: OPERATOR_NAME
             value: {{ include "enterprise-kyverno.fullname" . }}
           - name: STORAGE_PATH
-            value: "/var/local"
+            value: /var/local
+          - name: HELM_CACHE_HOME
+            value: /var/local/helmcache
           {{- with .Values.envVars }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
@@ -53,7 +55,7 @@ spec:
             - --enable-webhook={{- .Values.enableWebhook | default false}}
             - --install-rbac={{- .Values.rbac.operatorHasAdminPerms | default false }}
             - --manage-certs={{- include "enterprise-kyverno.managecerts" . }}
-            - --detect-policy-tamper={{- include "enterprise-kyverno.detectPolicyTamper" . }}
+            - --prevent-policy-tamper={{- include "enterprise-kyverno.preventPolicyTamper" . }}
           volumeMounts:
           - mountPath: /var/local
             name: local-vol

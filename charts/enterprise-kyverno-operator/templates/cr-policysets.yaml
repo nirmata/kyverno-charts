@@ -1,4 +1,11 @@
-{{ range $pol := include "enterprise-kyverno.enabledPolicysets" . | split "," }}
+{{ $polstr := include "enterprise-kyverno.enabledPolicysets" . }}
+{{ if and (contains "pod-security-restricted" $polstr) (not (contains "pod-security-baseline" $polstr)) }}
+  {{ $polstr = printf "%s,%s" "pod-security-baseline" $polstr }}
+{{ end }}
+
+{{ $chartRepoUsername := .Values.policies.chartRepoUsername }}
+
+{{ range $pol := $polstr | split "," }}
 
 {{- $psetName := "invalid" -}}
 {{- $psetType := "" -}}
@@ -11,43 +18,31 @@
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "kubernetes-best-practice-policies" -}}
-  {{- $version = "0.1.2" -}}
+  {{- $version = "0.2.1" -}}
 {{- else if eq $pol "pod-security-baseline" -}}
   {{- $psetName = "pod-security-baseline" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "pss-baseline-policies" -}}
-  {{- $version = "0.1.1" -}}
+  {{- $version = "0.2.4" -}}
 {{- else if eq $pol "pod-security-restricted" -}}
   {{- $psetName = "pod-security-restricted" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "pss-restricted-policies" -}}
-  {{- $version = "0.1.1" -}}
+  {{- $version = "0.2.4" -}}
 {{- else if eq $pol "rbac-best-practices" -}}
   {{- $psetName = "rbac-best-practices" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "rbac-best-practice-policies" -}}
-  {{- $version = "0.1.1" -}}
+  {{- $version = "0.1.2" -}}
 {{- else if eq $pol "multitenancy-best-practices" -}}
   {{- $psetName = "multitenancy-best-practices" -}}
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "multitenancy-best-practice-policies" -}}
-  {{- $version = "0.1.1" -}}
-{{- else if eq $pol "best-practices-legacy" -}}
-  {{- $psetName = "best-practices-legacy" -}}
-  {{- $psetType = "helm" -}}
-  {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
-  {{- $chartName = "best-practice-policies" -}}
-  {{- $version = "0.1.1" -}}
-{{- else if eq $pol "pod-security-legacy" -}}
-  {{- $psetName = "pod-security-legacy" -}}
-  {{- $psetType = "helm" -}}
-  {{- $chartRepo = "https://nirmata.github.io/kyverno-charts" -}}
-  {{- $chartName = "pod-security-policies" -}}
-  {{- $version = "0.1.0" -}}
+  {{- $version = "0.1.2" -}}
 {{- end -}}
 
 {{- if ne $psetName "invalid" -}}
@@ -69,6 +64,8 @@ spec:
       chartRepo: {{ $chartRepo }}
       chartName: {{ $chartName }}
       version: {{ $version }}
+      username: {{ $chartRepoUsername}}
+      passwordSecret: "{{ include "enterprise-kyverno.namespace" $ }}/operator-params/chartRepoPassword"
   {{ end }}
 
 {{ end }}

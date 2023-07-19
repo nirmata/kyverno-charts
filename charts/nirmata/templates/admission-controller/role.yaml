@@ -17,6 +17,7 @@ rules:
       - watch
       - create
       - update
+      - delete
   - apiGroups:
       - ''
     resources:
@@ -38,30 +39,24 @@ rules:
       - get
       - patch
       - update
-  - apiGroups:
-      - coordination.k8s.io
-    resources:
-      - leases
-    verbs:
-      - create
-      - delete
-      - get
-      - patch
-      - update
   # Allow update of Kyverno deployment annotations
   - apiGroups:
       - apps
     resources:
       - deployments
       {{- if .Values.webhooksCleanup.enabled }}
+      {{- if not .Values.templating.enabled -}}
       - deployments/scale
+      {{- end }}
       {{- end }}
     verbs:
       - get
       - list
       - watch
       {{- if .Values.webhooksCleanup.enabled }}
+      {{- if not .Values.templating.enabled -}}
       - patch
       - update
+      {{- end }}
       {{- end }}
 {{- end -}}

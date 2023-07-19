@@ -2,7 +2,9 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-profile: ""
+profile: "prod"
+
+cloudPlatform: ""
 
 namespace:
 
@@ -41,7 +43,7 @@ certManager: operator
 # Component configurations
 kyverno:
   createCR: true
-  enablePolicyExceptions: false
+  enablePolicyExceptions: true
   replicaCount:
   config:
     name: ""
@@ -114,18 +116,16 @@ kyverno:
     # -- Image repository
     repository: ghcr.io/nirmata
     # -- Image tag
-    tag: v1.9.3-n4k.nirmata.1
+    tag: v1.9.5-n4k.nirmata.1
 
-  # Additional parameters for Kyverno from Kyverno Helm Chart
+  # -- Override default exclude namespaces (default kyverno, kube-system, nirmata, nirmata-system )
+  excludedNamespacesForWebhook: []
+
+  # Kyverno Helm Chart customizations other than those already in kyverno CR
   helm:
-    rbac:
-      serviceAccount:
-        name: kyverno
-    licenseManager:
-      imageTag: "v0.0.2"
-      productName: ""
 
 policies:
+  chartRepoUsername:
   policySets:
 
 awsAdapter:
@@ -227,7 +227,7 @@ ingress:
 
 resources:
   limits:
-    memory: 128Mi
+    memory: 256Mi
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following

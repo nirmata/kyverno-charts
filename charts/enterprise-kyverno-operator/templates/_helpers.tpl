@@ -131,26 +131,44 @@ Create secret to access container registry
 {{- end -}}
 {{- end -}}
 
-{{- define "enterprise-kyverno.detectPolicyTamper" -}}
-{{- if eq .Values.profile "dev" -}}
-    {{- default false .Values.detectPolicyTamper -}}
-{{- else if eq .Values.profile "prod" -}}
-    {{- default true .Values.detectPolicyTamper -}}
-{{- else -}}
-    {{- default true .Values.detectPolicyTamper -}}
-{{- end -}}
+{{- define "enterprise-kyverno.preventPolicyTamper" -}}
+{{- $polTamperStr := lower (toString .Values.preventPolicyTamper) }}
+
+{{- if eq $polTamperStr "false" }}
+    {{- false }}
+{{- else if eq $polTamperStr "true"}}
+    {{- true }}
+{{- else }}
+    {{- if eq .Values.profile "dev" -}}
+        {{- false }}
+    {{- else if eq .Values.profile "prod" -}}
+        {{- true }}
+    {{- else -}}
+        {{- true }}
+    {{- end -}}
+{{- end}}
+
 {{- end -}}
 
 {{- define "enterprise-kyverno.enabledPolicysets" -}}
 {{- if eq .Values.profile "dev" -}}
-    {{- default ("pod-security-baseline,pod-security-restricted,rbac-best-practices,k8s-best-practices") (join "," .Values.policies.policySets) -}}
+    {{- default ("pod-security-baseline") (join "," .Values.policies.policySets) -}}
 {{- else if eq .Values.profile "prod" -}}
-    {{- default ("pod-security-baseline,pod-security-restricted,rbac-best-practices,k8s-best-practices") (join "," .Values.policies.policySets) -}}
+    {{- default ("pod-security-restricted,pod-security-baseline,rbac-best-practices") (join "," .Values.policies.policySets) -}}
 {{- else -}}
-    {{- default ("pod-security-baseline,pod-security-restricted,k8s-best-practices") (join "," .Values.policies.policySets) -}}
+    {{- default ("pod-security-restricted,pod-security-baseline") (join "," .Values.policies.policySets) -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "enterprise-kyverno.policysetsStr" -}}
 {{- range (include "enterprise-kyverno.enabledPolicysets" . | split ",") }}{{(print . " ") }} {{- end }}
 {{- end -}}
+
+{{- define "kyverno.excludedNamespaces" -}}
+{{- $excludedNamespaces := .Values.kyverno.excludedNamespacesForWebhook }}
+{{- if eq 0 (len .Values.kyverno.excludedNamespacesForWebhook) }}
+    {{- $defaultNamespaces := list "kube-system" "nirmata" "nirmata-system" -}}
+    {{- $excludedNamespaces = concat $defaultNamespaces .Values.kyverno.excludedNamespacesForWebhook -}}
+{{- end -}}
+{{ toJson $excludedNamespaces }}
+{{- end }}
