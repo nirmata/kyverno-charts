@@ -57,6 +57,27 @@ entries:
     version: 0.1.1
   enterprise-kyverno-operator:
   - apiVersion: v2
+    appVersion: v0.2.0-rc1
+    created: "2023-07-20T14:23:27.888896977Z"
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: 879710189ce981521d8f7973c22fd1c3667ac0857e7f8b196b0262bbbab1e9b9
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: enterprise-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/enterprise-kyverno-operator-v0.3.0-rc0/enterprise-kyverno-operator-v0.3.0-rc0.tgz
+    version: v0.3.0-rc0
+  - apiVersion: v2
     appVersion: v0.1.14
     created: "2023-07-13T06:45:49.395789007Z"
     description: Helm Chart for Enterprise Kyverno Operator
@@ -1438,6 +1459,43 @@ entries:
   kyverno:
   - annotations:
       artifacthub.io/changes: |
+        - kind: fixed
+          description: incorrect config map names
+        - kind: added
+          description: define resources for cleanupJobs
+        - kind: changed
+          description: change to enable webhook cleanup hook by default
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: v1.10.1-n4k.nirmata.1
+    created: "2023-07-20T14:23:28.106708791Z"
+    description: Kubernetes Native Policy Management
+    digest: 4b5b9cb736bf77cc88c2e714e31de41ba9b9234b5c1ddfec36108d98367d6aba
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - validating webhook
+    - admissions controller
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno
+    sources:
+    - https://github.com/nirmata/kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.0.2-rc0/kyverno-3.0.2-rc0.tgz
+    version: 3.0.2-rc0
+  - annotations:
+      artifacthub.io/changes: |
         - kind: added
           description: support for webhook annotations in config map
       artifacthub.io/links: |
@@ -2606,4 +2664,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-07-13T06:45:49.396384114Z"
+generated: "2023-07-20T14:23:28.107332887Z"
