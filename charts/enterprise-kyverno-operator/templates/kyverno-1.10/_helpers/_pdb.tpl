@@ -1,6 +1,6 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{- define "kyverno110.pdb.apiVersion" -}}
+{{- define "kyverno.pdb.apiVersion" -}}
 {{- if .Values.kyverno.apiVersionOverride.podDisruptionBudget -}}
   {{- .Values.kyverno.apiVersionOverride.podDisruptionBudget -}}
 {{- else if .Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget" -}}
@@ -10,7 +10,7 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "kyverno110.pdb.spec" -}}
+{{- define "kyverno.pdb.spec" -}}
 {{- if and .minAvailable .maxUnavailable -}}
   {{- fail "Cannot set both .minAvailable and .maxUnavailable" -}}
 {{- end -}}

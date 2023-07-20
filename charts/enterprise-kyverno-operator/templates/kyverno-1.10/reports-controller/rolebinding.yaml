@@ -1,19 +1,19 @@
 {{- if .Values.kyverno.reportsController.enabled -}}
-{{- if and (eq .Values.kyverno.reportsController.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) (contains "v1.10" .Values.kyverno.image.tag) -}}
+{{- if .Values.kyverno.reportsController.rbac.create -}}
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ template "kyverno110.reports-controller.roleName" . }}
+  name: {{ template "kyverno.reports-controller.roleName" . }}
   labels:
-    {{- include "kyverno110.reports-controller.labels" . | nindent 4 }}
+    {{- include "kyverno.reports-controller.labels" . | nindent 4 }}
   namespace: {{ template "kyverno.namespace" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ template "kyverno110.reports-controller.roleName" . }}
+  name: {{ template "kyverno.reports-controller.roleName" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "kyverno110.reports-controller.serviceAccountName" . }}
+    name: {{ template "kyverno.reports-controller.serviceAccountName" . }}
     namespace: {{ template "kyverno.namespace" . }}
 {{- end -}}
 {{- end -}}

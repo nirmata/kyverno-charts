@@ -1,17 +1,17 @@
-{{- if and (eq .Values.kyverno.admissionController.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) (contains "v1.10" .Values.kyverno.image.tag) -}}
+{{- if .Values.kyverno.admissionController.rbac.create -}}
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ template "kyverno110.admission-controller.roleName" . }}
+  name: {{ template "kyverno.admission-controller.roleName" . }}
   namespace: {{ template "kyverno.namespace" . }}
   labels:
-    {{- include "kyverno110.admission-controller.labels" . | nindent 4 }}
+    {{- include "kyverno.admission-controller.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ template "kyverno110.admission-controller.roleName" . }}
+  name: {{ template "kyverno.admission-controller.roleName" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "kyverno110.admission-controller.serviceAccountName" . }}
+    name: {{ template "kyverno.admission-controller.serviceAccountName" . }}
     namespace: {{ template "kyverno.namespace" . }}
 {{- end -}}

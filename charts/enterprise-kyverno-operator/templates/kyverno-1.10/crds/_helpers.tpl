@@ -1,15 +1,15 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{- define "kyverno110.crds.labels" -}}
-{{- template "kyverno110.labels.merge" (list
-  (include "kyverno110.labels.common" .)
-  (include "kyverno110.crds.matchLabels" .)
+{{- define "kyverno.crds.labels" -}}
+{{- template "kyverno.labels.merge" (list
+  (include "kyverno.labels.common" .)
+  (include "kyverno.crds.matchLabels" .)
 ) -}}
 {{- end -}}
 
-{{- define "kyverno110.crds.matchLabels" -}}
-{{- template "kyverno110.labels.merge" (list
-  (include "kyverno110.matchLabels.common" .)
-  (include "kyverno110.labels.component" "crds")
+{{- define "kyverno.crds.matchLabels" -}}
+{{- template "kyverno.labels.merge" (list
+  (include "kyverno.matchLabels.common" .)
+  (include "kyverno.labels.component" "crds")
 ) -}}
 {{- end -}}

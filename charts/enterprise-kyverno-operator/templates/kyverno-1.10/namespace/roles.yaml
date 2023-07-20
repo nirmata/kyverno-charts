@@ -1,11 +1,9 @@
-{{- if and (eq .Values.kyverno.rbac.create true) (contains "v1.10" .Values.kyverno.image.tag) }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace:  {{ include "kyverno.namespace" . }}
-  name: {{ include "kyverno110.name" . }}-installer
+  name: {{ include "kyverno.name" . }}-installer
 rules:
 - apiGroups: ["*"]
   resources: ["*"]
   verbs: ["*"]
-{{- end }}

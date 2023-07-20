@@ -1,35 +1,35 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{- define "kyverno110.admission-controller.name" -}}
-{{ template "kyverno110.name" . }}-admission-controller
+{{- define "kyverno.admission-controller.name" -}}
+{{ template "kyverno.name" . }}-admission-controller
 {{- end -}}
 
-{{- define "kyverno110.admission-controller.labels" -}}
-{{- template "kyverno110.labels.merge" (list
-  (include "kyverno110.labels.common" .)
-  (include "kyverno110.admission-controller.matchLabels" .)
+{{- define "kyverno.admission-controller.labels" -}}
+{{- template "kyverno.labels.merge" (list
+  (include "kyverno.labels.common" .)
+  (include "kyverno.admission-controller.matchLabels" .)
 ) -}}
 {{- end -}}
 
-{{- define "kyverno110.admission-controller.matchLabels" -}}
-{{- template "kyverno110.labels.merge" (list
-  (include "kyverno110.matchLabels.common" .)
-  (include "kyverno110.labels.component" "admission-controller")
+{{- define "kyverno.admission-controller.matchLabels" -}}
+{{- template "kyverno.labels.merge" (list
+  (include "kyverno.matchLabels.common" .)
+  (include "kyverno.labels.component" "admission-controller")
 ) -}}
 {{- end -}}
 
-{{- define "kyverno110.admission-controller.roleName" -}}
-{{ .Release.Name }}:admission-controller
+{{- define "kyverno.admission-controller.roleName" -}}
+{{ include "kyverno.fullname" . }}:admission-controller
 {{- end -}}
 
-{{- define "kyverno110.admission-controller.serviceAccountName" -}}
+{{- define "kyverno.admission-controller.serviceAccountName" -}}
 {{- if .Values.kyverno.admissionController.rbac.create -}}
-    {{ default (include "kyverno110.admission-controller.name" .) .Values.kyverno.admissionController.rbac.serviceAccount.name }}
+    {{ default (include "kyverno.admission-controller.name" .) .Values.kyverno.admissionController.rbac.serviceAccount.name }}
 {{- else -}}
     {{ required "A service account name is required when `rbac.create` is set to `false`" .Values.kyverno.admissionController.rbac.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
 
-{{- define "kyverno110.admission-controller.serviceName" -}}
-{{- printf "%s-svc" (include "kyverno110.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- define "kyverno.admission-controller.serviceName" -}}
+{{- printf "%s-svc" (include "kyverno.fullname" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}

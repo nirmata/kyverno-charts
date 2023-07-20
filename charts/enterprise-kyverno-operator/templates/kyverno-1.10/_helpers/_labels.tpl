@@ -1,6 +1,6 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{- define "kyverno110.labels.merge" -}}
+{{- define "kyverno.labels.merge" -}}
 {{- $labels := dict -}}
 {{- range . -}}
   {{- $labels = merge $labels (fromYaml .) -}}
@@ -10,32 +10,34 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "kyverno110.labels.helm" -}}
-helm.sh/chart: {{ template "kyverno110.chart" . }}
+{{- define "kyverno.labels.helm" -}}
+{{- if not .Values.kyverno.templating.enabled -}}
+helm.sh/chart: {{ template "kyverno.chart" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
-
-{{- define "kyverno110.labels.version" -}}
-app.kubernetes.io/version: {{ template "kyverno110.chartVersion" . }}
 {{- end -}}
 
-{{- define "kyverno110.labels.common" -}}
-{{- template "kyverno110.labels.merge" (list
-  (include "kyverno110.labels.helm" .)
-  (include "kyverno110.labels.version" .)
-  (toYaml .Values.kyverno.kyverno.customLabels)
+{{- define "kyverno.labels.version" -}}
+app.kubernetes.io/version: {{ template "kyverno.chartVersion" . }}
+{{- end -}}
+
+{{- define "kyverno.labels.common" -}}
+{{- template "kyverno.labels.merge" (list
+  (include "kyverno.labels.helm" .)
+  (include "kyverno.labels.version" .)
+  (toYaml .Values.kyverno.customLabels)
 ) -}}
 {{- end -}}
 
-{{- define "kyverno110.matchLabels.common" -}}
-app.kubernetes.io/part-of: {{ template "kyverno110.fullname" . }}
-app.kubernetes.io/instance: {{ template "kyverno110.name" . }}
+{{- define "kyverno.matchLabels.common" -}}
+app.kubernetes.io/part-of: {{ template "kyverno.fullname" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
-{{- define "kyverno110.labels.component" -}}
+{{- define "kyverno.labels.component" -}}
 app.kubernetes.io/component: {{ . }}
 {{- end -}}
 
-{{- define "kyverno110.labels.name" -}}
+{{- define "kyverno.labels.name" -}}
 app.kubernetes.io/name: {{ . }}
 {{- end -}}
