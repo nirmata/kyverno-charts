@@ -1,6 +1,6 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{- define "kyverno110.image" -}}
+{{- define "kyverno.image" -}}
 {{- $tag := default .defaultTag .image.tag -}}
 {{- if not (typeIs "string" $tag) -}}
   {{ fail "Image tags must be strings." }}

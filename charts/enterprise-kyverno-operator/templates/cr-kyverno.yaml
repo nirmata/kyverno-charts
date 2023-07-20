@@ -46,22 +46,32 @@ spec:
       {{- if .Values.kyverno.helm }}
       {{- toYaml .Values.kyverno.helm | nindent 6 }}
       {{- end}}
-      cleanupController:
-        image:
-          repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}cleanup-controller
-          tag: {{ .Values.kyverno.image.tag }}
-          pullSecrets:
-          - name: image-pull-secret
-      image:
-        pullSecrets:
-        {{- if (contains "v1.9" .Values.kyverno.image.tag) }}
+      admissionController:
+        imagePullSecrets:
         - name: image-pull-secret
-        {{- else if (contains "v1.8" .Values.kyverno.image.tag)}}
-          name: image-pull-secret
-        {{- end }}
-      initImage:
-        repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}kyvernopre
-        tag: {{ .Values.kyverno.image.tag }}
+      backgroundController:
+        imagePullSecrets:
+        - name: image-pull-secret
+      cleanupController:
+        imagePullSecrets:
+        - name: image-pull-secret
+      reportsController:
+        imagePullSecrets:
+        - name: image-pull-secret
+      clusterAdmissionReports:
+        imagePullSecrets:
+        - name: image-pull-secret
+      cleanupJobs:
+        admissionReports:
+          imagePullSecrets:
+          - name: image-pull-secret
+          image:
+            registry: {{.Values.kyverno.cleanupJobsRegistry}}
+        clusterAdmissionReports:
+          imagePullSecrets:
+          - name: image-pull-secret
+          image:
+            registry: {{.Values.kyverno.cleanupJobsRegistry}}
       {{- if .Values.image.pullSecrets.create }}
       imagePullSecrets:
         image-pull-secret:
@@ -75,11 +85,8 @@ spec:
       - --loggingFormat=text
       - --exceptionNamespace={{ include "kyverno.namespace" . }}
       {{- end }}
-      rbac:
-        serviceAccount:
-          name: kyverno
       licenseManager:
-        imageRepository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}kyverno-license-manager
+        imageRepository: {{ .Values.kyverno.image.repository }}/nirmata/kyverno-license-manager
         imageTag: "v0.1.1"
         productName: ""
 {{- end }}

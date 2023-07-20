@@ -1,27 +1,64 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{- define "kyverno110.config.configMapName" -}}
-    {{ default (include "kyverno110.fullname" .) .Values.kyverno.config.name }}
+{{- define "kyverno.config.configMapName" -}}
+{{- if .Values.kyverno.config.create -}}
+    {{ default (include "kyverno.fullname" .) .Values.kyverno.config.name }}
+{{- else -}}
+    {{ required "A configmap name is required when `config.create` is set to `false`" .Values.kyverno.config.name }}
+{{- end -}}
 {{- end -}}
 
-{{- define "kyverno110.config.metricsConfigMapName" -}}
-    {{ default (printf "%s-metrics" (include "kyverno110.fullname" .)) .Values.kyverno.metricsConfig.name }}
+{{- define "kyverno.config.metricsConfigMapName" -}}
+{{- if .Values.kyverno.metricsConfig.create -}}
+    {{ default (printf "%s-metrics" (include "kyverno.fullname" .)) .Values.kyverno.metricsConfig.name }}
+{{- else -}}
+    {{ required "A configmap name is required when `metricsConfig.create` is set to `false`" .Values.kyverno.metricsConfig.name }}
+{{- end -}}
 {{- end -}}
 
-{{- define "kyverno110.config.labels" -}}
-{{- template "kyverno110.labels.merge" (list
-  (include "kyverno110.labels.common" .)
-  (include "kyverno110.config.matchLabels" .)
+{{- define "kyverno.config.labels" -}}
+{{- template "kyverno.labels.merge" (list
+  (include "kyverno.labels.common" .)
+  (include "kyverno.config.matchLabels" .)
 ) -}}
 {{- end -}}
 
-{{- define "kyverno110.config.matchLabels" -}}
-{{- template "kyverno110.labels.merge" (list
-  (include "kyverno110.matchLabels.common" .)
-  (include "kyverno110.labels.component" "config")
+{{- define "kyverno.config.matchLabels" -}}
+{{- template "kyverno.labels.merge" (list
+  (include "kyverno.matchLabels.common" .)
+  (include "kyverno.labels.component" "config")
 ) -}}
 {{- end -}}
 
-{{- define "kyverno110.config.imagePullSecret" -}}
+{{- define "kyverno.config.resourceFilters" -}}
+{{- $resourceFilters := .Values.kyverno.config.resourceFilters -}}
+{{- if .Values.kyverno.config.excludeKyvernoNamespace -}}
+  {{- $resourceFilters = prepend .Values.kyverno.config.resourceFilters (printf "[*/*,%s,*]" (include "kyverno.namespace" .)) -}}
+{{- end -}}
+{{- range $exclude := .Values.kyverno.config.resourceFiltersExcludeNamespaces -}}
+  {{- range $filter := $resourceFilters -}}
+    {{- if (contains (printf ",%s," $exclude) $filter) -}}
+      {{- $resourceFilters = without $resourceFilters $filter -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- range $resourceFilter := $resourceFilters }}
+{{ tpl $resourceFilter $ }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kyverno.config.webhooks" -}}
+{{- $excludeDefault := dict "key" "kubernetes.io/metadata.name" "operator" "NotIn" "values" (list (include "kyverno.namespace" .)) }}
+{{- $newWebhook := list }}
+{{- range $webhook := .Values.kyverno.config.webhooks }}
+  {{- $namespaceSelector := default dict $webhook.namespaceSelector }}
+  {{- $matchExpressions := default list $namespaceSelector.matchExpressions }}
+  {{- $newNamespaceSelector := dict "matchLabels" $namespaceSelector.matchLabels "matchExpressions" (append $matchExpressions $excludeDefault) }}
+  {{- $newWebhook = append $newWebhook (merge (omit $webhook "namespaceSelector") (dict "namespaceSelector" $newNamespaceSelector)) }}
+{{- end }}
+{{- $newWebhook | toJson }}
+{{- end -}}
+
+{{- define "kyverno.config.imagePullSecret" -}}
 {{- printf "{\"auths\":{\"%s\":{\"auth\":\"%s\"}}}" .registry (printf "%s:%s" .username .password | b64enc) | b64enc }}
 {{- end -}}

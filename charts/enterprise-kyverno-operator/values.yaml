@@ -45,10 +45,15 @@ kyverno:
   createCR: true
   enablePolicyExceptions: true
   replicaCount:
+  cleanupJobsRegistry: ~
   config:
-    name: ""
+    create: true
+    name: ~
   metricsConfig:
+    create: true
     name: ""
+  upgrade:
+    fromV2: false
   rbac:
     create: true
     serviceAccount:
@@ -70,7 +75,8 @@ kyverno:
   webhooksCleanup:
     enable: false
   crds:
-    annotations: []
+    install: true
+    annotations: {}
   cleanupController:
     # -- Enable cleanup controller.
     enabled: true
@@ -114,9 +120,9 @@ kyverno:
   generatecontrollerExtraResources: []
   image:
     # -- Image repository
-    repository: ghcr.io/nirmata
+    repository: ghcr.io
     # -- Image tag
-    tag: v1.9.5-n4k.nirmata.1
+    tag: v1.10.1-n4k.nirmata.1
 
   # -- Override default exclude namespaces (default kyverno, kube-system, nirmata, nirmata-system )
   excludedNamespacesForWebhook: []

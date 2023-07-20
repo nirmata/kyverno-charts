@@ -1,22 +1,22 @@
 {{- if .Values.kyverno.backgroundController.enabled -}}
-{{- if and (eq .Values.kyverno.backgroundController.rbac.create true) (not .Values.rbac.operatorHasAdminPerms) (contains "v1.10" .Values.kyverno.image.tag) -}}
+{{- if .Values.kyverno.backgroundController.rbac.create -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno110.background-controller.roleName" . }}
+  name: {{ template "kyverno.background-controller.roleName" . }}
   labels:
-    {{- include "kyverno110.background-controller.labels" . | nindent 4 }}
+    {{- include "kyverno.background-controller.labels" . | nindent 4 }}
 aggregationRule:
   clusterRoleSelectors:
     - matchLabels:
-        {{- include "kyverno110.background-controller.matchLabels" . | nindent 8 }}
+        {{- include "kyverno.background-controller.matchLabels" . | nindent 8 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno110.background-controller.roleName" . }}:core
+  name: {{ template "kyverno.background-controller.roleName" . }}:core
   labels:
-    {{- include "kyverno110.background-controller.labels" . | nindent 4 }}
+    {{- include "kyverno.background-controller.labels" . | nindent 4 }}
 rules:
   - apiGroups:
       - '*'
@@ -42,14 +42,13 @@ rules:
       - deletecollection
   - apiGroups:
       - ''
+      - events.k8s.io
     resources:
       - events
     verbs:
       - create
       - update
       - patch
-      - delete
-      - deletecollection
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -64,7 +63,6 @@ rules:
   - apiGroups:
       - ""
     resources:
-      - namespaces
       - configmaps
       - secrets
       - resourcequotas
@@ -89,23 +87,11 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "kyverno110.background-controller.roleName" $ }}:additional
+  name: {{ template "kyverno.background-controller.roleName" $ }}:additional
   labels:
-    {{- include "kyverno110.background-controller.labels" $ | nindent 4 }}
+    {{- include "kyverno.background-controller.labels" $ | nindent 4 }}
 rules:
-  {{- range . }}
-  - apiGroups:
-      {{- toYaml .apiGroups | nindent 6 }}
-    resources:
-      {{- toYaml .resources | nindent 6 }}
-    verbs:
-    - create
-    - update
-    - patch
-    - delete
-    - get
-    - list
-  {{- end }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}
 {{- end }}
