@@ -130,6 +130,8 @@ kyverno:
 
   # Kyverno Helm Chart customizations other than those already in kyverno CR
   helm:
+    apiVersionOverride:
+      podDisruptionBudget: "policy/v1"
 
 policies:
   chartRepoUsername:
