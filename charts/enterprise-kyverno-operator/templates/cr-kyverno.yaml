@@ -43,6 +43,13 @@ spec:
       hostNetwork: true
       {{- end }}
 
+      {{- if eq .Values.kyverno.enablePolicyExceptions true }}
+      features:
+        policyExceptions: 
+          enabled: true
+          namespace: {{ include "kyverno.namespace" . }}
+      {{- end }}
+
       {{- if .Values.kyverno.helm }}
       {{- toYaml .Values.kyverno.helm | nindent 6 }}
       {{- end}}
@@ -79,12 +86,6 @@ spec:
           username: {{.Values.image.pullSecrets.username}}
           password: {{.Values.image.pullSecrets.password}}
       {{- end}}
-      {{- if and (eq .Values.kyverno.enablePolicyExceptions true) (contains "v1.9" .Values.kyverno.image.tag) }}
-      extraArgs:
-      - --enablePolicyException=true
-      - --loggingFormat=text
-      - --exceptionNamespace={{ include "kyverno.namespace" . }}
-      {{- end }}
       licenseManager:
         imageRepository: {{ .Values.kyverno.image.repository }}/nirmata/kyverno-license-manager
         imageTag: "v0.1.1"
