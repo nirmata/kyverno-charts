@@ -63,8 +63,10 @@ helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
 ## Upgrading from earlier versions
 There are many breaking changes in Kyverno 1.10. So we recommend doing a clean installation. Please refer to the [Kyverno 1.10 release notes](https://github.com/kyverno/kyverno/releases/tag/v1.10.0) to understand these breaking changes. Follow the below steps to, take a backup of key resources in Kyverno v1.9 or earlier, do a clean install of Kverno 1.10.x, and restore backed up Kyverno policies after migrating them over to v1.10.
 
+NOTE: In the kubectl commands below, replace namespace `nirmata-system` with appropriate namespace used your setup.
+
 ### Take backups
-1. Save custom values with which you had installed kyverno operator 
+1. Save custom values with which you had installed kyverno operator. E.g.
 ```bash
 helm get values -n nirmata-system kyverno-operator > oldValues.yaml
 ```
@@ -73,7 +75,10 @@ You might need to remove a couple of helm output messages from the old values ya
 2. Take a backup of existing policies. This is more important if you have installed policies in addition to the Nirmata policies installed by default. E.g.
 `kubectl get cpol pol1 pol2 pol3 ... -o yaml > mypolBkp.yaml` or `kubectl get cpol -o yaml > allPolBkp.yaml`
 
-3. Take a backup of policy reports for reference. They will be regenerated anyways. E.g. 
+3. Take a backup of existing Kyvernoes and PolicySet CRs. It is needed if these CRs have been changed manually outside of the helm install/upgrade commands. E.g.
+`kubectl -n nirmata-system get kyvernoes kyverno -o yaml > kyvernoCRBkp.yaml` and `kubectl -n nirmata-system get policysets -o yaml > policySetCRBkp.yaml`
+
+4. Take a backup of policy reports for reference. They will be regenerated anyways. E.g. 
 `kubectl get polr -A -o yaml > bkpPolr.yaml`
 
 ### Uninstall existing version
@@ -93,6 +98,12 @@ Pull the latest nirmata charts repo and install kyverno operator 1.10. Also veri
 ```bash
 helm install kyverno-operator nirmata/enterprise-kyverno-operator -n nirmata-system --create-namespace [--version v0.3.2-rc1 or equivalent version if using RC] --set licenseManger.licenseKey=xxxx --set licenseManager.apiKey=xxxx> -f oldValuesWithHelmModified.yaml
 ```
+
+### Modify 'spec' sections in kyverno CR if changed manually
+In case there was any direct change done to the kyvernoes CR outside helm, then those changes needed to applied manually again using `kubectl edit` or equivalent. Mainly, changes to the `spec.helm.values` section of Kyvernoes CR. Within these also, some parameters might need to migrated as per the `New Chart Values` section of the [Kyverno 1.10 migration guide](https://github.com/kyverno/kyverno/blob/release-1.10/charts/kyverno/README.md#migrating-from-v2-to-v3).
+
+### Create/Delete Modify PolicySet CRs if changed manually
+Similar to the `spec` section of the kyverno CR described above, if manual addition/deletion or changes to PolicySet CRs had been done outside of helm commands, those need to be applied again using values in the PolicySet backup yamls. For instance, parameters such as helm chart repo or username/passwords, policy validationfailureaction settings saved in the policyset backups need to be reapplied in the new policyset resource definitions.
 
 ### Reinstall migrated custom policies
 Modify the other custom policies created (backed up earlier) if needed, such that they follow the guidelines described in [breaking changes in Kyverno 1.10](https://github.com/kyverno/kyverno/releases/tag/v1.10.0), in case of breaking changes.
