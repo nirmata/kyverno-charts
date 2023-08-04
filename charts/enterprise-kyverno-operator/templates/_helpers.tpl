@@ -193,7 +193,7 @@ content:
         {{- end}}
         
       {{- if eq .Values.cloudPlatform "openshift" }}
-      securityContext: null
+      securityContext: NULLOBJ
       {{- end}}
 
 
