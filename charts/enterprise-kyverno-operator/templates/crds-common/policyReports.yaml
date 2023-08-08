@@ -5,7 +5,7 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.1
   labels:
-    app.kubernetes.io/part-of: enterprise-kyverno-operator
+    app.kubernetes.io/part-of: nirmata-kyverno-operator
   name: clusterpolicyreports.wgpolicyk8s.io
 spec:
   group: wgpolicyk8s.io
@@ -369,7 +369,7 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.1
   labels:
-    app.kubernetes.io/part-of: enterprise-kyverno-operator
+    app.kubernetes.io/part-of: nirmata-kyverno-operator
   name: policyreports.wgpolicyk8s.io
 spec:
   group: wgpolicyk8s.io

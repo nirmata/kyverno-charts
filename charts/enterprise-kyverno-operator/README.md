@@ -8,11 +8,11 @@ You need a license key to run Enterprise Kyverno. If you are using Nirmata Enter
 ### (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
 Create the namespace
 ```bash
-kubectl create namespace enterprise-kyverno-operator
+kubectl create namespace nirmata-system
 ```
 Create configmap in the namespace
 ```bash
-kubectl -n enterprise-kyverno-operator create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
+kubectl -n nirmata-system create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
 ```
 
 ## Getting Started
@@ -21,7 +21,7 @@ Add the chart repository and install the chart
 helm repo add nirmata https://nirmata.github.io/kyverno-charts
 helm repo update nirmata
 
-helm install enterprise-kyverno-operator nirmata/enterprise-kyverno-operator -n enterprise-kyverno-operator --create-namespace --set licenseKey=<licenseKey>[,apiKey=<api key>]
+helm install nirmata-kyverno-operator nirmata/nirmata-kyverno-operator -n nirmata-system --create-namespace --set licenseKey=<licenseKey>[,apiKey=<api key>]
 ```
 Helm Chart parameters for further fine-tuning the above helm install are described in the [Helm Chart Values](#helm-chart-values) section below.
 
@@ -32,8 +32,8 @@ Additional parameters corresponding to custom CA or HTTP proxies, NO_PROXY shoul
 
 View various Resources created
 ```bash
-kubectl -n enterprise-kyverno-operator get kyvernoes.security.nirmata.io #(CR that defines kyverno settings)
-kubectl -n enterprise-kyverno-operator get policysets.security.nirmata.io #(CRs corresponding to default policysets installed)
+kubectl -n nirmata-system get kyvernoes.security.nirmata.io #(CR that defines kyverno settings)
+kubectl -n nirmata-system get policysets.security.nirmata.io #(CRs corresponding to default policysets installed)
 
 kubectl -n kyverno get po #(should show Kyverno pods getting ready)
 kubectl get cpol #(should show policies installed by initial policysets)
@@ -41,19 +41,19 @@ kubectl get cpol #(should show policies installed by initial policysets)
 
 If you need to modify Kyverno configuration, change CR directly or via Helm Upgrade
 ```bash
-kubectl -n enterprise-kyverno-operator edit kyvernoes.security.nirmata.io kyverno (and set replicas to 3)
+kubectl -n nirmata-system edit kyvernoes.security.nirmata.io kyverno (and set replicas to 3)
 
-helm upgrade enterprise-kyverno-operator nirmata/enterprise-kyverno-operator -n enterprise-kyverno-operator --create-namespace --set licenseKey=<licenseKey> --set kyverno.replicas=3
+helm upgrade nirmata-kyverno-operator nirmata/nirmata-kyverno-operator -n nirmata-system --create-namespace --set licenseKey=<licenseKey> --set kyverno.replicas=3
 ```
 
 Removing a Policy Set CR removes policies contained in it
 ```bash
-kubectl -n enterprise-kyverno-operator delete policysets best-practices
+kubectl -n nirmata-system delete policysets best-practices
 ```
 
 To remove Enterprise Kyverno and components
 ```bash
-helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
+helm uninstall -n nirmata-system nirmata-kyverno-operator
 ```
 
 ## Configure Adapters

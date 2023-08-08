@@ -5,7 +5,7 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.10.0
   labels:
-    app.kubernetes.io/part-of: enterprise-kyverno-operator
+    app.kubernetes.io/part-of: nirmata-kyverno-operator
   creationTimestamp: null
   name: kyvernoes.security.nirmata.io
 spec:
