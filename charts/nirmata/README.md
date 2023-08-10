@@ -291,7 +291,7 @@ The following table lists the configurable parameters of the kyverno chart and t
 | systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |
 | licenceManager.enable | bool | `true` | Whether to use license manager |
 | licenceManager.imageRepository | string | `ghcr.io/nirmata/kyverno-license-manager` | License manager repository |
-| licenceManager.imageTag | string | `v0.0.1` | License manager image tag |
+| licenceManager.imageTag | string | `v0.1.2` | License manager image tag |
 | licenceManager.productName | string | | Product name to be present in license, ignore product name check if empty |
 | licenceManager.validateIntervalMins | int | `60` | License validation interval in mins|
 | licenceManager.callHomeServer | string | `nirmata.io` | License server hostname:port |

@@ -60,7 +60,7 @@ content:
           name: kyverno
       licenseManager:
         imageRepository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}kyverno-license-manager
-        imageTag: "v0.1.1"
+        imageTag: "v0.1.2"
         productName: ""
 {{- end -}}
 
