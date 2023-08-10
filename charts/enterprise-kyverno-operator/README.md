@@ -32,7 +32,7 @@ Additional parameters corresponding to custom CA or HTTP proxies, NO_PROXY shoul
 
 View various Resources created
 ```bash
-kubectl -n nirmata-system get kyvernoes.security.nirmata.io #(CR that defines kyverno settings)
+kubectl -n nirmata-system get kyvernoconfigs.security.nirmata.io #(CR that defines kyverno settings)
 kubectl -n nirmata-system get policysets.security.nirmata.io #(CRs corresponding to default policysets installed)
 
 kubectl -n kyverno get po #(should show Kyverno pods getting ready)
@@ -41,7 +41,7 @@ kubectl get cpol #(should show policies installed by initial policysets)
 
 If you need to modify Kyverno configuration, change CR directly or via Helm Upgrade
 ```bash
-kubectl -n nirmata-system edit kyvernoes.security.nirmata.io kyverno (and set replicas to 3)
+kubectl -n nirmata-system edit kyvernoconfigs.security.nirmata.io kyverno (and set replicas to 3)
 
 helm upgrade nirmata-kyverno-operator nirmata/nirmata-kyverno-operator -n nirmata-system --create-namespace --set licenseKey=<licenseKey> --set kyverno.replicas=3
 ```
@@ -94,7 +94,7 @@ There are platform specific configurations in which the Kyverno Helm chart confi
 | rbac.create | bool | `true` | Enable RBAC resources creation |
 | rbac.operatorHasAdminPerms | bool | `false` | Whether operator has admin permissions to install CRD and RBAC |
 | rbac.serviceAccount.name | string | `nil` | Service account name when `rbac.create` is set to `false` |
-| image.repository | string | `"ghcr.io/nirmata/enterprise-kyverno-operator"` | Image repository |
+| image.repository | string | `"ghcr.io/nirmata/nirmata-kyverno-operator"` | Image repository |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | image.tag | string | `nil` | Image tag (defaults to chart app version) |
 | image.imagePullSecrets.registry | string | `ghcr.io` | Image pull secret registry |

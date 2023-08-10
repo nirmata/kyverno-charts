@@ -1,4 +1,4 @@
-# Default values for enterprise-kyverno.
+# Default values for nirmata-kyverno.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -13,7 +13,7 @@ replicaCount: 1
 envVars: []
 
 image:
-  repository: ghcr.io/nirmata/enterprise-kyverno-operator
+  repository: ghcr.io/nirmata/nirmata-kyverno-operator
   # Defaults to chart appVersion
   tag:
   pullPolicy: IfNotPresent

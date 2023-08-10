@@ -7,8 +7,8 @@ rules:
 - apiGroups:
   - "security.nirmata.io"
   resources:
-  - kyvernoes
-  - kyvernoes/status
+  - kyvernoconfigs
+  - kyvernoconfigs/status
   - policysets
   - policysets/status
   - kyvernoadapters
@@ -23,7 +23,7 @@ rules:
 - apiGroups:
   - security.nirmata.io
   resources:
-  - kyvernoes/finalizers
+  - kyvernoconfigs/finalizers
   - policysets/finalizers
   - kyvernoadapters/finalizers
   verbs:
