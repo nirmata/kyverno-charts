@@ -141,6 +141,27 @@ entries:
     - https://github.com/nirmata/kyverno-charts/releases/download/enterprise-kyverno-operator-v0.3.0-rc0/enterprise-kyverno-operator-v0.3.0-rc0.tgz
     version: v0.3.0-rc0
   - apiVersion: v2
+    appVersion: v0.1.17
+    created: "2023-08-10T10:20:57.499105265Z"
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: 5741480dc27b88b498783ff036dabf725ab3a44fd95e2aa8f7afe219b74fd99a
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: enterprise-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/enterprise-kyverno-operator-v0.2.36/enterprise-kyverno-operator-v0.2.36.tgz
+    version: v0.2.36
+  - apiVersion: v2
     appVersion: v0.1.16
     created: "2023-08-07T05:57:31.264410337Z"
     description: Helm Chart for Enterprise Kyverno Operator
@@ -1646,6 +1667,40 @@ entries:
       artifacthub.io/operator: "false"
       artifacthub.io/prerelease: "false"
     apiVersion: v2
+    appVersion: v1.9.5-n4k.nirmata.2
+    created: "2023-08-10T10:20:57.683567691Z"
+    description: Kubernetes Native Policy Management
+    digest: 7b180d5cb584a705bcdf3fe9599247cded345701117ebe32bf0b9343b61eb32b
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy engine
+    - validating webhook
+    - admissions controller
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno
+    sources:
+    - https://github.com/kyverno/kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-1.6.9/kyverno-1.6.9.tgz
+    version: 1.6.9
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: support for webhook annotations in config map
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
     appVersion: v1.9.5-n4k.nirmata.1
     created: "2023-05-29T11:01:25.619477426Z"
     description: Kubernetes Native Policy Management
@@ -2824,4 +2879,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-08-07T05:57:31.265502243Z"
+generated: "2023-08-10T10:20:57.684295595Z"
