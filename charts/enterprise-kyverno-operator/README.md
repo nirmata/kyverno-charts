@@ -94,7 +94,7 @@ There are platform specific configurations in which the Kyverno Helm chart confi
 | rbac.create | bool | `true` | Enable RBAC resources creation |
 | rbac.operatorHasAdminPerms | bool | `false` | Whether operator has admin permissions to install CRD and RBAC |
 | rbac.serviceAccount.name | string | `nil` | Service account name when `rbac.create` is set to `false` |
-| image.repository | string | `"ghcr.io/nirmata/nirmata-kyverno-operator"` | Image repository |
+| image.repository | string | `"ghcr.io/nirmata/enterprise-kyverno-operator"` | Image repository |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | image.tag | string | `nil` | Image tag (defaults to chart app version) |
 | image.imagePullSecrets.registry | string | `ghcr.io` | Image pull secret registry |
