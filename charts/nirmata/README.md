@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.0.2](https://img.shields.io/badge/Version-3.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.10.1-n4k.nirmata.1](https://img.shields.io/badge/AppVersion-v1.10.1--n4k.nirmata.1-informational?style=flat-square)
+![Version: 3.0.3-rc1](https://img.shields.io/badge/Version-3.0.3--rc1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.10.2-n4k.nirmata.1](https://img.shields.io/badge/AppVersion-v1.10.2--n4k.nirmata.1-informational?style=flat-square)
 
 ## About
 
@@ -309,6 +309,7 @@ The chart values are organised per component.
 | features.omitEvents.eventTypes | list | `[]` | Events which should not be emitted (possible values `PolicyViolation`, `PolicyApplied`, `PolicyError`, and `PolicySkipped`) |
 | features.policyExceptions.enabled | bool | `false` | Enables the feature |
 | features.policyExceptions.namespace | string | `""` | Restrict policy exceptions to a single namespace |
+| features.policyReports.enabled | bool | `true` | Enables the feature |
 | features.protectManagedResources.enabled | bool | `false` | Enables the feature |
 | features.registryClient.allowInsecure | bool | `false` | Allow insecure registry |
 | features.registryClient.credentialHelpers | list | `["default","google","amazon","azure","github"]` | Enable registry client helpers |
@@ -864,6 +865,11 @@ The chart values are organised per component.
 | webhooksCleanup.enabled | bool | `true` | Create a helm pre-delete hook to cleanup webhooks. |
 | webhooksCleanup.image | string | `"bitnami/kubectl:latest"` | `kubectl` image to run commands for deleting webhooks. |
 | webhooksCleanup.imagePullSecrets | list | `[]` | Image pull secrets |
+| webhooksCleanup.nodeAffinity | object | `{}` | Node affinity constraints. |
+| webhooksCleanup.nodeSelector | object | `{}` | Node labels for pod assignment |
+| webhooksCleanup.podAffinity | object | `{}` | Pod affinity constraints. |
+| webhooksCleanup.podAntiAffinity | object | `{}` | Pod anti affinity constraints. |
+| webhooksCleanup.tolerations | list | `[]` | List of node taints to tolerate |
 
 ### Test
 
@@ -894,7 +900,12 @@ The chart values are organised per component.
 | cleanupJobs.admissionReports.image.repository | string | `"bitnami/kubectl"` | Image repository |
 | cleanupJobs.admissionReports.image.tag | string | `"1.26.4"` | Image tag Defaults to `latest` if omitted |
 | cleanupJobs.admissionReports.imagePullSecrets | list | `[]` | Image pull secrets |
+| cleanupJobs.admissionReports.nodeAffinity | object | `{}` | Node affinity constraints. |
+| cleanupJobs.admissionReports.nodeSelector | object | `{}` | Node labels for pod assignment |
+| cleanupJobs.admissionReports.podAffinity | object | `{}` | Pod affinity constraints. |
 | cleanupJobs.admissionReports.podAnnotations | object | `{}` | Pod Annotations |
+| cleanupJobs.admissionReports.podAntiAffinity | object | `{}` | Pod anti affinity constraints. |
+| cleanupJobs.admissionReports.podLabels | object | `{}` | Pod labels |
 | cleanupJobs.admissionReports.podSecurityContext | object | `{}` | Security context for the pod |
 | cleanupJobs.admissionReports.resources | object | `{}` | Job resources |
 | cleanupJobs.admissionReports.schedule | string | `"*/10 * * * *"` | Cronjob schedule |
@@ -908,7 +919,12 @@ The chart values are organised per component.
 | cleanupJobs.clusterAdmissionReports.image.repository | string | `"bitnami/kubectl"` | Image repository |
 | cleanupJobs.clusterAdmissionReports.image.tag | string | `"1.26.4"` | Image tag Defaults to `latest` if omitted |
 | cleanupJobs.clusterAdmissionReports.imagePullSecrets | list | `[]` | Image pull secrets |
+| cleanupJobs.clusterAdmissionReports.nodeAffinity | object | `{}` | Node affinity constraints. |
+| cleanupJobs.clusterAdmissionReports.nodeSelector | object | `{}` | Node labels for pod assignment |
+| cleanupJobs.clusterAdmissionReports.podAffinity | object | `{}` | Pod affinity constraints. |
 | cleanupJobs.clusterAdmissionReports.podAnnotations | object | `{}` | Pod Annotations |
+| cleanupJobs.clusterAdmissionReports.podAntiAffinity | object | `{}` | Pod anti affinity constraints. |
+| cleanupJobs.clusterAdmissionReports.podLabels | object | `{}` | Pod Labels |
 | cleanupJobs.clusterAdmissionReports.podSecurityContext | object | `{}` | Security context for the pod |
 | cleanupJobs.clusterAdmissionReports.resources | object | `{}` | Job resources |
 | cleanupJobs.clusterAdmissionReports.schedule | string | `"*/10 * * * *"` | Cronjob schedule |
@@ -936,7 +952,7 @@ The chart values are organised per component.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | customCAConfigMap | string | `nil` |  |
-| customLabels | object | `{"app":"kyverno"}` | Additional labels |
+| customLabels | object | `{}` | Additional labels |
 | existingImagePullSecrets | list | `[]` | Existing Image pull secrets for image verification policies, this will define the `--imagePullSecrets` argument |
 | fullnameOverride | string | `nil` | Override the expanded name of the chart |
 | imagePullSecrets | object | `{}` | Image pull secrets for image verification policies, this will define the `--imagePullSecrets` argument |
