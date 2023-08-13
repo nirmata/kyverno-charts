@@ -308,6 +308,21 @@ webhooksCleanup:
   # -- Image pull secrets
   imagePullSecrets: []
 
+  # -- Node labels for pod assignment
+  nodeSelector: {}
+
+  # -- List of node taints to tolerate
+  tolerations: []
+
+  # -- Pod anti affinity constraints.
+  podAntiAffinity: {}
+
+  # -- Pod affinity constraints.
+  podAffinity: {}
+
+  # -- Node affinity constraints.
+  nodeAffinity: {}
+
 grafana:
   # -- Enable grafana dashboard creation.
   enabled: false
@@ -329,6 +344,9 @@ grafana:
 # Features configuration
 features:
   admissionReports:
+    # -- Enables the feature
+    enabled: true
+  policyReports:
     # -- Enables the feature
     enabled: true
   autoUpdateWebhooks:
@@ -445,8 +463,23 @@ cleanupJobs:
     # -- List of node taints to tolerate
     tolerations: []
 
+    # -- Node labels for pod assignment
+    nodeSelector: {}
+
     # -- Pod Annotations
     podAnnotations: {}
+
+    # -- Pod labels
+    podLabels: {}
+
+    # -- Pod anti affinity constraints.
+    podAntiAffinity: {}
+
+    # -- Pod affinity constraints.
+    podAffinity: {}
+
+    # -- Node affinity constraints.
+    nodeAffinity: {}
 
   clusterAdmissionReports:
 
@@ -501,9 +534,23 @@ cleanupJobs:
     # -- List of node taints to tolerate
     tolerations: []
 
+    # -- Node labels for pod assignment
+    nodeSelector: {}
+
     # -- Pod Annotations
     podAnnotations: {}
 
+    # -- Pod Labels
+    podLabels: {}
+
+    # -- Pod anti affinity constraints.
+    podAntiAffinity: {}
+
+    # -- Pod affinity constraints.
+    podAffinity: {}
+
+    # -- Node affinity constraints.
+    nodeAffinity: {}
 # Admission controller configuration
 admissionController:
 
