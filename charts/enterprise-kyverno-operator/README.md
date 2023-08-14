@@ -16,6 +16,9 @@ kubectl -n nirmata-system create configmap <e.g. ca-store-cm> --from-file=custom
 ```
 
 ## Getting Started
+
+***Nirmata Kyverno Operator v0.2.x has a few breaking changes compared to the earlier Enterprise Kyverno Operator. If you already have Enterprise Kyverno Operator Chart installed, please see [Upgrading from earlier Enterprise Kyverno Operator chart version](#upgrading-from-earlier-enterprise-kyverno-operator-chart-version) before proceeding further***
+
 Add the chart repository and install the chart
 ```bash
 helm repo add nirmata https://nirmata.github.io/kyverno-charts
@@ -55,6 +58,62 @@ To remove Nirmata Kyverno Operator and components
 ```bash
 helm uninstall -n nirmata-system nirmata-kyverno-operator
 ```
+
+## Upgrading from earlier Enterprise Kyverno Operator chart version
+There are a few breaking changes in the `Nirmata Kyverno Operator` Helm chart compared to `Enterprise Kyverno Operator` chart versions v0.2.x. Mainly:
+- Chart name changed from `Enterprise Kyverno Operator` to `Nirmata Kyverno Operator`
+- Renaming the custom resource kyvernoes to kyvernoconfig
+- A new chart nirmata-kyverno-operator instead of enterprise-kyverno-operator
+- New defaults for chart name and namespace.
+Follow the below steps to take a backup of key resources in the earlier chart, do a clean install of the new Operator with the older chart values, and restore backed up values if any.
+
+NOTE: In the kubectl commands below, replace namespace and chart name `enterprise-kyverno-operator` with appropriate namespace and chart name used your setup.
+
+### Take backups
+1. Save custom values with which you had installed kyverno operator. E.g.
+```bash
+helm get values -n enterprise-kyverno-operator enterprise-kyverno-operator > oldValues.yaml
+```
+You might need to remove a couple of helm output messages from the old values yaml file saved above. These values will be leveraged later when we install the new chart. 
+
+2. Take a backup of existing policies. This is more important if you have installed policies in addition to the Nirmata policies installed by default. E.g.
+`kubectl get cpol pol1 pol2 pol3 ... -o yaml > mypolBkp.yaml` or `kubectl get cpol -o yaml > allPolBkp.yaml`
+
+3. Take a backup of existing Kyvernoes and PolicySet CRs. It is needed if these CRs have been changed manually outside of the helm install/upgrade commands. E.g.
+`kubectl -n enterprise-kyverno-operator get kyvernoes kyverno -o yaml > kyvernoCRBkp.yaml` and `kubectl -n enterprise-kyverno-operator get policysets -o yaml > policySetCRBkp.yaml`
+
+4. Take a backup of policy reports for reference. They will be regenerated anyways. E.g. 
+`kubectl get polr -A -o yaml > bkpPolr.yaml`
+
+### Uninstall existing Operator Chart
+1. Uninstall operator (which will uninstall kyverno and policies).
+```bash
+helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
+```
+2. Uninstall these Kyverno CRDs installed by earlier operator
+```bash
+kubectl delete crd kyvernoes.security.nirmata.io clusterpolicyreports.wgpolicyk8s.io policyreports.wgpolicyk8s.io
+```
+
+### Install new Nirmata Kyverno Operator Chart
+
+Pull the latest nirmata charts repo and install nirmata kyverno operator. Also verify installation. This part is same as the standard clean install described in the [Getting Started](#getting-started) section. The old values.yaml file saved earlier, modified if needed, should also be provided. E.g.
+```bash
+helm install nirmata-kyverno-operator nirmata/nirmata-kyverno-operator -n nirmata-system --create-namespace --set licenseManger.licenseKey=xxxx [,licenseManager.apiKey=xxxx] -f oldValues.yaml
+```
+
+### Modify 'spec' sections in kyvernoes CR if changed manually
+In case there was any direct change done to the kyvernoes CR outside helm, then those changes needed to applied manually again to the kyvernoconfig CR using `kubectl edit` or equivalent. Else skip this step.
+
+### Create/Delete Modify PolicySet CRs if changed manually
+Similar to the kyverno CR described above, if manual addition/deletion or changes to PolicySet CRs had been done outside of helm commands, those need to be applied again using values in the PolicySet backup yamls. For instance, parameters such as helm chart repo or username/passwords, policy validationfailureaction settings saved in the policyset backups need to be reapplied in the new policyset resource definitions. Else skip this step.
+
+### Reinstall custom policies if any
+```bash
+kubectl apply -f mypolBkpUpgraded.yaml
+```
+Verify that those policies/policysets show up as ready and are working as expected. 
+
 
 ## Configure Adapters
 Adapters such as AWS, CIS, Image Scan and others can be configured by setting appropriate flags corresponding to that adapter. In general, we need to provide 2 flags
