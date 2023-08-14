@@ -1,9 +1,9 @@
-# Helm Chart for Enterprise Kyverno
-Enterprise Kyverno is a Kubernetes Operator to manage lifecycle of Kyverno, Adapters and Nirmata supported policies. 
+# Helm Chart for Nirmata Kyverno Operator
+Nirmata Kyverno Opertor is a Kubernetes Operator to manage lifecycle of Kyverno, Adapters and Nirmata supported policies. 
 
 ## Prerequisites
 ### Get license key
-You need a license key to run Enterprise Kyverno. If you are using Nirmata Enterprise for Kyverno, it is available in the UI. Else contact `support@nirmata.com`.
+You need a license key to run Enterprise Kyverno. If you are using `Enterprise for Kyverno`, or `Nirmata Policy Manager`, it is available in the UI. Else contact `support@nirmata.com`.
 
 ### (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
 Create the namespace

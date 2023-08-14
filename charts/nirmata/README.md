@@ -1,10 +1,10 @@
-# Kyverno
+# Nirmata Enterprise for Kyverno
 
 Kubernetes Native Policy Management
 
 ## About
 
-[Kyverno](https://kyverno.io) is a Kubernetes Native Policy Management engine.
+[Kyverno](https://kyverno.io) is a Kubernetes Native Policy Management engine. `Enterprise for Kyverno` is an enterprise-grade distribution of Kyverno with long-term support, designed to save time and costs for production users.
 
 It allows you to:
 - Manage policies as Kubernetes resources (no new language required.)
