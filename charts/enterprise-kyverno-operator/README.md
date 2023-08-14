@@ -51,7 +51,7 @@ Removing a Policy Set CR removes policies contained in it
 kubectl -n nirmata-system delete policysets best-practices
 ```
 
-To remove Enterprise Kyverno and components
+To remove Nirmata Kyverno Operator and components
 ```bash
 helm uninstall -n nirmata-system nirmata-kyverno-operator
 ```
