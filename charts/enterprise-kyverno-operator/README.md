@@ -168,7 +168,7 @@ There are platform specific configurations in which the Kyverno Helm chart confi
 | kyverno.generatecontrollerExtraResources | list | `[]]` | Additional resources to be added to kyverno controller RBAC permissions |
 | kyverno.image.repository | string | `"ghcr.io/nirmata/kyverno"` | Kyverno Image repository |
 | kyverno.image.pullPolicy | string | `"IfNotPresent"` | Kyverno Image pull policy |
-| kyverno.image.tag | string | `v1.9.5-n4k.nirmata.1` | Image tag (defaults to chart app version) |
+| kyverno.image.tag | string | `v1.10.3-n4k.nirmata.1` | Image tag (defaults to chart app version) |
 | kyverno.enablePolicyExceptions| bool | `true` | Enable policyexceptions feature in Kyverno 1.9+ |
 | kyverno.excludedNamespacesForWebhook | list | `{kyverno, kube-system, nirmata, nirmata-system}` | Namespaces to exclude from Kyverno webhook |
 | kyverno.helm | object | `helm.rbac.serviceAccount.name=kyverno` | Free form yaml section with helm parameters in Kyverno chart. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#values) |
