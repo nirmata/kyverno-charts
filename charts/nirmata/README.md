@@ -291,11 +291,11 @@ The following table lists the configurable parameters of the kyverno chart and t
 | systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |
 | licenceManager.enable | bool | `true` | Whether to use license manager |
 | licenceManager.imageRepository | string | `ghcr.io/nirmata/kyverno-license-manager` | License manager repository |
-| licenceManager.imageTag | string | `v0.0.1` | License manager image tag |
+| licenceManager.imageTag | string | `v0.1.2` | License manager image tag |
 | licenceManager.productName | string | | Product name to be present in license, ignore product name check if empty |
 | licenceManager.validateIntervalMins | int | `60` | License validation interval in mins|
 | licenceManager.callHomeServer | string | `nirmata.io` | License server hostname:port |
-| licenceManager.licenseKey | string | | License key (required) |
+| licenceManager.licenseKey | string | `free-tier-license` | License key (required) |
 | licenceManager.apiKey | string | | License server API key |
 | licenceManager.clusterId | string | | Cluster Id to use. If not provided, uid of kube-system namnespace |
 | licenceManager.clusterName | string | | Cluster Name to use. Auto-generated if not provided |

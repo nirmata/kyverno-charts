@@ -63,9 +63,6 @@ app.kubernetes.io/part-of: {{ template "kyverno.name" . }}
 {{/* Helm required labels */}}
 {{- define "kyverno.labels" -}}
 app.kubernetes.io/component: kyverno
-app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/name: {{ template "kyverno.name" . }}
 {{- with (include "kyverno.helmLabels" .) }}
 {{ . }}
 {{- end }}
@@ -73,8 +70,6 @@ app.kubernetes.io/name: {{ template "kyverno.name" . }}
 {{ . }}
 {{- end }}
 app.kubernetes.io/part-of: {{ template "kyverno.name" . }}
-app.kubernetes.io/version: "{{ .Chart.Version }}"
-helm.sh/chart: {{ template "kyverno.chart" . }}
 {{- with (include "kyverno.versionLabels" .) }}
 {{ . }}
 {{- end }}
@@ -91,11 +86,9 @@ helm.sh/chart: {{ template "kyverno.chart" . }}
 app: kyverno
 app.kubernetes.io/component: kyverno
 app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/name: {{ template "kyverno.name" . }}-test
 app.kubernetes.io/part-of: {{ template "kyverno.name" . }}
 app.kubernetes.io/version: "{{ .Chart.Version | replace "+" "_" }}"
-helm.sh/chart: {{ template "kyverno.chart" . }}
 {{- end -}}
 
 {{/* matchLabels */}}

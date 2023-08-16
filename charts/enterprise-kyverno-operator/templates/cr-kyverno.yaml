@@ -17,29 +17,5 @@ spec:
 
   helm:
     values:
-      {{- if eq .Values.cloudPlatform "openshift" }}
-      securityContext: null
-      {{- end}}
-
-      {{- if eq .Values.cloudPlatform "aks" }}
-      webhookAnnotations:
-        'admissions.enforcer/disabled': 'true'
-      {{- end}}
-
-      {{- if eq .Values.cloudPlatform "eks" }}
-      hostNetwork: true
-      {{- end }}
-
-      {{- toYaml .Values.kyverno.helm | nindent 6 }}
-      cleanupController:
-        image:
-          tag: {{ .Values.kyverno.image.tag }}
-      initImage:
-        tag: {{ .Values.kyverno.image.tag }}
-      {{- if and (eq .Values.kyverno.enablePolicyExceptions true) (contains "v1.9" .Values.kyverno.image.tag) }}
-      extraArgs:
-      - --enablePolicyException=true
-      - --loggingFormat=text
-      - --exceptionNamespace={{ include "kyverno.namespace" . }}
-      {{- end }}
+    {{- include "enterprise-kyverno.combinedKyveroHelm" . | nindent 6 }}
 {{- end }}
