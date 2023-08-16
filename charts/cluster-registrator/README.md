@@ -25,7 +25,7 @@ helm repo update kyverno-charts
 2. Install the Helm Chart:
 
 ```console
-helm install cluster-registrator kyverno-charts/cluster-registrator --cluster.name <cluster-name> --apiToken <api-token>
+helm install cluster-registrator kyverno-charts/cluster-registrator --set cluster.name <cluster-name> --set apiToken <api-token>
 ```
 
 3. Verify the Cluster Registrator installation:
