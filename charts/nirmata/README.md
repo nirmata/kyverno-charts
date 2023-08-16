@@ -295,7 +295,7 @@ The following table lists the configurable parameters of the kyverno chart and t
 | licenceManager.productName | string | | Product name to be present in license, ignore product name check if empty |
 | licenceManager.validateIntervalMins | int | `60` | License validation interval in mins|
 | licenceManager.callHomeServer | string | `nirmata.io` | License server hostname:port |
-| licenceManager.licenseKey | string | | License key (required) |
+| licenceManager.licenseKey | string | `free-tier-license` | License key (required) |
 | licenceManager.apiKey | string | | License server API key |
 | licenceManager.clusterId | string | | Cluster Id to use. If not provided, uid of kube-system namnespace |
 | licenceManager.clusterName | string | | Cluster Name to use. Auto-generated if not provided |
