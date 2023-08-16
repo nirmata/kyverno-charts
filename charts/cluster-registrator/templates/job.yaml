@@ -29,6 +29,26 @@ rules:
       - clusterroles
     verbs:
       - create
+  {{- if eq .Values.controllerPerms "read-write" }}
+  - apiGroups:
+      - kyverno.io
+    resources:
+      - clusterpolicies
+      - policies
+      - policyexceptions
+    verbs:
+      - '*'
+  {{- end }}
+  - apiGroups:
+      - security.nirmata.io
+      - operator.kyverno.io
+      - kyverno.io
+    resources:
+      - '*'
+    verbs:
+      - get
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -209,7 +229,7 @@ spec:
         - name: NIRMATA_TOKEN
           value: "{{ .Values.apiToken }}"
         - name: NIRMATA_URL
-          value: "{{ .Values.NirmataURL }}"
+          value: "{{ .Values.nirmataURL }}"
         - name: NIRMATA_CLUSTER_TYPE
           value: "{{ .Values.cluster.type }}"
         - name: HTTP_PROXY
