@@ -39,7 +39,7 @@ kubectl logs job/nirmata-cluster-registrator -n nirmata -f
 
 | Key | Type | Default | Required | Description |
 |-----|------|---------|----------|-------------|
-| NirmataURL | string | `"https://nirmata.io"` | No| Nirmata URL|
+| nirmataURL | string | `"https://nirmata.io"` | No| Nirmata URL|
 | cluster.name | string | `nil` | Yes | Name of the cluster in NPM|
 | cluster.type | string | `default-policy-manager-type` |No| Type of cluster to be created in NPM |
 | apiToken | string | `""` | Yes |Token required to authenticate into NPM|
@@ -47,6 +47,7 @@ kubectl logs job/nirmata-cluster-registrator -n nirmata -f
 | proxy.httpsProxy | string | `""` |No|HTTPS_PROXY required for connecting to clusters with Proxy |
 | proxy.noProxy | string | `""` | No|NO_PROXY required for connecting to clusters with Proxy |
 | tlsCert | string | `""` | No|TLS CERT to use for tunnel service connection |
+| controllerPerms | string | `read-write` | No|Whether registrator should install kube-controller with read-only or read-write permissions. Used as an additional gate to avoid providing privileges unintentionally. |
 
 
 ## Maintainers
