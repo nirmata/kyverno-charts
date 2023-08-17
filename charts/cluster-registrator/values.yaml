@@ -1,7 +1,7 @@
 # Default values for cluster registrator chart
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-NirmataURL: "https://nirmata.io"
+nirmataURL: "https://nirmata.io"
 
 cluster:
   name:
@@ -15,3 +15,11 @@ proxy:
   noProxy: ""
 
 tlsCert: ""
+
+# -- Whether registrator should install kube-controller with readonly or read-write permissions.
+# Roles needed by the kube-controller are ultimately decided based on support in server logic.
+# This parameter can be used as an additional gate for privilege escalation prevention so that
+# we don't provide read-write perms even if yamls downloaded from service need that.
+# Currently simple read-only and read-write flag, but we could have more shorthands for
+# variations such as: * on polexes but read-only on policy-reports, etc.
+controllerPerms: 'read-write'
