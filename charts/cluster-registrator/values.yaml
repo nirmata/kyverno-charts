@@ -16,6 +16,8 @@ proxy:
 
 tlsCert: ""
 
+imageTag: v0.1.0
+
 # -- Whether registrator should install kube-controller with readonly or read-write permissions.
 # Roles needed by the kube-controller are ultimately decided based on support in server logic.
 # This parameter can be used as an additional gate for privilege escalation prevention so that
