@@ -1,6 +1,6 @@
 {{- if .Values.kyverno.createCR }}
 apiVersion: security.nirmata.io/v1alpha1
-kind: KyvernoConfig
+kind: Kyverno
 metadata:
   annotations:
   labels:

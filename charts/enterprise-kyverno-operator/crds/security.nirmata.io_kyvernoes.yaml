@@ -7,18 +7,19 @@ metadata:
   labels:
     app.kubernetes.io/part-of: nirmata-kyverno-operator
   creationTimestamp: null
-  name: kyvernoconfigs.security.nirmata.io
+  name: kyvernoes.security.nirmata.io
 spec:
   group: security.nirmata.io
   names:
-    kind: KyvernoConfig
-    listKind: KyvernoConfigList
-    plural: kyvernoconfigs
-    singular: kyvernoconfig
+    kind: Kyverno
+    listKind: KyvernoList
+    plural: kyvernoes
+    singular: kyverno
     shortNames:
     - kycfg
     - kyvernocfg
     - kyvernoconf
+    - kyvernoconfig
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -41,7 +42,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Kyverno is the Schema for the kyvernoconfigs API
+        description: Kyverno is the Schema for the kyvernoes API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
