@@ -37,15 +37,27 @@ content:
       {{- toYaml .Values.kyverno.helm | nindent 6 }}
       {{- end}}
       admissionController:
+        container:
+          image:
+            tag: {{ .Values.kyverno.image.tag }}
+        initContainer:
+          image:
+            tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
         - name: image-pull-secret
       backgroundController:
+        image:
+          tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
         - name: image-pull-secret
       cleanupController:
+        image:
+          tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
         - name: image-pull-secret
       reportsController:
+        image:
+          tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
         - name: image-pull-secret
       clusterAdmissionReports:
