@@ -50,7 +50,7 @@ webhooks:
     service:
       name: {{ include "enterprise-kyverno.fullname" . }}
       namespace: {{ template "enterprise-kyverno.namespace" . }}
-      path: /validate-security-nirmata-io-v1alpha1-kyvernoconfig
+      path: /validate-security-nirmata-io-v1alpha1-kyverno
   failurePolicy: Fail
   name: vkyverno.kb.io
   rules:
@@ -62,6 +62,6 @@ webhooks:
     - CREATE
     - UPDATE
     resources:
-    - kyvernoconfigs
+    - kyvernoes
   sideEffects: None
 {{- end }}
