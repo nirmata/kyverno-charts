@@ -1616,9 +1616,9 @@ licenseManager:
   # -- Validation interval in mins
   validateIntervalMins: 60
   # -- License server
-  callHomeServer: "nirmata.io"
+  callHomeServer: nirmata.io
   # -- License key
-  licenseKey:
+  licenseKey: free-tier-license
   # -- License server API key
   apiKey:
   # -- Cluster Id. If not provided, use kube-system uid

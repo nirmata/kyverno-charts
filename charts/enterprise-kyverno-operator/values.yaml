@@ -1,4 +1,4 @@
-# Default values for enterprise-kyverno.
+# Default values for nirmata-kyverno.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -13,7 +13,7 @@ replicaCount: 1
 envVars: []
 
 image:
-  repository: ghcr.io/nirmata/enterprise-kyverno-operator
+  repository: ghcr.io/nirmata/nirmata-kyverno-operator
   # Defaults to chart appVersion
   tag:
   pullPolicy: IfNotPresent
@@ -122,7 +122,7 @@ kyverno:
     # -- Image repository
     repository: ghcr.io
     # -- Image tag
-    tag: v1.10.3-n4k.nirmata.1
+    tag: v1.10.3-n4k.nirmata.2
 
   # -- Override default exclude namespaces (default kyverno, kube-system, nirmata, nirmata-system )
   excludedNamespacesForWebhook: []

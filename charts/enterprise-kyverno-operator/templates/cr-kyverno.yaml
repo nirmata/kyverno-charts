@@ -1,6 +1,6 @@
 {{- if .Values.kyverno.createCR }}
 apiVersion: security.nirmata.io/v1alpha1
-kind: Kyverno
+kind: KyvernoConfig
 metadata:
   annotations:
   labels:
@@ -17,77 +17,5 @@ spec:
 
   helm:
     values:
-      config:
-        webhooks:
-        #Exclude namespaces
-        - namespaceSelector:
-            matchExpressions:
-            - key: kubernetes.io/metadata.name
-              operator: NotIn
-              values:
-              {{- $excludedNamespaces := include "kyverno.excludedNamespaces" . | fromJsonArray }}
-              {{- range $excludedNamespaces}}
-              - {{.}}
-              {{- end }}
-        
-      {{- if eq .Values.cloudPlatform "openshift" }}
-      securityContext: null
-      {{- end}}
-
-      {{- if eq .Values.cloudPlatform "aks" }}
-      webhookAnnotations:
-        'admissions.enforcer/disabled': 'true'
-      {{- end}}
-
-      {{- if eq .Values.cloudPlatform "eks" }}
-      hostNetwork: true
-      {{- end }}
-
-      {{- if eq .Values.kyverno.enablePolicyExceptions true }}
-      features:
-        policyExceptions: 
-          enabled: true
-          namespace: {{ include "kyverno.namespace" . }}
-      {{- end }}
-
-      {{- if .Values.kyverno.helm }}
-      {{- toYaml .Values.kyverno.helm | nindent 6 }}
-      {{- end}}
-      admissionController:
-        imagePullSecrets:
-        - name: image-pull-secret
-      backgroundController:
-        imagePullSecrets:
-        - name: image-pull-secret
-      cleanupController:
-        imagePullSecrets:
-        - name: image-pull-secret
-      reportsController:
-        imagePullSecrets:
-        - name: image-pull-secret
-      clusterAdmissionReports:
-        imagePullSecrets:
-        - name: image-pull-secret
-      cleanupJobs:
-        admissionReports:
-          imagePullSecrets:
-          - name: image-pull-secret
-          image:
-            registry: {{.Values.kyverno.cleanupJobsRegistry}}
-        clusterAdmissionReports:
-          imagePullSecrets:
-          - name: image-pull-secret
-          image:
-            registry: {{.Values.kyverno.cleanupJobsRegistry}}
-      {{- if .Values.image.pullSecrets.create }}
-      imagePullSecrets:
-        image-pull-secret:
-          registry: {{.Values.image.pullSecrets.registry}}
-          username: {{.Values.image.pullSecrets.username}}
-          password: {{.Values.image.pullSecrets.password}}
-      {{- end}}
-      licenseManager:
-        imageRepository: {{ .Values.kyverno.image.repository }}/nirmata/kyverno-license-manager
-        imageTag: "v0.1.1"
-        productName: ""
+    {{- include "enterprise-kyverno.combinedKyveroHelm" . | nindent 6 }}
 {{- end }}
