@@ -1,5 +1,5 @@
 apiVersion: v2
-name: enterprise-kyverno-operator
+name: nirmata-kyverno-operator
 description: Helm Chart for Enterprise Kyverno Operator
 type: application
 

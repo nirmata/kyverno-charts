@@ -1,12 +1,12 @@
-# kyverno
+# Nirmata Kyverno
 
 Kubernetes Native Policy Management
 
-![Version: 3.0.5-rc1](https://img.shields.io/badge/Version-3.0.5--rc1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.10.3-n4k.nirmata.1](https://img.shields.io/badge/AppVersion-v1.10.3--n4k.nirmata.1-informational?style=flat-square)
+![Version: 3.0.5-rc2](https://img.shields.io/badge/Version-3.0.5--rc2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.10.3-n4k.nirmata.2](https://img.shields.io/badge/AppVersion-v1.10.3--n4k.nirmata.2-informational?style=flat-square)
 
 ## About
 
-[Kyverno](https://kyverno.io) is a Kubernetes Native Policy Management engine.
+[Kyverno](https://kyverno.io) is a Kubernetes Native Policy Management engine. `Nirmata Kyverno` is an enterprise-grade distribution of Kyverno with long-term support, designed to save time and costs for production users.
 
 It allows you to:
 - Manage policies as Kubernetes resources (no new language required.)
@@ -943,7 +943,7 @@ The chart values are organised per component.
 | licenseManager.enable | bool | `true` | Whether to use license manager |
 | licenseManager.imageRepository | string | `"ghcr.io/nirmata/kyverno-license-manager"` | License manager repo |
 | licenseManager.imageTag | string | `"v0.1.2"` | Image tag |
-| licenseManager.licenseKey | string | `nil` | License key |
+| licenseManager.licenseKey | string | `"free-tier-license"` | License key |
 | licenseManager.productName | string | `""` | Product name to be present in license, empty to ignore check |
 | licenseManager.validateIntervalMins | int | `60` | Validation interval in mins |
 
