@@ -26,7 +26,7 @@ Other parameters corresponding to custom CA or HTTP proxies, NO_PROXY should be 
 --set customCAConfigMap=<e.g. ca-store-cm> --set systemCertPath=<e.g. /etc/ssl/certs>  --set "extraEnvVars[0].name=HTTP_PROXY" --set "extraEnvVars[0].value=<e.g. http://test.com:8080>" ...
 
 # 4. Check pods are running
-kubectl -n <namespace> get pods 
+kubectl -n nirmata-venafi-adapter get pods 
 
 # 5. Check CRD is created (should show imagekey)
 kubectl get crd
@@ -37,7 +37,7 @@ For a sample use-case, create an imagekey CR, verify that it fetches venafi cert
 ```
 
 # 1 Create a password secret for venafi environment
-kubectl create secret generic venafi-pwd-secret -n nirmata-venafi-adapter --from-literal password=<your-password> --as system:serviceaccount:<namespace>:imagekey-controller
+kubectl create secret generic venafi-pwd-secret -n nirmata-venafi-adapter --from-literal password=<your-password> --as system:serviceaccount:nirmata-venafi-adapter:imagekey-controller
 
 # 2. If needed, create an additional secret to convey to Venafi that an additional X.509 cert has to be trusted. Needed for some corner cases when enterprise customers use internal certificates. E.g. 
 kubectl create secret generic venafi-addl-cert-secret -n nirmata-venafi-adapter --from-file <addl-cert-key-filename>
@@ -65,13 +65,13 @@ spec:
     additionalCertSecretName: <"" or e.g. default/addl-venafi-cert-secret/addl-cert-secret-key>
 
 # 4. Apply the CR
-kubectl -n <namespace> create imagekey.yaml
+kubectl -n nirmata-venafi-adapter create imagekey.yaml
 
 # 5. Check that the CR is created
-kubectl -n <namespace> get imagekey
+kubectl -n nirmata-venafi-adapter get imagekey
 
 # 6. Ensure that the first job runs and downloads the specified key to configmap specified
-kubectl -n <namespace> get cm <config map name in CR> -o yaml
+kubectl -n nirmata-venafi-adapter get cm <config map name in CR> -o yaml
 
 # 7. Create a Kyverno imageverify policy referring to the configmap field. [See this](https://kyverno.io/policies/other/verify_image/)
 
