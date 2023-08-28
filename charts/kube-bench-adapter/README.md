@@ -13,7 +13,7 @@ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
 
 # 2. Install kube-bench adapter from nirmata helm repo with desired parameters.
 
-helm install kube-bench-adapter nirmata/kube-bench-adapter --set kubeBench.name="test-1" --set kubeBench.kubeBenchBenchmark="cis-1.7"
+helm install kube-bench-adapter nirmata/kube-bench-adapter --set kubeBench.name="cis-k8s-benchmark" --set kubeBench.kubeBenchBenchmark="cis-1.7"
 
 # 3. Watch the jobs
 kubectl get jobs --watch
