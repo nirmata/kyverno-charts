@@ -20,12 +20,12 @@ spec:
             command: ["./{{ .Values.kubeBench.command }}"]
             args: [
             "-name","{{ .Values.kubeBench.name}}",
-            "-yaml", "{{ .Values.kubeBench.yaml }}",
             "-category", "{{ .Values.kubeBench.category }}",
             "-namespace", "{{ .Values.kubeBench.namespace }}",
-            "-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}",
+            "-kube-bench-image", "{{ .Values.kubeBench.kubeBenchImg }}",
             "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
             "-kube-bench-targets", "{{ .Values.kubeBench.kubeBenchTargets }}",
+            "-kube-bench-benchmark", "{{ .Values.kubeBench.kubeBenchBenchmark }}",
             ]
             {{- with .Values.resources }}
             resources: {{ tpl (toYaml .) $ | nindent 14 }}
