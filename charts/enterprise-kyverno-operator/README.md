@@ -107,12 +107,13 @@ There are platform specific configurations in which the Kyverno Helm chart confi
 | kyverno.rbac.create | bool | `true` | Enable Kyverno RBAC resources creation |
 | kyverno.rbac.serviceAccount.create | string | `nil` | Whether to create Kyverno service account |
 | kyverno.rbac.serviceAccount.clusterRole.extraResources | list | `[]` | Extra resource permissions to add to the Kyverno cluster role |
-| kyverno.generatecontrollerExtraResources | list | `[]]` | Additional resources to be added to kyverno controller RBAC permissions |
+| kyverno.generatecontrollerExtraResources | list | `[]` | Additional resources to be added to kyverno controller RBAC permissions |
 | kyverno.image.repository | string | `"ghcr.io/nirmata/kyverno"` | Kyverno Image repository |
 | kyverno.image.pullPolicy | string | `"IfNotPresent"` | Kyverno Image pull policy |
 | kyverno.image.tag | string | `v1.9.5-n4k.nirmata.2` | Image tag (defaults to chart app version) |
 | kyverno.enablePolicyExceptions| bool | `true` | Enable policyexceptions feature in Kyverno 1.9+ |
-| kyverno.excludedNamespacesForWebhook | list | `{kyverno, kube-system, nirmata, nirmata-system}` | Namespaces to exclude from Kyverno webhook |
+| kyverno.excludedNamespacesForWebhook | list | `[]` | Namespaces to exclude from Kyverno webhook, in addition to defaults kyverno, kube-system, nirmata, nirmata-system |
+| kyverno.excludedNamespacesOverride | bool | `false` | Override exclusion of default namespaces in excludedNamespacesForWebhook parameter above|
 | kyverno.helm | object | `nil` | Free form yaml section with helm parameters in Kyverno chart. Note that null values for any object in a yaml node must be specified using a special string "NULLOBJ" for that node. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#values). |
 | policies.policySets | list | `{pod-security-restricted, rbac-best-practices}` | Default policy sets to be installed along with operator. Others are, `pod-security-baseline`, `k8s-best-practices`, and `multitenancy-best-practices` |
 | awsAdapter.rbac.create | bool | false | Create RBAC resources for Kyverno AWS Adapter, if AWS Adapter is going to be enabled now (through the awsAdapter.createCR helm param below) or later |
