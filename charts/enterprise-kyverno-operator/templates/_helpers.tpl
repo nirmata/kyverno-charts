@@ -165,9 +165,11 @@ Create secret to access container registry
 {{- end -}}
 
 {{- define "kyverno.excludedNamespaces" -}}
+{{- $defaultNamespaces := list "kube-system" "nirmata" "nirmata-system" -}}
 {{- $excludedNamespaces := .Values.kyverno.excludedNamespacesForWebhook }}
-{{- if eq 0 (len .Values.kyverno.excludedNamespacesForWebhook) }}
-    {{- $defaultNamespaces := list "kube-system" "nirmata" "nirmata-system" -}}
+{{- if .Values.kyverno.excludedNamespacesOverride }}
+    {{- $excludedNamespaces = .Values.kyverno.excludedNamespacesForWebhook -}}
+{{- else -}}
     {{- $excludedNamespaces = concat $defaultNamespaces .Values.kyverno.excludedNamespacesForWebhook -}}
 {{- end -}}
 {{ toJson $excludedNamespaces }}
