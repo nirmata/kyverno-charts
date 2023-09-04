@@ -75,3 +75,43 @@ Create secret to access docker registry
 {{- define "imagePullSecret" }}
 {{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.image.pullSecrets.registry (printf "%s:%s" .Values.image.pullSecrets.username .Values.image.pullSecrets.password | b64enc) | b64enc }}
 {{- end }}
+
+{{- define "kube-bench.jobTemplate" }}
+spec:
+  template:
+    metadata:
+      labels:
+            {{- include "kube-bench.labels" . | nindent 12 }}
+    spec:
+      containers:
+      - name: {{ include "kube-bench.fullname" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["./{{ .Values.kubeBench.command }}"]
+        args: [
+        "-name","{{ .Values.kubeBench.name}}",
+        "-category", "{{ .Values.kubeBench.category }}",
+        "-namespace", "{{ .Values.kubeBench.namespace }}",
+        "-kube-bench-image", "{{ .Values.kubeBench.kubeBenchImg }}",
+        "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
+        "-kube-bench-targets", "{{ .Values.kubeBench.kubeBenchTargets }}",
+        "-kube-bench-benchmark", "{{ .Values.kubeBench.kubeBenchBenchmark }}",
+        ]
+        {{- with .Values.resources }}
+        resources: {{ tpl (toYaml .) $ | nindent 14 }}
+        {{- end }}
+        {{- with .Values.livenessProbe }}
+        livenessProbe: {{ tpl (toYaml .) $ | nindent 14 }}
+        {{- end }}
+        {{- with .Values.readinessProbe }}
+        readinessProbe: {{ tpl (toYaml .) $ | nindent 14 }}
+        {{- end }}
+        {{- with .Values.securityContext }}
+        securityContext: {{ tpl (toYaml .) $ | nindent 14 }}
+        {{- end }}
+      {{- if .Values.image.pullSecrets.create }}
+      imagePullSecrets:
+      - name: {{ .Values.image.pullSecrets.name }}
+      {{- end }}
+      restartPolicy: Never
+      serviceAccountName:   {{ include "kube-bench.fullname" . }}
+{{- end}}

@@ -1,0 +1,8 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: {{ .Values.kubeBench.namespace }}
+  name: {{ include "kube-bench.fullname" . }}-startup
+  labels:
+    {{- include "kube-bench.labels" . | nindent 4 }}
+{{ include "kube-bench.jobTemplate" . }}
