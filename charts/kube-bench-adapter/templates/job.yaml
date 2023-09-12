@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   namespace: {{ .Values.kubeBench.namespace }}
-  name: {{ include "kube-bench.fullname" . }}-startup
+  name: {{ include "kube-bench.fullname" . }}-startup-{{ uuidv4 | trunc 5 }}
   labels:
     {{- include "kube-bench.labels" . | nindent 4 }}
 {{ include "kube-bench.jobTemplate" . }}
