@@ -18,7 +18,8 @@ tlsCert: ""
 
 imageTag: v0.1.0
 
-# -- Whether registrator should install kube-controller with readonly or read-write permissions.
+# Whether registrator should install kube-controller with readonly or read-write permissions.
+# For NDP we provide a read-write-ndp role that has a lot more perms than read-write
 # Roles needed by the kube-controller are ultimately decided based on support in server logic.
 # This parameter can be used as an additional gate for privilege escalation prevention so that
 # we don't provide read-write perms even if yamls downloaded from service need that.
