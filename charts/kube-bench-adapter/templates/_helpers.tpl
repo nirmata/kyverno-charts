@@ -89,7 +89,6 @@ spec:
         command: ["./{{ .Values.kubeBench.command }}"]
         args: [
         "-name","{{ .Values.kubeBench.name}}",
-        "-category", "{{ .Values.kubeBench.category }}",
         "-namespace", "{{ .Values.kubeBench.namespace }}",
         "-kube-bench-image", "{{ .Values.kubeBench.kubeBenchImg }}",
         "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",

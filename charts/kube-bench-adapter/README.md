@@ -1,6 +1,6 @@
 # kube-bench-adapter
 
-![Version: v1.2.5](https://img.shields.io/badge/Version-v1.2.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.2](https://img.shields.io/badge/AppVersion-v0.2.2-informational?style=flat-square)
+![Version: v1.2.6](https://img.shields.io/badge/Version-v1.2.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.3](https://img.shields.io/badge/AppVersion-v0.2.3-informational?style=flat-square)
 
 The kube-bench adapter periodically runs a CIS benchmark check using cron-job with a tool called kube-bench and produces a cluster-wide policy report based on the Policy Report Custom Resource Definition.
 
@@ -29,7 +29,7 @@ kubectl get clusterpolicyreports
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"ghcr.io/nirmata/kube-bench-adapter"` | image repository of kube-bench-adapter |
-| image.tag | string | `"v0.2.2"` | tag of image repository of kube-bench-adapter |
+| image.tag | string | `"v0.2.3"` | tag of image repository of kube-bench-adapter |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |
@@ -38,7 +38,6 @@ kubectl get clusterpolicyreports
 | ingress.hosts[0].paths[0].backend.servicePort | int | `80` |  |
 | ingress.hosts[0].paths[0].path | string | `"/"` |  |
 | ingress.tls | list | `[]` |  |
-| kubeBench.category | string | `"CIS Benchmarks"` | category of the policy report |
 | kubeBench.command | string | `"policyreport"` |  |
 | kubeBench.kubeBenchImg | string | `"aquasec/kube-bench:v0.6.6"` | kube-bench image used for the adapter |
 | kubeBench.kubeconfig | string | `"$HOME/.kube/config"` | absolute path to the kubeconfig file |

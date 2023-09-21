@@ -10,7 +10,7 @@ image:
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
    # --tag of image repository of kube-bench-adapter
-  tag: "v0.2.2"
+  tag: "v0.2.3"
   pullSecrets:
     registry:
     # Leave blank, if no ImagePullSecret is needed.
@@ -46,8 +46,6 @@ kubeBench:
   command: "policyreport"
   # -- name of kube-bench adapter cluster policy report
   name: "kube-bench"
-  # -- category of the policy report
-  category: "CIS Kubernetes Benchmarks"
   # -- specifies namespace where kube-bench job will run
   namespace: "default"
   # -- kube-bench image used for the adapter
