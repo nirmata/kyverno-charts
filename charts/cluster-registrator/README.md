@@ -19,13 +19,13 @@ Cluster Registrator performs the following steps:
 
 ```console
 helm repo add cluster-registrator https://nirmata.github.io/kyverno-charts/
-helm repo update kyverno-charts
+helm repo update cluster-registrator
 ```
 
 2. Install the Helm Chart:
 
 ```console
-helm install cluster-registrator kyverno-charts/cluster-registrator --set cluster.name <cluster-name> --set apiToken <api-token>
+helm install cluster-registrator cluster-registrator/cluster-registrator --set cluster.name=<cluster-name> --set apiToken=<api-token>
 ```
 
 3. Verify the Cluster Registrator installation:
