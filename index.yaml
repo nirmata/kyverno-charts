@@ -3182,6 +3182,24 @@ entries:
   venafi-adapter:
   - apiVersion: v1
     appVersion: v0.1.0
+    created: "2023-10-30T11:17:49.710010534Z"
+    description: Nirmata Venafi Adapter
+    digest: 4f1ebf924a14e7562d51e287801a6c9285ae9b7f51c63ead242f581d8f78ac14
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - venafi adapter
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: venafi-adapter
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.14/venafi-adapter-v0.1.14.tgz
+    version: v0.1.14
+  - apiVersion: v1
+    appVersion: v0.1.0
     created: "2023-07-26T15:35:01.797583665Z"
     description: Nirmata Venafi Adapter
     digest: 36caed21c96c85e6431f2e86c01b16a2ed05156ba563a0990ea8638c78307a2c
@@ -3365,4 +3383,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-10-21T11:11:35.738361372Z"
+generated: "2023-10-30T11:17:49.711429116Z"
