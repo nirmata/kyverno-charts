@@ -3,7 +3,7 @@ namespace: nirmata-venafi-adapter
 
 # -- Venafi adapter registry image and tag
 venafiAdapterImage: ghcr.io/nirmata/nirmata-imagekey-controller
-venafiAdapterImageTag: v0.2.1
+venafiAdapterImageTag: "0.2.1"
 
 # -- If image registry is private, provide registry details
 imagePullSecret:
