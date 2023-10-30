@@ -228,27 +228,6 @@ entries:
     version: v0.3.0-rc0
   - apiVersion: v2
     appVersion: v0.1.18
-    created: "2023-10-30T15:35:58.576589068Z"
-    description: Helm Chart for Enterprise Kyverno Operator
-    digest: 6e70f569e465f2c719840cabe050c211c8666ba734e11fd967a96ca949965a74
-    home: https://kyverno.io/
-    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
-    keywords:
-    - kubernetes
-    - nirmata
-    - enterprise kyverno operator
-    - kyverno operator
-    kubeVersion: '>=1.20.0-0'
-    maintainers:
-    - name: Nirmata
-      url: https://nirmata.com/
-    name: enterprise-kyverno-operator
-    type: application
-    urls:
-    - https://github.com/nirmata/kyverno-charts/releases/download/enterprise-kyverno-operator-v0.2.40/enterprise-kyverno-operator-v0.2.40.tgz
-    version: v0.2.40
-  - apiVersion: v2
-    appVersion: v0.1.18
     created: "2023-10-21T11:11:35.5931582Z"
     description: Helm Chart for Enterprise Kyverno Operator
     digest: e6551ee58ce382746a557d6609f5b1b6cd247ac6b11ee510909402d18ff32627
@@ -1839,6 +1818,55 @@ entries:
       artifacthub.io/operator: "false"
       artifacthub.io/prerelease: "false"
     apiVersion: v2
+    appVersion: v1.10.3-n4k.nirmata.4
+    created: "2023-10-30T15:36:19.269868475Z"
+    description: Kubernetes Native Policy Management
+    digest: cf695e0a2e4ac85a63316891203b7f03901060fb21f24324977530b832b448d0
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - validating webhook
+    - admissions controller
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno
+    sources:
+    - https://github.com/nirmata/kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.0.5-rc5/kyverno-3.0.5-rc5.tgz
+    version: 3.0.5-rc5
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: only create ServiceMonitor if cluster supports it
+        - kind: fixed
+          description: rbac templating issues
+        - kind: added
+          description: define resources for cleanupJobs
+        - kind: changed
+          description: change to enable webhook cleanup hook by default
+        - kind: added
+          description: allow pod labels for cleanup jobs
+        - kind: added
+          description: allow nodeSelector for cleanup jobs
+        - kind: added
+          description: allow nodeSelector, tolerations and affinity settings for webhooksCleanup
+        - kind: added
+          description: allow affinity settings for cleanup jobs
+        - kind: added
+          description: Add helper to handle the labels for cleanup jobs, add component label
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
     appVersion: v1.10.3-n4k.nirmata.2
     created: "2023-08-25T09:32:09.738098947Z"
     description: Kubernetes Native Policy Management
@@ -2032,40 +2060,6 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.0.2-rc0/kyverno-3.0.2-rc0.tgz
     version: 3.0.2-rc0
-  - annotations:
-      artifacthub.io/changes: |
-        - kind: added
-          description: support for webhook annotations in config map
-      artifacthub.io/links: |
-        - name: Documentation
-          url: https://kyverno.io/docs
-      artifacthub.io/operator: "false"
-      artifacthub.io/prerelease: "false"
-    apiVersion: v2
-    appVersion: v1.9.5-n4k.nirmata.4
-    created: "2023-10-30T15:35:58.734849775Z"
-    description: Kubernetes Native Policy Management
-    digest: fc8e14212ffbc3b68a74b7d5c17b64822ef502bb446e934026ce73d2ccc7b814
-    home: https://kyverno.io/
-    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
-    keywords:
-    - kubernetes
-    - nirmata
-    - policy agent
-    - policy engine
-    - validating webhook
-    - admissions controller
-    kubeVersion: '>=1.16.0-0'
-    maintainers:
-    - name: Nirmata
-      url: https://nirmata.com/
-    name: kyverno
-    sources:
-    - https://github.com/kyverno/kyverno
-    type: application
-    urls:
-    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-1.6.12/kyverno-1.6.12.tgz
-    version: 1.6.12
   - annotations:
       artifacthub.io/changes: |
         - kind: added
@@ -3113,6 +3107,27 @@ entries:
   nirmata-kyverno-operator:
   - apiVersion: v2
     appVersion: v0.2.0
+    created: "2023-10-30T15:36:19.537679941Z"
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: 1c6f5726de2cd89123c42fba4e6beaf1847f7d86ce2840213d48aa67992d022b
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-kyverno-operator-v0.3.4/nirmata-kyverno-operator-v0.3.4.tgz
+    version: v0.3.4
+  - apiVersion: v2
+    appVersion: v0.2.0
     created: "2023-09-01T04:55:02.968862689Z"
     description: Helm Chart for Enterprise Kyverno Operator
     digest: 81f6e7067482b2b5710e92b08baabc8683f052430179b61b063b68e8d7fb324d
@@ -3438,4 +3453,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2023-10-30T15:35:58.735946088Z"
+generated: "2023-10-30T15:36:19.538994876Z"
