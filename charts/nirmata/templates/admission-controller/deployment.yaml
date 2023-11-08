@@ -125,7 +125,11 @@ spec:
           - -deployment-name={{ template "kyverno.admission-controller.name" . }}
           - -namespace={{ template "kyverno.namespace" . }}
           - -product-name={{ .Values.licenseManager.productName }}
+          else
           - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
+          if this is --set (licenseSecret)
+          - -license-file= l
+          // have the same path we have mounted
           - -run-type=init-container
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
           - -api-key={{ .Values.licenseManager.apiKey }}
@@ -148,7 +152,11 @@ spec:
           - -namespace={{ template "kyverno.namespace" . }}
           - -product-name={{ .Values.licenseManager.productName }}
           - -validate-interval={{ .Values.licenseManager.validateIntervalMins }}
-          - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
+          {{- if .Values.licenseManager.licenseSecret }}
+          - -license-file= {{ .Values.systemCertPath }}/license.txt
+          {{- else }}
+          - -license-key={{ required "licenseManager.licenseKey  is required if licenseMangaer.licenseSecret is not specified" .Values.licenseManager.licenseKey }}
+          {{- end }}
           - -run-type=sidecar
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
           - -api-key={{ .Values.licenseManager.apiKey }}
@@ -256,6 +264,14 @@ spec:
             {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
           volumeMounts:
+          {{- if .Values.license-file }}
+            - name: license-volume
+              mountPath: {{ .Values.licenseStorePath }}/license.txt
+              subPath: license.txt
+          {{- end }}
+            - name: license-store
+              mountPath: {{ .Values.systemCertPath }}/license.txt
+              subPath: license.txt
             - mountPath: {{ .Values.admissionController.tufRootMountPath }}
               name: sigstore
             {{- if .Values.customCAConfigMap }}
@@ -264,6 +280,11 @@ spec:
               subPath: custom-ca.pem
             {{- end}}
       volumes:
+      {{- if .Values.customCAConfigMap }}
+      - name: license-store
+        secret:  
+          name: {{ .Values.licenseSecret }}
+      {{- end}}
       - name: sigstore
         {{- toYaml (required "A valid .Values.admissionController.sigstoreVolume entry is required" .Values.admissionController.sigstoreVolume) | nindent 8 }}
       {{- if .Values.customCAConfigMap }}
