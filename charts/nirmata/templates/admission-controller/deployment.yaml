@@ -125,11 +125,11 @@ spec:
           - -deployment-name={{ template "kyverno.admission-controller.name" . }}
           - -namespace={{ template "kyverno.namespace" . }}
           - -product-name={{ .Values.licenseManager.productName }}
-          else
+          {{- if .Values.licenseManager.licenseSecret }}
+          - -license-secret={{ .Values.licenseManager.licenseSecret }}
+          {{- else }}
           - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
-          if this is --set (licenseSecret)
-          - -license-file= l
-          // have the same path we have mounted
+          {{- end }}
           - -run-type=init-container
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
           - -api-key={{ .Values.licenseManager.apiKey }}
@@ -264,11 +264,6 @@ spec:
             {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
           volumeMounts:
-          {{- if .Values.license-file }}
-            - name: license-volume
-              mountPath: {{ .Values.licenseStorePath }}/license.txt
-              subPath: license.txt
-          {{- end }}
             - name: license-store
               mountPath: {{ .Values.systemCertPath }}/license.txt
               subPath: license.txt
@@ -280,11 +275,6 @@ spec:
               subPath: custom-ca.pem
             {{- end}}
       volumes:
-      {{- if .Values.customCAConfigMap }}
-      - name: license-store
-        secret:  
-          name: {{ .Values.licenseSecret }}
-      {{- end}}
       - name: sigstore
         {{- toYaml (required "A valid .Values.admissionController.sigstoreVolume entry is required" .Values.admissionController.sigstoreVolume) | nindent 8 }}
       {{- if .Values.customCAConfigMap }}

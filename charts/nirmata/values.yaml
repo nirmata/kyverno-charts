@@ -1603,8 +1603,6 @@ customCAConfigMap:
 # Path containing ssl certs within the container. Used only if customCAConfigMap is used
 systemCertPath: /etc/ssl/certs
 
-licenseStorePath: /etc/license
-
 # License manager configs
 licenseManager:
   # -- Whether to use license manager
@@ -1621,7 +1619,7 @@ licenseManager:
   callHomeServer: nirmata.io
   # -- License key
   licenseKey: free-tier-license
-    # -- License secret
+    # -- License secret containing license string under key 'license'
   licenseSecret: 
   # -- License server API key
   apiKey:
