@@ -264,9 +264,6 @@ spec:
             {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: license-store
-              mountPath: {{ .Values.systemCertPath }}/license.txt
-              subPath: license.txt
             - mountPath: {{ .Values.admissionController.tufRootMountPath }}
               name: sigstore
             {{- if .Values.customCAConfigMap }}
