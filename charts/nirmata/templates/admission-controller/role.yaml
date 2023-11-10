@@ -26,6 +26,9 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - update
     resourceNames:
       - {{ include "kyverno.config.configMapName" . }}
       - {{ include "kyverno.config.metricsConfigMapName" . }}
