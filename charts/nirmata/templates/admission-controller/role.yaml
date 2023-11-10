@@ -25,9 +25,19 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - update
     resourceNames:
       - {{ include "kyverno.config.configMapName" . }}
       - {{ include "kyverno.config.metricsConfigMapName" . }}
+      - license-check-success
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - create
   - apiGroups:
       - coordination.k8s.io
     resources:
