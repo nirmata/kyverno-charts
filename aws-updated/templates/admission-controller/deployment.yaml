@@ -117,55 +117,33 @@ spec:
           {{- with .Values.admissionController.initContainer.extraEnvVars }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-      {{- if .Values.licenseManager.enable }}
-        - name: n4k-lm-init
-          image: {{ .Values.licenseManager.imageRepository }}:{{ .Values.licenseManager.imageTag }}
-          imagePullPolicy: Always
+        - name: awslm-init
+          image: {{ .Values.licensemanagerImage.repository }}:{{ default .Chart.AppVersion (default .Values.licensemanagerImage.tag .Values.licensemanagerImage.tag) }}
+          imagePullPolicy: {{ default .Values.admissionController.container.image.pullPolicy .Values.licensemanagerImage.pullPolicy }}
           args:
-          - -deployment-name={{ template "kyverno.admission-controller.name" . }}
-          - -namespace={{ template "kyverno.namespace" . }}
-          - -product-name={{ .Values.licenseManager.productName }}
-          {{- if .Values.licenseManager.licenseSecret }}
-          - -license-secret={{ .Values.licenseManager.licenseSecret }}
-          {{- else }}
-          - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
-          {{- end }}
-          - -run-type=init-container
-          - -call-home-server={{ .Values.licenseManager.callHomeServer }}
-          - -api-key={{ .Values.licenseManager.apiKey }}
-          - -cluster-id={{ .Values.licenseManager.clusterId }}
-          - -cluster-name={{ .Values.licenseManager.clusterName }}
-          {{- if .Values.securityContext }}
-          securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
-          {{- end }}
-      {{- end }}
+            - --interval=0
+            - --check-node-count=false
+            - --type=PROVISIONAL
+          env:
+            - name: AWS_REGION
+              value: {{ .Values.aws.region }}
+        {{- if .Values.aws.licenseConfigSecretName }}
+        # Add following environment variable to container for credential provider
+            - name: AWS_WEB_IDENTITY_REFRESH_TOKEN_FILE
+              value: "/var/run/secrets/product-license/license_token"
+            - name: AWS_ROLE_ARN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.aws.licenseConfigSecretName }}
+                  key: iam_role
+          volumeMounts:
+            - name: awsmp-product-license
+              mountPath: "/var/run/secrets/product-license"
+        {{- end }}
       containers:
         {{- with .Values.admissionController.extraContainers }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- if .Values.licenseManager.enable }}
-        - name: n4k-lm
-          image: {{ .Values.licenseManager.imageRepository }}:{{ .Values.licenseManager.imageTag }}
-          imagePullPolicy: Always
-          args:
-          - -deployment-name={{ template "kyverno.admission-controller.name" . }}
-          - -namespace={{ template "kyverno.namespace" . }}
-          - -product-name={{ .Values.licenseManager.productName }}
-          - -validate-interval={{ .Values.licenseManager.validateIntervalMins }}
-          {{- if .Values.licenseManager.licenseSecret }}
-          - -license-secret={{ .Values.licenseManager.licenseSecret }}
-          {{- else }}
-          - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
-          {{- end }}
-          - -run-type=sidecar
-          - -call-home-server={{ .Values.licenseManager.callHomeServer }}
-          - -api-key={{ .Values.licenseManager.apiKey }}
-          - -cluster-id={{ .Values.licenseManager.clusterId }}
-          - -cluster-name={{ .Values.licenseManager.clusterName }}
-          {{- if .Values.securityContext }}
-          securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
-          {{- end }}
-      {{- end }}
         - name: kyverno
           image: {{ include "kyverno.image" (dict "image" .Values.admissionController.container.image "defaultTag" .Chart.AppVersion) | quote }}
           imagePullPolicy: {{ .Values.admissionController.container.image.pullPolicy }}
@@ -271,9 +249,47 @@ spec:
               mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
               subPath: custom-ca.pem
             {{- end}}
+        - name: awslm
+          image: {{ .Values.licensemanagerImage.repository }}:{{ default .Chart.AppVersion (default .Values.licensemanagerImage.tag .Values.licensemanagerImage.tag) }}
+          imagePullPolicy: {{ default .Values.admissionController.container.image.pullPolicy .Values.licensemanagerImage.pullPolicy }}
+          args:
+            - --interval=60m
+            - --check-node-count=false
+            - --type=PROVISIONAL
+          env:
+          - name: AWS_REGION
+            value: {{ .Values.aws.region }}
+        {{- if .Values.aws.licenseConfigSecretName }}
+        # Add following environment variable to container for credential provider
+            - name: AWS_WEB_IDENTITY_REFRESH_TOKEN_FILE
+              value: "/var/run/secrets/product-license/license_token"
+            - name: AWS_ROLE_ARN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.aws.licenseConfigSecretName }}
+                  key: iam_role
+          volumeMounts:
+            - name: awsmp-product-license
+              mountPath: "/var/run/secrets/product-license"
+            - mountPath: {{ .Values.tufRootMountPath }}
+              name: sigstore
+        {{- end }}
+          volumeMounts:
+            - mountPath: {{ .Values.tufRootMountPath }}
+              name: sigstore
+            {{- if .Values.customCAConfigMap }}
+            - name: custom-ca-store
+              mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
+              subPath: custom-ca.pem
+            {{- end}}
       volumes:
       - name: sigstore
         {{- toYaml (required "A valid .Values.admissionController.sigstoreVolume entry is required" .Values.admissionController.sigstoreVolume) | nindent 8 }}
+      {{- if .Values.aws.licenseConfigSecretName }}
+      - name: awsmp-product-license
+        secret:
+          secretName: {{ .Values.aws.licenseConfigSecretName }}
+      {{- end }}
       {{- if .Values.customCAConfigMap }}
       - name: custom-ca-store
         configMap:
