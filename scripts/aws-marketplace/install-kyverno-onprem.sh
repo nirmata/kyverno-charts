@@ -1,5 +1,5 @@
 kubectl create namespace kyverno
-kubectl create serviceaccount awslm-service-account --namespace kyverno
+kubectl create serviceaccount kyverno-admission-controller --namespace kyverno
 
 AWSMP_TOKEN=<AWS Marketplace token>
 AWSMP_ROLE_ARN=arn:aws:iam::<account-id>:role/service-role/AWSMarketplaceLicenseTokenConsumptionRole
@@ -30,7 +30,7 @@ kubectl create secret docker-registry awsmp-image-pull-secret \
 --docker-password=$(aws ecr get-login-password --region us-east-1) \
 --namespace kyverno
 
-kubectl patch serviceaccount awslm-service-account \
+kubectl patch serviceaccount kyverno-admission-controller \
 --namespace kyverno \
 -p '{"imagePullSecrets": [{"name": "awsmp-image-pull-secret"}]}'
 
