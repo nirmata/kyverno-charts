@@ -1,14 +1,15 @@
 apiVersion: v2
 type: application
-name: kyverno
-version: 3.0.5-rc7
-appVersion: v1.10.4-n4k.nirmata.1
+name: kyverno-chart
+version:  v1.12.0-01-aws
+appVersion: v1.10.5-n4k.nirmata.1
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
   - kubernetes
   - nirmata
   - policy agent
+  - policy engine
   - validating webhook
   - admissions controller
 home: https://kyverno.io/
@@ -17,30 +18,5 @@ sources:
 maintainers:
   - name: Nirmata
     url: https://nirmata.com/
-kubeVersion: ">=1.16.0-0"
-annotations:
-  artifacthub.io/operator: "false"
-  artifacthub.io/prerelease: "false"
-  artifacthub.io/links: |
-    - name: Documentation
-      url: https://kyverno.io/docs
-  # valid kinds are: added, changed, deprecated, removed, fixed and security
-  artifacthub.io/changes: |
-    - kind: changed
-      description: only create ServiceMonitor if cluster supports it
-    - kind: fixed
-      description: rbac templating issues
-    - kind: added
-      description: define resources for cleanupJobs
-    - kind: changed
-      description: change to enable webhook cleanup hook by default
-    - kind: added
-      description: allow pod labels for cleanup jobs
-    - kind: added
-      description: allow nodeSelector for cleanup jobs
-    - kind: added
-      description: allow nodeSelector, tolerations and affinity settings for webhooksCleanup
-    - kind: added
-      description: allow affinity settings for cleanup jobs
-    - kind: added
-      description: Add helper to handle the labels for cleanup jobs, add component label
+engine: gotpl
+kubeVersion: ">=1.23.0-0"
