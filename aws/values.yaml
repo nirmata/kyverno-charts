@@ -574,6 +574,9 @@ admissionController:
     create: true
 
     serviceAccount:
+      # -- Create a ServiceAccount, or already created
+      create: true
+
       # -- The ServiceAccount name
       name:
 
