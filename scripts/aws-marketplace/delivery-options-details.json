@@ -8,7 +8,7 @@
       "HelmDeliveryOptionDetails": {
         "CompatibleServices": ["EKS", "EKS-Anywhere"],
         "ContainerImages": ["709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno:v1.10.5-n4k.nirmata.2", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyvernopre:v1.10.5-n4k.nirmata.2", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/cleanup-controller:v1.10.5-n4k.nirmata.2", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/background-controller:v1.10.5-n4k.nirmata.2", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/reports-controller:v1.10.5-n4k.nirmata.2", "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/awslm:0.1-rc4"],
-        "HelmChartUri": "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno-chart:v1.12.0-01-aws",
+        "HelmChartUri": "709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kyverno-chart:v1.12.0-03-aws",
         "Description": "Deploy Kyverno using Helm",
         "UsageInstructions": "Detailed usage instructions are here: https://docs.nirmata.io/n4k/provider-integrations/amazon-eks/\n",
         "MarketplaceServiceAccountName": "kyverno-admission-controller",
