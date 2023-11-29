@@ -903,7 +903,8 @@ backgroundController:
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
-  enable: true
+  enabled: true
+
   rbac:
     # -- Create RBAC resources
     create: true
@@ -1120,7 +1121,7 @@ cleanupController:
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
-  enable: true
+  enabled: true
 
   rbac:
     # -- Create RBAC resources
@@ -1391,7 +1392,7 @@ reportsController:
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
-  enable: true
+  enabled: true
 
   rbac:
     # -- Create RBAC resources
