@@ -1610,7 +1610,7 @@ licenseManager:
   # -- License manager repo
   imageRepository: ghcr.io/nirmata/kyverno-license-manager
   # -- Image tag
-  imageTag: v0.1.2
+  imageTag: v0.1.3
   # -- Product name to be present in license, empty to ignore check
   productName: ""
   # -- Validation interval in mins
@@ -1619,6 +1619,8 @@ licenseManager:
   callHomeServer: nirmata.io
   # -- License key
   licenseKey: free-tier-license
+    # -- License secret containing license string under key 'license'
+  licenseSecret:
   # -- License server API key
   apiKey:
   # -- Cluster Id. If not provided, use kube-system uid
