@@ -83,7 +83,7 @@ content:
       {{- end}}
       licenseManager:
         imageRepository: {{ .Values.kyverno.image.repository }}/nirmata/kyverno-license-manager
-        imageTag: "v0.1.2"
+        imageTag: "v0.1.3"
         productName: ""
 {{- end -}}
 
