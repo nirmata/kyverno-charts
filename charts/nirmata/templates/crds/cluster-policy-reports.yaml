@@ -1,4 +1,8 @@
-{{- if .Values.reportsController.enabled -}}
+{{- if and (eq .Values.reportsController.enabled true) (eq .Values.crds.clusterpolicyreports false) }}
+{{- fail "CRD clusterpolicyreports disabled while reportsController enabled" }}
+{{- end }}
+
+{{- if .Values.crds.clusterpolicyreports -}}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:

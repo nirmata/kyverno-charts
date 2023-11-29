@@ -23,6 +23,18 @@ apiVersionOverride:
 # CRDs configuration
 crds:
 
+  backgroundscanreports: true
+
+  cleanuppolicies: true
+
+  clusterbackgroundscanreports: true
+
+  clustercleanuppolicies: true
+
+  clusterpolicyreports: true
+
+  policyreports: true
+
   # -- Whether to have Helm install the Kyverno CRDs, if the CRDs are not installed by Helm, they must be added before policies can be created
   install: true
 
