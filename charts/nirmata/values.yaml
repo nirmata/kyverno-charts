@@ -27,6 +27,18 @@ apiVersionOverride:
 # CRDs configuration
 crds:
 
+  backgroundscanreports: true
+
+  cleanuppolicies: true
+
+  clusterbackgroundscanreports: true
+
+  clustercleanuppolicies: true
+
+  clusterpolicyreports: true
+
+  policyreports: true
+
   # -- Whether to have Helm install the Kyverno CRDs, if the CRDs are not installed by Helm, they must be added before policies can be created
   install: true
 
@@ -891,7 +903,6 @@ backgroundController:
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
-  # -- Enable background controller.
   enabled: true
 
   rbac:
@@ -1110,7 +1121,6 @@ cleanupController:
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
-  # -- Enable cleanup controller.
   enabled: true
 
   rbac:
@@ -1382,7 +1392,6 @@ reportsController:
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
-  # -- Enable reports controller.
   enabled: true
 
   rbac:

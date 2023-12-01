@@ -249,14 +249,6 @@ spec:
               mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
               subPath: custom-ca.pem
             {{- end}}
-          volumeMounts:
-            - mountPath: {{ .Values.tufRootMountPath }}
-              name: sigstore
-            {{- if .Values.customCAConfigMap }}
-            - name: custom-ca-store
-              mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
-              subPath: custom-ca.pem
-            {{- end}}
         - name: awslm
           image: {{ .Values.licensemanagerImage.repository }}:{{ default .Chart.AppVersion (default .Values.licensemanagerImage.tag .Values.licensemanagerImage.tag) }}
           imagePullPolicy: {{ default .Values.admissionController.container.image.pullPolicy .Values.licensemanagerImage.pullPolicy }}
@@ -279,7 +271,7 @@ spec:
           volumeMounts:
             - name: awsmp-product-license
               mountPath: "/var/run/secrets/product-license"
-            - mountPath: {{ .Values.tufRootMountPath }}
+            - mountPath: {{ .Values.admissionController.tufRootMountPath }}
               name: sigstore
         {{- end }}
       volumes:
