@@ -125,7 +125,11 @@ spec:
           - -deployment-name={{ template "kyverno.admission-controller.name" . }}
           - -namespace={{ template "kyverno.namespace" . }}
           - -product-name={{ .Values.licenseManager.productName }}
+          {{- if .Values.licenseManager.licenseSecret }}
+          - -license-secret={{ .Values.licenseManager.licenseSecret }}
+          {{- else }}
           - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
+          {{- end }}
           - -run-type=init-container
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
           - -api-key={{ .Values.licenseManager.apiKey }}
@@ -148,7 +152,11 @@ spec:
           - -namespace={{ template "kyverno.namespace" . }}
           - -product-name={{ .Values.licenseManager.productName }}
           - -validate-interval={{ .Values.licenseManager.validateIntervalMins }}
+          {{- if .Values.licenseManager.licenseSecret }}
+          - -license-secret={{ .Values.licenseManager.licenseSecret }}
+          {{- else }}
           - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
+          {{- end }}
           - -run-type=sidecar
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
           - -api-key={{ .Values.licenseManager.apiKey }}
