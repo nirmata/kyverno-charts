@@ -19,6 +19,9 @@
 {{- with .autoUpdateWebhooks -}}
   {{- $flags = append $flags (print "--autoUpdateWebhooks=" .enabled) -}}
 {{- end -}}
+{{- with .disableAutoWebhookGeneration -}}
+  {{- $flags = append $flags (print "--disableAutoWebhookGeneration=" .enabled) -}}
+{{- end -}}
 {{- with .backgroundScan -}}
   {{- $flags = append $flags (print "--backgroundScan=" .enabled) -}}
   {{- $flags = append $flags (print "--backgroundScanWorkers=" .backgroundScanWorkers) -}}
