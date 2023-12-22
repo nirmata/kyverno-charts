@@ -365,7 +365,7 @@ features:
     # -- Enables the feature
     enabled: true
   disableAutoWebhookGeneration:
-    enabled: true
+    enabled: false
   backgroundScan:
     # -- Enables the feature
     enabled: true
