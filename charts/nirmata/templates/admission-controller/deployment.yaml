@@ -197,6 +197,7 @@ spec:
             {{- include "kyverno.features.flags" (pick (mergeOverwrite .Values.features .Values.admissionController.featuresOverride)
               "admissionReports"
               "autoUpdateWebhooks"
+              "disableAutoWebhookGeneration"
               "configMapCaching"
               "deferredLoading"
               "dumpPayload"
