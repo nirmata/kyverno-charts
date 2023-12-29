@@ -131,6 +131,8 @@ kyverno:
   helm:
     apiVersionOverride:
       podDisruptionBudget: "policy/v1"
+    licenseManager:
+      imageTag: v0.1.5
 
 policies:
   chartRepoUsername:
