@@ -22,6 +22,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       command:
-        - /bin/sh
+        - sh
         - -c
         - sleep 20 ; wget -O- -S --no-check-certificate https://{{ template "kyverno.admission-controller.serviceName" . }}.{{ template "kyverno.namespace" . }}:{{ .Values.admissionController.service.port }}/health/liveness
