@@ -433,7 +433,7 @@ cleanupJobs:
       # -- (string) Image registry
       registry: ~
       # -- Image repository
-      repository: bitnami/kubectl:latest
+      repository: bitnami/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
       tag: '1.26.4'
@@ -504,7 +504,7 @@ cleanupJobs:
       # -- (string) Image registry
       registry: ~
       # -- Image repository
-      repository: bitnami/kubectl:latest
+      repository: bitnami/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
       tag: '1.26.4'
