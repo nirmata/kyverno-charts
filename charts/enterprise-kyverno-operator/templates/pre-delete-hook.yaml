@@ -30,10 +30,10 @@ spec:
         {{- end }}
       containers:
         - name: kubectl
-          image: {{ .Values.predeletehookimage | default "ghcr.io/nirmata/kubectl:1.24" }}
+          image: {{ .Values.predeletehookimage | default "ghcr.io/nirmata/kubectl:1.28.5" }}
           imagePullPolicy: IfNotPresent
           command:
-          - /bin/sh
+          - sh
           - -c
           - >
               for i in {{ include "enterprise-kyverno.policysetsStr" . }}; 
