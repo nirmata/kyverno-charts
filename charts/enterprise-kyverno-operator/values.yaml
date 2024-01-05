@@ -71,7 +71,7 @@ kyverno:
         extraResources: []
   templating:
     enabled: false
-    image: bitnami/kubectl:latest
+    image: ghcr.io/nirmata/kubectl:1.29.0
   webhooksCleanup:
     enable: false
   crds:
