@@ -316,7 +316,7 @@ webhooksCleanup:
   # -- Create a helm pre-delete hook to cleanup webhooks.
   enabled: true
   # -- `kubectl` image to run commands for deleting webhooks.
-  image: ghcr.io/nirmata/kubectl:1.28.5
+  image: ghcr.io/nirmata/kubectl:1.29.0
   # -- Image pull secrets
   imagePullSecrets: []
 
@@ -436,7 +436,7 @@ cleanupJobs:
       repository: ghcr.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.28.5'
+      tag: '1.29.0'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
@@ -507,7 +507,7 @@ cleanupJobs:
       repository: ghcr.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.28.5'
+      tag: '1.29.0'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
@@ -1621,7 +1621,7 @@ licenseManager:
   # -- License manager repo
   imageRepository: ghcr.io/nirmata/kyverno-license-manager
   # -- Image tag
-  imageTag: v0.1.5
+  imageTag: v0.1.7
   # -- Product name to be present in license, empty to ignore check
   productName: ""
   # -- Validation interval in mins
