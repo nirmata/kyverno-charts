@@ -133,6 +133,15 @@ kyverno:
       podDisruptionBudget: "policy/v1"
     licenseManager:
       imageTag: v0.1.7
+    webhooksCleanup:
+      image: ghcr.io/nirmata/kubectl:1.29.0
+    cleanupJobs:
+      admissionReports:
+        image:
+          tag: '1.29.0'
+      clusterAdmissionReports:
+        image:
+          tag: '1.29.0'
 
 policies:
   chartRepoUsername:
