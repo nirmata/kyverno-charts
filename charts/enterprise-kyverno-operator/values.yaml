@@ -122,7 +122,7 @@ kyverno:
     # -- Image repository
     repository: ghcr.io
     # -- Image tag
-    tag: v1.10.6-n4k.nirmata.3
+    tag: v1.10.7-n4k.nirmata.1
 
   # -- Override default exclude namespaces (default kyverno, kube-system, nirmata, nirmata-system )
   excludedNamespacesForWebhook: []
@@ -132,7 +132,7 @@ kyverno:
     apiVersionOverride:
       podDisruptionBudget: "policy/v1"
     licenseManager:
-      imageTag: v0.1.5
+      imageTag: v0.1.7
 
 policies:
   chartRepoUsername:
