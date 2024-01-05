@@ -137,11 +137,10 @@ kyverno:
       image: ghcr.io/nirmata/kubectl:1.29.0
     cleanupJobs:
       admissionReports:
-        image: 
+        image:
           tag: '1.29.0'
-    cleanupJobs:
       clusterAdmissionReports:
-        image: 
+        image:
           tag: '1.29.0'
 
 policies:
