@@ -336,6 +336,10 @@ rules:
   - podsecuritypolicies
   - persistentvolumes
   - replicasets
+  - cronjobs
+  - daemonsets
+  - jobs
+  - statefulsets
   verbs:
   - list
   - get

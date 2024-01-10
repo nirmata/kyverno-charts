@@ -47,7 +47,7 @@ kubectl logs job/nirmata-cluster-registrator -n nirmata -f
 | proxy.httpsProxy | string | `""` |No|HTTPS_PROXY required for connecting to clusters with Proxy |
 | proxy.noProxy | string | `""` | No|NO_PROXY required for connecting to clusters with Proxy |
 | tlsCert | string | `""` | No|TLS CERT to use for tunnel service connection |
-| controllerPerms | string | `read-write` | No| Whether registrator should install kube-controller with read-only or read-write permissions (for NPM) and read-write-ndp permissions (for NDP). Used as an additional gate to avoid providing privileges unintentionally. |
+| controllerPerms | string | `read-write` | No| Whether registrator should install kube-controller with `read-write` or `read-only` permissions (for NPM) and `read-write-ndp` permissions (for NDP). Used as an additional gate to avoid providing privileges unintentionally. |
 
 
 ## Maintainers
