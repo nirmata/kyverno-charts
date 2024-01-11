@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.0.5-rc2](https://img.shields.io/badge/Version-3.0.5--rc2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.10.4-n4k.nirmata.1](https://img.shields.io/badge/AppVersion-v1.10.4--n4k.nirmata.1-informational?style=flat-square)
+![Version: 3.1.0](https://img.shields.io/badge/Version-3.0.5--rc2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.11.0-n4k.nirmata.1](https://img.shields.io/badge/AppVersion-v1.10.4--n4k.nirmata.1-informational?style=flat-square)
 
 ## About
 
@@ -837,7 +837,7 @@ Please see https://kyverno.io/docs/installation/#security-vs-operability for mor
 
 ## Requirements
 
-Kubernetes: `>=1.16.0-0`
+Kubernetes: `>=1.25.0-0`
 
 ## Maintainers
 

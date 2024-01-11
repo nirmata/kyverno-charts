@@ -29,5 +29,15 @@ rules:
       - get
       - patch
       - update
+    resourceNames:
+      - kyverno-background-controller
+  - apiGroups:
+      - ''
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
 {{- end -}}
 {{- end -}}

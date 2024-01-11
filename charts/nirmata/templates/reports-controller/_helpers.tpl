@@ -19,6 +19,7 @@
 {{- end -}}
 
 {{- define "kyverno.reports-controller.image" -}}
+{{- $imageRegistry := default .image.registry .globalRegistry -}}
 {{- if .image.registry -}}
   {{ .image.registry }}/{{ required "An image repository is required" .image.repository }}:{{ default .defaultTag .image.tag }}
 {{- else -}}
