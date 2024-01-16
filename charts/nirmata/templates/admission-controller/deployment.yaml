@@ -78,7 +78,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         - name: kyverno-pre
-          image: {{ include "kyverno.image" (dict "image" .Values.admissionController.initContainer.image "defaultTag" (default .Chart.AppVersion .Values.admissionController.container.image.tag)) | quote }}
+          image: {{ include "kyverno.image" (dict "globalRegistry" ((.Values.global).image).registry "image" .Values.admissionController.initContainer.image "defaultTag" (default .Chart.AppVersion .Values.admissionController.container.image.tag)) | quote }}
           imagePullPolicy: {{ default .Values.admissionController.container.image.pullPolicy .Values.admissionController.initContainer.image.pullPolicy }}
           args:
             {{- include "kyverno.features.flags" (pick (mergeOverwrite .Values.features .Values.admissionController.featuresOverride)
@@ -98,6 +98,8 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
+          - name: KYVERNO_SERVICEACCOUNT_NAME
+            value: {{ template "kyverno.admission-controller.serviceAccountName" . }}
           - name: INIT_CONFIG
             value: {{ template "kyverno.config.configMapName" . }}
           - name: METRICS_CONFIG
@@ -117,59 +119,16 @@ spec:
           {{- with .Values.admissionController.initContainer.extraEnvVars }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-      {{- if .Values.licenseManager.enable }}
-        - name: n4k-lm-init
-          image: {{ .Values.licenseManager.imageRepository }}:{{ .Values.licenseManager.imageTag }}
-          imagePullPolicy: Always
-          args:
-          - -deployment-name={{ template "kyverno.admission-controller.name" . }}
-          - -namespace={{ template "kyverno.namespace" . }}
-          - -product-name={{ .Values.licenseManager.productName }}
-          {{- if .Values.licenseManager.licenseSecret }}
-          - -license-secret={{ .Values.licenseManager.licenseSecret }}
-          {{- else }}
-          - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
-          {{- end }}
-          - -run-type=init-container
-          - -call-home-server={{ .Values.licenseManager.callHomeServer }}
-          - -api-key={{ .Values.licenseManager.apiKey }}
-          - -cluster-id={{ .Values.licenseManager.clusterId }}
-          - -cluster-name={{ .Values.licenseManager.clusterName }}
-          {{- if .Values.securityContext }}
-          securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
-          {{- end }}
-      {{- end }}
       containers:
         {{- with .Values.admissionController.extraContainers }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- if .Values.licenseManager.enable }}
-        - name: n4k-lm
-          image: {{ .Values.licenseManager.imageRepository }}:{{ .Values.licenseManager.imageTag }}
-          imagePullPolicy: Always
-          args:
-          - -deployment-name={{ template "kyverno.admission-controller.name" . }}
-          - -namespace={{ template "kyverno.namespace" . }}
-          - -product-name={{ .Values.licenseManager.productName }}
-          - -validate-interval={{ .Values.licenseManager.validateIntervalMins }}
-          {{- if .Values.licenseManager.licenseSecret }}
-          - -license-secret={{ .Values.licenseManager.licenseSecret }}
-          {{- else }}
-          - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
-          {{- end }}
-          - -run-type=sidecar
-          - -call-home-server={{ .Values.licenseManager.callHomeServer }}
-          - -api-key={{ .Values.licenseManager.apiKey }}
-          - -cluster-id={{ .Values.licenseManager.clusterId }}
-          - -cluster-name={{ .Values.licenseManager.clusterName }}
-          {{- if .Values.securityContext }}
-          securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
-          {{- end }}
-      {{- end }}
         - name: kyverno
-          image: {{ include "kyverno.image" (dict "image" .Values.admissionController.container.image "defaultTag" .Chart.AppVersion) | quote }}
+          image: {{ include "kyverno.image" (dict "globalRegistry" ((.Values.global).image).registry "image" .Values.admissionController.container.image "defaultTag" .Chart.AppVersion) | quote }}
           imagePullPolicy: {{ .Values.admissionController.container.image.pullPolicy }}
           args:
+            - --caSecretName={{ template "kyverno.admission-controller.serviceName" . }}.{{ template "kyverno.namespace" . }}.svc.kyverno-tls-ca
+            - --tlsSecretName={{ template "kyverno.admission-controller.serviceName" . }}.{{ template "kyverno.namespace" . }}.svc.kyverno-tls-pair
             - --backgroundServiceAccountName=system:serviceaccount:{{ include "kyverno.namespace" . }}:{{ include "kyverno.background-controller.serviceAccountName" . }}
             - --servicePort={{ .Values.admissionController.service.port }}
             {{- if .Values.admissionController.tracing.enabled }}
@@ -197,16 +156,17 @@ spec:
             {{- include "kyverno.features.flags" (pick (mergeOverwrite .Values.features .Values.admissionController.featuresOverride)
               "admissionReports"
               "autoUpdateWebhooks"
-              "disableAutoWebhookGeneration"
               "configMapCaching"
               "deferredLoading"
               "dumpPayload"
               "forceFailurePolicyIgnore"
+              "generateValidatingAdmissionPolicy"
               "logging"
               "omitEvents"
               "policyExceptions"
               "protectManagedResources"
               "registryClient"
+              "tuf"
             ) | nindent 12 }}
             {{- range $key, $value := .Values.admissionController.container.extraArgs }}
             {{- if $value }}
@@ -267,17 +227,7 @@ spec:
           volumeMounts:
             - mountPath: {{ .Values.admissionController.tufRootMountPath }}
               name: sigstore
-            {{- if .Values.customCAConfigMap }}
-            - name: custom-ca-store
-              mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
-              subPath: custom-ca.pem
-            {{- end}}
       volumes:
       - name: sigstore
         {{- toYaml (required "A valid .Values.admissionController.sigstoreVolume entry is required" .Values.admissionController.sigstoreVolume) | nindent 8 }}
-      {{- if .Values.customCAConfigMap }}
-      - name: custom-ca-store
-        configMap:
-          name: {{ .Values.customCAConfigMap }}
-      {{- end}}
 {{- end -}}

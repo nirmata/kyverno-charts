@@ -23,7 +23,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       command:
-        - sh
+        - /bin/sh
         - -c
         - sleep 20 ; wget -O- -S --no-check-certificate https://{{ template "kyverno.cleanup-controller.name" . }}.{{ template "kyverno.namespace" . }}:{{ .Values.cleanupController.service.port }}/health/readiness
 {{- end -}}
