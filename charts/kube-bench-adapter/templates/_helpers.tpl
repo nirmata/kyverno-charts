@@ -99,7 +99,7 @@ spec:
         {{- end }}
         {{- if .Values.kubeBench.nodeSelectorKey }}
         "-nodeSelectorKey", "{{ .Values.kubeBench.nodeSelectorKey }}",
-        "-nodeSelectoValue", "{{ .Values.kubeBench.nodeSelectorValue }}",
+        "-nodeSelectorValue", "{{ .Values.kubeBench.nodeSelectorValue }}",
         {{- end }}
         ]
         {{- with .Values.resources }}

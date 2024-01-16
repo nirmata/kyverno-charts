@@ -57,11 +57,11 @@ kubeBench:
   # -- targets for benchmark of kube-bench job
   kubeBenchTargets: "master,node,etcd,policies"
   # -- timeout for kube-bench job 1s, 10m, etc
-  timeout: 
+  timeout: ~
   # -- Node selector key
-  nodeSelectorKey:
+  nodeSelectorKey: ~
   # -- Node selector value
-  nodeSelectorValue:
+  nodeSelectorValue: ~
 
 service:
   type: NodePort
@@ -99,8 +99,8 @@ livenessProbe:
   timeoutSeconds: 5
   exec:
     command:
-    - cat
-    - run.sh
+    - ./policyreport
+    - -h
 
 ## Readiness Probe. The block is directly forwarded into the deployment, so you can use whatever readinessProbe configuration you want.
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
@@ -112,8 +112,8 @@ readinessProbe:
   timeoutSeconds: 5
   exec:
     command:
-    - cat
-    - run.sh
+    - ./policyreport
+    - -h
 
 securityContext:
   allowPrivilegeEscalation: false
