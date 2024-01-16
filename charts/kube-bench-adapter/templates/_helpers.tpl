@@ -94,6 +94,13 @@ spec:
         "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
         "-kube-bench-targets", "{{ .Values.kubeBench.kubeBenchTargets }}",
         "-kube-bench-benchmark", "{{ .Values.kubeBench.kubeBenchBenchmark }}",
+        {{- if .Values.kubeBench.timeout }}
+        "-timeout", "{{ .Values.kubeBench.timeout }}",
+        {{- end }}
+        {{- if .Values.kubeBench.nodeSelectorKey }}
+        "-nodeSelectorKey", "{{ .Values.kubeBench.nodeSelectorKey }}",
+        "-nodeSelectoValue", "{{ .Values.kubeBench.nodeSelectorValue }}",
+        {{- end }}
         ]
         {{- with .Values.resources }}
         resources: {{ tpl (toYaml .) $ | nindent 14 }}

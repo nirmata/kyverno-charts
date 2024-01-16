@@ -10,7 +10,7 @@ image:
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
    # --tag of image repository of kube-bench-adapter
-  tag: "v0.2.3"
+  tag: "v0.2.4-rc1"
   pullSecrets:
     registry:
     # Leave blank, if no ImagePullSecret is needed.
@@ -56,6 +56,12 @@ kubeBench:
   kubeBenchBenchmark: cis-1.7
   # -- targets for benchmark of kube-bench job
   kubeBenchTargets: "master,node,etcd,policies"
+  # -- timeout for kube-bench job 1s, 10m, etc
+  timeout: 
+  # -- Node selector key
+  nodeSelectorKey:
+  # -- Node selector value
+  nodeSelectorValue:
 
 service:
   type: NodePort
