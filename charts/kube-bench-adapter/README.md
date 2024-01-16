@@ -39,6 +39,9 @@ kubectl get clusterpolicyreports
 | ingress.hosts[0].paths[0].path | string | `"/"` |  |
 | ingress.tls | list | `[]` |  |
 | kubeBench.command | string | `"policyreport"` |  |
+| kubeBench.timeout | string | `"10m"` | timeout for kube-bench child job to complete |
+| kubeBench.nodeSelectorKey | string | `""` | nodeSelector key to run kube-bench job on node with given label key-value |
+| kubeBench.nodeSelectorValue | string | `""` | nodeSelector value to run kube-bench job on node with given label key-value |
 | kubeBench.kubeBenchImg | string | `"aquasec/kube-bench:v0.6.6"` | kube-bench image used for the adapter |
 | kubeBench.kubeconfig | string | `"$HOME/.kube/config"` | absolute path to the kubeconfig file |
 | kubeBench.name | string | `"kube-bench"` | name of kube-bench adapter cluster policy report |
