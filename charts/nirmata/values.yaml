@@ -49,10 +49,10 @@ crds:
 # TODO
 
   reportsController:
-    enabled: true 
-  
+    enabled: true
+
   cleanupController:
-    enabled: true 
+    enabled: true
 
   backgroundController:
     enabled: true
