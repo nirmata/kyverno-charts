@@ -45,6 +45,18 @@ crds:
 
   policyreports: true
 
+#  temporary
+# TODO
+
+  reportsController:
+    enabled: true 
+  
+  cleanupController:
+    enabled: true 
+
+  backgroundController:
+    enabled: true
+
   # -- Whether to have Helm install the Kyverno CRDs, if the CRDs are not installed by Helm, they must be added before policies can be created
   install: true
 
@@ -414,6 +426,9 @@ grafana:
 
 # Features configuration
 features:
+  generateValidatingAdmissionPolicy:
+    # -- Enables the feature
+    enabled: false
   admissionReports:
     enabled: true
   aggregateReports:

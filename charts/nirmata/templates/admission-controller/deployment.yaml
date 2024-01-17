@@ -278,7 +278,6 @@ spec:
             - name: custom-ca-store
               mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
               subPath: custom-ca.pem
-            {{- end}}
       volumes:
       - name: sigstore
         {{- toYaml (required "A valid .Values.admissionController.sigstoreVolume entry is required" .Values.admissionController.sigstoreVolume) | nindent 8 }}
