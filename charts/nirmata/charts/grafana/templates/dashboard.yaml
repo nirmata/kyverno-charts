@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ tpl .Values.configMapName . }}
+  name: {{ tpl .Values.grafana.configMapName . }}
   namespace: {{ default (include "kyverno.namespace" .) .Values.namespace }}
   annotations:
     {{- toYaml .Values.annotations | nindent 4 }}
