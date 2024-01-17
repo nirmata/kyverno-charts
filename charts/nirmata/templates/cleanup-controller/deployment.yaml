@@ -110,6 +110,7 @@ spec:
             {{- end }}
             {{- include "kyverno.features.flags" (pick (mergeOverwrite .Values.features .Values.cleanupController.featuresOverride)
               "deferredLoading"
+              "disableAutoWebhookGeneration"
               "dumpPayload"
               "logging"
               "ttlController"

@@ -19,6 +19,14 @@ metadata:
     {{- include "kyverno.cleanup-controller.labels" . | nindent 4 }}
 rules:
   - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
       - admissionregistration.k8s.io
     resources:
       - validatingwebhookconfigurations
@@ -42,9 +50,17 @@ rules:
     resources:
       - clustercleanuppolicies
       - cleanuppolicies
+      - clustercleanuppolicies/*
+      - cleanuppolicies/*
     verbs:
+      - create
+      - delete
+      - get
       - list
+      - patch
+      - update
       - watch
+      - deletecollection
   - apiGroups:
       - kyverno.io
     resources:
@@ -61,14 +77,25 @@ rules:
       - list
       - watch
   - apiGroups:
-      - ''
-      - events.k8s.io
+      - batch
     resources:
-      - events
+      - cronjobs
     verbs:
       - create
-      - patch
+      - delete
+      - get
+      - list
       - update
+      - watch
+  - apiGroups:
+    - ''
+    - events.k8s.io
+    resources:
+    - events
+    verbs:
+    - create
+    - patch
+    - update
   - apiGroups:
       - authorization.k8s.io
     resources:
@@ -84,7 +111,15 @@ metadata:
   labels:
     {{- include "kyverno.cleanup-controller.labels" $ | nindent 4 }}
 rules:
-  {{- toYaml . | nindent 2 }}
+  {{- range . }}
+  - apiGroups:
+      {{- toYaml .apiGroups | nindent 6 }}
+    resources:
+      {{- toYaml .resources | nindent 6 }}
+    verbs:
+      - delete
+      - list
+  {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
