@@ -142,6 +142,9 @@ spec:
           {{- end }}
       {{- end }}
       containers:
+        {{- with .Values.admissionController.extraContainers }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- if .Values.licenseManager.enable }}
         - name: n4k-lm
           image: {{ .Values.licenseManager.imageRepository }}:{{ .Values.licenseManager.imageTag }}
@@ -165,9 +168,6 @@ spec:
           securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
           {{- end }}
       {{- end }}
-        {{- with .Values.admissionController.extraContainers }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
         - name: kyverno
           image: {{ include "kyverno.image" (dict "globalRegistry" ((.Values.global).image).registry "image" .Values.admissionController.container.image "defaultTag" .Chart.AppVersion) | quote }}
           imagePullPolicy: {{ .Values.admissionController.container.image.pullPolicy }}
@@ -237,8 +237,6 @@ spec:
           env:
           - name: INIT_CONFIG
             value: {{ template "kyverno.config.configMapName" . }}
-          - name: KYVERNO_SERVICEACCOUNT_NAME
-            value: {{ template "kyverno.admission-controller.serviceAccountName" . }}
           - name: METRICS_CONFIG
             value: {{ template "kyverno.config.metricsConfigMapName" . }}
           - name: KYVERNO_NAMESPACE
@@ -275,13 +273,17 @@ spec:
           volumeMounts:
             - mountPath: {{ .Values.admissionController.tufRootMountPath }}
               name: sigstore
+            {{- if .Values.customCAConfigMap }}
             - name: custom-ca-store
               mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
               subPath: custom-ca.pem
+            {{- end}}
       volumes:
       - name: sigstore
         {{- toYaml (required "A valid .Values.admissionController.sigstoreVolume entry is required" .Values.admissionController.sigstoreVolume) | nindent 8 }}
+      {{- if .Values.customCAConfigMap }}
       - name: custom-ca-store
         configMap:
           name: {{ .Values.customCAConfigMap }}
+      {{- end}}
 {{- end -}}
