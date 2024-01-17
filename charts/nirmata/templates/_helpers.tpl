@@ -13,8 +13,14 @@
 {{- with .admissionReports -}}
   {{- $flags = append $flags (print "--admissionReports=" .enabled) -}}
 {{- end -}}
+{{- with .aggregateReports -}}
+  {{- $flags = append $flags (print "--aggregateReports=" .enabled) -}}
+{{- end -}}
 {{- with .policyReports -}}
   {{- $flags = append $flags (print "--policyReports=" .enabled) -}}
+{{- end -}}
+{{- with .validatingAdmissionPolicyReports -}}
+  {{- $flags = append $flags (print "--validatingAdmissionPolicyReports=" .enabled) -}}
 {{- end -}}
 {{- with .autoUpdateWebhooks -}}
   {{- $flags = append $flags (print "--autoUpdateWebhooks=" .enabled) -}}
