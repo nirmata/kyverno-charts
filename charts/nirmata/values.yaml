@@ -33,6 +33,18 @@ apiVersionOverride:
 # CRDs configuration
 crds:
 
+  backgroundscanreports: true
+
+  cleanuppolicies: true
+
+  clusterbackgroundscanreports: true
+
+  clustercleanuppolicies: true
+
+  clusterpolicyreports: true
+
+  policyreports: true
+
   # -- Whether to have Helm install the Kyverno CRDs, if the CRDs are not installed by Helm, they must be added before policies can be created
   install: true
 
@@ -250,9 +262,9 @@ metricsConfig:
     # -- list of namespaces to NOT capture metrics for.
     exclude: []
 
-  # -- (string) Rate at which metrics should reset so as to clean up the memory footprint of kyverno metrics, if you might be expecting high memory footprint of Kyverno's metrics. Default: 0, no refresh of metrics. WARNING: This flag is not working since Kyverno 1.8.0
+  # -- (string) Rate at which metrics should reset so as to clean up the memory footprint of kyverno metrics, if you might be expecting high memory footprint of Kyverno's metrics. Default: 0, no refresh of metrics
   metricsRefreshInterval: ~
-  # metricsRefreshInterval: 24h
+    # metricsRefreshInterval: 24h
 
   # -- (list) Configures the bucket boundaries for all Histogram metrics, changing this configuration requires restart of the kyverno admission controller
   bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 15, 20, 25, 30]
@@ -332,10 +344,10 @@ webhooksCleanup:
     # -- (string) Image registry
     registry: ~
     # -- Image repository
-    repository: bitnami/kubectl
+    repository: ghcr.io/nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.26.4'
+    tag: '1.29.0'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -403,7 +415,6 @@ grafana:
 # Features configuration
 features:
   admissionReports:
-    # -- Enables the feature
     enabled: true
   aggregateReports:
     # -- Enables the feature
@@ -417,6 +428,8 @@ features:
   autoUpdateWebhooks:
     # -- Enables the feature
     enabled: true
+  disableAutoWebhookGeneration:
+    enabled: false
   backgroundScan:
     # -- Enables the feature
     enabled: true
@@ -436,9 +449,6 @@ features:
     # -- Enables the feature
     enabled: false
   forceFailurePolicyIgnore:
-    # -- Enables the feature
-    enabled: false
-  generateValidatingAdmissionPolicy:
     # -- Enables the feature
     enabled: false
   logging:
@@ -497,10 +507,10 @@ cleanupJobs:
       # -- (string) Image registry
       registry: ~
       # -- Image repository
-      repository: bitnami/kubectl
+      repository: ghcr.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.26.10'
+      tag: '1.29.0'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
@@ -568,10 +578,10 @@ cleanupJobs:
       # -- (string) Image registry
       registry: ~
       # -- Image repository
-      repository: bitnami/kubectl
+      repository: ghcr.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.26.4'
+      tag: '1.29.0'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
@@ -823,7 +833,7 @@ admissionController:
       # -- Image registry
       registry: ghcr.io
       # -- Image repository
-      repository: kyverno/kyvernopre
+      repository: nirmata/kyvernopre
       # -- (string) Image tag
       # If missing, defaults to image.tag
       tag: ~
@@ -865,7 +875,7 @@ admissionController:
       # -- Image registry
       registry: ghcr.io
       # -- Image repository
-      repository: kyverno/kyverno
+      repository: nirmata/kyverno
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
@@ -991,7 +1001,6 @@ backgroundController:
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
-  # -- Enable background controller.
   enabled: true
 
   rbac:
@@ -1070,10 +1079,10 @@ backgroundController:
     # -- Image registry
     registry: ghcr.io
     # -- Image repository
-    repository: kyverno/background-controller
+    repository: nirmata/background-controller
     # -- Image tag
     # Defaults to appVersion in Chart.yaml if omitted
-    tag: ~
+    tag:  # replaced in e2e tests
     # -- Image pull policy
     pullPolicy: IfNotPresent
 
@@ -1260,7 +1269,6 @@ cleanupController:
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
-  # -- Enable cleanup controller.
   enabled: true
 
   rbac:
@@ -1282,10 +1290,6 @@ cleanupController:
       #     - ''
       #   resources:
       #     - pods
-      #   verbs:
-      #     - delete
-      #     - list
-      #     - watch
 
   # -- Create self-signed certificates at deployment time.
   # The certificates won't be automatically renewed if this is set to `true`.
@@ -1295,7 +1299,7 @@ cleanupController:
     # -- Image registry
     registry: ghcr.io
     # -- Image repository
-    repository: kyverno/cleanup-controller
+    repository: nirmata/cleanup-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -1447,8 +1451,6 @@ cleanupController:
       type: RuntimeDefault
 
   podDisruptionBudget:
-    # -- Enable PodDisruptionBudget.
-    # Will always be enabled if replicas > 1. This non-declarative behavior should ideally be avoided, but changing it now would be breaking.
     enabled: false
     # -- Configures the minimum available pods for disruptions.
     # Cannot be used if `maxUnavailable` is set.
@@ -1539,7 +1541,6 @@ reportsController:
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
-  # -- Enable reports controller.
   enabled: true
 
   rbac:
@@ -1566,7 +1567,7 @@ reportsController:
     # -- Image registry
     registry: ghcr.io
     # -- Image repository
-    repository: kyverno/reports-controller
+    repository: nirmata/reports-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -1693,8 +1694,6 @@ reportsController:
       type: RuntimeDefault
 
   podDisruptionBudget:
-    # -- Enable PodDisruptionBudget.
-    # Will always be enabled if replicas > 1. This non-declarative behavior should ideally be avoided, but changing it now would be breaking.
     enabled: false
     # -- Configures the minimum available pods for disruptions.
     # Cannot be used if `maxUnavailable` is set.
@@ -1774,3 +1773,34 @@ reportsController:
     collector: ~
     # -- (string) Otel collector credentials
     creds: ~
+
+# Configmap storing custom CA certificate
+customCAConfigMap:
+
+# Path containing ssl certs within the container. Used only if customCAConfigMap is used
+systemCertPath: /etc/ssl/certs
+
+# License manager configs
+licenseManager:
+  # -- Whether to use license manager
+  enable: true
+  # -- License manager repo
+  imageRepository: ghcr.io/nirmata/kyverno-license-manager
+  # -- Image tag
+  imageTag: v0.1.7
+  # -- Product name to be present in license, empty to ignore check
+  productName: ""
+  # -- Validation interval in mins
+  validateIntervalMins: 60
+  # -- License server
+  callHomeServer: nirmata.io
+  # -- License key
+  licenseKey: free-tier-license
+    # -- License secret containing license string under key 'license'
+  licenseSecret:
+  # -- License server API key
+  apiKey:
+  # -- Cluster Id. If not provided, use kube-system uid
+  clusterId:
+  # -- Cluster name. Autogenerated if not provided
+  clusterName:
