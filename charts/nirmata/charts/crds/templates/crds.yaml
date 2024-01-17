@@ -1,14 +1,15 @@
+{{- if .Values.crds.install }}
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    controller-gen.kubebuilder.io/version: v0.12.0
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    controller-gen.kubebuilder.io/version: v0.12.0
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: admissionreports.kyverno.io
 spec:
   group: kyverno.io
@@ -336,16 +337,20 @@ spec:
     storage: true
     subresources: {}
 ---
+{{- if and (eq .Values.reportsController.enabled true) (eq .Values.crds.backgroundscanreports false) }}
+{{- fail "CRD backgroundscanreports disabled while reportsController enabled" }}
+{{- end }}
+{{- if .Values.crds.backgroundscanreports }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    controller-gen.kubebuilder.io/version: v0.12.0
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    controller-gen.kubebuilder.io/version: v0.12.0
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: backgroundscanreports.kyverno.io
 spec:
   group: kyverno.io
@@ -640,17 +645,23 @@ spec:
     served: true
     storage: true
     subresources: {}
+{{- end }}
 ---
+{{- if and (eq .Values.cleanupController.enabled true) (eq .Values.crds.cleanuppolicies false) }}
+{{- fail "CRD cleanuppolicies disabled while cleanupController enabled" }}
+{{- end }}
+
+{{- if .Values.crds.cleanuppolicies }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    controller-gen.kubebuilder.io/version: v0.12.0
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    controller-gen.kubebuilder.io/version: v0.12.0
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: cleanuppolicies.kyverno.io
 spec:
   group: kyverno.io
@@ -3148,17 +3159,18 @@ spec:
     storage: true
     subresources:
       status: {}
+{{- end }}
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    controller-gen.kubebuilder.io/version: v0.12.0
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    controller-gen.kubebuilder.io/version: v0.12.0
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: clusteradmissionreports.kyverno.io
 spec:
   group: kyverno.io
@@ -3487,16 +3499,21 @@ spec:
     storage: true
     subresources: {}
 ---
+{{- if and (eq .Values.reportsController.enabled true) (eq .Values.crds.clusterbackgroundscanreports false) }}
+{{- fail "CRD backgroundscanreports disabled while reportsController enabled" }}
+{{- end }}
+
+{{- if .Values.crds.clusterbackgroundscanreports }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    controller-gen.kubebuilder.io/version: v0.12.0
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    controller-gen.kubebuilder.io/version: v0.12.0
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: clusterbackgroundscanreports.kyverno.io
 spec:
   group: kyverno.io
@@ -3791,17 +3808,23 @@ spec:
     served: true
     storage: true
     subresources: {}
+{{- end }}
 ---
+{{- if and (eq .Values.cleanupController.enabled true) (eq .Values.crds.clustercleanuppolicies false) }}
+{{- fail "CRD clustercleanuppolicies disabled while cleanupController enabled" }}
+{{- end }}
+
+{{- if .Values.crds.clustercleanuppolicies }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    controller-gen.kubebuilder.io/version: v0.12.0
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    controller-gen.kubebuilder.io/version: v0.12.0
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: clustercleanuppolicies.kyverno.io
 spec:
   group: kyverno.io
@@ -6299,17 +6322,18 @@ spec:
     storage: true
     subresources:
       status: {}
+{{- end }}
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    controller-gen.kubebuilder.io/version: v0.12.0
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    controller-gen.kubebuilder.io/version: v0.12.0
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: clusterpolicies.kyverno.io
 spec:
   group: kyverno.io
@@ -6334,16 +6358,16 @@ spec:
     - jsonPath: .spec.validationFailureAction
       name: VALIDATE ACTION
       type: string
+    - jsonPath: .spec.failurePolicy
+      name: Failure Policy
+      priority: 1
+      type: string
     - jsonPath: .status.conditions[?(@.type == "Ready")].status
       name: READY
       type: string
     - jsonPath: .metadata.creationTimestamp
       name: AGE
       type: date
-    - jsonPath: .spec.failurePolicy
-      name: FAILURE POLICY
-      priority: 1
-      type: string
     - jsonPath: .status.rulecount.validate
       name: VALIDATE
       priority: 1
@@ -9667,7 +9691,7 @@ spec:
                                               description: Specify signature algorithm
                                                 for public keys. Supported values
                                                 are sha256 and sha512.
-                                              type: string
+                                              type: string                                      
                                           type: object
                                         repository:
                                           description: Repository is an optional alternate
@@ -10554,7 +10578,10 @@ spec:
                               type: object
                             type: array
                           image:
-                            description: Deprecated. Use ImageReferences instead.
+                            description: 'Image is the image name consisting of the
+                              registry address, repository, image, and tag. Wildcards
+                              (''*'' and ''?'') are allowed. See: https://kubernetes.io/docs/concepts/containers/images.
+                              Deprecated. Use ImageReferences instead.'
                             type: string
                           imageReferences:
                             description: 'ImageReferences is a list of matching image
@@ -10567,42 +10594,14 @@ spec:
                             items:
                               type: string
                             type: array
-                          imageRegistryCredentials:
-                            description: ImageRegistryCredentials provides credentials
-                              that will be used for authentication with registry.
-                            properties:
-                              allowInsecureRegistry:
-                                description: AllowInsecureRegistry allows insecure
-                                  access to a registry.
-                                type: boolean
-                              providers:
-                                description: 'Providers specifies a list of OCI Registry
-                                  names, whose authentication providers are provided.
-                                  It can be of one of these values: default,google,azure,amazon,github.'
-                                items:
-                                  description: ImageRegistryCredentialsProvidersType
-                                    provides the list of credential providers required.
-                                  enum:
-                                  - default
-                                  - amazon
-                                  - azure
-                                  - google
-                                  - github
-                                  type: string
-                                type: array
-                              secrets:
-                                description: Secrets specifies a list of secrets that
-                                  are provided for credentials. Secrets must live
-                                  in the Kyverno namespace.
-                                items:
-                                  type: string
-                                type: array
-                            type: object
                           issuer:
-                            description: Deprecated. Use KeylessAttestor instead.
+                            description: Issuer is the certificate issuer used for
+                              keyless signing. Deprecated. Use KeylessAttestor instead.
                             type: string
                           key:
-                            description: Deprecated. Use StaticKeyAttestor instead.
+                            description: Key is the PEM encoded public key that the
+                              image or attestation is signed with. Deprecated. Use
+                              StaticKeyAttestor instead.
                             type: string
                           mutateDigest:
                             default: true
@@ -24034,13 +24033,13 @@ spec:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    controller-gen.kubebuilder.io/version: v0.12.0
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    controller-gen.kubebuilder.io/version: v0.12.0
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: policies.kyverno.io
 spec:
   group: kyverno.io
@@ -30454,7 +30453,7 @@ spec:
                                                   items:
                                                     type: string
                                                   type: array
-                                              type: object
+                                              type: object                                          
                                             jmesPath:
                                               description: JMESPath is an optional
                                                 JSON Match Expression that can be
@@ -42284,12 +42283,43 @@ spec:
             - exceptions
             - match
             type: object
+            required:
+            - ready
+            type: object
         required:
         - spec
         type: object
     served: true
     storage: false
   - name: v2beta1
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.11.3
+    {{- with .Values.crds.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
+  name: policyexceptions.kyverno.io
+spec:
+  group: kyverno.io
+  names:
+    categories:
+    - kyverno
+    kind: PolicyException
+    listKind: PolicyExceptionList
+    plural: policyexceptions
+    shortNames:
+    - polex
+    singular: policyexception
+  scope: Namespaced
+  versions:
+  - name: v2alpha1
     schema:
       openAPIV3Schema:
         description: PolicyException declares resources to be excluded from specified
@@ -42792,13 +42822,13 @@ spec:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    controller-gen.kubebuilder.io/version: v0.12.0
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    controller-gen.kubebuilder.io/version: v0.12.0
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: updaterequests.kyverno.io
 spec:
   group: kyverno.io
@@ -43199,16 +43229,21 @@ spec:
     subresources:
       status: {}
 ---
+{{- if and (eq .Values.reportsController.enabled true) (eq .Values.crds.clusterpolicyreports false) }}
+{{- fail "CRD clusterpolicyreports disabled while reportsController enabled" }}
+{{- end }}
+
+{{- if .Values.crds.clusterpolicyreports }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    controller-gen.kubebuilder.io/version: v0.12.0
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    controller-gen.kubebuilder.io/version: v0.12.0
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: clusterpolicyreports.wgpolicyk8s.io
 spec:
   group: wgpolicyk8s.io
@@ -43565,17 +43600,23 @@ spec:
     served: true
     storage: true
     subresources: {}
+{{- end }}
 ---
+{{- if and (eq .Values.reportsController.enabled true) (eq .Values.crds.clusterpolicyreports false) }}
+{{- fail "CRD clusterpolicyreports disabled while reportsController enabled" }}
+{{- end }}
+
+{{- if .Values.crds.clusterpolicyreports }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    controller-gen.kubebuilder.io/version: v0.12.0
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    controller-gen.kubebuilder.io/version: v0.12.0
+  labels:
+    {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: policyreports.wgpolicyk8s.io
 spec:
   group: wgpolicyk8s.io
@@ -43931,3 +43972,5 @@ spec:
     served: true
     storage: true
     subresources: {}
+{{- end }}
+{{- end }}
