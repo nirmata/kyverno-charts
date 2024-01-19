@@ -45,8 +45,8 @@ crds:
 
   policyreports: true
 
-#  temporary
-# TODO
+# While disabling controllers in their respective configuration, disable them here as well
+# This is temporary and will be fixed in a few versions
 
   reportsController:
     enabled: true
