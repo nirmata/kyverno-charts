@@ -29,6 +29,9 @@ rules:
   - apiGroups:
       - kyverno.io
     resources:
+      - policies
+      - clusterpolicies
+      - policyexceptions
       - updaterequests
       - updaterequests/status
     verbs:
@@ -42,6 +45,15 @@ rules:
       - deletecollection
   - apiGroups:
       - ''
+    resources:
+      - namespaces
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ''
       - events.k8s.io
     resources:
       - events
@@ -49,6 +61,8 @@ rules:
       - create
       - update
       - patch
+      - get
+      - list
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -82,6 +96,10 @@ rules:
       - update
       - patch
       - delete
+      - watch
+{{- with .Values.backgroundController.rbac.coreClusterRole.extraResources }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
 {{- with .Values.backgroundController.rbac.clusterRole.extraResources }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -95,3 +113,4 @@ rules:
 {{- end }}
 {{- end }}
 {{- end }}
+
