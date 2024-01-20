@@ -44,34 +44,34 @@ content:
           image:
             tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
-        - name: image-pull-secret
+        - name: {{ .Values.image.pullSecret.name }}
       backgroundController:
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
-        - name: image-pull-secret
+        - name: {{ .Values.image.pullSecret.name }}
       cleanupController:
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
-        - name: image-pull-secret
+        - name: {{ .Values.image.pullSecret.name }}
       reportsController:
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
-        - name: image-pull-secret
+        - name: {{ .Values.image.pullSecret.name }}
       clusterAdmissionReports:
         imagePullSecrets:
-        - name: image-pull-secret
+        - name: {{ .Values.image.pullSecret.name }}
       cleanupJobs:
         admissionReports:
           imagePullSecrets:
-          - name: image-pull-secret
+          - name: {{ .Values.image.pullSecret.name }}
           image:
             registry: {{.Values.kyverno.cleanupJobsRegistry}}
         clusterAdmissionReports:
           imagePullSecrets:
-          - name: image-pull-secret
+          - name: {{ .Values.image.pullSecret.name }}
           image:
             registry: {{.Values.kyverno.cleanupJobsRegistry}}
       {{- if .Values.image.pullSecrets.create }}
