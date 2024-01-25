@@ -37,6 +37,8 @@ content:
       {{- toYaml .Values.kyverno.helm | nindent 6 }}
       {{- end}}
       admissionController:
+        podLabels: {{- include "globalLabels" . }}
+        podAnnotations: {{- include "globalAnnotations" . }}
         container:
           image:
             tag: {{ .Values.kyverno.image.tag }}
@@ -46,30 +48,42 @@ content:
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
       backgroundController:
+        podLabels: {{- include "globalLabels" . }}
+        podAnnotations: {{- include "globalAnnotations" . }}
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
       cleanupController:
+        podLabels: {{- include "globalLabels" . }}
+        podAnnotations: {{- include "globalAnnotations" . }}
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
       reportsController:
+        podLabels: {{- include "globalLabels" . }}
+        podAnnotations: {{- include "globalAnnotations" . }}   
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
       clusterAdmissionReports:
+        podLabels: {{- include "globalLabels" . }}
+        podAnnotations: {{- include "globalAnnotations" . }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
       cleanupJobs:
         admissionReports:
+          podLabels: {{- include "globalLabels" . }}
+          podAnnotations: {{- include "globalAnnotations" . }}
           imagePullSecrets:
           - name: {{ .Values.image.pullSecrets.name }}
           image:
             registry: {{.Values.kyverno.cleanupJobsRegistry}}
         clusterAdmissionReports:
+          podLabels: {{- include "globalLabels" . }}
+          podAnnotations: {{- include "globalAnnotations" . }}
           imagePullSecrets:
           - name: {{ .Values.image.pullSecrets.name }}
           image:

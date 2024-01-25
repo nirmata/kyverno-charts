@@ -10,6 +10,12 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "globalLabels" -}}
+{{- if .Values.global.labels}}
+{{ toYaml .Values.global.labels }}
+{{- end }}
+{{- end -}}
+
 {{- define "kyverno.labels.helm" -}}
 {{- if not .Values.kyverno.templating.enabled -}}
 helm.sh/chart: {{ template "kyverno.chart" . }}
@@ -24,6 +30,7 @@ app.kubernetes.io/version: {{ template "kyverno.chartVersion" . }}
 {{- define "kyverno.labels.common" -}}
 {{- template "kyverno.labels.merge" (list
   (include "kyverno.labels.helm" .)
+  (include "globalLabels" .)
   (include "kyverno.labels.version" .)
   (toYaml .Values.kyverno.customLabels)
 ) -}}

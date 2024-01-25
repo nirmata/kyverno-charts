@@ -4,6 +4,8 @@ metadata:
   name: {{ include "enterprise-kyverno.fullname" . }}
   labels:
     {{- include "enterprise-kyverno.labels" . | nindent 4 }}
+  annotations:
+    {{- include "globalAnnotations" . | nindent 4 }}
   namespace: {{ template "enterprise-kyverno.namespace" . }}
 spec:
   {{- if not .Values.autoscaling.enabled }}

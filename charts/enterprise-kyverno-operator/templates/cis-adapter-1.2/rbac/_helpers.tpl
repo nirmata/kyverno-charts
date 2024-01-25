@@ -42,6 +42,7 @@ helm.sh/chart: {{ include "kube-bench.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{ include "globalLabels" . }}
 {{- end }}
 
 {{/* matchLabels */}}

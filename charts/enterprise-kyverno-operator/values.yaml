@@ -12,6 +12,9 @@ replicaCount: 1
 
 envVars: []
 
+globalLabels: {}
+globalAnnotations: {}
+
 image:
   repository: ghcr.io/nirmata/nirmata-kyverno-operator
   # Defaults to chart appVersion

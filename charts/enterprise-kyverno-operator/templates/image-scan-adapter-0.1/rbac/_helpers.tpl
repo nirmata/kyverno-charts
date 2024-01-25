@@ -36,6 +36,7 @@ Common labels
 {{- define "image-scan-adapter.labels" -}}
 helm.sh/chart: {{ include "image-scan-adapter.chart" . }}
 {{ include "image-scan-adapter.selectorLabels" . }}
+{{ include "globalLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}

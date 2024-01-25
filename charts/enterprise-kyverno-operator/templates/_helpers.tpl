@@ -36,11 +36,31 @@ Common labels
 {{- define "enterprise-kyverno.labels" -}}
 helm.sh/chart: {{ include "enterprise-kyverno.chart" . }}
 {{ include "enterprise-kyverno.selectorLabels" . }}
+{{ include "globalLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
+
+{{/*
+Global labels
+*/}}
+{{- define "globalLabels" }}
+{{- if .Values.globalLabels }}
+{{ toYaml .Values.globalLabels | indent 4 }}
+{{- end }}
+{{- end }}
+
+{{/*
+Global annotations
+*/}}
+{{- define "globalAnnotations" }}
+{{- if .Values.globalAnnotations }}
+{{ toYaml .Values.globalAnnotations | indent 4 }}
+{{- end }}
+{{- end }}
+
 
 {{/*
 Selector labels

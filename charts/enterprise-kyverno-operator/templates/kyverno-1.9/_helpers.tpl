@@ -81,6 +81,9 @@ helm.sh/chart: {{ template "kyverno19.chart" . }}
 {{- if .Values.kyverno.customLabels }}
 {{ toYaml .Values.kyverno.customLabels }}
 {{- end }}
+{{- if .Values.global.labels}}
+{{ toYaml .Values.global.labels }}
+{{- end }}
 {{- end -}}
 
 {{/* Helm required labels */}}

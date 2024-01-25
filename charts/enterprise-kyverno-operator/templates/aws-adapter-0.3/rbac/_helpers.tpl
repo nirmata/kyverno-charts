@@ -45,6 +45,7 @@ Common labels
 {{- define "kyverno-aws-adapter.labels" -}}
 helm.sh/chart: {{ include "kyverno-aws-adapter.chart" . }}
 {{ include "kyverno-aws-adapter.selectorLabels" . }}
+{{ include "globalLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
