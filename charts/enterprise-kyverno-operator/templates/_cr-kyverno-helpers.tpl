@@ -37,6 +37,14 @@ content:
       {{- toYaml .Values.kyverno.helm | nindent 6 }}
       {{- end}}
       admissionController:
+        podLabels: 
+{{- if .Values.globalLabels }}
+{{- toYaml .Values.globalLabels | nindent 10 }}
+{{- end}}
+        podAnnotations: 
+{{- if .Values.globalAnnotations }}
+{{- toYaml .Values.globalAnnotations | nindent 10 }}
+{{- end}}
         container:
           image:
             tag: {{ .Values.kyverno.image.tag }}
@@ -46,30 +54,78 @@ content:
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
       backgroundController:
+        podLabels: 
+{{- if .Values.globalLabels }}
+{{- toYaml .Values.globalLabels | nindent 10 }}
+{{- end}}
+        podAnnotations: 
+{{- if .Values.globalAnnotations }}
+{{- toYaml .Values.globalAnnotations | nindent 10 }}
+{{- end}}
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
       cleanupController:
+        podLabels: 
+{{- if .Values.globalLabels }}
+{{- toYaml .Values.globalLabels | nindent 10 }}
+{{- end}}
+        podAnnotations: 
+{{- if .Values.globalAnnotations }}
+{{- toYaml .Values.globalAnnotations | nindent 10 }}
+{{- end}}
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
-      reportsController:
+      reportsController:  
+        podLabels: 
+{{- if .Values.globalLabels }}
+{{- toYaml .Values.globalLabels | nindent 10 }}
+{{- end}}
+        podAnnotations: 
+{{- if .Values.globalAnnotations }}
+{{- toYaml .Values.globalAnnotations | nindent 10 }}
+{{- end}}
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
       clusterAdmissionReports:
+        podLabels: 
+{{- if .Values.globalLabels }}
+{{- toYaml .Values.globalLabels | nindent 10 }}
+{{- end}}
+        podAnnotations: 
+{{- if .Values.globalAnnotations }}
+{{- toYaml .Values.globalAnnotations | nindent 10 }}
+{{- end}}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
       cleanupJobs:
         admissionReports:
+          podLabels: 
+  {{- if .Values.globalLabels }}
+  {{- toYaml .Values.globalLabels | nindent 12 }}
+  {{- end}}
+          podAnnotations: 
+  {{- if .Values.globalAnnotations }}
+  {{- toYaml .Values.globalAnnotations | nindent 12 }}
+  {{- end}}
           imagePullSecrets:
           - name: {{ .Values.image.pullSecrets.name }}
           image:
             registry: {{.Values.kyverno.cleanupJobsRegistry}}
         clusterAdmissionReports:
+          podLabels: 
+  {{- if .Values.globalLabels }}
+  {{- toYaml .Values.globalLabels | nindent 12 }}
+  {{- end}}
+          podAnnotations: 
+  {{- if .Values.globalAnnotations }}
+  {{- toYaml .Values.globalAnnotations | nindent 12 }}
+  {{- end}}
           imagePullSecrets:
           - name: {{ .Values.image.pullSecrets.name }}
           image:

@@ -8,6 +8,9 @@ cloudPlatform: ""
 
 namespace:
 
+globalLabels: {}
+globalAnnotations: {}
+
 replicaCount: 1
 
 envVars: []
