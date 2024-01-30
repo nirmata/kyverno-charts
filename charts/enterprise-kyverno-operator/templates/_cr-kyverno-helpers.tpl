@@ -36,6 +36,12 @@ content:
       {{- if .Values.kyverno.helm }}
       {{- toYaml .Values.kyverno.helm | nindent 6 }}
       {{- end}}
+
+      customLabels:
+{{- if .Values.globalLabels }}
+{{- toYaml .Values.globalLabels | nindent 8 }}
+{{- end}} 
+
       admissionController:
         podLabels: 
 {{- if .Values.globalLabels }}
