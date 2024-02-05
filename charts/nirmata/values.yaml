@@ -312,6 +312,8 @@ test:
 # -- Additional labels
 customLabels: {}
 
+customAnnotations: {}
+
 webhooksCleanup:
   # -- Create a helm pre-delete hook to cleanup webhooks.
   enabled: true

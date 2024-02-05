@@ -29,6 +29,10 @@ app.kubernetes.io/version: {{ template "kyverno.chartVersion" . }}
 ) -}}
 {{- end -}}
 
+{{- define "kyverno.annotations.common" -}}
+
+{{- end -}}
+
 {{- define "kyverno.matchLabels.common" -}}
 app.kubernetes.io/part-of: {{ template "kyverno.fullname" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
