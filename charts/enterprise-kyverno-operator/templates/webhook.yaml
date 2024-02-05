@@ -7,6 +7,9 @@ metadata:
     cert-manager.io/inject-ca-from: {{ template "enterprise-kyverno.namespace" . }}/kyverno-operator-serving-cert
   {{- end}}
   labels:
+    {{- if .Values.globalLabels }}
+    {{- toYaml .Values.globalLabels| nindent 4 }}
+    {{- end }}
     app.kubernetes.io/component: webhook
     app.kubernetes.io/created-by: kyverno-operator
     app.kubernetes.io/instance: validating-webhook-configuration

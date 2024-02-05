@@ -41,6 +41,10 @@ content:
 {{- if .Values.globalLabels }}
 {{- toYaml .Values.globalLabels | nindent 8 }}
 {{- end}} 
+      customAnnotations:
+{{- if .Values.globalAnnotations }}
+{{- toYaml .Values.globalAnnotations | nindent 8 }}
+{{- end}} 
 
       admissionController:
         podLabels: 
