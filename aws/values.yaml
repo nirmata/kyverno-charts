@@ -22,7 +22,7 @@ apiVersionOverride:
   # -- (string) Override api version used to create `PodDisruptionBudget`` resources.
   # When not specified the chart will check if `policy/v1/PodDisruptionBudget` is available to
   # determine the api version automatically.
-  podDisruptionBudget: ~
+  podDisruptionBudget: "policy/v1"
 
 aws:
   region: us-east-1
