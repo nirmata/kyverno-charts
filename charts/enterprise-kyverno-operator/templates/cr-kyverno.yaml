@@ -5,6 +5,10 @@ metadata:
   annotations:
   labels:
     {{- include "enterprise-kyverno.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.globalAnnotations }}
+    {{- toYaml .Values.globalAnnotations | nindent 4 }}
+    {{- end }}
   name: kyverno
   namespace: {{ template "enterprise-kyverno.namespace" . }}
 spec:

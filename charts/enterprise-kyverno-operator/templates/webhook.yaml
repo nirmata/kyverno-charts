@@ -17,6 +17,10 @@ metadata:
     app.kubernetes.io/name: validatingwebhookconfiguration
     app.kubernetes.io/part-of: kyverno-operator
   name: kyverno-operator-validating-webhook-configuration
+  {{- if .Values.globalAnnotations }}
+  annotations: 
+    {{- toYaml .Values.globalAnnotations| nindent 4 }}
+  {{- end }}
 webhooks:
 - admissionReviewVersions:
   - v1

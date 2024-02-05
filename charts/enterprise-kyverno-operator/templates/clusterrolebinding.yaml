@@ -6,7 +6,11 @@ metadata:
   name: {{ template "enterprise-kyverno.fullname" . }}
   labels:
     {{- if .Values.globalLabels }}
-    {{- toYaml .Values.globalLabels| nindent 4 }}
+    {{- toYaml .Values.globalLabels | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.globalAnnotations }}
+    {{- toYaml .Values.globalAnnotations | nindent 4 }}
     {{- end }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io

@@ -7,6 +7,10 @@ metadata:
   labels:
     {{- if .Values.globalLabels }}
     {{- toYaml .Values.globalLabels| nindent 4 }}
+  {{- if .Values.globalAnnotations }}
+  annotations: 
+    {{- toYaml .Values.globalAnnotations| nindent 4 }}
+  {{- end }}
     {{- end }}
 rules:
 - apiGroups:
