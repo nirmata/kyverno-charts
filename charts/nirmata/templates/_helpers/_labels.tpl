@@ -40,9 +40,11 @@ app.kubernetes.io/version: {{ template "kyverno.chartVersion" . }}
 {{- end -}}
 
 {{- define "kyverno.annotations.common" -}}
+{{- if .Values.customAnnotations }}
   {{- template "kyverno.annotations.merge" (list
     (toYaml .Values.customAnnotations)
   ) -}}
+  {{- end }}
 {{- end -}}
 
 {{- define "kyverno.matchLabels.common" -}}
