@@ -199,7 +199,7 @@ spec:
     spec:
       containers:
       - name: cluster-registrator
-        image: ghcr.io/nirmata/cluster-registrator:v0.0.1
+        image: ghcr.io/nirmata/cluster-registrator:v0.1.1
         args:
         - "--cluster-name"
         - "{{ .Values.cluster.name }}"
