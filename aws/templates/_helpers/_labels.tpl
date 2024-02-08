@@ -13,7 +13,6 @@
 {{- define "kyverno.labels.helm" -}}
 {{- if not .Values.templating.enabled -}}
 helm.sh/chart: {{ template "kyverno.chart" . }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 {{- end -}}
 
