@@ -7,6 +7,11 @@ metadata:
   namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.reports-controller.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
 spec:
   {{- include "kyverno.pdb.spec" .Values.reportsController.podDisruptionBudget | nindent 2 }}
   selector:

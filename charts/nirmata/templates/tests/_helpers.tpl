@@ -15,6 +15,9 @@
 {{- end -}}
 
 {{- define "kyverno.test.annotations" -}}
+{{- template "kyverno.annotations.merge" (list
+    (toYaml .Values.customAnnotations)
+) -}}
 helm.sh/hook: test
 {{- end -}}
 

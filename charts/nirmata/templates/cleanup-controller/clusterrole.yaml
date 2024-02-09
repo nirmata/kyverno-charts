@@ -6,6 +6,11 @@ metadata:
   name: {{ template "kyverno.cleanup-controller.roleName" . }}
   labels:
     {{- include "kyverno.cleanup-controller.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
 aggregationRule:
   clusterRoleSelectors:
     - matchLabels:
@@ -17,6 +22,11 @@ metadata:
   name: {{ template "kyverno.cleanup-controller.roleName" . }}:core
   labels:
     {{- include "kyverno.cleanup-controller.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
 rules:
   - apiGroups:
       - '*'
@@ -95,6 +105,11 @@ metadata:
   name: {{ template "kyverno.cleanup-controller.roleName" $ }}:additional
   labels:
     {{- include "kyverno.cleanup-controller.labels" $ | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
 rules:
   {{- range . }}
   - apiGroups:

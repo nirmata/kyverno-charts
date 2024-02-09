@@ -7,6 +7,9 @@ metadata:
     "helm.sh/hook": pre-delete
     "helm.sh/hook-weight": "3"
     "helm.sh/hook-delete-policy": hook-succeeded
+  {{- if .Values.globalAnnotations }}
+    {{- toYaml .Values.globalAnnotations| nindent 4 }}
+  {{- end }}
   labels:
     app: {{ template "enterprise-kyverno.name" . }}-operator
 {{ include "enterprise-kyverno.labels" . | indent 4 }}

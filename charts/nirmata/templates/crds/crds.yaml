@@ -10,6 +10,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: admissionreports.kyverno.io
 spec:
   group: kyverno.io
@@ -351,6 +356,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: backgroundscanreports.kyverno.io
 spec:
   group: kyverno.io
@@ -662,6 +672,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: cleanuppolicies.kyverno.io
 spec:
   group: kyverno.io
@@ -1777,6 +1792,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: clusteradmissionreports.kyverno.io
 spec:
   group: kyverno.io
@@ -2120,6 +2140,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: clusterbackgroundscanreports.kyverno.io
 spec:
   group: kyverno.io
@@ -2431,6 +2456,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: clustercleanuppolicies.kyverno.io
 spec:
   group: kyverno.io
@@ -3546,6 +3576,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: clusterpolicies.kyverno.io
 spec:
   group: kyverno.io
@@ -17834,6 +17869,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: policies.kyverno.io
 spec:
   group: kyverno.io
@@ -32125,6 +32165,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: policyexceptions.kyverno.io
 spec:
   group: kyverno.io
@@ -32649,6 +32694,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: updaterequests.kyverno.io
 spec:
   group: kyverno.io
@@ -33059,6 +33109,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: clusterpolicyreports.wgpolicyk8s.io
 spec:
   group: wgpolicyk8s.io
@@ -33432,6 +33487,11 @@ metadata:
     {{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   name: policyreports.wgpolicyk8s.io
 spec:
   group: wgpolicyk8s.io
