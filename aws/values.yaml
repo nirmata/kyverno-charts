@@ -316,7 +316,7 @@ webhooksCleanup:
   # -- Create a helm pre-delete hook to cleanup webhooks.
   enabled: true
   # -- `kubectl` image to run commands for deleting webhooks.
-  image: ghcr.io/nirmata/kubectl:1.29.0
+  image: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/kubectl:1.29.0
   # -- Image pull secrets
   imagePullSecrets: []
 
@@ -429,9 +429,9 @@ cleanupJobs:
 
     image:
       # -- (string) Image registry
-      registry: ~
+      registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
       # -- Image repository
-      repository: ghcr.io/nirmata/kubectl
+      repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
       tag: '1.29.0'
@@ -500,9 +500,9 @@ cleanupJobs:
 
     image:
       # -- (string) Image registry
-      registry: ~
+      registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
       # -- Image repository
-      repository: ghcr.io/nirmata/kubectl
+      repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
       tag: '1.29.0'
