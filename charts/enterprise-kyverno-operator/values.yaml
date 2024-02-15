@@ -76,7 +76,7 @@ kyverno:
     enabled: false
     image: ghcr.io/nirmata/kubectl:1.29.0
   webhooksCleanup:
-    enable: false
+    enabled: false
   crds:
     install: true
     annotations: {}
@@ -137,6 +137,7 @@ kyverno:
     licenseManager:
       imageTag: v0.1.8
     webhooksCleanup:
+      enabled: false
       image: ghcr.io/nirmata/kubectl:1.29.0
     cleanupJobs:
       admissionReports:

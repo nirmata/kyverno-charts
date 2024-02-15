@@ -337,6 +337,20 @@ webhooksCleanup:
   # -- Node affinity constraints.
   nodeAffinity: {}
 
+  # -- Security context for webhook cleanup containers
+  securityContext:
+    runAsUser: 65534
+    runAsGroup: 65534
+    runAsNonRoot: true
+    privileged: false
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
 grafana:
   # -- Enable grafana dashboard creation.
   enabled: false
