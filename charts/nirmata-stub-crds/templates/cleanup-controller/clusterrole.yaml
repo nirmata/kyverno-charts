@@ -18,14 +18,27 @@ metadata:
   labels:
     {{- include "kyverno.cleanup-controller.labels" . | nindent 4 }}
 rules:
+{{- with .Values.admissionController.rbac.coreClusterRole.extraResources }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
   - apiGroups:
-      - '*'
+      - apiextensions.k8s.io
     resources:
-      - '*'
+      - customresourcedefinitions
     verbs:
       - get
       - list
       - watch
+  - apiGroups:
+    - ""
+    resources:
+    - nodes
+    - namespaces
+    - configmaps
+    verbs:
+    - watch
+    - list
+    - get
   - apiGroups:
       - admissionregistration.k8s.io
     resources:

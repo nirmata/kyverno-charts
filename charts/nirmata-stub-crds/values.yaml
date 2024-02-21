@@ -583,6 +583,21 @@ admissionController:
       annotations: {}
         # example.com/annotation: value
 
+    coreClusterRole:
+      # -- Extra resource permissions to add in the core cluster role.
+      # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+      # @default -- See [values.yaml](values.yaml)
+      extraResources:
+    #     - apiGroups:
+    #         - '*'
+    #       resources:
+    #         - '*'
+    #       verbs:
+    #         - get
+    #         - list
+    #         - watch
+
+
     clusterRole:
       # -- Extra resource permissions to add in the cluster role
       extraResources: []
@@ -919,6 +934,20 @@ backgroundController:
       annotations: {}
         # example.com/annotation: value
 
+    coreClusterRole:
+      # -- Extra resource permissions to add in the core cluster role.
+      # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+      # @default -- See [values.yaml](values.yaml)
+      extraResources:
+    #     - apiGroups:
+    #         - '*'
+    #       resources:
+    #         - '*'
+    #       verbs:
+    #         - get
+    #         - list
+    #         - watch
+
     clusterRole:
       # -- Extra resource permissions to add in the cluster role
       extraResources: []
@@ -1136,6 +1165,20 @@ cleanupController:
       # -- Annotations for the ServiceAccount
       annotations: {}
         # example.com/annotation: value
+
+    coreClusterRole:
+      # -- Extra resource permissions to add in the core cluster role.
+      # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+      # @default -- See [values.yaml](values.yaml)
+      extraResources:
+        # - apiGroups:
+        #     - '*'
+        #   resources:
+        #     - '*'
+        #   verbs:
+        #     - get
+        #     - list
+        #     - watch
 
     clusterRole:
       # -- Extra resource permissions to add in the cluster role
@@ -1407,6 +1450,20 @@ reportsController:
       # -- Annotations for the ServiceAccount
       annotations: {}
         # example.com/annotation: value
+
+    coreClusterRole:
+      # -- Extra resource permissions to add in the core cluster role.
+      # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+      # @default -- See [values.yaml](values.yaml)
+      extraResources:
+    #     - apiGroups:
+    #         - '*'
+    #       resources:
+    #         - '*'
+    #       verbs:
+    #         - get
+    #         - list
+    #         - watch
 
     clusterRole:
       # -- Extra resource permissions to add in the cluster role

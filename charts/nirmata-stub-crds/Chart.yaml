@@ -1,7 +1,7 @@
 apiVersion: v2
 type: application
 name: kyverno-stub-crds
-version: 3.0.12
+version: 3.0.13
 appVersion: v1.10.7-n4k.nirmata.2
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
