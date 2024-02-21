@@ -1,5 +1,5 @@
-{{- if .Values.reportsController.enabled -}}
-{{- if .Values.reportsController.rbac.create -}}
+{{- if .Values.kyverno.reportsController.enabled -}}
+{{- if .Values.kyverno.reportsController.rbac.create -}}
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:

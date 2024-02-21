@@ -1,4 +1,4 @@
-{{- if .Values.webhooksCleanup.enabled -}}
+{{- if .Values.kyverno.webhooksCleanup.enabled -}}
   {{- if not .Values.templating.enabled -}}
 apiVersion: batch/v1
 kind: Job

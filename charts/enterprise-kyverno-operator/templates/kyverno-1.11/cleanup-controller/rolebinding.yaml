@@ -1,5 +1,5 @@
-{{- if .Values.cleanupController.enabled -}}
-{{- if .Values.cleanupController.rbac.create -}}
+{{- if .Values.kyverno.cleanupController.enabled -}}
+{{- if .Values.kyverno.cleanupController.rbac.create -}}
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
