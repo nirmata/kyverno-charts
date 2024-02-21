@@ -1,4 +1,4 @@
-{{- if .Values.admissionController.rbac.create -}}
+{{- if .Values.kyverno.admissionController.rbac.create }}
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:

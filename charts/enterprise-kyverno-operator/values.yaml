@@ -43,6 +43,34 @@ certManager: operator
 
 # Component configurations
 kyverno:
+  features:
+    generateValidatingAdmissionPolicy:
+      # -- Enables the feature
+      enabled: false
+  global:
+    image:
+      registry: ~
+  policyReportsCleanup:
+    enabled: true
+    image:
+      registry: ~
+      repository: bitnami/kubectl
+      tag: '1.28.4'
+      pullPolicy: ~
+    podSecurityContext: {}
+    securityContext:
+      runAsUser: 65534
+      runAsGroup: 65534
+      runAsNonRoot: true
+      privileged: false
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault
+
   createCR: true
   enablePolicyExceptions: true
   replicaCount:
@@ -63,6 +91,7 @@ kyverno:
       # -- Extra resource permissions to add in the cluster role
       extraResources: []
   admissionController:
+    replicas: ~
     rbac:
       create: true
       serviceAccount:
@@ -70,6 +99,11 @@ kyverno:
       clusterRole:
         # -- Extra resource permissions to add in the cluster role
         extraResources: []
+      coreClusterRole:
+        # -- Extra resource permissions to add in the core cluster role.
+        # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+        # @default -- See [values.yaml](values.yaml)
+        extraResources:
   templating:
     enabled: false
     image: bitnami/kubectl:latest
@@ -89,6 +123,11 @@ kyverno:
       clusterRole:
         # -- Extra resource permissions to add in the cluster role
         extraResources: []
+      coreClusterRole:
+        # -- Extra resource permissions to add in the core cluster role.
+        # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+        # @default -- See [values.yaml](values.yaml)
+        extraResources:
   reportsController:
     # -- Enable reports controller.
     enabled: true
@@ -100,6 +139,11 @@ kyverno:
       clusterRole:
         # -- Extra resource permissions to add in the cluster role
         extraResources: []
+      coreClusterRole:
+        # -- Extra resource permissions to add in the core cluster role.
+        # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+        # @default -- See [values.yaml](values.yaml)
+        extraResources:
   backgroundController:
     # -- Enable background controller.
     enabled: true
@@ -111,6 +155,11 @@ kyverno:
       clusterRole:
         # -- Extra resource permissions to add in the cluster role
         extraResources: []
+      coreClusterRole:
+        # -- Extra resource permissions to add in the core cluster role.
+        # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+        # @default -- See [values.yaml](values.yaml)
+        extraResources:
   kyverno:
     customLabels: {}
   nameOverride: "kyverno"

@@ -1,5 +1,5 @@
-{{- if .Values.reportsController.enabled -}}
-{{- if .Values.reportsController.rbac.create -}}
+{{- if .Values.kyverno.reportsController.enabled -}}
+{{- if .Values.kyverno.reportsController.rbac.create -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -66,7 +66,7 @@ rules:
     verbs:
       - create
       - patch
-{{- with .Values.reportsController.rbac.clusterRole.extraResources }}
+{{- with .Values.kyverno.reportsController.rbac.clusterRole.extraResources }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole

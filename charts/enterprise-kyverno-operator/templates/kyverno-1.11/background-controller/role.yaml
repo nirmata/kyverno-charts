@@ -1,5 +1,5 @@
-{{- if .Values.backgroundController.enabled -}}
-{{- if .Values.backgroundController.rbac.create -}}
+{{- if .Values.kyverno.backgroundController.enabled -}}
+{{- if .Values.kyverno.backgroundController.rbac.create -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
