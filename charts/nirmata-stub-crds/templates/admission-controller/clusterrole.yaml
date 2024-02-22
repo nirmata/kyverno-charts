@@ -110,9 +110,9 @@ rules:
   - apiGroups:
     - ""
     resources:
-    - nodes
-    - namespaces
     - configmaps
+    - namespaces
+    - nodes
     verbs:
     - watch
     - list

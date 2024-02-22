@@ -30,16 +30,6 @@ rules:
       - list
       - watch
   - apiGroups:
-    - ""
-    resources:
-    - nodes
-    - namespaces
-    - configmaps
-    verbs:
-    - watch
-    - list
-    - get
-  - apiGroups:
       - admissionregistration.k8s.io
     resources:
       - validatingwebhookconfigurations
