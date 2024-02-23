@@ -1,11 +1,11 @@
-{{- if .Values.install }}
+{{- if .Values.kyverno.install }}
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -337,16 +337,12 @@ spec:
     storage: true
     subresources: {}
 ---
-{{- if and (eq .Values.reportsController.enabled true) (eq .Values.backgroundscanreports false) }}
-{{- fail "CRD backgroundscanreports disabled while reportsController enabled" }}
-{{- end }}
-{{- if .Values.backgroundscanreports }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -645,19 +641,13 @@ spec:
     served: true
     storage: true
     subresources: {}
-{{- end }}
 ---
-{{- if and (eq .Values.cleanupController.enabled true) (eq .Values.cleanuppolicies false) }}
-{{- fail "CRD cleanuppolicies disabled while cleanupController enabled" }}
-{{- end }}
-
-{{- if .Values.cleanuppolicies }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -3159,14 +3149,13 @@ spec:
     storage: true
     subresources:
       status: {}
-{{- end }}
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -3499,17 +3488,12 @@ spec:
     storage: true
     subresources: {}
 ---
-{{- if and (eq .Values.reportsController.enabled true) (eq .Values.clusterbackgroundscanreports false) }}
-{{- fail "CRD backgroundscanreports disabled while reportsController enabled" }}
-{{- end }}
-
-{{- if .Values.clusterbackgroundscanreports }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -3808,19 +3792,13 @@ spec:
     served: true
     storage: true
     subresources: {}
-{{- end }}
 ---
-{{- if and (eq .Values.cleanupController.enabled true) (eq .Values.clustercleanuppolicies false) }}
-{{- fail "CRD clustercleanuppolicies disabled while cleanupController enabled" }}
-{{- end }}
-
-{{- if .Values.clustercleanuppolicies }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -6322,14 +6300,13 @@ spec:
     storage: true
     subresources:
       status: {}
-{{- end }}
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -24035,7 +24012,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -41770,7 +41747,7 @@ metadata:
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
     controller-gen.kubebuilder.io/version: v0.12.0
@@ -42793,7 +42770,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -43198,17 +43175,12 @@ spec:
     subresources:
       status: {}
 ---
-{{- if and (eq .Values.reportsController.enabled true) (eq .Values.clusterpolicyreports false) }}
-{{- fail "CRD clusterpolicyreports disabled while reportsController enabled" }}
-{{- end }}
-
-{{- if .Values.clusterpolicyreports }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -43567,19 +43539,13 @@ spec:
     served: true
     storage: true
     subresources: {}
-{{- end }}
 ---
-{{- if and (eq .Values.reportsController.enabled true) (eq .Values.clusterpolicyreports false) }}
-{{- fail "CRD clusterpolicyreports disabled while reportsController enabled" }}
-{{- end }}
-
-{{- if .Values.clusterpolicyreports }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
+    {{- with .Values.kyverno.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -43937,5 +43903,4 @@ spec:
     served: true
     storage: true
     subresources: {}
-{{- end }}
 {{- end }}
