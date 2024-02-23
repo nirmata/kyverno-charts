@@ -25,7 +25,7 @@ app.kubernetes.io/version: {{ template "kyverno.chartVersion" . }}
 {{- template "kyverno.labels.merge" (list
   (include "kyverno.labels.helm" .)
   (include "kyverno.labels.version" .)
-  (toYaml .Values.customLabels)
+  (toYaml .Values.kyverno.kyverno.customLabels)
 ) -}}
 {{- end -}}
 

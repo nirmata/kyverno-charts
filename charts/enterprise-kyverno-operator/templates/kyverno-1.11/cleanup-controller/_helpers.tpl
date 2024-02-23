@@ -32,9 +32,9 @@
 {{- end -}}
 
 {{- define "kyverno.cleanup-controller.serviceAccountName" -}}
-{{- if .Values.cleanupController.rbac.create -}}
-    {{ default (include "kyverno.cleanup-controller.name" .) .Values.cleanupController.rbac.serviceAccount.name }}
+{{- if .Values.kyverno.cleanupController.rbac.create -}}
+    {{ default (include "kyverno.cleanup-controller.name" .) .Values.kyverno.cleanupController.rbac.serviceAccount.name }}
 {{- else -}}
-    {{ required "A service account name is required when `rbac.create` is set to `false`" .Values.cleanupController.rbac.serviceAccount.name }}
+    {{ required "A service account name is required when `rbac.create` is set to `false`" .Values.kyverno.cleanupController.rbac.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
