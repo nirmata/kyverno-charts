@@ -108,6 +108,7 @@ kyverno:
     image: bitnami/kubectl:latest
   webhooksCleanup:
     enable: false
+    enabled: false
   crds:
     install: true
     annotations: {}
