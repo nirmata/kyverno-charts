@@ -1,8 +1,8 @@
 {{/* vim: set filetype=mustache: */}}
 
 {{- define "kyverno.pdb.apiVersion" -}}
-{{- if .Values.apiVersionOverride.podDisruptionBudget -}}
-  {{- .Values.apiVersionOverride.podDisruptionBudget -}}
+{{- if .Values.kyverno.apiVersionOverride.podDisruptionBudget -}}
+  {{- .Values.kyverno.apiVersionOverride.podDisruptionBudget -}}
 {{- else if .Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget" -}}
   policy/v1
 {{- else -}}

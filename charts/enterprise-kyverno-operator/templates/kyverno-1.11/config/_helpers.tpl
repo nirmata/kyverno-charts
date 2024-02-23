@@ -1,18 +1,18 @@
 {{/* vim: set filetype=mustache: */}}
 
 {{- define "kyverno.config.configMapName" -}}
-{{- if .Values.config.create -}}
-    {{ default (include "kyverno.fullname" .) .Values.config.name }}
+{{- if .Values.kyverno.config.create -}}
+    {{ default (include "kyverno.fullname" .) .Values.kyverno.config.name }}
 {{- else -}}
-    {{ required "A configmap name is required when `config.create` is set to `false`" .Values.config.name }}
+    {{ required "A configmap name is required when `config.create` is set to `false`" .Values.kyverno.config.name }}
 {{- end -}}
 {{- end -}}
 
 {{- define "kyverno.config.metricsConfigMapName" -}}
-{{- if .Values.metricsConfig.create -}}
-    {{ default (printf "%s-metrics" (include "kyverno.fullname" .)) .Values.metricsConfig.name }}
+{{- if .Values.kyverno.metricsConfig.create -}}
+    {{ default (printf "%s-metrics" (include "kyverno.fullname" .)) .Values.kyverno.metricsConfig.name }}
 {{- else -}}
-    {{ required "A configmap name is required when `metricsConfig.create` is set to `false`" .Values.metricsConfig.name }}
+    {{ required "A configmap name is required when `metricsConfig.create` is set to `false`" .Values.kyverno.metricsConfig.name }}
 {{- end -}}
 {{- end -}}
 
@@ -31,11 +31,11 @@
 {{- end -}}
 
 {{- define "kyverno.config.resourceFilters" -}}
-{{- $resourceFilters := .Values.config.resourceFilters -}}
-{{- if .Values.config.excludeKyvernoNamespace -}}
-  {{- $resourceFilters = prepend .Values.config.resourceFilters (printf "[*/*,%s,*]" (include "kyverno.namespace" .)) -}}
+{{- $resourceFilters := .Values.kyverno.config.resourceFilters -}}
+{{- if .Values.kyverno.config.excludeKyvernoNamespace -}}
+  {{- $resourceFilters = prepend .Values.kyverno.config.resourceFilters (printf "[*/*,%s,*]" (include "kyverno.namespace" .)) -}}
 {{- end -}}
-{{- range $exclude := .Values.config.resourceFiltersExcludeNamespaces -}}
+{{- range $exclude := .Values.kyverno.config.resourceFiltersExcludeNamespaces -}}
   {{- range $filter := $resourceFilters -}}
     {{- if (contains (printf ",%s," $exclude) $filter) -}}
       {{- $resourceFilters = without $resourceFilters $filter -}}
@@ -50,7 +50,7 @@
 {{- define "kyverno.config.webhooks" -}}
 {{- $excludeDefault := dict "key" "kubernetes.io/metadata.name" "operator" "NotIn" "values" (list (include "kyverno.namespace" .)) }}
 {{- $newWebhook := list }}
-{{- range $webhook := .Values.config.webhooks }}
+{{- range $webhook := .Values.kyverno.config.webhooks }}
   {{- $namespaceSelector := default dict $webhook.namespaceSelector }}
   {{- $matchExpressions := default list $namespaceSelector.matchExpressions }}
   {{- $newNamespaceSelector := dict "matchLabels" $namespaceSelector.matchLabels "matchExpressions" (append $matchExpressions $excludeDefault) }}
