@@ -143,6 +143,7 @@ There are platform specific configurations in which the Kyverno Helm chart confi
 | nameOverride | string | `nil` | Override the name of the chart |
 | fullnameOverride | string | `nil` | Override the expanded name of the chart |
 | enableWebhook | bool | `true` | Enable operator webhooks for enhanced error checks and user info in audit log |
+| enablePreDeleteHook | bool | `true` | Enable operator pre-delete hook for cleaning up Kyverno and policysets installed |
 | certManager | string | `operator` | Webhook cert management mechanism. Valid values are "operator", "cert-manager", "other". |
 | licenseKey | string | `nil`| License key (required) |
 | apiKey | string | `nil` | License server API key |
