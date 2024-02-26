@@ -1,0 +1,10 @@
+{{- if .Values.customKubeBenchJob }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: custom-job-cm
+  namespace: {{ .Values.kubeBench.namespace }}
+data:
+  job.yaml: | 
+{{ toYaml .Values.customKubeBenchJob | indent 4}}
+{{- end }}

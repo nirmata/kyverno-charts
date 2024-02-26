@@ -31,6 +31,8 @@ kubectl get clusterpolicyreports
 | image.repository | string | `"ghcr.io/nirmata/kube-bench-adapter"` | image repository of kube-bench-adapter |
 | image.tag | string | `"v0.2.3"` | tag of image repository of kube-bench-adapter |
 | imagePullSecrets | list | `[]` |  |
+| clusterType | string | `""` | use embedded yamls corresponding to cluster type instead of default kube-bench job yaml. E.g. eks, gke, aks |
+| customKubeBenchJob | object | `{}` | custom job yaml to override the default kube-bench yaml or cluster specific one specified using clusterType |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |
 | ingress.hosts[0].host | string | `"chart-example.local"` |  |
