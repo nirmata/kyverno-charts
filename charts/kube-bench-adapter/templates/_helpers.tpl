@@ -86,7 +86,6 @@ spec:
       containers:
       - name: {{ include "kube-bench.fullname" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        command: ["./{{ .Values.kubeBench.command }}"]
         args: [
         "-name","{{ .Values.kubeBench.name}}",
         "-namespace", "{{ .Values.kubeBench.namespace }}",
@@ -96,6 +95,11 @@ spec:
         "-kube-bench-benchmark", "{{ .Values.kubeBench.kubeBenchBenchmark }}",
         {{- if .Values.kubeBench.timeout }}
         "-timeout", "{{ .Values.kubeBench.timeout }}",
+        {{- end }}
+        {{- if .Values.customKubeBenchJob }}
+        "-custom-job-file", "/etc/config/job.yaml",
+        {{- else if .Values.clusterType }}
+        "-cluster-type-override", {{ .Values.clusterType }},
         {{- end }}
         {{- if .Values.kubeBench.nodeSelectorKey }}
         "-nodeSelectorKey", "{{ .Values.kubeBench.nodeSelectorKey }}",
@@ -114,10 +118,23 @@ spec:
         {{- with .Values.securityContext }}
         securityContext: {{ tpl (toYaml .) $ | nindent 14 }}
         {{- end }}
+        {{- if .Values.customKubeBenchJob }}
+        volumeMounts:
+        - name: custom-job-folder
+          mountPath: /etc/config/job.yaml
+          subPath: job.yaml
+        {{- end }}
       {{- if .Values.image.pullSecrets.create }}
       imagePullSecrets:
       - name: {{ .Values.image.pullSecrets.name }}
       {{- end }}
+      {{- if .Values.customKubeBenchJob }}
+      volumes:
+      - name: custom-job-folder
+        configMap: 
+          name: custom-job-cm
+      {{- end }}
+
       restartPolicy: Never
       serviceAccountName:   {{ include "kube-bench.fullname" . }}
 {{- end}}
