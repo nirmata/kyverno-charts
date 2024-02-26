@@ -3,7 +3,7 @@ name: kube-bench-adapter
 description: The kube-bench adapter periodically runs a CIS benchmark check using cron-job with a tool called kube-bench and produces a cluster-wide policy report based on the Policy Report Custom Resource Definition.
 type: application
 version: v1.2.7
-appVersion: "v0.2.4"
+appVersion: "v0.2.5"
 maintainers:
   - name: Nirmata
     url: https://nirmata.com/
