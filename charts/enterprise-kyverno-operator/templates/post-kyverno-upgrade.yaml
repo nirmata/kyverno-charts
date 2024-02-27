@@ -5,8 +5,6 @@ kind: Job
 metadata:
   name: {{ template "kyverno.fullname" . }}-hook-post-upgrade
   namespace: {{ template "kyverno.namespace" . }}
-  labels:
-    {{- include "kyverno.hooks.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": post-upgrade
     "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
