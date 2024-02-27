@@ -54,8 +54,8 @@ kyverno:
     enabled: true
     image:
       registry: ~
-      repository: bitnami/kubectl
-      tag: '1.28.4'
+      repository: ghcr.io/nirmata/kubectl
+      tag: '1.29.0'
       pullPolicy: ~
     podSecurityContext: {}
     securityContext:
@@ -106,7 +106,7 @@ kyverno:
         extraResources:
   templating:
     enabled: false
-    image: bitnami/kubectl:latest
+    image: ghcr.io/nirmata/kubectl:1.29.0
   webhooksCleanup:
     enable: false
     enabled: false
@@ -183,7 +183,18 @@ kyverno:
     apiVersionOverride:
       podDisruptionBudget: "policy/v1"
     licenseManager:
-      imageTag: v0.1.5
+
+      imageTag: v0.1.8
+    webhooksCleanup:
+      enabled: false
+      image: ghcr.io/nirmata/kubectl:1.29.0
+    cleanupJobs:
+      admissionReports:
+        image:
+          tag: '1.29.0'
+      clusterAdmissionReports:
+        image:
+          tag: '1.29.0'
 
 policies:
   chartRepoUsername:
