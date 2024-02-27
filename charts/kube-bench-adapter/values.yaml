@@ -10,7 +10,7 @@ image:
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
    # --tag of image repository of kube-bench-adapter
-  tag: "v0.2.4"
+  tag: "v0.2.5"
   pullSecrets:
     registry:
     # Leave blank, if no ImagePullSecret is needed.
@@ -99,7 +99,7 @@ livenessProbe:
   timeoutSeconds: 5
   exec:
     command:
-    - ./policyreport
+    - /ko-app/kube-bench
     - -h
 
 ## Readiness Probe. The block is directly forwarded into the deployment, so you can use whatever readinessProbe configuration you want.
@@ -112,7 +112,7 @@ readinessProbe:
   timeoutSeconds: 5
   exec:
     command:
-    - ./policyreport
+    - /ko-app/kube-bench
     - -h
 
 securityContext:
