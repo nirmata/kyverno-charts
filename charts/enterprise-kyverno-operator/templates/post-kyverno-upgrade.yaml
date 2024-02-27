@@ -20,7 +20,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: kubectl
-          image: {{ (include "kyverno.image" (dict "globalRegistry" ((.Values.kyverno.global).image).registry "image" .Values.policyReportsCleanup.image "defaultTag" (default .Chart.AppVersion .Values.policyReportsCleanup.image.tag))) | quote }}
+          image: {{ (include "kyverno.image" (dict "globalRegistry" ((.Values.kyverno.global).image).registry "image" .Values.kyverno.policyReportsCleanup.image "defaultTag" (default .Chart.AppVersion .Values.kyverno.policyReportsCleanup.image.tag))) | quote }}
           imagePullPolicy: {{ .Values.kyverno.policyReportsCleanup.image.pullPolicy }}
           command:
             - /bin/bash
