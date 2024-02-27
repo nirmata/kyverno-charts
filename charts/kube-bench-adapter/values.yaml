@@ -99,7 +99,7 @@ livenessProbe:
   timeoutSeconds: 5
   exec:
     command:
-    - ./policyreport
+    - /ko-app/main
     - -h
 
 ## Readiness Probe. The block is directly forwarded into the deployment, so you can use whatever readinessProbe configuration you want.
@@ -112,7 +112,7 @@ readinessProbe:
   timeoutSeconds: 5
   exec:
     command:
-    - ./policyreport
+    - - /ko-app/main
     - -h
 
 securityContext:
