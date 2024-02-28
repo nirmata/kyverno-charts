@@ -1,4 +1,4 @@
-{{- if .Values.kyverno.policyReportsCleanup.enabled -}}
+{{- if .Values.kyverno.helm.policyReportsCleanup.enabled -}}
   {{- if not .Values.kyverno.templating.enabled -}}
 apiVersion: batch/v1
 kind: Job
@@ -13,15 +13,15 @@ spec:
   template:
     spec:
       serviceAccount: {{ template "kyverno.admission-controller.serviceAccountName" . }}
-      {{- with .Values.kyverno.policyReportsCleanup.podSecurityContext }}
+      {{- with .Values.kyverno.helm.policyReportsCleanup.podSecurityContext }}
       securityContext:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       restartPolicy: Never
       containers:
         - name: kubectl
-          image: {{ (include "kyverno.image" (dict "globalRegistry" ((.Values.kyverno.global).image).registry "image" .Values.kyverno.policyReportsCleanup.image "defaultTag" (default .Chart.AppVersion .Values.kyverno.policyReportsCleanup.image.tag))) | quote }}
-          imagePullPolicy: {{ .Values.kyverno.policyReportsCleanup.image.pullPolicy }}
+          image: {{ (include "kyverno.image" (dict "globalRegistry" ((.Values.kyverno.global).image).registry "image" .Values.kyverno.helm.policyReportsCleanup.image "defaultTag" (default .Chart.AppVersion .Values.kyverno.helm.policyReportsCleanup.image.tag))) | quote }}
+          imagePullPolicy: {{ .Values.kyverno.helm.policyReportsCleanup.image.pullPolicy }}
           command:
             - /bin/bash
             - -c
@@ -48,7 +48,7 @@ spec:
               else
                 echo "no clusterpolicyreports"
               fi
-          {{- with .Values.kyverno.policyReportsCleanup.securityContext }}
+          {{- with .Values.kyverno.helm.policyReportsCleanup.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}

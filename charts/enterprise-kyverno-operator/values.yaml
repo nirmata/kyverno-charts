@@ -42,34 +42,6 @@ certManager: operator
 
 # Component configurations
 kyverno:
-  features:
-    generateValidatingAdmissionPolicy:
-      # -- Enables the feature
-      enabled: false
-  global:
-    image:
-      registry: ~
-  policyReportsCleanup:
-    enabled: true
-    image:
-      registry: ~
-      repository: ghcr.io/nirmata/kubectl
-      tag: '1.29.0'
-      pullPolicy: ~
-    podSecurityContext: {}
-    securityContext:
-      runAsUser: 65534
-      runAsGroup: 65534
-      runAsNonRoot: true
-      privileged: false
-      allowPrivilegeEscalation: false
-      readOnlyRootFilesystem: true
-      capabilities:
-        drop:
-          - ALL
-      seccompProfile:
-        type: RuntimeDefault
-
   createCR: true
   enablePolicyExceptions: true
   replicaCount:
@@ -179,10 +151,33 @@ kyverno:
 
   # Kyverno Helm Chart customizations other than those already in kyverno CR
   helm:
+    features:
+      generateValidatingAdmissionPolicy:
+        # -- Enables the feature
+        enabled: false
+    policyReportsCleanup:
+      enabled: true
+      image:
+        registry: ~
+        repository: ghcr.io/nirmata/kubectl
+        tag: '1.29.0'
+        pullPolicy: ~
+      podSecurityContext: {}
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+        privileged: false
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+        seccompProfile:
+          type: RuntimeDefault
     apiVersionOverride:
       podDisruptionBudget: "policy/v1"
     licenseManager:
-
       imageTag: v0.1.8
     webhooksCleanup:
       enabled: false
