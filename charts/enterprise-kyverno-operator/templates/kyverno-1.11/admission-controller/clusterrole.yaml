@@ -22,7 +22,7 @@ rules:
     resources:
       - mutatingwebhookconfigurations
       - validatingwebhookconfigurations
-      {{- if .Values.kyverno.features.generateValidatingAdmissionPolicy.enabled }}
+      {{- if .Values.kyverno.helm.features.generateValidatingAdmissionPolicy.enabled }}
       - validatingadmissionpolicies
       - validatingadmissionpolicybindings
       {{- end }}
