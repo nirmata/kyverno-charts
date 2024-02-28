@@ -23,31 +23,31 @@ spec:
           image: {{ (include "kyverno.image" (dict "globalRegistry" ((.Values.kyverno.global).image).registry "image" .Values.kyverno.helm.policyReportsCleanup.image "defaultTag" (default .Chart.AppVersion .Values.kyverno.helm.policyReportsCleanup.image.tag))) | quote }}
           imagePullPolicy: {{ .Values.kyverno.helm.policyReportsCleanup.image.pullPolicy }}
           command:
-            - sh
-            - -c
-            - |
-              NAMESPACES=$(kubectl get namespaces --no-headers=true | awk '{print $1}')
+          - sh
+          - -c
+          - |
+            NAMESPACES=$(kubectl get namespaces --no-headers=true -o custom-columns=:metadata.name)
 
-              for ns in ${NAMESPACES[@]};
-              do
-                COUNT=$(kubectl get policyreports.wgpolicyk8s.io -n $ns --no-headers=true | awk '/pol/{print $1}' | wc -l)
+            for ns in ${NAMESPACES[@]};
+            do
+              COUNT=$(kubectl get policyreports.wgpolicyk8s.io -n $ns --no-headers=true -o custom-columns=:metadata.name | wc -l)
 
-                if [ $COUNT -gt 0 ]; then
-                  echo "deleting $COUNT policyreports in namespace $ns"
-                  kubectl get policyreports.wgpolicyk8s.io -n $ns --no-headers=true | awk '/pol/{print $1}' | xargs kubectl delete -n $ns policyreports.wgpolicyk8s.io
-                else
-                  echo "no policyreports in namespace $ns"
-                fi
-              done
-
-              COUNT=$(kubectl get clusterpolicyreports.wgpolicyk8s.io --no-headers=true | awk '/pol/{print $1}' | wc -l)
-                
               if [ $COUNT -gt 0 ]; then
-                echo "deleting $COUNT clusterpolicyreports"
-                kubectl get clusterpolicyreports.wgpolicyk8s.io --no-headers=true | awk '/pol/{print $1}' | xargs kubectl delete clusterpolicyreports.wgpolicyk8s.io
+                echo "deleting $COUNT policyreports in namespace $ns"
+                kubectl delete -n $ns policyreports.wgpolicyk8s.io --selector='pol'
               else
-                echo "no clusterpolicyreports"
+                echo "no policyreports in namespace $ns"
               fi
+            done
+
+            COUNT=$(kubectl get clusterpolicyreports.wgpolicyk8s.io --no-headers=true -o custom-columns=:metadata.name | wc -l)
+                    
+            if [ $COUNT -gt 0 ]; then
+              echo "deleting $COUNT clusterpolicyreports"
+              kubectl delete clusterpolicyreports.wgpolicyk8s.io --selector='pol'
+            else
+              echo "no clusterpolicyreports"
+            fi
           {{- with .Values.kyverno.helm.policyReportsCleanup.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
