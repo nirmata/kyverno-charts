@@ -25,7 +25,7 @@ spec:
           image: {{ (include "kyverno.image" (dict "globalRegistry" ((.Values.global).image).registry "image" .Values.policyReportsCleanup.image "defaultTag" (default .Chart.AppVersion .Values.policyReportsCleanup.image.tag))) | quote }}
           imagePullPolicy: {{ .Values.policyReportsCleanup.image.pullPolicy }}
           command:
-            - /bin/bash
+            - sh
             - -c
             - |
               NAMESPACES=$(kubectl get namespaces --no-headers=true | awk '{print $1}')
