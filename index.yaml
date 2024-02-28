@@ -1973,6 +1973,97 @@ entries:
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: v1.11.4-n4k.nirmata.3
+    created: "2024-02-28T13:27:45.724338268Z"
+    dependencies:
+    - condition: grafana.enabled
+      name: grafana
+      repository: ""
+      version: 0.0.0
+    - condition: crds.install
+      name: crds
+      repository: ""
+      version: 3.1.0
+    description: Kubernetes Native Policy Management
+    digest: b2715c1802eb9aef10d25f7312e9beca973fd22df7c0f0f2ec3a1d3d6d3fb69d
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy
+    - validating webhook
+    - admission controller
+    - mutation
+    - mutate
+    - validate
+    - generate
+    - supply chain
+    - security
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://kyverno.io/
+    name: kyverno
+    sources:
+    - https://github.com/nirmata/kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.1.5/kyverno-3.1.5.tgz
+    version: 3.1.5
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: support for GrafanaDashboard custom resource
+        - kind: changed
+          description: only create ServiceMonitor if cluster supports it
+        - kind: fixed
+          description: rbac templating issues
+        - kind: added
+          description: make sigstore volume configurable
+        - kind: changed
+          description: no deployments can run with 0 replicas
+        - kind: changed
+          description: change dashboard title of kyverno grafana dashboard
+        - kind: added
+          description: view aggregated cluster role support
+        - kind: added
+          description: support for webhook annotations in config map
+        - kind: added
+          description: allow overriding PDB api version
+        - kind: fixed
+          description: missing image pull secrets in helm hooks
+        - kind: added
+          description: support `excludeRoles` and `excludeClusterRoles` in config
+        - kind: added
+          description: define resources for cleanupJobs
+        - kind: changed
+          description: change to enable webhook cleanup hook by default
+        - kind: added
+          description: allow pod labels for cleanup jobs
+        - kind: added
+          description: allow nodeSelector for cleanup jobs
+        - kind: added
+          description: allow nodeSelector, tolerations and affinity settings for webhooksCleanup
+        - kind: added
+          description: allow affinity settings for cleanup jobs
+        - kind: added
+          description: Add helper to handle the labels for cleanup jobs, add component label
+        - kind: added
+          description: allow podSecurityContext and securityContext for webhooksCleanup
+        - kind: added
+          description: match conditions support in webhooks
+        - kind: fixed
+          description: missing image pull policy missing in a couple of deployments
+        - kind: added
+          description: added TUF flags for custom sigstore deployments
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: v1.11.4-n4k.nirmata.3
     created: "2024-02-28T09:10:45.56828383Z"
     dependencies:
     - condition: grafana.enabled
@@ -5231,6 +5322,27 @@ entries:
   nirmata-kyverno-operator:
   - apiVersion: v2
     appVersion: v0.3.0-rc2
+    created: "2024-02-28T13:27:45.862675517Z"
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: be35e3f57a6b012b0d7f427bc2ee5d7b569ea193db2ca0406a9e5c45bcf49532
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-kyverno-operator-v0.4.0-rc5.1/nirmata-kyverno-operator-v0.4.0-rc5.1.tgz
+    version: v0.4.0-rc5.1
+  - apiVersion: v2
+    appVersion: v0.3.0-rc2
     created: "2024-02-28T09:10:45.696492539Z"
     description: Helm Chart for Enterprise Kyverno Operator
     digest: 22bb782d42aa0c14e3aa03edda44ea2a8a6e9c31bd83e6cd51474c3366f8f86e
@@ -6228,4 +6340,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2024-02-28T09:10:45.697731283Z"
+generated: "2024-02-28T13:27:45.864784378Z"
