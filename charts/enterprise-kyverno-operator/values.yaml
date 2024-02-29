@@ -78,7 +78,7 @@ kyverno:
         extraResources:
   templating:
     enabled: false
-    image: ghcr.io/nirmata/kubectl:1.29.0
+    image: ghcr.io/nirmata/kubectl:1.29.1
   webhooksCleanup:
     enable: false
     enabled: false
@@ -161,7 +161,7 @@ kyverno:
       image:
         registry: ~
         repository: ghcr.io/nirmata/kubectl
-        tag: '1.29.0'
+        tag: '1.29.1'
         pullPolicy: ~
       podSecurityContext: {}
       securityContext:
@@ -182,7 +182,7 @@ kyverno:
       imageTag: v0.1.8
     webhooksCleanup:
       enabled: false
-      image: ghcr.io/nirmata/kubectl:1.29.0
+      image: ghcr.io/nirmata/kubectl:1.29.1
     cleanupJobs:
       admissionReports:
         image:
