@@ -359,7 +359,7 @@ webhooksCleanup:
     repository: ghcr.io/nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.29.0'
+    tag: '1.29.1'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -411,7 +411,7 @@ policyReportsCleanup:
     repository: ghcr.io/nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.29.0'
+    tag: '1.29.1'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -560,7 +560,7 @@ cleanupJobs:
       repository: ghcr.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.29.0'
+      tag: '1.29.1'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
@@ -631,7 +631,7 @@ cleanupJobs:
       repository: ghcr.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.29.0'
+      tag: '1.29.1'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
