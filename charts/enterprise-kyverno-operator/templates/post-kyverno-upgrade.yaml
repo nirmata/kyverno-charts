@@ -26,27 +26,26 @@ spec:
             - sh
             - -c
             - |
-              NAMESPACES=$(kubectl get namespaces --no-headers=true --output=jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
+              NAMESPACES=$(kubectl get namespaces --no-headers=true | awk '{print $1}')
 
-              for ns in $(echo $NAMESPACES);
-              do
-                COUNT=$(kubectl get policyreports.wgpolicyk8s.io -n $ns --no-headers=true --output=name | awk '/pol/{print $1}' | wc -l)
+              for ns in $NAMESPACES; do
+                  COUNT=$(kubectl get policyreports.wgpolicyk8s.io -n "$ns" --no-headers=true | awk '/pol/{print $1}' | wc -l)
 
-                if [ $COUNT -gt 0 ]; then
-                  echo "deleting $COUNT policyreports in namespace $ns"
-                  kubectl get policyreports.wgpolicyk8s.io -n $ns --no-headers=true --output=name | awk '/pol/{print $1}' | xargs kubectl delete -n $ns
-                else
-                  echo "no policyreports in namespace $ns"
-                fi
+                  if [ "$COUNT" -gt 0 ]; then
+                      echo "deleting $COUNT policyreports in namespace $ns"
+                      kubectl get policyreports.wgpolicyk8s.io -n "$ns" --no-headers=true | awk '/pol/{print $1}' | xargs kubectl delete -n "$ns" policyreports.wgpolicyk8s.io
+                  else
+                      echo "no policyreports in namespace $ns"
+                  fi
               done
 
-              COUNT=$(kubectl get clusterpolicyreports.wgpolicyk8s.io --no-headers=true --output=name | awk '/pol/{print $1}' | wc -l)
-                            
-              if [ $COUNT -gt 0 ]; then
-                echo "deleting $COUNT clusterpolicyreports"
-                kubectl get clusterpolicyreports.wgpolicyk8s.io --no-headers=true --output=name | awk '/pol/{print $1}' | xargs kubectl delete
+              COUNT=$(kubectl get clusterpolicyreports.wgpolicyk8s.io --no-headers=true | awk '/pol/{print $1}' | wc -l)
+
+              if [ "$COUNT" -gt 0 ]; then
+                  echo "deleting $COUNT clusterpolicyreports"
+                  kubectl get clusterpolicyreports.wgpolicyk8s.io --no-headers=true | awk '/pol/{print $1}' | xargs kubectl delete clusterpolicyreports.wgpolicyk8s.io
               else
-                echo "no clusterpolicyreports"
+                  echo "no clusterpolicyreports"
               fi
           {{- with .Values.kyverno.helm.policyReportsCleanup.securityContext }}
           securityContext:
