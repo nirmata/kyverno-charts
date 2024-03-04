@@ -413,6 +413,10 @@ spec:
         args:
         - "--cluster-name"
         - "{{ .Values.cluster.name }}"
+        {{- if .Values.apiTokenSecret }}
+        - "--token-secret"
+        - "{{ .Values.apiTokenSecret }}"
+        {{- end }}
         env:
         - name: CLUSTER_NAME
           value: "{{ .Values.cluster.name }}"
@@ -430,6 +434,8 @@ spec:
           value: "{{ .Values.proxy.noProxy }}"
         - name: TLS_CERT
           value: "{{ .Values.tlsCert }}"
+        - name: APIKEY_SECRET_NAMESPACE
+          value: "{{ .Release.Namespace }}"
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
