@@ -42,7 +42,8 @@ kubectl logs job/nirmata-cluster-registrator -n nirmata -f
 | nirmataURL | string | `"https://nirmata.io"` | No| Nirmata URL|
 | cluster.name | string | `nil` | Yes | Name of the cluster in NPM|
 | cluster.type | string | `default-policy-manager-type` |No| Type of cluster to be created in NPM |
-| apiToken | string | `""` | Yes |Token required to authenticate into NPM|
+| apiToken | string | `""` | No |Token required to authenticate into NPM. Need one of apiToken or apiTokenSecret |
+| apiTokenSecret | string | `""` | No |Token secret required to authenticate into NPM in key apiKey. Need one of apiToken or apiTokenSecret|
 | proxy.httpProxy | string | `""` |No| HTTP_PROXY required for connecting to clusters with Proxy |
 | proxy.httpsProxy | string | `""` |No|HTTPS_PROXY required for connecting to clusters with Proxy |
 | proxy.noProxy | string | `""` | No|NO_PROXY required for connecting to clusters with Proxy |
