@@ -31,8 +31,10 @@ spec:
         {{- toYaml .Values.globalLabels| nindent 8 }}
         {{- end }}
     spec:
+      {{- if .Values.image.pullSecrets.create }}
       imagePullSecrets: 
       - name: {{ .Values.image.pullSecrets.name }}
+      {{- end }}
       serviceAccountName: {{ include "enterprise-kyverno.rbac.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}

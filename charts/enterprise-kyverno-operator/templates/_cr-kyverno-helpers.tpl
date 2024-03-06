@@ -61,8 +61,12 @@ content:
         initContainer:
           image:
             tag: {{ .Values.kyverno.image.tag }}
+{{- if .Values.image.pullSecrets.create }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
+{{- else }}
+        imagePullSecrets: []
+{{- end }}
       backgroundController:
         podLabels: 
 {{- if .Values.globalLabels }}
@@ -74,8 +78,12 @@ content:
 {{- end}}
         image:
           tag: {{ .Values.kyverno.image.tag }}
+{{- if .Values.image.pullSecrets.create }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
+{{- else }}
+        imagePullSecrets: []
+{{- end }}
       cleanupController:
         podLabels: 
 {{- if .Values.globalLabels }}
@@ -87,8 +95,12 @@ content:
 {{- end}}
         image:
           tag: {{ .Values.kyverno.image.tag }}
+{{- if .Values.image.pullSecrets.create }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
+{{- else }}
+        imagePullSecrets: []
+{{- end }}
       reportsController:  
         podLabels: 
 {{- if .Values.globalLabels }}
@@ -100,8 +112,12 @@ content:
 {{- end}}
         image:
           tag: {{ .Values.kyverno.image.tag }}
+{{- if .Values.image.pullSecrets.create }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
+{{- else }}
+        imagePullSecrets: []
+{{- end }}
       clusterAdmissionReports:
         podLabels: 
 {{- if .Values.globalLabels }}
@@ -111,8 +127,12 @@ content:
 {{- if .Values.globalAnnotations }}
 {{- toYaml .Values.globalAnnotations | nindent 10 }}
 {{- end}}
+{{- if .Values.image.pullSecrets.create }}
         imagePullSecrets:
         - name: {{ .Values.image.pullSecrets.name }}
+{{- else }}
+        imagePullSecrets: []
+{{- end }}
       cleanupJobs:
         admissionReports:
           podLabels: 
@@ -123,8 +143,12 @@ content:
   {{- if .Values.globalAnnotations }}
   {{- toYaml .Values.globalAnnotations | nindent 12 }}
   {{- end}}
+{{- if .Values.image.pullSecrets.create }}
           imagePullSecrets:
           - name: {{ .Values.image.pullSecrets.name }}
+{{- else }}
+          imagePullSecrets: []
+{{- end }}
           image:
             registry: {{.Values.kyverno.cleanupJobsRegistry}}
         clusterAdmissionReports:
@@ -136,8 +160,12 @@ content:
   {{- if .Values.globalAnnotations }}
   {{- toYaml .Values.globalAnnotations | nindent 12 }}
   {{- end}}
+{{- if .Values.image.pullSecrets.create }}
           imagePullSecrets:
           - name: {{ .Values.image.pullSecrets.name }}
+{{- else }}
+          imagePullSecrets: []
+{{- end }}
           image:
             registry: {{.Values.kyverno.cleanupJobsRegistry}}
       {{- if .Values.image.pullSecrets.create }}
