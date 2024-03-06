@@ -267,6 +267,27 @@ entries:
     version: v0.3.0-rc0
   - apiVersion: v2
     appVersion: v0.1.18
+    created: "2024-03-06T16:12:51.844755537Z"
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: bd9966d611d5ed3acfe6d5b2726cec78747d45d4586e9a77c0fd5ef904c9ca76
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: enterprise-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/enterprise-kyverno-operator-v0.2.43/enterprise-kyverno-operator-v0.2.43.tgz
+    version: v0.2.43
+  - apiVersion: v2
+    appVersion: v0.1.18
     created: "2024-03-06T11:14:14.56950743Z"
     description: Helm Chart for Enterprise Kyverno Operator
     digest: cb44c27445044060070c32a094f04e84ad44343317fef85bd40349d85ddcca2e
@@ -6710,4 +6731,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2024-03-06T11:14:14.570589036Z"
+generated: "2024-03-06T16:12:51.845929991Z"
