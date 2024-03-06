@@ -30,14 +30,18 @@ content:
         image:
           repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}cleanup-controller
           tag: {{ .Values.kyverno.image.tag }}
+          {{- if .Values.image.pullSecrets.create }}
           pullSecrets:
           - name: image-pull-secret
+          {{- else }}
+          pullSecrets: []
+          {{- end }}
       image:
+        {{- if .Values.image.pullSecrets.create }}
         pullSecrets:
-        {{- if (contains "v1.9" .Values.kyverno.image.tag) }}
         - name: image-pull-secret
-        {{- else if (contains "v1.8" .Values.kyverno.image.tag)}}
-          name: image-pull-secret
+        {{- else }}
+          pullSecrets: []
         {{- end }}
       initImage:
         repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}kyvernopre

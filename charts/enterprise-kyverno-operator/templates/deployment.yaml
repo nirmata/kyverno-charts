@@ -21,8 +21,10 @@ spec:
       labels:
         {{- include "enterprise-kyverno.selectorLabels" . | nindent 8 }}
     spec:
+      {{- if .Values.image.pullSecrets.create }}
       imagePullSecrets: 
       - name: {{ .Values.image.pullSecrets.name }}
+      {{- end }}
       serviceAccountName: {{ include "enterprise-kyverno.rbac.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
