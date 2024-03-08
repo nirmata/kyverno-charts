@@ -1,4 +1,4 @@
-{{- if .Values.kyverno.helm.policyReportsCleanup.enabled -}}
+
   {{- if not .Values.kyverno.templating.enabled -}}
 apiVersion: batch/v1
 kind: Job
@@ -26,6 +26,13 @@ spec:
             - sh
             - -c
             - |
+              echo "waiting"
+              sleep 60
+              kubectl wait --for=condition=available deployment/kyverno-admission-controller --timeout=60s --namespace=kyverno
+              kubectl wait --for=condition=available deployment/kyverno-background-controller --timeout=60s --namespace=kyverno
+              kubectl wait --for=condition=available deployment/kyverno-reports-controller --timeout=60s --namespace=kyverno
+              kubectl wait --for=condition=available deployment/kyverno-cleanup-controller --timeout=60s --namespace=kyverno
+
               NAMESPACES=$(kubectl get namespaces --no-headers=true | awk '{print $1}')
 
               for ns in $NAMESPACES; do
@@ -52,4 +59,4 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
   {{- end -}}
-{{- end -}}
+
