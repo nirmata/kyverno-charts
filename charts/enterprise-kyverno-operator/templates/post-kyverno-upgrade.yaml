@@ -1,5 +1,4 @@
-
-  {{- if not .Values.kyverno.templating.enabled -}}
+{{- if not .Values.kyverno.templating.enabled -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -58,5 +57,5 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-  {{- end -}}
+{{- end -}}
 
