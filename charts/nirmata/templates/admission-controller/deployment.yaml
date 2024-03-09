@@ -141,6 +141,10 @@ spec:
           - -cluster-id={{ .Values.licenseManager.clusterId }}
           - -cluster-name={{ .Values.licenseManager.clusterName }}
           {{- with .Values.admissionController.initContainer.securityContext }}
+          {{- with .Values.licenseManager.resources }}
+          resources:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -169,6 +173,10 @@ spec:
           - -cluster-id={{ .Values.licenseManager.clusterId }}
           - -cluster-name={{ .Values.licenseManager.clusterName }}
           {{- with .Values.admissionController.container.securityContext }}
+          {{- with .Values.licenseManager.resources }}
+          resources:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
