@@ -140,6 +140,10 @@ spec:
           - -api-key={{ .Values.licenseManager.apiKey }}
           - -cluster-id={{ .Values.licenseManager.clusterId }}
           - -cluster-name={{ .Values.licenseManager.clusterName }}
+          {{- with .Values.licenseManager.resources }}
+          resources:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           {{- with .Values.admissionController.initContainer.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
@@ -168,6 +172,10 @@ spec:
           - -api-key={{ .Values.licenseManager.apiKey }}
           - -cluster-id={{ .Values.licenseManager.clusterId }}
           - -cluster-name={{ .Values.licenseManager.clusterName }}
+          {{- with .Values.licenseManager.resources }}
+          resources:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           {{- with .Values.admissionController.container.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}

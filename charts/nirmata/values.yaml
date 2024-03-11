@@ -1633,6 +1633,14 @@ systemCertPath: /etc/ssl/certs
 # License manager configs
 licenseManager:
   # -- Whether to use license manager
+  resources:
+    # -- Pod resource limits
+    limits:
+      memory: 384Mi
+    # -- Pod resource requests
+    requests:
+      cpu: 100m
+      memory: 128Mi
   enable: true
   # -- License manager repo
   imageRepository: ghcr.io/nirmata/kyverno-license-manager
