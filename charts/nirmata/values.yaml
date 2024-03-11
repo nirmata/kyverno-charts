@@ -1637,6 +1637,7 @@ licenseManager:
     # -- Pod resource limits
     limits:
       memory: 384Mi
+      cpu: 100m
     # -- Pod resource requests
     requests:
       cpu: 100m
