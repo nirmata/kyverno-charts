@@ -7,10 +7,11 @@ metadata:
   namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.background-controller.labels" . | nindent 4 }}
-  {{- with .Values.backgroundController.metricsService.annotations }}
+{{- $commonAnnotations := include "kyverno.background-controller.serviceAnnotations" . | nindent 4 }}
+{{- if $commonAnnotations }}
   annotations:
-    {{- tpl (toYaml .) $ | nindent 4 }}
-  {{- end }}
+{{ $commonAnnotations }}
+{{- end }}
 spec:
   ports:
   - port: {{ .Values.backgroundController.metricsService.port }}

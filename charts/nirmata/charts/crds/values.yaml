@@ -7,7 +7,7 @@ templating:
   
 # -- Additional CRDs annotations
 # -- This field can be overwritten by setting crds.annotations in the parent chart
-annotations: {}
+customAnnotations: {}
   # argocd.argoproj.io/sync-options: Replace=true
   # strategy.spinnaker.io/replace: 'true'
 

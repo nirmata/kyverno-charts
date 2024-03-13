@@ -4,6 +4,13 @@ metadata:
   name: {{ include "enterprise-kyverno.fullname" . }}
   labels:
     {{- include "enterprise-kyverno.labels" . | nindent 4 }}
+    {{- if .Values.globalLabels }}
+    {{- toYaml .Values.globalLabels| nindent 4 }}
+    {{- end }}
+  {{- if .Values.globalAnnotations }}
+  annotations: 
+    {{- toYaml .Values.globalAnnotations| nindent 4 }}
+  {{- end }}
   namespace: {{ template "enterprise-kyverno.namespace" . }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
@@ -14,12 +21,15 @@ spec:
       {{- include "enterprise-kyverno.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.globalAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         {{- include "enterprise-kyverno.selectorLabels" . | nindent 8 }}
+        {{- if .Values.globalLabels }}
+        {{- toYaml .Values.globalLabels| nindent 8 }}
+        {{- end }}
     spec:
       imagePullSecrets: 
       - name: {{ .Values.image.pullSecrets.name }}

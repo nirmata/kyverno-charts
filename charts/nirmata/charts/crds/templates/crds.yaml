@@ -5,9 +5,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: admissionreports.kyverno.io
@@ -346,9 +347,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: backgroundscanreports.kyverno.io
@@ -657,9 +659,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: cleanuppolicies.kyverno.io
@@ -3166,9 +3169,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: clusteradmissionreports.kyverno.io
@@ -3509,9 +3513,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: clusterbackgroundscanreports.kyverno.io
@@ -3820,9 +3825,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: clustercleanuppolicies.kyverno.io
@@ -6329,9 +6335,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: clusterpolicies.kyverno.io
@@ -24035,9 +24042,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: policies.kyverno.io
@@ -41770,9 +41778,10 @@ metadata:
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   annotations:
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
     controller-gen.kubebuilder.io/version: v0.12.0
   name: policyexceptions.kyverno.io
 spec:
@@ -42793,9 +42802,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: updaterequests.kyverno.io
@@ -43208,9 +43218,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: clusterpolicyreports.wgpolicyk8s.io
@@ -43579,9 +43590,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-    {{- with .Values.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
   labels:
     {{- include "kyverno.crds.labels" . | nindent 4 }}
   name: policyreports.wgpolicyk8s.io
