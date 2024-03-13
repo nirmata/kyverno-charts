@@ -59,8 +59,8 @@ content:
         initContainer:
           image:
             tag: {{ .Values.kyverno.image.tag }}
-        imagePullSecrets:
-        - name: {{ .Values.image.pullSecret.name }}
+          imagePullSecrets:
+          - name: {{ .Values.image.pullSecrets.name }}
       backgroundController:
         podLabels: 
 {{- if .Values.globalLabels }}
@@ -73,7 +73,7 @@ content:
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
-        - name: {{ .Values.image.pullSecret.name }}
+        - name: {{ .Values.image.pullSecrets.name }}
       cleanupController:
         podLabels: 
 {{- if .Values.globalLabels }}
@@ -86,7 +86,7 @@ content:
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
-        - name: {{ .Values.image.pullSecret.name }}
+        - name: {{ .Values.image.pullSecrets.name }}
       reportsController:
         podLabels: 
 {{- if .Values.globalLabels }}
@@ -99,7 +99,7 @@ content:
         image:
           tag: {{ .Values.kyverno.image.tag }}
         imagePullSecrets:
-        - name: {{ .Values.image.pullSecret.name }}
+        - name: {{ .Values.image.pullSecrets.name }}
       clusterAdmissionReports:
         podLabels: 
 {{- if .Values.globalLabels }}
@@ -110,7 +110,7 @@ content:
 {{- toYaml .Values.globalAnnotations | nindent 10 }}
 {{- end}}
         imagePullSecrets:
-        - name: {{ .Values.image.pullSecret.name }}
+        - name: {{ .Values.image.pullSecrets.name }}
       cleanupJobs:
         admissionReports:
           podLabels: 
@@ -122,7 +122,7 @@ content:
   {{- toYaml .Values.globalAnnotations | nindent 12 }}
   {{- end}}
           imagePullSecrets:
-          - name: {{ .Values.image.pullSecret.name }}
+          - name: {{ .Values.image.pullSecrets.name }}
           image:
             registry: {{.Values.kyverno.cleanupJobsRegistry}}
         clusterAdmissionReports:
@@ -135,7 +135,7 @@ content:
   {{- toYaml .Values.globalAnnotations | nindent 12 }}
   {{- end}}
           imagePullSecrets:
-          - name: {{ .Values.image.pullSecret.name }}
+          - name: {{ .Values.image.pullSecrets.name }}
           image:
             registry: {{.Values.kyverno.cleanupJobsRegistry}}
       {{- if .Values.image.pullSecrets.create }}
