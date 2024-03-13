@@ -30,7 +30,7 @@
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "pss-restricted-policies" -}}
-  {{- $version = "0.3.1" -}}
+  {{- $version = "0.4.1" -}}
 {{- else if eq $pol "rbac-best-practices" -}}
   {{- $psetName = "rbac-best-practices" -}}
   {{- $psetType = "helm" -}}
