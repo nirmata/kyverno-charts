@@ -5,9 +5,11 @@ metadata:
   namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.admission-controller.labels" . | nindent 4 }}
-  {{- with .Values.admissionController.service.annotations }}
-  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
-  {{- end }}
+{{- $commonAnnotations := include "kyverno.admission-controller.serviceAnnotations" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
 spec:
   ports:
   - port: {{ .Values.admissionController.service.port }}

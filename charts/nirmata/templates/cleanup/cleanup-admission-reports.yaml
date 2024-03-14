@@ -6,6 +6,11 @@ metadata:
   namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.cleanup.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
 spec:
   schedule: {{ .Values.cleanupJobs.admissionReports.schedule | quote }}
   concurrencyPolicy: Forbid
