@@ -4,6 +4,14 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ template "enterprise-kyverno.fullname" . }}
   namespace: {{ template "enterprise-kyverno.namespace" . }}
+  labels:
+    {{- if .Values.globalLabels }}
+    {{- toYaml .Values.globalLabels| nindent 4 }}
+    {{- end }}
+  {{- if .Values.globalAnnotations }}
+  annotations: 
+    {{- toYaml .Values.globalAnnotations| nindent 4 }}
+  {{- end }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

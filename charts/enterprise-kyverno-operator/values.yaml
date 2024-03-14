@@ -8,6 +8,10 @@ cloudPlatform: ""
 
 namespace:
 
+globalLabels: {}
+globalAnnotations: {}
+enablePreDeleteHook: true
+
 replicaCount: 1
 
 envVars: []

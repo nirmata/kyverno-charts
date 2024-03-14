@@ -7,6 +7,10 @@ metadata:
   labels:
     {{- include "kyverno.hooks.labels" . | nindent 4 }}
   annotations:
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+{{ $commonAnnotations }}
+{{- end }}
     "helm.sh/hook": pre-delete
     "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
 spec:

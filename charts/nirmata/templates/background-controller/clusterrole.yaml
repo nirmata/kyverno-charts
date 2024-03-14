@@ -6,6 +6,11 @@ metadata:
   name: {{ template "kyverno.background-controller.roleName" . }}
   labels:
     {{- include "kyverno.background-controller.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
 aggregationRule:
   clusterRoleSelectors:
     - matchLabels:
@@ -17,6 +22,11 @@ metadata:
   name: {{ template "kyverno.background-controller.roleName" . }}:core
   labels:
     {{- include "kyverno.background-controller.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
 rules:
   - apiGroups:
       - '*'
@@ -99,6 +109,11 @@ metadata:
   name: {{ template "kyverno.background-controller.roleName" $ }}:additional
   labels:
     {{- include "kyverno.background-controller.labels" $ | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
 rules:
   {{- range . }}
   - apiGroups:

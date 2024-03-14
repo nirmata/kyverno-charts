@@ -5,6 +5,13 @@ metadata:
   annotations:
   labels:
     {{- include "enterprise-kyverno.labels" . | nindent 4 }}
+    {{- if .Values.globalLabels }}
+    {{- toYaml .Values.globalLabels| nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.globalAnnotations }}
+    {{- toYaml .Values.globalAnnotations | nindent 4 }}
+    {{- end }}
   name: aws-adapter-config
   namespace: {{ template "enterprise-kyverno.namespace" . }}
 spec:

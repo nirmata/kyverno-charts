@@ -33,3 +33,17 @@
 {{- define "kyverno.admission-controller.serviceName" -}}
 {{- printf "%s-svc" (include "kyverno.fullname" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{- define "kyverno.admission-controller.serviceAnnotations" -}}
+  {{- template "kyverno.annotations.merge" (list
+    (toYaml .Values.customAnnotations)
+    (toYaml .Values.admissionController.service.annotations)
+  ) -}}
+{{- end -}}
+
+{{- define "kyverno.admission-controller.serviceAccountAnnotations" -}}
+  {{- template "kyverno.annotations.merge" (list
+    (toYaml .Values.customAnnotations)
+    (toYaml .Values.admissionController.rbac.serviceAccount.annotations)
+  ) -}}
+{{- end -}}

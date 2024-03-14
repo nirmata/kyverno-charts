@@ -10,11 +10,29 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "kyverno.annotations.merge" -}}
+{{- $annotations := dict -}}
+{{- range . -}}
+  {{- $annotations = merge $annotations (fromYaml .) -}}
+{{- end -}}
+{{- with $annotations -}}
+  {{- toYaml $annotations -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "kyverno.labels.helm" -}}
 {{- if not .Values.templating.enabled -}}
 helm.sh/chart: {{ template "kyverno.chart" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+{{- end -}}
+
+{{- define "kyverno.annotations.common" -}}
+{{- if .Values.customAnnotations }}
+  {{- template "kyverno.annotations.merge" (list
+    (toYaml .Values.customAnnotations)
+  ) -}}
+  {{- end }}
 {{- end -}}
 
 {{- define "kyverno.labels.version" -}}

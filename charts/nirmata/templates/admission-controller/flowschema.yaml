@@ -5,6 +5,11 @@ metadata:
   name: {{ template "kyverno.admission-controller.name" . }}
   labels:
     {{- include "kyverno.admission-controller.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
 spec:
   priorityLevelConfiguration:
     name: {{ template "kyverno.admission-controller.name" . }}

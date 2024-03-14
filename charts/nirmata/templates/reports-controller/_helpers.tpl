@@ -38,3 +38,17 @@
     {{ required "A service account name is required when `rbac.create` is set to `false`" .Values.reportsController.rbac.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{- define "kyverno.reports-controller.serviceAnnotations" -}}
+  {{- template "kyverno.annotations.merge" (list
+    (toYaml .Values.customAnnotations)
+    (toYaml .Values.reportsController.metricsService.annotations)
+  ) -}}
+{{- end -}}
+
+{{- define "kyverno.reports-controller.serviceAccountAnnotations" -}}
+  {{- template "kyverno.annotations.merge" (list
+    (toYaml .Values.customAnnotations)
+    (toYaml  .Values.reportsController.rbac.serviceAccount.annotations)
+  ) -}}
+{{- end -}}

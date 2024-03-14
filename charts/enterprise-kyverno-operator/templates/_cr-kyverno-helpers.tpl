@@ -27,6 +27,14 @@ content:
       {{- end }}
 
       cleanupController:
+        podLabels: 
+{{- if .Values.globalLabels }}
+{{- toYaml .Values.globalLabels | nindent 10 }}
+{{- end}}
+        podAnnotations: 
+{{- if .Values.globalAnnotations }}
+{{- toYaml .Values.globalAnnotations | nindent 10 }}
+{{- end}}
         image:
           repository: {{ trimSuffix "kyverno" .Values.kyverno.image.repository  }}cleanup-controller
           tag: {{ .Values.kyverno.image.tag }}
