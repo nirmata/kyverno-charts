@@ -136,6 +136,23 @@ There are platform specific configurations in which the Kyverno Helm chart confi
 - `eks`
 - `openshift`
 
+## Troubleshooting
+
+### Webhook server cert error when installing via ArgoCD
+While installing the operator Helm Chart via ArgoCD, we might see a webhook error like this:
+
+```
+Error from server (InternalError): Internal error occurred: failed calling webhook "mutate.kyverno.svc-fail": Post "https://infra-kyverno-svc.infra.svc:443/mutate?timeout=10s": x509: certificate signed by unknown authority (possibly because of "crypto/rsa: verification error" while trying to verify candidate authority certificate "*.kyverno.svc")
+```
+The CA certificate in the operator secret `nirmata-system/webhook-server-cert` and that in the validating webhookconfiguration `kyverno-operator-validating-webhook-configuration` should match. Operator rewrites the webhookconfiguration and the secret too, after install. So, ArgoCD will show it as a drift. To fix it, we can use the following to the ArgoCD app manifest:
+
+```
+spec:
+  ignoreDifferences:
+  - name: webhook-server-secret
+    kind: Secret
+```
+
 ## Helm Chart Values
 
 | Key | Type | Default | Description |
