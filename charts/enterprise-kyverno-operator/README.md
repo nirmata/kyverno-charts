@@ -151,6 +151,27 @@ spec:
   ignoreDifferences:
   - name: webhook-server-secret
     kind: Secret
+    jsonPointers:
+    - /data/tls.key
+    - /data/tls.crt
+    - /data/ca.crt
+```
+
+### Error creating Kyverno CR when installing via ArgoCD
+The Kyverno CR creation might fail when sync'ing the ArgoCD app. This could happen because ArgoCD has problems installing Helm Charts having both a CRD as well as CR. For that, we need to add a retry so that the CR can be applied after the CRD is ready. E.g.
+
+```
+syncPolicy:
+  syncOptions:
+    - CreateNamespace=true
+    - ApplyOutOfSyncOnly=true
+    - ServerSideApply=true
+  retry:
+    limit: 2
+    backoff:
+      duration: 20s
+      factor: 2
+      maxDuration: 3m0s
 ```
 
 ## Helm Chart Values
