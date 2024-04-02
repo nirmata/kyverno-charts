@@ -6648,6 +6648,13 @@ spec:
                         is supported for backwards compatibility but will be deprecated
                         in the next major release. See: https://kyverno.io/docs/writing-policies/preconditions/'
                       x-kubernetes-preserve-unknown-fields: true
+                    skipBackgroundRequests:
+                      default: true
+                      description: SkipBackgroundRequests bypasses admission requests
+                        that are sent by the background controller. The default value
+                        is set to "true", it must be set to "false" to apply generate
+                        and mutateExisting rules to those requests.
+                      type: boolean
                     validate:
                       description: Validation is used to validate matching resources.
                       properties:
@@ -7396,6 +7403,16 @@ spec:
                                                     used to validate SCTs against
                                                     a custom source.
                                                   type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
+                                                  type: string
                                               type: object
                                             rekor:
                                               description: Rekor provides configuration
@@ -7421,8 +7438,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                           type: object
                                         keyless:
@@ -7457,6 +7472,16 @@ spec:
                                                     used to validate SCTs against
                                                     a custom source.
                                                   type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
+                                                  type: string
                                               type: object
                                             issuer:
                                               description: Issuer is the certificate
@@ -7486,8 +7511,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                             roots:
                                               description: Roots is an optional set
@@ -7524,6 +7547,16 @@ spec:
                                                   description: PubKey, if set, is
                                                     used to validate SCTs against
                                                     a custom source.
+                                                  type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
                                                   type: string
                                               type: object
                                             kms:
@@ -7574,8 +7607,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                             secret:
                                               description: Reference to a Secret resource
@@ -7839,6 +7870,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 rekor:
                                                   description: Rekor provides configuration
@@ -7866,8 +7908,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                               type: object
                                             keyless:
@@ -7904,6 +7944,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 issuer:
                                                   description: Issuer is the certificate
@@ -7935,8 +7986,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 roots:
                                                   description: Roots is an optional
@@ -7975,6 +8024,17 @@ spec:
                                                       description: PubKey, if set,
                                                         is used to validate SCTs against
                                                         a custom source.
+                                                      type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
                                                       type: string
                                                   type: object
                                                 kms:
@@ -8030,8 +8090,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 secret:
                                                   description: Reference to a Secret
@@ -8055,7 +8113,8 @@ spec:
                                                   default: sha256
                                                   description: Specify signature algorithm
                                                     for public keys. Supported values
-                                                    are sha256 and sha512.
+                                                    are sha224, sha256, sha384 and
+                                                    sha512.
                                                   type: string
                                               type: object
                                             repository:
@@ -8273,6 +8332,16 @@ spec:
                                                   to validate SCTs against a custom
                                                   source.
                                                 type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
+                                                type: string
                                             type: object
                                           rekor:
                                             description: Rekor provides configuration
@@ -8297,8 +8366,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                         type: object
                                       keyless:
@@ -8333,6 +8400,16 @@ spec:
                                                   to validate SCTs against a custom
                                                   source.
                                                 type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
+                                                type: string
                                             type: object
                                           issuer:
                                             description: Issuer is the certificate
@@ -8361,8 +8438,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                           roots:
                                             description: Roots is an optional set
@@ -8399,6 +8474,16 @@ spec:
                                                 description: PubKey, if set, is used
                                                   to validate SCTs against a custom
                                                   source.
+                                                type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
                                                 type: string
                                             type: object
                                           kms:
@@ -8447,8 +8532,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                           secret:
                                             description: Reference to a Secret resource
@@ -8471,7 +8554,7 @@ spec:
                                             default: sha256
                                             description: Specify signature algorithm
                                               for public keys. Supported values are
-                                              sha256 and sha512.
+                                              sha224, sha256, sha384 and sha512.
                                             type: string
                                         type: object
                                       repository:
@@ -11124,6 +11207,13 @@ spec:
                             is supported for backwards compatibility but will be deprecated
                             in the next major release. See: https://kyverno.io/docs/writing-policies/preconditions/'
                           x-kubernetes-preserve-unknown-fields: true
+                        skipBackgroundRequests:
+                          default: true
+                          description: SkipBackgroundRequests bypasses admission requests
+                            that are sent by the background controller. The default
+                            value is set to "true", it must be set to "false" to apply
+                            generate and mutateExisting rules to those requests.
+                          type: boolean
                         validate:
                           description: Validation is used to validate matching resources.
                           properties:
@@ -11931,6 +12021,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 rekor:
                                                   description: Rekor provides configuration
@@ -11958,8 +12059,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                               type: object
                                             keyless:
@@ -11996,6 +12095,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 issuer:
                                                   description: Issuer is the certificate
@@ -12027,8 +12137,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 roots:
                                                   description: Roots is an optional
@@ -12067,6 +12175,17 @@ spec:
                                                       description: PubKey, if set,
                                                         is used to validate SCTs against
                                                         a custom source.
+                                                      type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
                                                       type: string
                                                   type: object
                                                 kms:
@@ -12122,8 +12241,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 secret:
                                                   description: Reference to a Secret
@@ -12147,7 +12264,8 @@ spec:
                                                   default: sha256
                                                   description: Specify signature algorithm
                                                     for public keys. Supported values
-                                                    are sha256 and sha512.
+                                                    are sha224, sha256, sha384 and
+                                                    sha512.
                                                   type: string
                                               type: object
                                             repository:
@@ -12397,6 +12515,19 @@ spec:
                                                             SCTs against a custom
                                                             source.
                                                           type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
+                                                          type: string
                                                       type: object
                                                     rekor:
                                                       description: Rekor provides
@@ -12427,8 +12558,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                   type: object
                                                 keyless:
@@ -12468,6 +12597,19 @@ spec:
                                                             SCTs against a custom
                                                             source.
                                                           type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
+                                                          type: string
                                                       type: object
                                                     issuer:
                                                       description: Issuer is the certificate
@@ -12502,8 +12644,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                     roots:
                                                       description: Roots is an optional
@@ -12547,6 +12687,19 @@ spec:
                                                             set, is used to validate
                                                             SCTs against a custom
                                                             source.
+                                                          type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
                                                           type: string
                                                       type: object
                                                     kms:
@@ -12607,8 +12760,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                     secret:
                                                       description: Reference to a
@@ -12633,8 +12784,8 @@ spec:
                                                       default: sha256
                                                       description: Specify signature
                                                         algorithm for public keys.
-                                                        Supported values are sha256
-                                                        and sha512.
+                                                        Supported values are sha224,
+                                                        sha256, sha384 and sha512.
                                                       type: string
                                                   type: object
                                                 repository:
@@ -12860,6 +13011,17 @@ spec:
                                                       used to validate SCTs against
                                                       a custom source.
                                                     type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
+                                                    type: string
                                                 type: object
                                               rekor:
                                                 description: Rekor provides configuration
@@ -12886,8 +13048,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                             type: object
                                           keyless:
@@ -12924,6 +13084,17 @@ spec:
                                                       used to validate SCTs against
                                                       a custom source.
                                                     type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
+                                                    type: string
                                                 type: object
                                               issuer:
                                                 description: Issuer is the certificate
@@ -12954,8 +13125,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                               roots:
                                                 description: Roots is an optional
@@ -12994,6 +13163,17 @@ spec:
                                                     description: PubKey, if set, is
                                                       used to validate SCTs against
                                                       a custom source.
+                                                    type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
                                                     type: string
                                                 type: object
                                               kms:
@@ -13047,8 +13227,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                               secret:
                                                 description: Reference to a Secret
@@ -13072,7 +13250,7 @@ spec:
                                                 default: sha256
                                                 description: Specify signature algorithm
                                                   for public keys. Supported values
-                                                  are sha256 and sha512.
+                                                  are sha224, sha256, sha384 and sha512.
                                                 type: string
                                             type: object
                                           repository:
@@ -15400,6 +15578,13 @@ spec:
                             type: object
                           type: array
                       type: object
+                    skipBackgroundRequests:
+                      default: true
+                      description: SkipBackgroundRequests bypasses admission requests
+                        that are sent by the background controller. The default value
+                        is set to "true", it must be set to "false" to apply generate
+                        and mutateExisting rules to those requests.
+                      type: boolean
                     validate:
                       description: Validation is used to validate matching resources.
                       properties:
@@ -16261,6 +16446,16 @@ spec:
                                                     used to validate SCTs against
                                                     a custom source.
                                                   type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
+                                                  type: string
                                               type: object
                                             rekor:
                                               description: Rekor provides configuration
@@ -16286,8 +16481,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                           type: object
                                         keyless:
@@ -16322,6 +16515,16 @@ spec:
                                                     used to validate SCTs against
                                                     a custom source.
                                                   type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
+                                                  type: string
                                               type: object
                                             issuer:
                                               description: Issuer is the certificate
@@ -16351,8 +16554,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                             roots:
                                               description: Roots is an optional set
@@ -16389,6 +16590,16 @@ spec:
                                                   description: PubKey, if set, is
                                                     used to validate SCTs against
                                                     a custom source.
+                                                  type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
                                                   type: string
                                               type: object
                                             kms:
@@ -16439,8 +16650,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                             secret:
                                               description: Reference to a Secret resource
@@ -16463,7 +16672,7 @@ spec:
                                               default: sha256
                                               description: Specify signature algorithm
                                                 for public keys. Supported values
-                                                are sha256 and sha512.
+                                                are sha224, sha256, sha384 and sha512.
                                               type: string
                                           type: object
                                         repository:
@@ -16693,6 +16902,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 rekor:
                                                   description: Rekor provides configuration
@@ -16720,8 +16940,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                               type: object
                                             keyless:
@@ -16758,6 +16976,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 issuer:
                                                   description: Issuer is the certificate
@@ -16789,8 +17018,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 roots:
                                                   description: Roots is an optional
@@ -16829,6 +17056,17 @@ spec:
                                                       description: PubKey, if set,
                                                         is used to validate SCTs against
                                                         a custom source.
+                                                      type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
                                                       type: string
                                                   type: object
                                                 kms:
@@ -16884,8 +17122,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 secret:
                                                   description: Reference to a Secret
@@ -16909,7 +17145,8 @@ spec:
                                                   default: sha256
                                                   description: Specify signature algorithm
                                                     for public keys. Supported values
-                                                    are sha256 and sha512.
+                                                    are sha224, sha256, sha384 and
+                                                    sha512.
                                                   type: string
                                               type: object
                                             repository:
@@ -17127,6 +17364,16 @@ spec:
                                                   to validate SCTs against a custom
                                                   source.
                                                 type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
+                                                type: string
                                             type: object
                                           rekor:
                                             description: Rekor provides configuration
@@ -17151,8 +17398,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                         type: object
                                       keyless:
@@ -17187,6 +17432,16 @@ spec:
                                                   to validate SCTs against a custom
                                                   source.
                                                 type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
+                                                type: string
                                             type: object
                                           issuer:
                                             description: Issuer is the certificate
@@ -17215,8 +17470,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                           roots:
                                             description: Roots is an optional set
@@ -17253,6 +17506,16 @@ spec:
                                                 description: PubKey, if set, is used
                                                   to validate SCTs against a custom
                                                   source.
+                                                type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
                                                 type: string
                                             type: object
                                           kms:
@@ -17301,8 +17564,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                           secret:
                                             description: Reference to a Secret resource
@@ -17325,7 +17586,7 @@ spec:
                                             default: sha256
                                             description: Specify signature algorithm
                                               for public keys. Supported values are
-                                              sha256 and sha512.
+                                              sha224, sha256, sha384 and sha512.
                                             type: string
                                         type: object
                                       repository:
@@ -19963,6 +20224,13 @@ spec:
                             is supported for backwards compatibility but will be deprecated
                             in the next major release. See: https://kyverno.io/docs/writing-policies/preconditions/'
                           x-kubernetes-preserve-unknown-fields: true
+                        skipBackgroundRequests:
+                          default: true
+                          description: SkipBackgroundRequests bypasses admission requests
+                            that are sent by the background controller. The default
+                            value is set to "true", it must be set to "false" to apply
+                            generate and mutateExisting rules to those requests.
+                          type: boolean
                         validate:
                           description: Validation is used to validate matching resources.
                           properties:
@@ -20770,6 +21038,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 rekor:
                                                   description: Rekor provides configuration
@@ -20797,8 +21076,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                               type: object
                                             keyless:
@@ -20835,6 +21112,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 issuer:
                                                   description: Issuer is the certificate
@@ -20866,8 +21154,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 roots:
                                                   description: Roots is an optional
@@ -20906,6 +21192,17 @@ spec:
                                                       description: PubKey, if set,
                                                         is used to validate SCTs against
                                                         a custom source.
+                                                      type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
                                                       type: string
                                                   type: object
                                                 kms:
@@ -20961,8 +21258,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 secret:
                                                   description: Reference to a Secret
@@ -20986,7 +21281,8 @@ spec:
                                                   default: sha256
                                                   description: Specify signature algorithm
                                                     for public keys. Supported values
-                                                    are sha256 and sha512.
+                                                    are sha224, sha256, sha384 and
+                                                    sha512.
                                                   type: string
                                               type: object
                                             repository:
@@ -21236,6 +21532,19 @@ spec:
                                                             SCTs against a custom
                                                             source.
                                                           type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
+                                                          type: string
                                                       type: object
                                                     rekor:
                                                       description: Rekor provides
@@ -21266,8 +21575,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                   type: object
                                                 keyless:
@@ -21307,6 +21614,19 @@ spec:
                                                             SCTs against a custom
                                                             source.
                                                           type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
+                                                          type: string
                                                       type: object
                                                     issuer:
                                                       description: Issuer is the certificate
@@ -21341,8 +21661,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                     roots:
                                                       description: Roots is an optional
@@ -21386,6 +21704,19 @@ spec:
                                                             set, is used to validate
                                                             SCTs against a custom
                                                             source.
+                                                          type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
                                                           type: string
                                                       type: object
                                                     kms:
@@ -21446,8 +21777,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                     secret:
                                                       description: Reference to a
@@ -21472,8 +21801,8 @@ spec:
                                                       default: sha256
                                                       description: Specify signature
                                                         algorithm for public keys.
-                                                        Supported values are sha256
-                                                        and sha512.
+                                                        Supported values are sha224,
+                                                        sha256, sha384 and sha512.
                                                       type: string
                                                   type: object
                                                 repository:
@@ -21699,6 +22028,17 @@ spec:
                                                       used to validate SCTs against
                                                       a custom source.
                                                     type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
+                                                    type: string
                                                 type: object
                                               rekor:
                                                 description: Rekor provides configuration
@@ -21725,8 +22065,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                             type: object
                                           keyless:
@@ -21763,6 +22101,17 @@ spec:
                                                       used to validate SCTs against
                                                       a custom source.
                                                     type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
+                                                    type: string
                                                 type: object
                                               issuer:
                                                 description: Issuer is the certificate
@@ -21793,8 +22142,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                               roots:
                                                 description: Roots is an optional
@@ -21833,6 +22180,17 @@ spec:
                                                     description: PubKey, if set, is
                                                       used to validate SCTs against
                                                       a custom source.
+                                                    type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
                                                     type: string
                                                 type: object
                                               kms:
@@ -21886,8 +22244,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                               secret:
                                                 description: Reference to a Secret
@@ -21911,7 +22267,7 @@ spec:
                                                 default: sha256
                                                 description: Specify signature algorithm
                                                   for public keys. Supported values
-                                                  are sha256 and sha512.
+                                                  are sha224, sha256, sha384 and sha512.
                                                 type: string
                                             type: object
                                           repository:
@@ -24608,6 +24964,13 @@ spec:
                         is supported for backwards compatibility but will be deprecated
                         in the next major release. See: https://kyverno.io/docs/writing-policies/preconditions/'
                       x-kubernetes-preserve-unknown-fields: true
+                    skipBackgroundRequests:
+                      default: true
+                      description: SkipBackgroundRequests bypasses admission requests
+                        that are sent by the background controller. The default value
+                        is set to "true", it must be set to "false" to apply generate
+                        and mutateExisting rules to those requests.
+                      type: boolean
                     validate:
                       description: Validation is used to validate matching resources.
                       properties:
@@ -25377,6 +25740,16 @@ spec:
                                                     used to validate SCTs against
                                                     a custom source.
                                                   type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
+                                                  type: string
                                               type: object
                                             rekor:
                                               description: Rekor provides configuration
@@ -25402,8 +25775,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                           type: object
                                         keyless:
@@ -25438,6 +25809,16 @@ spec:
                                                     used to validate SCTs against
                                                     a custom source.
                                                   type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
+                                                  type: string
                                               type: object
                                             issuer:
                                               description: Issuer is the certificate
@@ -25467,8 +25848,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                             roots:
                                               description: Roots is an optional set
@@ -25505,6 +25884,16 @@ spec:
                                                   description: PubKey, if set, is
                                                     used to validate SCTs against
                                                     a custom source.
+                                                  type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
                                                   type: string
                                               type: object
                                             kms:
@@ -25555,8 +25944,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                             secret:
                                               description: Reference to a Secret resource
@@ -25579,7 +25966,7 @@ spec:
                                               default: sha256
                                               description: Specify signature algorithm
                                                 for public keys. Supported values
-                                                are sha256 and sha512.
+                                                are sha224, sha256, sha384 and sha512.
                                               type: string
                                           type: object
                                         repository:
@@ -25820,6 +26207,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 rekor:
                                                   description: Rekor provides configuration
@@ -25847,8 +26245,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                               type: object
                                             keyless:
@@ -25885,6 +26281,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 issuer:
                                                   description: Issuer is the certificate
@@ -25916,8 +26323,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 roots:
                                                   description: Roots is an optional
@@ -25956,6 +26361,17 @@ spec:
                                                       description: PubKey, if set,
                                                         is used to validate SCTs against
                                                         a custom source.
+                                                      type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
                                                       type: string
                                                   type: object
                                                 kms:
@@ -26011,8 +26427,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 secret:
                                                   description: Reference to a Secret
@@ -26036,7 +26450,8 @@ spec:
                                                   default: sha256
                                                   description: Specify signature algorithm
                                                     for public keys. Supported values
-                                                    are sha256 and sha512.
+                                                    are sha224, sha256, sha384 and
+                                                    sha512.
                                                   type: string
                                               type: object
                                             repository:
@@ -26254,6 +26669,16 @@ spec:
                                                   to validate SCTs against a custom
                                                   source.
                                                 type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
+                                                type: string
                                             type: object
                                           rekor:
                                             description: Rekor provides configuration
@@ -26278,8 +26703,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                         type: object
                                       keyless:
@@ -26314,6 +26737,16 @@ spec:
                                                   to validate SCTs against a custom
                                                   source.
                                                 type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
+                                                type: string
                                             type: object
                                           issuer:
                                             description: Issuer is the certificate
@@ -26342,8 +26775,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                           roots:
                                             description: Roots is an optional set
@@ -26380,6 +26811,16 @@ spec:
                                                 description: PubKey, if set, is used
                                                   to validate SCTs against a custom
                                                   source.
+                                                type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
                                                 type: string
                                             type: object
                                           kms:
@@ -26428,8 +26869,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                           secret:
                                             description: Reference to a Secret resource
@@ -26452,7 +26891,7 @@ spec:
                                             default: sha256
                                             description: Specify signature algorithm
                                               for public keys. Supported values are
-                                              sha256 and sha512.
+                                              sha224, sha256, sha384 and sha512.
                                             type: string
                                         type: object
                                       repository:
@@ -29102,6 +29541,13 @@ spec:
                             is supported for backwards compatibility but will be deprecated
                             in the next major release. See: https://kyverno.io/docs/writing-policies/preconditions/'
                           x-kubernetes-preserve-unknown-fields: true
+                        skipBackgroundRequests:
+                          default: true
+                          description: SkipBackgroundRequests bypasses admission requests
+                            that are sent by the background controller. The default
+                            value is set to "true", it must be set to "false" to apply
+                            generate and mutateExisting rules to those requests.
+                          type: boolean
                         validate:
                           description: Validation is used to validate matching resources.
                           properties:
@@ -29909,6 +30355,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 rekor:
                                                   description: Rekor provides configuration
@@ -29936,8 +30393,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                               type: object
                                             keyless:
@@ -29974,6 +30429,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 issuer:
                                                   description: Issuer is the certificate
@@ -30005,8 +30471,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 roots:
                                                   description: Roots is an optional
@@ -30045,6 +30509,17 @@ spec:
                                                       description: PubKey, if set,
                                                         is used to validate SCTs against
                                                         a custom source.
+                                                      type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
                                                       type: string
                                                   type: object
                                                 kms:
@@ -30100,8 +30575,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 secret:
                                                   description: Reference to a Secret
@@ -30125,7 +30598,8 @@ spec:
                                                   default: sha256
                                                   description: Specify signature algorithm
                                                     for public keys. Supported values
-                                                    are sha256 and sha512.
+                                                    are sha224, sha256, sha384 and
+                                                    sha512.
                                                   type: string
                                               type: object
                                             repository:
@@ -30375,6 +30849,19 @@ spec:
                                                             SCTs against a custom
                                                             source.
                                                           type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
+                                                          type: string
                                                       type: object
                                                     rekor:
                                                       description: Rekor provides
@@ -30405,8 +30892,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                   type: object
                                                 keyless:
@@ -30446,6 +30931,19 @@ spec:
                                                             SCTs against a custom
                                                             source.
                                                           type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
+                                                          type: string
                                                       type: object
                                                     issuer:
                                                       description: Issuer is the certificate
@@ -30480,8 +30978,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                     roots:
                                                       description: Roots is an optional
@@ -30525,6 +31021,19 @@ spec:
                                                             set, is used to validate
                                                             SCTs against a custom
                                                             source.
+                                                          type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
                                                           type: string
                                                       type: object
                                                     kms:
@@ -30585,8 +31094,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                     secret:
                                                       description: Reference to a
@@ -30611,8 +31118,8 @@ spec:
                                                       default: sha256
                                                       description: Specify signature
                                                         algorithm for public keys.
-                                                        Supported values are sha256
-                                                        and sha512.
+                                                        Supported values are sha224,
+                                                        sha256, sha384 and sha512.
                                                       type: string
                                                   type: object
                                                 repository:
@@ -30838,6 +31345,17 @@ spec:
                                                       used to validate SCTs against
                                                       a custom source.
                                                     type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
+                                                    type: string
                                                 type: object
                                               rekor:
                                                 description: Rekor provides configuration
@@ -30864,8 +31382,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                             type: object
                                           keyless:
@@ -30902,6 +31418,17 @@ spec:
                                                       used to validate SCTs against
                                                       a custom source.
                                                     type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
+                                                    type: string
                                                 type: object
                                               issuer:
                                                 description: Issuer is the certificate
@@ -30932,8 +31459,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                               roots:
                                                 description: Roots is an optional
@@ -30972,6 +31497,17 @@ spec:
                                                     description: PubKey, if set, is
                                                       used to validate SCTs against
                                                       a custom source.
+                                                    type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
                                                     type: string
                                                 type: object
                                               kms:
@@ -31025,8 +31561,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                               secret:
                                                 description: Reference to a Secret
@@ -31050,7 +31584,7 @@ spec:
                                                 default: sha256
                                                 description: Specify signature algorithm
                                                   for public keys. Supported values
-                                                  are sha256 and sha512.
+                                                  are sha224, sha256, sha384 and sha512.
                                                 type: string
                                             type: object
                                           repository:
@@ -33382,6 +33916,13 @@ spec:
                             type: object
                           type: array
                       type: object
+                    skipBackgroundRequests:
+                      default: true
+                      description: SkipBackgroundRequests bypasses admission requests
+                        that are sent by the background controller. The default value
+                        is set to "true", it must be set to "false" to apply generate
+                        and mutateExisting rules to those requests.
+                      type: boolean
                     validate:
                       description: Validation is used to validate matching resources.
                       properties:
@@ -34243,6 +34784,16 @@ spec:
                                                     used to validate SCTs against
                                                     a custom source.
                                                   type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
+                                                  type: string
                                               type: object
                                             rekor:
                                               description: Rekor provides configuration
@@ -34268,8 +34819,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                           type: object
                                         keyless:
@@ -34304,6 +34853,16 @@ spec:
                                                     used to validate SCTs against
                                                     a custom source.
                                                   type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
+                                                  type: string
                                               type: object
                                             issuer:
                                               description: Issuer is the certificate
@@ -34333,8 +34892,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                             roots:
                                               description: Roots is an optional set
@@ -34371,6 +34928,16 @@ spec:
                                                   description: PubKey, if set, is
                                                     used to validate SCTs against
                                                     a custom source.
+                                                  type: string
+                                                tsaCertChain:
+                                                  description: TSACertChain, if set,
+                                                    is the PEM-encoded certificate
+                                                    chain file for the RFC3161 timestamp
+                                                    authority. Must contain the root
+                                                    CA certificate. Optionally may
+                                                    contain intermediate CA certificates,
+                                                    and may contain the leaf TSA certificate
+                                                    if not present in the timestamurce.
                                                   type: string
                                               type: object
                                             kms:
@@ -34421,8 +34988,6 @@ spec:
                                                     to the public Rekor log instance
                                                     https://rekor.sigstore.dev.
                                                   type: string
-                                              required:
-                                              - url
                                               type: object
                                             secret:
                                               description: Reference to a Secret resource
@@ -34445,7 +35010,7 @@ spec:
                                               default: sha256
                                               description: Specify signature algorithm
                                                 for public keys. Supported values
-                                                are sha256 and sha512.
+                                                are sha224, sha256, sha384 and sha512.
                                               type: string
                                           type: object
                                         repository:
@@ -34675,6 +35240,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 rekor:
                                                   description: Rekor provides configuration
@@ -34702,8 +35278,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                               type: object
                                             keyless:
@@ -34740,6 +35314,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 issuer:
                                                   description: Issuer is the certificate
@@ -34771,8 +35356,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 roots:
                                                   description: Roots is an optional
@@ -34811,6 +35394,17 @@ spec:
                                                       description: PubKey, if set,
                                                         is used to validate SCTs against
                                                         a custom source.
+                                                      type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
                                                       type: string
                                                   type: object
                                                 kms:
@@ -34866,8 +35460,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 secret:
                                                   description: Reference to a Secret
@@ -34891,7 +35483,8 @@ spec:
                                                   default: sha256
                                                   description: Specify signature algorithm
                                                     for public keys. Supported values
-                                                    are sha256 and sha512.
+                                                    are sha224, sha256, sha384 and
+                                                    sha512.
                                                   type: string
                                               type: object
                                             repository:
@@ -35109,6 +35702,16 @@ spec:
                                                   to validate SCTs against a custom
                                                   source.
                                                 type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
+                                                type: string
                                             type: object
                                           rekor:
                                             description: Rekor provides configuration
@@ -35133,8 +35736,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                         type: object
                                       keyless:
@@ -35169,6 +35770,16 @@ spec:
                                                   to validate SCTs against a custom
                                                   source.
                                                 type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
+                                                type: string
                                             type: object
                                           issuer:
                                             description: Issuer is the certificate
@@ -35197,8 +35808,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                           roots:
                                             description: Roots is an optional set
@@ -35235,6 +35844,16 @@ spec:
                                                 description: PubKey, if set, is used
                                                   to validate SCTs against a custom
                                                   source.
+                                                type: string
+                                              tsaCertChain:
+                                                description: TSACertChain, if set,
+                                                  is the PEM-encoded certificate chain
+                                                  file for the RFC3161 timestamp authority.
+                                                  Must contain the root CA certificate.
+                                                  Optionally may contain intermediate
+                                                  CA certificates, and may contain
+                                                  the leaf TSA certificate if not
+                                                  present in the timestamurce.
                                                 type: string
                                             type: object
                                           kms:
@@ -35283,8 +35902,6 @@ spec:
                                                   the transparency log. Defaults to
                                                   the public Rekor log instance https://rekor.sigstore.dev.
                                                 type: string
-                                            required:
-                                            - url
                                             type: object
                                           secret:
                                             description: Reference to a Secret resource
@@ -35307,7 +35924,7 @@ spec:
                                             default: sha256
                                             description: Specify signature algorithm
                                               for public keys. Supported values are
-                                              sha256 and sha512.
+                                              sha224, sha256, sha384 and sha512.
                                             type: string
                                         type: object
                                       repository:
@@ -37945,6 +38562,13 @@ spec:
                             is supported for backwards compatibility but will be deprecated
                             in the next major release. See: https://kyverno.io/docs/writing-policies/preconditions/'
                           x-kubernetes-preserve-unknown-fields: true
+                        skipBackgroundRequests:
+                          default: true
+                          description: SkipBackgroundRequests bypasses admission requests
+                            that are sent by the background controller. The default
+                            value is set to "true", it must be set to "false" to apply
+                            generate and mutateExisting rules to those requests.
+                          type: boolean
                         validate:
                           description: Validation is used to validate matching resources.
                           properties:
@@ -38752,6 +39376,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 rekor:
                                                   description: Rekor provides configuration
@@ -38779,8 +39414,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                               type: object
                                             keyless:
@@ -38817,6 +39450,17 @@ spec:
                                                         is used to validate SCTs against
                                                         a custom source.
                                                       type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
+                                                      type: string
                                                   type: object
                                                 issuer:
                                                   description: Issuer is the certificate
@@ -38848,8 +39492,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 roots:
                                                   description: Roots is an optional
@@ -38888,6 +39530,17 @@ spec:
                                                       description: PubKey, if set,
                                                         is used to validate SCTs against
                                                         a custom source.
+                                                      type: string
+                                                    tsaCertChain:
+                                                      description: TSACertChain, if
+                                                        set, is the PEM-encoded certificate
+                                                        chain file for the RFC3161
+                                                        timestamp authority. Must
+                                                        contain the root CA certificate.
+                                                        Optionally may contain intermediate
+                                                        CA certificates, and may contain
+                                                        the leaf TSA certificate if
+                                                        not present in the timestamurce.
                                                       type: string
                                                   type: object
                                                 kms:
@@ -38943,8 +39596,6 @@ spec:
                                                         to the public Rekor log instance
                                                         https://rekor.sigstore.dev.
                                                       type: string
-                                                  required:
-                                                  - url
                                                   type: object
                                                 secret:
                                                   description: Reference to a Secret
@@ -38968,7 +39619,8 @@ spec:
                                                   default: sha256
                                                   description: Specify signature algorithm
                                                     for public keys. Supported values
-                                                    are sha256 and sha512.
+                                                    are sha224, sha256, sha384 and
+                                                    sha512.
                                                   type: string
                                               type: object
                                             repository:
@@ -39218,6 +39870,19 @@ spec:
                                                             SCTs against a custom
                                                             source.
                                                           type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
+                                                          type: string
                                                       type: object
                                                     rekor:
                                                       description: Rekor provides
@@ -39248,8 +39913,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                   type: object
                                                 keyless:
@@ -39289,6 +39952,19 @@ spec:
                                                             SCTs against a custom
                                                             source.
                                                           type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
+                                                          type: string
                                                       type: object
                                                     issuer:
                                                       description: Issuer is the certificate
@@ -39323,8 +39999,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                     roots:
                                                       description: Roots is an optional
@@ -39368,6 +40042,19 @@ spec:
                                                             set, is used to validate
                                                             SCTs against a custom
                                                             source.
+                                                          type: string
+                                                        tsaCertChain:
+                                                          description: TSACertChain,
+                                                            if set, is the PEM-encoded
+                                                            certificate chain file
+                                                            for the RFC3161 timestamp
+                                                            authority. Must contain
+                                                            the root CA certificate.
+                                                            Optionally may contain
+                                                            intermediate CA certificates,
+                                                            and may contain the leaf
+                                                            TSA certificate if not
+                                                            present in the timestamurce.
                                                           type: string
                                                       type: object
                                                     kms:
@@ -39428,8 +40115,6 @@ spec:
                                                             log. Defaults to the public
                                                             Rekor log instance https://rekor.sigstore.dev.
                                                           type: string
-                                                      required:
-                                                      - url
                                                       type: object
                                                     secret:
                                                       description: Reference to a
@@ -39454,8 +40139,8 @@ spec:
                                                       default: sha256
                                                       description: Specify signature
                                                         algorithm for public keys.
-                                                        Supported values are sha256
-                                                        and sha512.
+                                                        Supported values are sha224,
+                                                        sha256, sha384 and sha512.
                                                       type: string
                                                   type: object
                                                 repository:
@@ -39681,6 +40366,17 @@ spec:
                                                       used to validate SCTs against
                                                       a custom source.
                                                     type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
+                                                    type: string
                                                 type: object
                                               rekor:
                                                 description: Rekor provides configuration
@@ -39707,8 +40403,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                             type: object
                                           keyless:
@@ -39745,6 +40439,17 @@ spec:
                                                       used to validate SCTs against
                                                       a custom source.
                                                     type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
+                                                    type: string
                                                 type: object
                                               issuer:
                                                 description: Issuer is the certificate
@@ -39775,8 +40480,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                               roots:
                                                 description: Roots is an optional
@@ -39815,6 +40518,17 @@ spec:
                                                     description: PubKey, if set, is
                                                       used to validate SCTs against
                                                       a custom source.
+                                                    type: string
+                                                  tsaCertChain:
+                                                    description: TSACertChain, if
+                                                      set, is the PEM-encoded certificate
+                                                      chain file for the RFC3161 timestamp
+                                                      authority. Must contain the
+                                                      root CA certificate. Optionally
+                                                      may contain intermediate CA
+                                                      certificates, and may contain
+                                                      the leaf TSA certificate if
+                                                      not present in the timestamurce.
                                                     type: string
                                                 type: object
                                               kms:
@@ -39868,8 +40582,6 @@ spec:
                                                       to the public Rekor log instance
                                                       https://rekor.sigstore.dev.
                                                     type: string
-                                                required:
-                                                - url
                                                 type: object
                                               secret:
                                                 description: Reference to a Secret
@@ -39893,7 +40605,7 @@ spec:
                                                 default: sha256
                                                 description: Specify signature algorithm
                                                   for public keys. Supported values
-                                                  are sha256 and sha512.
+                                                  are sha224, sha256, sha384 and sha512.
                                                 type: string
                                             type: object
                                           repository:
@@ -41741,6 +42453,8 @@ spec:
               message:
                 description: Specifies request status message.
                 type: string
+              retryCount:
+                type: integer
               state:
                 description: State represents state of the update request.
                 type: string
