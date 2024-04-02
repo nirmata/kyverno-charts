@@ -29,3 +29,5 @@ systemCertPath: /etc/ssl/certs
 # - name: HTTPS_PROXY
 #   value: https://test.com:8000
 extraEnvVars:
+- name: VENAFI_PKCS11_CLIENT_IMAGE
+  value: ghcr.io/nirmata/venafi-pkcs11-client:0.3.1
