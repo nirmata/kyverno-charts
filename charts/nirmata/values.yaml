@@ -1628,6 +1628,14 @@ systemCertPath: /etc/ssl/certs
 
 # -- License manager configs
 licenseManager:
+  resources:
+    # -- Pod resource limits
+    limits:
+      memory: 384Mi
+    # -- Pod resource requests
+    requests:
+      cpu: 100m
+      memory: 128Mi
   # -- Whether to use license manager
   enable: true
   # -- License manager repo
