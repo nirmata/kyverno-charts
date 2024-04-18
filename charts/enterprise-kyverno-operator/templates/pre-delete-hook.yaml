@@ -56,6 +56,10 @@ spec:
               kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoconfigs kyverno;
               sleep 10;
               {{- end }}
+              kubectl delete crd kyvernoadapters.security.nirmata.io;
+              kubectl delete crd kyvernoconfigs.security.nirmata.io;
+              kubectl delete crd policysets.security.nirmata.io;
+              kubectl delete namespace nirmata-system;
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
