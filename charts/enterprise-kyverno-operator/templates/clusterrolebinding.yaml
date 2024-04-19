@@ -9,6 +9,7 @@ metadata:
     {{- toYaml .Values.globalLabels | nindent 4 }}
     {{- end }}
   annotations:
+    helm.sh/resource-policy: keep
     {{- if .Values.globalAnnotations }}
     {{- toYaml .Values.globalAnnotations | nindent 4 }}
     {{- end }}

@@ -1,0 +1,53 @@
+{{- if .Values.deleteOperatorCRDs }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "enterprise-kyverno.fullname" . }}-post-cleanup
+  annotations:
+    "helm.sh/hook": post-delete
+    "helm.sh/hook-delete-policy": hook-succeeded
+  {{- if .Values.globalAnnotations }}
+    {{- toYaml .Values.globalAnnotations | nindent 4 }}
+  {{- end }}
+  labels:
+    app: {{ template "enterprise-kyverno.name" . }}-operator
+{{ include "enterprise-kyverno.labels" . | indent 4 }}
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      name: {{ template "enterprise-kyverno.fullname" . }}-crd-cleanup
+      labels:
+        app: {{ template "enterprise-kyverno.name" . }}-operator
+{{ include "enterprise-kyverno.labels" . | indent 8 }}
+    spec:
+      imagePullSecrets: 
+      - name: {{ .Values.image.pullSecrets.name }}
+      serviceAccountName: {{ template "enterprise-kyverno.rbac.serviceAccountName" . }}
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        {{- if .Values.podSecurityContext }}
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: kubectl
+          image: {{ .Values.predeletehookimage | default "ghcr.io/nirmata/kubectl:1.29.1" }}
+          imagePullPolicy: IfNotPresent
+          command:
+          - sh
+          - -c
+          - >
+              kubectl delete crd kyvernoadapters.security.nirmata.io;
+              kubectl delete crd kyvernoconfigs.security.nirmata.io;
+              kubectl delete crd policysets.security.nirmata.io;
+              kubectl delete clusterrole kyverno-operator
+              kubectl delete clusterrolebinding kyverno-operator
+              kubectl delete serviceaccount kyverno-operator -n {{ template "enterprise-kyverno.namespace" . }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          resources:
+            limits:
+              memory: 128Mi
+      restartPolicy: OnFailure
+{{- end }}
