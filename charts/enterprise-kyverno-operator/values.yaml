@@ -4,6 +4,9 @@
 
 profile: "prod"
 
+# set to false if you dont want to delete crds on uninstall
+deleteOperatorCRDs: true
+
 cloudPlatform: ""
 
 namespace:

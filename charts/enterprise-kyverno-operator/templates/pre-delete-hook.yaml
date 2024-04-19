@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "enterprise-kyverno.fullname" . }}-operator-cleanup
+  name: {{ template "enterprise-kyverno.fullname" . }}-cleanup
   namespace: {{ template "enterprise-kyverno.namespace" . }}
   annotations:
     "helm.sh/hook": pre-delete
