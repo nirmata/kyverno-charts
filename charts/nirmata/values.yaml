@@ -1668,7 +1668,7 @@ licenseManager:
   # -- License key
   licenseKey: free-tier-license
     # -- License secret containing license string under key 'license'
-  licenseSecret:
+  apiAndLicenseSecret: my-api-license-secret
   # -- License server API key
   apiKey:
   # -- Cluster Id. If not provided, use kube-system uid

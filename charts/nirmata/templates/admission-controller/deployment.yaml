@@ -130,16 +130,29 @@ spec:
           - -deployment-name={{ template "kyverno.admission-controller.name" . }}
           - -namespace={{ template "kyverno.namespace" . }}
           - -product-name={{ .Values.licenseManager.productName }}
-          {{- if .Values.licenseManager.licenseSecret }}
-          - -license-secret={{ .Values.licenseManager.licenseSecret }}
+          {{- if .Values.licenseManager.apiAndLicenseSecret }}
+          - -license-key=$(LICENSE_KEY)
+          - -api-key=$(API_KEY)
           {{- else }}
-          - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
+          - -license-key={{ required "licenseManager.licenseKey is required" .Values.licenseManager.licenseKey }}
+          - -api-key={{ .Values.licenseManager.apiKey }}
           {{- end }}
           - -run-type=init-container
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
           - -api-key={{ .Values.licenseManager.apiKey }}
           - -cluster-id={{ .Values.licenseManager.clusterId }}
           - -cluster-name={{ .Values.licenseManager.clusterName }}
+          env:
+          - name: LICENSE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.licenseManager.apiAndLicenseSecret }}
+                key: license
+          - name: API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.licenseManager.apiAndLicenseSecret }}
+                key: api
           {{- with .Values.licenseManager.resources }}
           resources:
             {{- tpl (toYaml .) $ | nindent 12 }}
@@ -162,16 +175,29 @@ spec:
           - -namespace={{ template "kyverno.namespace" . }}
           - -product-name={{ .Values.licenseManager.productName }}
           - -validate-interval={{ .Values.licenseManager.validateIntervalMins }}
-          {{- if .Values.licenseManager.licenseSecret }}
-          - -license-secret={{ .Values.licenseManager.licenseSecret }}
+          {{- if .Values.licenseManager.apiAndLicenseSecret }}
+          - -license-key=$(LICENSE_KEY)
+          - -api-key=$(API_KEY)
           {{- else }}
-          - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
+          - -license-key={{ required "licenseManager.licenseKey is required" .Values.licenseManager.licenseKey }}
+          - -api-key={{ .Values.licenseManager.apiKey }}
           {{- end }}
           - -run-type=sidecar
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
           - -api-key={{ .Values.licenseManager.apiKey }}
           - -cluster-id={{ .Values.licenseManager.clusterId }}
           - -cluster-name={{ .Values.licenseManager.clusterName }}
+          env:
+          - name: LICENSE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.licenseManager.apiAndLicenseSecret }}
+                key: license
+          - name: API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.licenseManager.apiAndLicenseSecret }}
+                key: api
           {{- with .Values.licenseManager.resources }}
           resources:
             {{- tpl (toYaml .) $ | nindent 12 }}
