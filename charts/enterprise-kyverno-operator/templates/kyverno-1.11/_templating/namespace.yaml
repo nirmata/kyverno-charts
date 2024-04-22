@@ -1,4 +1,4 @@
-{{- if .Values.kyverno.templating.enabled -}}
+{{- if not .Values.kyverno.customNamespaces -}}
 apiVersion: v1
 kind: Namespace
 metadata:
