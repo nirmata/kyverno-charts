@@ -1,8 +1,10 @@
 ---
+{{- if .Values.createNs }}
 apiVersion: v1
 kind: Namespace
 metadata:
   name: nirmata
+{{- end }}
 ---
 apiVersion: v1
 kind: ServiceAccount
