@@ -3,6 +3,8 @@
 # Declare variables to be passed into your templates.
 nirmataURL: "https://nirmata.io"
 
+createNs: true
+
 cluster:
   name:
   type: "default-policy-manager-type"
