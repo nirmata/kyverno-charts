@@ -82,6 +82,8 @@ kyverno:
   templating:
     enabled: false
     image: ghcr.io/nirmata/kubectl:1.29.1
+    version: ~
+  customNamespaces: false
   webhooksCleanup:
     enable: false
     enabled: false

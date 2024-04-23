@@ -1,4 +1,4 @@
-{{- if .Values.templating.enabled -}}
+{{- if not .Values.customeNamespaces -}}
 apiVersion: v1
 kind: Namespace
 metadata:
