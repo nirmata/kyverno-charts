@@ -45,6 +45,9 @@ enableWebhook: true
 # Whether certificate management is done by "cert-manager", "operator", "other"
 certManager: operator
 
+# set to true if secret is being provided for licenseManager, and set the name under helm.licenseManager
+apiAndLicenseSecretExists: false
+
 # Component configurations
 kyverno:
   createCR: true
