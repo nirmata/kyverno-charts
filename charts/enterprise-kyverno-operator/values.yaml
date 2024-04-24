@@ -45,7 +45,7 @@ enableWebhook: true
 # Whether certificate management is done by "cert-manager", "operator", "other"
 certManager: operator
 
-# set to true if secret is being provided for licenseManager, and set the name under helm.licenseManager
+# set to true if secret is being provided for licenseManager, and set the name under helm.licenseManager.apiSecret/helm.licenseManager.licenseSecret
 apiAndLicenseSecretExists: false
 
 # Component configurations
