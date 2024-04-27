@@ -2,7 +2,7 @@ apiVersion: v2
 type: application
 name: kyverno
 
-version: 3.0.27
+version: 3.0.27-rc1
 appVersion: v1.10.7-n4k.nirmata.6
 
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
