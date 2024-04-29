@@ -1,0 +1,11 @@
+# -- Internal settings used with `helm template` to generate install manifest
+# @ignored
+templating:
+  enabled: false
+  debug: false
+  version: ~
+
+operator:
+  adapter: true
+  policyset: true
+  kyvernoconfig: true

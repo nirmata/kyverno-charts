@@ -16,6 +16,15 @@ replicaCount: 1
 
 envVars: []
 
+# CRDs configuration
+crds:
+  # -- Whether to have Helm install the Kyverno-Operator CRDs, if the CRDs are not installed by Helm, they must be added before
+  install: true
+  operator:
+    adapter: true
+    policyset: true
+    kyvernoconfig: true
+
 image:
   repository: ghcr.io/nirmata/nirmata-kyverno-operator
   # Defaults to chart appVersion
