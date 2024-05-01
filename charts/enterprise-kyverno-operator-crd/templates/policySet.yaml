@@ -1,0 +1,89 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.10.0
+  labels:
+    app.kubernetes.io/part-of: nirmata-kyverno-operator
+  creationTimestamp: null
+  name: policysets.security.nirmata.io
+spec:
+  group: security.nirmata.io
+  names:
+    kind: PolicySet
+    listKind: PolicySetList
+    plural: policysets
+    singular: policyset
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.allPoliciesReady
+      name: All Policies Ready
+      type: boolean
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: PolicySet is the Schema for the PolicySets API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: PolicySetSpec defines the desired state of PolicySet
+            properties:
+              helm:
+                additionalProperties:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                description: Finer customizations for each component are provided
+                  in a generic object structure, typically matching the value.yaml
+                  of individual components
+                type: object
+              source:
+                properties:
+                  description:
+                    type: string
+                  helm:
+                    properties:
+                      chartName:
+                        type: string
+                      chartRepo:
+                        type: string
+                      version:
+                        type: string
+                      username:
+                        type: string
+                      passwordSecret:
+                        type: string
+                    type: object
+                type: object
+            type: object
+          status:
+            description: PolicySetStatus defines the observed state of PolicySet
+            properties:
+              allPoliciesReady:
+                type: boolean
+              lastUpdated:
+                format: date-time
+                type: string
+              policiesNotReady:
+                items:
+                  type: string
+                type: array
+            required:
+            - allPoliciesReady
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
