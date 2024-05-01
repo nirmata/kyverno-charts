@@ -1,0 +1,328 @@
+# Default values for nirmata-kyverno.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+profile: "prod"
+
+cloudPlatform: ""
+
+namespace:
+
+globalLabels: {}
+globalAnnotations: {}
+enablePreDeleteHook: true
+
+replicaCount: 1
+
+envVars: []
+
+image:
+  repository: ghcr.io/nirmata/nirmata-kyverno-operator
+  # Defaults to chart appVersion
+  tag:
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    registry: ghcr.io
+    name: image-pull-secret
+    create: false
+    username:
+    password:
+
+rbac:
+  create: true
+  operatorHasAdminPerms: false
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+enableWebhook: true
+# Whether certificate management is done by "cert-manager", "operator", "other"
+certManager: operator
+
+# set to true if secret is being provided for licenseManager, and set the name under helm.licenseManager.apiSecret/helm.licenseManager.licenseSecret
+apiAndLicenseSecretExists: false
+
+# Component configurations
+kyverno:
+  createCR: true
+  enablePolicyExceptions: true
+  replicaCount:
+  cleanupJobsRegistry: ~
+  config:
+    create: true
+    name: ~
+  metricsConfig:
+    create: true
+    name: ""
+  upgrade:
+    fromV2: false
+  rbac:
+    create: true
+    serviceAccount:
+      create: true
+    clusterRole:
+      # -- Extra resource permissions to add in the cluster role
+      extraResources: []
+  admissionController:
+    replicas: ~
+    rbac:
+      create: true
+      serviceAccount:
+        create: true
+      clusterRole:
+        # -- Extra resource permissions to add in the cluster role
+        extraResources: []
+      coreClusterRole:
+        # -- Extra resource permissions to add in the core cluster role.
+        # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+        # @default -- See [values.yaml](values.yaml)
+        extraResources:
+  templating:
+    enabled: false
+    image: ghcr.io/nirmata/kubectl:1.29.1
+    version: ~
+  customNamespaces: false
+  webhooksCleanup:
+    enable: false
+    enabled: false
+  crds:
+    install: true
+    annotations: {}
+  cleanupController:
+    # -- Enable cleanup controller.
+    enabled: true
+    rbac:
+      # -- Create RBAC resources
+      create: true
+      serviceAccount:
+        create: true
+      clusterRole:
+        # -- Extra resource permissions to add in the cluster role
+        extraResources: []
+      coreClusterRole:
+        # -- Extra resource permissions to add in the core cluster role.
+        # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+        # @default -- See [values.yaml](values.yaml)
+        extraResources:
+  reportsController:
+    # -- Enable reports controller.
+    enabled: true
+    rbac:
+      # -- Create RBAC resources
+      create: true
+      serviceAccount:
+        name:
+      clusterRole:
+        # -- Extra resource permissions to add in the cluster role
+        extraResources: []
+      coreClusterRole:
+        # -- Extra resource permissions to add in the core cluster role.
+        # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+        # @default -- See [values.yaml](values.yaml)
+        extraResources:
+  backgroundController:
+    # -- Enable background controller.
+    enabled: true
+    rbac:
+      # -- Create RBAC resources
+      create: true
+      serviceAccount:
+        name:
+      clusterRole:
+        # -- Extra resource permissions to add in the cluster role
+        extraResources: []
+      coreClusterRole:
+        # -- Extra resource permissions to add in the core cluster role.
+        # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+        # @default -- See [values.yaml](values.yaml)
+        extraResources:
+  kyverno:
+    customLabels: {}
+  nameOverride: "kyverno"
+  fullnameOverride: "kyverno"
+  namespace: kyverno
+
+  # -- Additional resources to be added to kyverno controller RBAC permissions.
+  generatecontrollerExtraResources: []
+  image:
+    # -- Image repository
+    repository: ghcr.io
+    # -- Image tag
+    tag: v1.11.4-n4k.nirmata.3
+
+  # -- Override default exclude namespaces (default kyverno, kube-system, nirmata, nirmata-system )
+  excludedNamespacesForWebhook: []
+
+  # Kyverno Helm Chart customizations other than those already in kyverno CR
+  helm:
+    features:
+      generateValidatingAdmissionPolicy:
+        # -- Enables the feature
+        enabled: false
+    policyReportsCleanup:
+      enabled: false
+      image:
+        registry: ~
+        repository: ghcr.io/nirmata/kubectl
+        tag: '1.29.1'
+        pullPolicy: ~
+      podSecurityContext: {}
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+        privileged: false
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+        seccompProfile:
+          type: RuntimeDefault
+    apiVersionOverride:
+      podDisruptionBudget: "policy/v1"
+    licenseManager:
+      imageTag: v0.1.8
+    webhooksCleanup:
+      enabled: false
+      image: ghcr.io/nirmata/kubectl:1.29.1
+    cleanupJobs:
+      admissionReports:
+        image:
+          tag: '1.29.0'
+      clusterAdmissionReports:
+        image:
+          tag: '1.29.0'
+
+policies:
+  chartRepoUsername:
+  policySets:
+
+awsAdapter:
+  createCR: false
+  namespace: kyverno-aws-adapter
+  replicas: 1
+  image:
+    repository: ghcr.io/nirmata/kyverno-aws-adapter
+    tag: v0.3.0
+  rbac:
+    create: false
+    serviceAccount:
+      name:
+  roleArn:
+  nameOverride: "kyverno-aws-adapter"
+  fullnameOverride: "kyverno-aws-adapter"
+  eksCluster:
+    name:
+    region:
+
+imageScanAdapter:
+  createCR: false
+  namespace: image-scan-adapter
+  replicas: 1
+  image:
+    repository: ghcr.io/nirmata/image-scan-adapter
+    tag: v0.1.0
+  rbac:
+    create: false
+    serviceAccount:
+      name:
+  roleArn:
+  nameOverride: "image-scan-adapter"
+  fullnameOverride: "image-scan-adapter"
+
+cisAdapter:
+  createCR: false
+  namespace: cis-adapter
+  replicas: 1
+  image:
+    repository: ghcr.io/nirmata/kube-bench-adapter
+    tag: v0.2.1
+  rbac:
+    create: false
+  serviceAccount:
+    create: false
+    name:
+  nameOverride: "cis-adapter"
+  fullnameOverride: "cis-adapter"
+  helm:
+    cronjob:
+      schedule: '"@weekly"'
+
+# Items after this are general chart parameters. Set/Modify as per need.
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+  # fsGroup: 2000
+
+securityContext:
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+    - CAP_NET_RAW
+
+# -- Configmap storing custom CA certificate if any
+customCAConfigMap:
+# -- Path containing ssl certs within the container. Used only if customCAConfigMap is used
+systemCertPath: /etc/ssl/certs
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  limits:
+    memory: 256Mi
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
