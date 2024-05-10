@@ -42,7 +42,7 @@
   {{- $psetType = "helm" -}}
   {{- $chartRepo = "https://nirmata.github.io/kyverno-policies" -}}
   {{- $chartName = "multitenancy-best-practice-policies" -}}
-  {{- $version = "0.1.2" -}}
+  {{- $version = "0.2.1" -}}
 {{- end -}}
 
 {{- if ne $psetName "invalid" -}}
