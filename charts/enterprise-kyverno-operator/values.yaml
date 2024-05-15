@@ -78,7 +78,7 @@ kyverno:
         extraResources: []
   templating:
     enabled: false
-    image: ghcr.io/nirmata/kubectl:1.29.0
+    image: ghcr.io/nirmata/kubectl:1.30.1
   webhooksCleanup:
     enabled: false
     enable: false
@@ -130,7 +130,7 @@ kyverno:
     # -- Image repository
     repository: ghcr.io
     # -- Image tag
-    tag: v1.10.7-n4k.nirmata.7
+    tag: v1.10.7-n4k.nirmata.10
 
   # -- Override default exclude namespaces (default kyverno, kube-system, nirmata, nirmata-system )
   excludedNamespacesForWebhook: []
@@ -146,17 +146,17 @@ kyverno:
     apiVersionOverride:
       podDisruptionBudget: "policy/v1"
     licenseManager:
-      imageTag: v0.1.8
+      imageTag: v0.1.12
     webhooksCleanup:
       enabled: false
-      image: ghcr.io/nirmata/kubectl:1.29.0
+      image: ghcr.io/nirmata/kubectl:1.30.1
     cleanupJobs:
       admissionReports:
         image:
-          tag: '1.29.0'
+          tag: '1.30.1'
       clusterAdmissionReports:
         image:
-          tag: '1.29.0'
+          tag: '1.30.1'
 
 policies:
   chartRepoUsername:
