@@ -14,6 +14,7 @@ metadata:
 {{- end }}
 spec:
   replicas: {{ template "kyverno.deployment.replicas" .Values.cleanupController.replicas }}
+  revisionHistoryLimit: {{ .Values.cleanupController.revisionHistoryLimit }}
   {{- with .Values.cleanupController.updateStrategy }}
   strategy:
     {{- toYaml . | nindent 4 }}
@@ -33,14 +34,14 @@ spec:
       {{- end }}
     spec:
       {{- with .Values.cleanupController.imagePullSecrets }}
-      imagePullSecrets: 
+      imagePullSecrets:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       {{- with .Values.cleanupController.podSecurityContext }}
       securityContext:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-      {{- with .Values.cleanupController.nodeSelector }}
+      {{- with .Values.cleanupController.nodeSelector | default .Values.global.nodeSelector }}
       nodeSelector:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
@@ -81,7 +82,7 @@ spec:
       serviceAccountName: {{ template "kyverno.cleanup-controller.serviceAccountName" . }}
       containers:
         - name: controller
-          image: {{ include "kyverno.cleanup-controller.image" (dict "globalRegistry" ((.Values.global).image).registry "image" .Values.cleanupController.image "defaultTag" .Chart.AppVersion) | quote }}
+          image: {{ include "kyverno.cleanup-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.cleanupController.image "defaultTag" .Chart.AppVersion) | quote }}
           imagePullPolicy: {{ .Values.cleanupController.image.pullPolicy }}
           ports:
           - containerPort: 9443
@@ -90,6 +91,11 @@ spec:
           - containerPort: 8000
             name: metrics
             protocol: TCP
+          {{ if .Values.cleanupController.profiling.enabled }}
+          - containerPort: {{ .Values.cleanupController.profiling.port }}
+            name: profiling-port
+            protocol: TCP
+          {{- end }}
           args:
             - --caSecretName={{ template "kyverno.cleanup-controller.name" . }}.{{ template "kyverno.namespace" . }}.svc.kyverno-tls-ca
             - --tlsSecretName={{ template "kyverno.cleanup-controller.name" . }}.{{ template "kyverno.namespace" . }}.svc.kyverno-tls-pair
@@ -119,6 +125,10 @@ spec:
             - --{{ $key }}={{ $value }}
             {{- end }}
             {{- end }}
+            {{ if .Values.cleanupController.profiling.enabled }}
+            - --profile=true
+            - --profilePort={{ .Values.cleanupController.profiling.port }}
+            {{- end }}
           env:
           - name: KYVERNO_DEPLOYMENT
             value: {{ template "kyverno.cleanup-controller.name" . }}
@@ -138,7 +148,7 @@ spec:
                 fieldPath: metadata.namespace
           - name: KYVERNO_SVC
             value: {{ template "kyverno.cleanup-controller.name" . }}
-          {{- with .Values.cleanupController.extraEnvVars }}
+          {{- with (concat .Values.global.extraEnvVars .Values.cleanupController.extraEnvVars) }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
           {{- with .Values.cleanupController.resources }}
