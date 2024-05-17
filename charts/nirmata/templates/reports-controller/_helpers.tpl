@@ -52,3 +52,7 @@
     (toYaml  .Values.reportsController.rbac.serviceAccount.annotations)
   ) -}}
 {{- end -}}
+
+{{- define "kyverno.reports-controller.caCertificatesConfigMapName" -}}
+{{ printf "%s-ca-certificates" (include "kyverno.reports-controller.name" .) }}
+{{- end -}}
