@@ -6,11 +6,10 @@ metadata:
   namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.config.labels" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.config.configMapAnnotations" . | nindent 4 }}
-{{- if $commonAnnotations }}
+  {{- with .Values.metricsConfig.annotations }}
   annotations:
-{{ $commonAnnotations }}
-{{- end }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 data:
   {{- with .Values.metricsConfig.namespaces }}
   namespaces: {{ toJson . | quote }}
