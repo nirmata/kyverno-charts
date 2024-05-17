@@ -13,6 +13,7 @@ metadata:
 {{- end }}
 spec:
   replicas: {{ template "kyverno.deployment.replicas" .Values.admissionController.replicas }}
+  revisionHistoryLimit: {{ .Values.admissionController.revisionHistoryLimit }}
   {{- with .Values.admissionController.updateStrategy }}
   strategy:
     {{- toYaml . | nindent 4 }}
@@ -39,7 +40,7 @@ spec:
       securityContext:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-      {{- with .Values.admissionController.nodeSelector }}
+      {{- with .Values.admissionController.nodeSelector | default .Values.global.nodeSelector }}
       nodeSelector:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
@@ -83,7 +84,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         - name: kyverno-pre
-          image: {{ include "kyverno.image" (dict "globalRegistry" ((.Values.global).image).registry "image" .Values.admissionController.initContainer.image "defaultTag" (default .Chart.AppVersion .Values.admissionController.container.image.tag)) | quote }}
+          image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.admissionController.initContainer.image "defaultTag" (default .Chart.AppVersion .Values.admissionController.container.image.tag)) | quote }}
           imagePullPolicy: {{ default .Values.admissionController.container.image.pullPolicy .Values.admissionController.initContainer.image.pullPolicy }}
           args:
             - --loggingFormat={{ .Values.admissionController.logging.format }}
@@ -184,7 +185,7 @@ spec:
           {{- end }}
         {{- end }}
         - name: kyverno
-          image: {{ include "kyverno.image" (dict "globalRegistry" ((.Values.global).image).registry "image" .Values.admissionController.container.image "defaultTag" .Chart.AppVersion) | quote }}
+          image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.admissionController.container.image "defaultTag" .Chart.AppVersion) | quote }}
           imagePullPolicy: {{ .Values.admissionController.container.image.pullPolicy }}
           args:
             - --backgroundServiceAccountName='system:serviceaccount:{{ include "kyverno.namespace" . }}:{{ include "kyverno.background-controller.serviceAccountName" . }}'
@@ -217,6 +218,10 @@ spec:
             - --{{ $key }}={{ $value }}
             {{- end }}
             {{- end }}
+            {{ if .Values.admissionController.profiling.enabled }}
+            - --profile=true
+            - --profilePort={{ .Values.admissionController.profiling.port }}
+            {{- end }}
           {{- with .Values.admissionController.container.resources }}
           resources: {{ tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
@@ -231,6 +236,11 @@ spec:
           - containerPort: 8000
             name: metrics-port
             protocol: TCP
+          {{ if .Values.admissionController.profiling.enabled }}
+          - containerPort: {{ .Values.admissionController.profiling.port }}
+            name: profiling-port
+            protocol: TCP
+          {{- end }}
           env:
           - name: INIT_CONFIG
             value: {{ template "kyverno.config.configMapName" . }}
@@ -250,7 +260,7 @@ spec:
             value: {{ template "kyverno.admission-controller.serviceName" . }}
           - name: TUF_ROOT
             value: {{ .Values.admissionController.tufRootMountPath }}
-          {{- with .Values.admissionController.container.extraEnvVars }}
+          {{- with (concat .Values.global.extraEnvVars .Values.admissionController.container.extraEnvVars) }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
           - name: KYVERNO_DEPLOYMENT
