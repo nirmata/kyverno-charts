@@ -1,4 +1,5 @@
 {{- if .Values.cleanupController.enabled -}}
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -6,11 +7,10 @@ metadata:
   namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.cleanup-controller.labels" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.background-controller.serviceAnnotations" . | nindent 4 }}
-{{- if $commonAnnotations }}
+  {{- with .Values.cleanupController.service.annotations }}
   annotations:
-{{ $commonAnnotations }}
-{{- end }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
 spec:
   ports:
   - port: {{ .Values.cleanupController.service.port }}
@@ -48,5 +48,27 @@ spec:
   selector:
     {{- include "kyverno.cleanup-controller.matchLabels" . | nindent 4 }}
   type: {{ .Values.cleanupController.metricsService.type }}
+{{- end -}}
+{{- if .Values.cleanupController.profiling.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "kyverno.cleanup-controller.name" . }}-profiling
+  namespace: {{ template "kyverno.namespace" . }}
+  labels:
+    {{- include "kyverno.cleanup-controller.labels" . | nindent 4 }}
+spec:
+  ports:
+  - port: {{ .Values.cleanupController.profiling.port }}
+    targetPort: {{ .Values.cleanupController.profiling.port }}
+    protocol: TCP
+    name: profiling-port
+    {{- if and (eq .Values.cleanupController.profiling.serviceType "NodePort") (not (empty .Values.cleanupController.profiling.nodePort)) }}
+    nodePort: {{ .Values.cleanupController.profiling.nodePort }}
+    {{- end }}
+  selector:
+    {{- include "kyverno.cleanup-controller.matchLabels" . | nindent 4 }}
+  type: {{ .Values.cleanupController.profiling.serviceType }}
 {{- end -}}
 {{- end -}}
