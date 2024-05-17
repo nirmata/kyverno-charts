@@ -46,6 +46,10 @@
   ) -}}
 {{- end -}}
 
+{{- define "kyverno.background-controller.caCertificatesConfigMapName" -}}
+{{ printf "%s-ca-certificates" (include "kyverno.background-controller.name" .) }}
+{{- end -}}
+
 {{- define "kyverno.background-controller.serviceAccountAnnotations" -}}
   {{- template "kyverno.annotations.merge" (list
     (toYaml .Values.customAnnotations)
