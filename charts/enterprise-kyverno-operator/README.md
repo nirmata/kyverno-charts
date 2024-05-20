@@ -179,40 +179,40 @@ syncPolicy:
 
 ## Helm Chart Values
 
-| Key | Type | Default | Description                                 |
-|-----|------|---------|---------------------------------------------|
-| nameOverride | string | `nil` | Override the name of the chart              |
-| fullnameOverride | string | `nil` | Override the expanded name of the chart     |
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| nameOverride | string | `nil` | Override the name of the chart |
+| fullnameOverride | string | `nil` | Override the expanded name of the chart |
 | enableWebhook | bool | `true` | Enable operator webhooks for enhanced error checks and user info in audit log |
 | certManager | string | `operator` | Webhook cert management mechanism. Valid values are "operator", "cert-manager", "other". |
-| licenseKey | string | `nil`| License key (required)                      |
-| apiKey | string | `nil` | License server API key                      |
-| profile | string | `prod` | Operator profile, one of `dev`, `prod`, `nil`. See description of profiles above. |
-| customCAConfigMap | string | | Configmap storing custom CA certificate     |
+| licenseKey | string | `nil`| License key (required) |
+| apiKey | string | `nil` | License server API key |
+| profile | string | `prod` | Operator profile, one of `dev`, `prod`, `nil`. See description of profiles above.  |
+| customCAConfigMap | string | | Configmap storing custom CA certificate |
 | systemCertPath | string | `/etc/ssl/certs` | Path containing ssl certs within the container. Used only if customCAConfigMap is used |
-| rbac.create | bool | `true` | Enable RBAC resources creation              |
+| rbac.create | bool | `true` | Enable RBAC resources creation |
 | rbac.operatorHasAdminPerms | bool | `false` | Whether operator has admin permissions to install CRD and RBAC |
 | rbac.serviceAccount.name | string | `nil` | Service account name when `rbac.create` is set to `false` |
-| image.repository | string | `"ghcr.io/nirmata/enterprise-kyverno-operator"` | Image repository                            |
-| image.pullPolicy | string | `"IfNotPresent"` | Image pull policy                           |
-| image.tag | string | `nil` | Image tag (defaults to chart app version)   |
-| image.imagePullSecrets.registry | string | `ghcr.io` | Image pull secret registry                  |
-| image.imagePullSecrets.name | string | `image-pull-secret` | Image pull secret name                      |
-| image.imagePullSecrets.create | bool | `false` | Whether to create image pull secret         |
-| image.imagePullSecrets.username | string | `nil` | Username for image pull secret registry     |
-| image.imagePullSecrets.password | string | `nil` | Password for image pull secret registry     |
+| image.repository | string | `"ghcr.io/nirmata/enterprise-kyverno-operator"` | Image repository |
+| image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| image.tag | string | `nil` | Image tag (defaults to chart app version) |
+| image.imagePullSecrets.registry | string | `ghcr.io` | Image pull secret registry |
+| image.imagePullSecrets.name | string | `image-pull-secret` | Image pull secret name |
+| image.imagePullSecrets.create | bool | `false` | Whether to create image pull secret |
+| image.imagePullSecrets.username | string | `nil` | Username for image pull secret registry |
+| image.imagePullSecrets.password | string | `nil` | Password for image pull secret registry |
 | kyverno.createCR | bool | `true` | Create a CR that describes Kyverno to be managed by operator |
-| kyverno.replicaCount | int | `1` | Kyverno replicas                            |
-| kyverno.rbac.create | bool | `true` | Enable Kyverno RBAC resources creation      |
-| kyverno.rbac.serviceAccount.create | string | `nil` | Whether to create Kyverno service account   |
+| kyverno.replicaCount | int | `1` | Kyverno replicas |
+| kyverno.rbac.create | bool | `true` | Enable Kyverno RBAC resources creation |
+| kyverno.rbac.serviceAccount.create | string | `nil` | Whether to create Kyverno service account |
 | kyverno.rbac.serviceAccount.clusterRole.extraResources | list | `[]` | Extra resource permissions to add to the Kyverno cluster role |
 | kyverno.generatecontrollerExtraResources | list | `[]` | Additional resources to be added to kyverno controller RBAC permissions |
-| kyverno.image.repository | string | `"ghcr.io/nirmata/kyverno"` | Kyverno Image repository                    |
-| kyverno.image.pullPolicy | string | `"IfNotPresent"` | Kyverno Image pull policy                   |
-| kyverno.image.tag | string | `v1.10.4-n4k.nirmata.1` | Image tag (defaults to chart app version)   |
+| kyverno.image.repository | string | `"ghcr.io/nirmata/kyverno"` | Kyverno Image repository |
+| kyverno.image.pullPolicy | string | `"IfNotPresent"` | Kyverno Image pull policy |
+| kyverno.image.tag | string | `v1.10.4-n4k.nirmata.1` | Image tag (defaults to chart app version) |
 | kyverno.enablePolicyExceptions| bool | `true` | Enable policyexceptions feature in Kyverno 1.9+ |
 | kyverno.excludedNamespacesForWebhook | list | `[]` | Namespaces to exclude from Kyverno webhook, in addition to defaults kyverno, kube-system, nirmata, nirmata-system |
-| kyverno.excludedNamespacesOverride | bool | `false` | Override exclusion of default namespaces in excludedNamespacesForWebhook parameter above |
+| kyverno.excludedNamespacesOverride | bool | `false` | Override exclusion of default namespaces in excludedNamespacesForWebhook parameter above|
 | kyverno.helm | object | `nil` | Free form yaml section with helm parameters in Kyverno chart. Note that null values for any object in a yaml node must be specified using a special string "NULLOBJ" for that node. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/nirmata#values). |
 | policies.policySets | list | `{pod-security-restricted, rbac-best-practices}` | Default policy sets to be installed along with operator. Others are, `pod-security-baseline`, `k8s-best-practices`, and `multitenancy-best-practices` |
 | awsAdapter.rbac.create | bool | false | Create RBAC resources for Kyverno AWS Adapter, if AWS Adapter is going to be enabled now (through the awsAdapter.createCR helm param below) or later |
