@@ -17,5 +17,5 @@ spec:
       chartName: {{ .chartName }}
       version: {{ .version }}
       username: {{ .username }}
-      passwordSecret: {{ .passwordSecret }}
+      passwordSecret: "{{ include "enterprise-kyverno.namespace" $ }}/{{ .passwordSecret }}"
   {{- end }}
