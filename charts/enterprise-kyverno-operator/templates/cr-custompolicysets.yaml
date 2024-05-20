@@ -1,0 +1,21 @@
+{{- range .Values.policies.customPolicySetCharts }}
+---
+apiVersion: security.nirmata.io/v1alpha1
+kind: PolicySet
+metadata:
+  annotations:
+  labels:
+    app.kubernetes.io/name: policyset
+    app.kubernetes.io/instance: {{ .name }}
+    app.kubernetes.io/part-of: nirmata-kyverno-operator
+  name: {{ .name }}
+  namespace: {{ template "enterprise-kyverno.namespace" $ }}
+spec:
+  source:
+    helm:
+      chartRepo: {{ .chartRepo }}
+      chartName: {{ .chartName }}
+      version: {{ .version }}
+      username: {{ .username }}
+      passwordSecret: "{{ include "enterprise-kyverno.namespace" $ }}/{{ .passwordSecret }}"
+  {{- end }}

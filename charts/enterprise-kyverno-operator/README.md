@@ -115,7 +115,7 @@ Apply them to the cluster. E.g.
 ```bash
 kubectl apply -f mypolBkpUpgraded.yaml
 ```
-Verify that those policies/policysets show up as ready and are working as expected. The 1.10 compatible versions of Nirmata supplied policysets are already as per those guidelines, so there is no need to change them. 
+Verify that those policies/policysets show up as ready and are working as expected. The 1.10 compatible versions of Nirmata supplied policysets are already as per those guidelines, so there is no need to change them.
 
 ## Configure Adapters
 Adapters such as AWS, CIS, Image Scan and others can be configured by setting appropriate flags corresponding to that adapter. In general, we need to provide 2 flags
@@ -228,6 +228,12 @@ syncPolicy:
 | imageScanAdapter.rbac.create | bool | false | Create RBAC resources for Image Scan Adapter, if it is going to be enabled now (through the imageScanAdapter.createCR helm param below) or later |
 | imageScanAdapter.createCR | bool | false | Enable Image Scan Adapter by creating its Adapter Config CR |
 | imageScanAdapter.helm | object | `scanAll: true` | Free form yaml section with helm parameters in Image Scan Adapter Helm chart. Needed only if imageScanAdapter.createCR is true. See all parameters [here](https://github.com/nirmata/kyverno-charts/tree/main/charts/image-scan-adapter#values) |
+| policies.customPolicySetCharts.chartRepo | string | `nil` | Deploy custom policy sets and set repository |
+| policies.customPolicySetCharts.chartName | string | `nil` | Deploy custom policy sets and set chart name |
+| policies.customPolicySetCharts.version   | string | `nil` | Deploy custom policy sets and set version   |
+| policies.customPolicySetCharts.username  | string | `nil` | Deploy custom policy sets and set username |
+| policies.customPolicySetCharts.passwordSecret | string | `nil` | Deploy custom policy sets and set key/password |
+| policies.customPolicySetCharts.name      | string | `nil` | Deploy custom policy sets and set policy set name |
 
 ## (Optional) External certificate management for webhooks
 Kyverno Operator uses webhooks to provide enhanced functionality such as logging user information in resource change events logged into the Kubernetes event stream, and some enhanced semantic checks for custom resources.

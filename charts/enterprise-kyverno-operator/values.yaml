@@ -202,6 +202,15 @@ kyverno:
 policies:
   chartRepoUsername:
   policySets:
+#  Custom Policy sets can be deployed now by specifying a list of extra custom policyset parameters (chartRepo, chartName, version etc.)
+#  so that policysets need not be created manually. Below is an example addition -
+#  customPolicySetCharts:
+#    - chartRepo: https://nirmata.github.io/kyverno-policies
+#      chartName: kubernetes-best-practice-policies
+#      version: 0.2.1
+#      username: user
+#      passwordSecret: nirmata-system/api/Key
+#      name: k8s-best-practices
 
 awsAdapter:
   createCR: false
