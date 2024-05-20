@@ -234,6 +234,7 @@ syncPolicy:
 | policies.customPolicySetCharts.username  | string | `nil` | Deploy custom policy sets and set username |
 | policies.customPolicySetCharts.passwordSecret | string | `nil` | Deploy custom policy sets and set key/password |
 | policies.customPolicySetCharts.name      | string | `nil` | Deploy custom policy sets and set policy set name |
+
 ## (Optional) External certificate management for webhooks
 Kyverno Operator uses webhooks to provide enhanced functionality such as logging user information in resource change events logged into the Kubernetes event stream, and some enhanced semantic checks for custom resources.
 
