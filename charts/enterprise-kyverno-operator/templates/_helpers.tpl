@@ -161,7 +161,14 @@ Create secret to access container registry
 {{- end -}}
 
 {{- define "enterprise-kyverno.policysetsStr" -}}
-{{- range (include "enterprise-kyverno.enabledPolicysets" . | split ",") }}{{(print . " ") }} {{- end }}
+{{- $enabledPolicysets := include "enterprise-kyverno.enabledPolicysets" . -}}
+{{- $customPolicySetNames := "" -}}
+{{- range .Values.policies.customPolicySetCharts -}}
+  {{- $customPolicySetNames = (printf "%s,%s" $customPolicySetNames .name) -}}
+{{- end -}}
+{{- range (split "," (printf "%s,%s" $enabledPolicysets $customPolicySetNames | trimPrefix ",")) -}}
+  {{- print . " " -}}
+{{- end -}}
 {{- end -}}
 
 {{- define "kyverno.excludedNamespaces" -}}
