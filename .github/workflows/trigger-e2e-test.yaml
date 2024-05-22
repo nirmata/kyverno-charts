@@ -1,0 +1,46 @@
+name: Trigger N4K-Automation Tests
+
+on:
+  release:
+     types:
+        - created
+
+jobs:
+  trigger-action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check release name
+        id: check_release
+        run: |
+          if [[ "${{ github.event.release.name }}" == kyverno-* ]]; then
+            echo "is_kyverno=true" >> $GITHUB_ENV
+          elif [[ "${{ github.event.release.name }}" == nirmata-kyverno-operator-* ]]; then
+            echo "is_nirmata_kyverno_operator=true" >> $GITHUB_ENV
+          else
+            echo "is_kyverno=false" >> $GITHUB_ENV
+            echo "is_nirmata_kyverno_operator=false" >> $GITHUB_ENV
+          fi
+
+      - uses: actions/github-script@v6
+        if: env.is_kyverno == 'true'
+        with:
+          github-token: ${{ secrets.CI_ACTION_PAT_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'nirmata',
+              repo: 'n4k-automation',
+              workflow_id: 'n4k-conformance-e2e.yaml',
+              ref: 'main'
+            })
+
+      - uses: actions/github-script@v6
+        if: env.is_nirmata_kyverno_operator == 'true'
+        with:
+          github-token: ${{ secrets.CI_ACTION_PAT_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'nirmata',
+              repo: 'n4k-automation',
+              workflow_id: 'operator-conformance-e2e.yaml',
+              ref: 'main'
+            })
