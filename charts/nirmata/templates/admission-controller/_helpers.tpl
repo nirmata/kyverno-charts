@@ -34,6 +34,10 @@
 {{- printf "%s-svc" (include "kyverno.fullname" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{- define "kyverno.admission-controller.caCertificatesConfigMapName" -}}
+{{ printf "%s-ca-certificates" (include "kyverno.admission-controller.name" .) }}
+{{- end -}}
+
 {{- define "kyverno.admission-controller.serviceAnnotations" -}}
   {{- template "kyverno.annotations.merge" (list
     (toYaml .Values.customAnnotations)
@@ -41,9 +45,9 @@
   ) -}}
 {{- end -}}
 
-{{- define "kyverno.admission-controller.serviceAccountAnnotations" -}}
+{{- define "kyverno.background-controller.serviceAccountAnnotations" -}}
   {{- template "kyverno.annotations.merge" (list
     (toYaml .Values.customAnnotations)
-    (toYaml .Values.admissionController.rbac.serviceAccount.annotations)
+    (toYaml .Values.backgroundController.rbac.serviceAccount.annotations)
   ) -}}
 {{- end -}}
