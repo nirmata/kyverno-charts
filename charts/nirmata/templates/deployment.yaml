@@ -119,6 +119,7 @@ spec:
           - -api-key={{ .Values.licenseManager.apiKey }}
           - -cluster-id={{ .Values.licenseManager.clusterId }}
           - -cluster-name={{ .Values.licenseManager.clusterName }}
+          - -secret-namespace={{ .Values.licenseManager.secretNamespace }}
           {{- if .Values.securityContext }}
           securityContext: {{ include "kyverno.securityContext" . | nindent 12 }}
           {{- end }}
