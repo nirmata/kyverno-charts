@@ -34,7 +34,7 @@ spec:
             image: {{ (include "kyverno.image" .Values.cleanupJobs.clusterAdmissionReports) | quote }}
             imagePullPolicy: {{ .Values.cleanupJobs.clusterAdmissionReports.image.pullPolicy }}
             command:
-            - /bin/sh
+            - sh
             - -c
             - |
               COUNT=$(kubectl get clusteradmissionreports.kyverno.io -A | wc -l)
