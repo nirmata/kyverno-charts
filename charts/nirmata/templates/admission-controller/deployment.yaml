@@ -137,6 +137,11 @@ spec:
           {{- else }}
           - -license-key={{ required "licenseManager.licenseKey is required" .Values.licenseManager.licenseKey }}
           {{- end }}
+
+          {{- if .Values.licenseManager.secretNs }}
+          - -secret-namespace={{ .Values.licenseManager.secretNs }}
+          {{- end }}
+
           {{- if .Values.licenseManager.apiSecret }}
           - -api-secret={{ .Values.licenseManager.apiSecret }}
           {{- else }}
