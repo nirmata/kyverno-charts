@@ -115,7 +115,7 @@ crds:
       # -- (string) Image registry
       registry: ghcr.io
       # -- (string) Image repository
-      repository: kyverno/kyverno-cli
+      repository: nirmata/kyverno-cli
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
