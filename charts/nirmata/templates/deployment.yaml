@@ -115,6 +115,7 @@ spec:
           - -product-name={{ .Values.licenseManager.productName }}
           - -license-key={{ required "licenseManager.licenseKey  is required" .Values.licenseManager.licenseKey }}
           - -run-type=init-container
+          - -secret-namespace={{ .Values.licenseManager.secretNs }}
           - -call-home-server={{ .Values.licenseManager.callHomeServer }}
           - -api-key={{ .Values.licenseManager.apiKey }}
           - -cluster-id={{ .Values.licenseManager.clusterId }}
