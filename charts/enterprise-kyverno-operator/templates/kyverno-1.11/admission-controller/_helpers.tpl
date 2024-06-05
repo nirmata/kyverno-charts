@@ -23,13 +23,31 @@
 {{- end -}}
 
 {{- define "kyverno.admission-controller.serviceAccountName" -}}
-{{- if .Values.kyverno.admissionController.rbac.create -}}
-    {{ default (include "kyverno.admission-controller.name" .) .Values.kyverno.admissionController.rbac.serviceAccount.name }}
+{{- if .Values.admissionController.rbac.create -}}
+    {{ default (include "kyverno.admission-controller.name" .) .Values.admissionController.rbac.serviceAccount.name }}
 {{- else -}}
-    {{ required "A service account name is required when `rbac.create` is set to `false`" .Values.kyverno.admissionController.rbac.serviceAccount.name }}
+    {{ required "A service account name is required when `rbac.create` is set to `false`" .Values.admissionController.rbac.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
 
 {{- define "kyverno.admission-controller.serviceName" -}}
 {{- printf "%s-svc" (include "kyverno.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "kyverno.admission-controller.caCertificatesConfigMapName" -}}
+{{ printf "%s-ca-certificates" (include "kyverno.admission-controller.name" .) }}
+{{- end -}}
+
+{{- define "kyverno.admission-controller.serviceAnnotations" -}}
+  {{- template "kyverno.annotations.merge" (list
+    (toYaml .Values.customAnnotations)
+    (toYaml .Values.admissionController.service.annotations)
+  ) -}}
+{{- end -}}
+
+{{- define "kyverno.background-controller.serviceAccountAnnotations" -}}
+  {{- template "kyverno.annotations.merge" (list
+    (toYaml .Values.customAnnotations)
+    (toYaml .Values.backgroundController.rbac.serviceAccount.annotations)
+  ) -}}
 {{- end -}}

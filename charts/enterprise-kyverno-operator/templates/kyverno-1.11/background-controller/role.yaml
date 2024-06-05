@@ -6,6 +6,11 @@ metadata:
   name: {{ template "kyverno.background-controller.roleName" . }}
   labels:
     {{- include "kyverno.background-controller.labels" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
   namespace: {{ template "kyverno.namespace" . }}
 rules:
   - apiGroups:

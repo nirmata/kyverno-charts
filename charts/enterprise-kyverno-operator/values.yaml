@@ -92,6 +92,28 @@ kyverno:
     enable: false
     enabled: false
   crds:
+    groups:
+      kyverno:
+        admissionreports: true
+        backgroundscanreports: true
+        cleanuppolicies: true
+        clusteradmissionreports: true
+        clusterbackgroundscanreports: true
+        clustercleanuppolicies: true
+        clusterpolicies: true
+        globalcontextentries: true
+        policies: true
+        policyexceptions: true
+        updaterequests: true
+    # -- Install CRDs in group `reports.kyverno.io`
+      reports:
+        clusterephemeralreports: true
+        ephemeralreports: true
+
+      # -- Install CRDs in group `wgpolicyk8s.io`
+      wgpolicyk8s:
+        clusterpolicyreports: true
+        policyreports: true
     install: true
     annotations: {}
   cleanupController:
