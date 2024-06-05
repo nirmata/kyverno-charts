@@ -92,6 +92,14 @@ kyverno:
     enable: false
     enabled: false
   crds:
+    migration:
+      # -- Enable CRDs migration using helm post upgrade hook
+      enabled: true
+      image:
+        # -- (string) Image registry
+        registry: ghcr.io
+        # -- (string) Image repository
+        repository: nirmata/kyverno-cli
     groups:
       kyverno:
         admissionreports: true
