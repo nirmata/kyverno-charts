@@ -91,6 +91,14 @@ kyverno:
     enable: false
     enabled: false
   crds:
+    migration:
+      # -- Enable CRDs migration using helm post upgrade hook
+      enabled: true
+      image:
+        # -- (string) Image registry
+        registry: ghcr.io
+        # -- (string) Image repository
+        repository: nirmata/kyverno-cli
     groups:
       kyverno:
         admissionreports: true
@@ -175,7 +183,7 @@ kyverno:
     # -- Image repository
     repository: ghcr.io
     # -- Image tag
-    tag: v1.11.4-n4k.nirmata.3
+    tag: v1.12.2-n4k.nirmata.1
 
   # -- Override default exclude namespaces (default kyverno, kube-system, nirmata, nirmata-system )
   excludedNamespacesForWebhook: []

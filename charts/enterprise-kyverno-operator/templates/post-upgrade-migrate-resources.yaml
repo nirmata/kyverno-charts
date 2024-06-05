@@ -95,7 +95,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: kubectl
-          image: {{ (include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.kyverno.crds.migration.image "defaultTag" (default .Chart.AppVersion .Values.kyverno.crds.migration.image.tag))) | quote }}
+          image: {{ (include "kyverno.image" (dict "globalRegistry" ((.Values.kyverno.global).image).registry "image" .Values.kyverno.crds.migration.image "defaultTag" (default .Chart.AppVersion .Values.kyverno.crds.migration.image.tag))) | quote }}
           imagePullPolicy: {{ .Values.kyverno.crds.migration.image.pullPolicy }}
           args:
             - migrate
@@ -115,7 +115,7 @@ spec:
       tolerations:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-      {{- with .Values.kyverno.crds.migration.nodeSelector | default .Values.global.nodeSelector }}
+      {{- with .Values.kyverno.crds.migration.nodeSelector | default .Values.kyverno.global.nodeSelector }}
       nodeSelector:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
