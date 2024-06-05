@@ -111,28 +111,5 @@ spec:
       imagePullSecrets:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-      {{- with .Values.kyverno.crds.migration.tolerations }}
-      tolerations:
-        {{- tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-      {{- with .Values.kyverno.crds.migration.nodeSelector | default .Values.kyverno.global.nodeSelector }}
-      nodeSelector:
-        {{- tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-      {{- if or .Values.kyverno.crds.migration.podAntiAffinity .Values.kyverno.crds.migration.podAffinity .Values.kyverno.crds.migration.nodeAffinity }}
-      affinity:
-        {{- with .Values.kyverno.crds.migration.podAntiAffinity }}
-        podAntiAffinity:
-          {{- tpl (toYaml .) $ | nindent 10 }}
-        {{- end }}
-        {{- with .Values.kyverno.crds.migration.podAffinity }}
-        podAffinity:
-          {{- tpl (toYaml .) $ | nindent 10 }}
-        {{- end }}
-        {{- with .Values.kyverno.crds.migration.nodeAffinity }}
-        nodeAffinity:
-          {{- tpl (toYaml .) $ | nindent 10 }}
-        {{- end }}
-      {{- end }}
 {{- end -}}
 {{- end -}}
