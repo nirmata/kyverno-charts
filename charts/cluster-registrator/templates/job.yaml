@@ -224,6 +224,8 @@ rules:
       - clusterpolicies
       - policies
       - policyexceptions
+      - clustercleanuppolicies
+      - cleanuppolicies
     verbs:
       - '*'
   {{- end }}
