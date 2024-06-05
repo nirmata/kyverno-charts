@@ -5,6 +5,11 @@ metadata:
   name: {{ template "kyverno.rbac.roleName" . }}:admin:reports
   labels:
     {{- include "kyverno.rbac.labels.admin" . | nindent 4 }}
+{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
+{{- if $commonAnnotations }}
+  annotations:
+{{ $commonAnnotations }}
+{{- end }}
 rules:
   - apiGroups:
       - kyverno.io
@@ -13,6 +18,19 @@ rules:
       - clusteradmissionreports
       - backgroundscanreports
       - clusterbackgroundscanreports
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - reports.kyverno.io
+    resources:
+      - ephemeralreports
+      - clusterephemeralreports
     verbs:
       - create
       - delete
@@ -36,6 +54,15 @@ rules:
       - clusteradmissionreports
       - backgroundscanreports
       - clusterbackgroundscanreports
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - reports.kyverno.io
+    resources:
+      - ephemeralreports
+      - clusterephemeralreports
     verbs:
       - get
       - list

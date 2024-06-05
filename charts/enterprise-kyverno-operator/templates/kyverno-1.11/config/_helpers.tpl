@@ -42,6 +42,10 @@
     {{- end -}}
   {{- end -}}
 {{- end -}}
+{{- $resourceFilters = concat $resourceFilters .Values.config.resourceFiltersInclude -}}
+{{- range $include := .Values.config.resourceFiltersIncludeNamespaces -}}
+  {{- $resourceFilters = append $resourceFilters (printf "[*/*,%s,*]" $include) -}}
+{{- end -}}
 {{- range $resourceFilter := $resourceFilters }}
 {{ tpl $resourceFilter $ }}
 {{- end -}}
@@ -61,4 +65,18 @@
 
 {{- define "kyverno.config.imagePullSecret" -}}
 {{- printf "{\"auths\":{\"%s\":{\"auth\":\"%s\"}}}" .registry (printf "%s:%s" .username .password | b64enc) | b64enc }}
+{{- end -}}
+
+{{- define "kyverno.config.metricsConfigMapAnnotations" -}}
+  {{- template "kyverno.annotations.merge" (list
+    (toYaml .Values.customAnnotations)
+    (toYaml .Values.metricsConfig.annotations)
+  ) -}}
+{{- end -}}
+
+{{- define "kyverno.config.configMapAnnotations" -}}
+  {{- template "kyverno.annotations.merge" (list
+    (toYaml .Values.customAnnotations)
+    (toYaml .Values.config.annotations)
+  ) -}}
 {{- end -}}
