@@ -173,6 +173,9 @@ spec:
           - -namespace={{ template "kyverno.namespace" . }}
           - -product-name={{ .Values.licenseManager.productName }}
           - -validate-interval={{ .Values.licenseManager.validateIntervalMins }}
+          {{- if .Values.licenseManager.secretNs}}
+          - -secret-namespace={{ .Values.licenseManager.secretNs }}
+          {{- end}}
           {{- if .Values.licenseManager.licenseSecret }}
           - -license-secret={{ .Values.licenseManager.licenseSecret }}
           {{- else }}
