@@ -10,7 +10,9 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: nirmata-cluster-registrator
-  namespace: nirmata
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
   labels: {{ include "nirmata-cluster-registrator-chart.labels" . | nindent 4 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
