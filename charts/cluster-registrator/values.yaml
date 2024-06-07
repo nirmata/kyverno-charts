@@ -28,3 +28,5 @@ imageTag: v0.1.2
 # Currently simple read-only and read-write flag, but we could have more shorthands for
 # variations such as: * on polexes but read-only on policy-reports, etc.
 controllerPerms: 'read-write'
+
+namespace: nirmata

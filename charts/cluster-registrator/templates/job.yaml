@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: nirmata
+  name: {{ .Values.namespace }}
 {{- end }}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: nirmata-cluster-registrator
-  namespace: nirmata
+  namespace: {{ .Values.namespace }}
   labels: {{ include "nirmata-cluster-registrator-chart.labels" . | nindent 4 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -360,7 +360,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: nirmata-cluster-registrator
-  namespace: nirmata
+  namespace: {{ .Values.namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -373,7 +373,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: nirmata-cluster-registrator
-  namespace: nirmata
+  namespace: {{ .Values.namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -386,13 +386,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: nirmata-cluster-registrator
-  namespace: nirmata
+  namespace: {{ .Values.namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: nirmata:cluster-registrator-ns-admin
-  namespace: nirmata
+  namespace: {{ .Values.namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -400,13 +400,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: nirmata-cluster-registrator
-  namespace: nirmata
+  namespace: {{ .Values.namespace }}
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: nirmata-cluster-registrator
-  namespace: nirmata
+  namespace: {{ .Values.namespace }}
   labels: {{ include "nirmata-cluster-registrator-chart.labels" . | nindent 4 }}
 spec:
   template:
