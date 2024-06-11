@@ -6,6 +6,13 @@ metadata:
   name: {{ .Values.namespace }}
 {{- end }}
 ---
+{{- if not (lookup "v1" "Namespace" "" "nirmata") }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nirmata
+{{- end}}
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -392,7 +399,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: nirmata:cluster-registrator-ns-admin
-  namespace: {{ .Values.namespace }}
+  namespace: nirmata
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
