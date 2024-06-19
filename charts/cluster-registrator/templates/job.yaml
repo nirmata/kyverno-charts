@@ -6,13 +6,6 @@ metadata:
   name: {{ .Values.namespace }}
 {{- end }}
 ---
-{{- if not (lookup "v1" "Namespace" "" "nirmata") }}
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: nirmata
-{{- end}}
----
 apiVersion: v1
 kind: ServiceAccount
 metadata:
