@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: pre-delete-job
-  namespace: {{ .Release.Namespace }}
+  namespace: nirmata
   labels:
     helm.sh/hook: pre-delete
     helm.sh/hook-delete-policy: hook-succeeded
@@ -20,7 +20,7 @@ spec:
           set -e
 
           # Fetch the ConfigMap
-          configmap=$(kubectl get configmap items-created-configmap -n {{ .Release.Namespace }} -o json)
+          configmap=$(kubectl get configmap items-created-configmap -n nirmata -o json)
           
           # Extract the items data
           items=$(echo $configmap | jq -r '.data["items.json"]')
@@ -31,7 +31,9 @@ spec:
             name=$(echo $item | jq -r '.name')
 
             # Delete the item
-            kubectl delete $kind $name -n {{ .Release.Namespace }} || true
+            kubectl delete $kind $name -n nirmata || true
+            # Delete the ConfigMap itself
+            kubectl delete configmap custom-items-configmap -n nirmata
           done
         volumeMounts:
         - name: config-volume
