@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pre-delete-job
+  namespace: {{ .Release.Namespace }}
+  labels:
+    helm.sh/hook: pre-delete
+    helm.sh/hook-delete-policy: hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: delete-items
+        image: bitnami/kubectl:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          #!/bin/sh
+          set -e
+
+          # Fetch the ConfigMap
+          configmap=$(kubectl get configmap items-created-configmap -n {{ .Release.Namespace }} -o json)
+          
+          # Extract the items data
+          items=$(echo $configmap | jq -r '.data["items.json"]')
+
+          # Iterate through the items and delete them
+          echo $items | jq -c '.[]' | while read item; do
+            kind=$(echo $item | jq -r '.kind')
+            name=$(echo $item | jq -r '.name')
+
+            # Delete the item
+            kubectl delete $kind $name -n {{ .Release.Namespace }} || true
+          done
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config
+      volumes:
+      - name: config-volume
+        configMap:
+          name: items-created-configmap
