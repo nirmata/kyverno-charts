@@ -10,6 +10,7 @@ spec:
   template:
     spec:
       restartPolicy: Never
+      serviceAccountName: nirmata-cluster-registrator
       containers:
       - name: delete-items
         image: nirmata/kubectl:1.29.4
