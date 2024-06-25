@@ -18,23 +18,17 @@ spec:
         - |
           #!/bin/sh
           set -e
-
-          # Fetch the ConfigMap
           configmap=$(kubectl get configmap items-created-configmap -n nirmata -o json)
           
           # Extract the items data
-          items=$(echo $configmap | jq -r '.data["items.json"]')
-
-          # Iterate through the items and delete them
-          echo $items | jq -c '.[]' | while read item; do
-            kind=$(echo $item | jq -r '.kind')
-            name=$(echo $item | jq -r '.name')
+          items=$(echo $configmap | jq -r '.data | to_entries[] | "\(.key) \(.value)"')
+          echo "$items" | while read -r item; do
 
             # Delete the item
             kubectl delete $kind $name -n nirmata || true
-            # Delete the ConfigMap itself
-            kubectl delete configmap custom-items-configmap -n nirmata
           done
+          kubectl delete configmap items-created-configmap -n nirmata || true
+          
         volumeMounts:
         - name: config-volume
           mountPath: /etc/config
