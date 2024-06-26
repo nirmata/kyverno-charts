@@ -23,8 +23,14 @@ spec:
           items=$(kubectl get configmap items-created -n nirmata -o json | jq -r '.data | to_entries[] | "\(.key) \(.value)"')
           
           # Iterate through the items and delete them
-          echo "$items" | while read -r item; do
-            kubectl delete $kind $name -n nirmata || true
+          echo "$items" | while read -r line; do
+            kind=$(echo $line | awk '{print $1}')
+            names=$(echo $line | awk '{print $2}')
+            
+            IFS=',' read -r -a nameArray <<< "$names"
+            for name in "${nameArray[@]}"; do
+              kubectl delete $kind $name -n nirmata || true
+            done
           done
           
           # Delete the ConfigMap itself
