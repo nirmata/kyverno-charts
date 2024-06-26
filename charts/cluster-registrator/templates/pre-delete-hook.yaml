@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pre-delete-job
+  namespace: {{ .Values.namespace }}
+  annotations:
+    "helm.sh/hook": pre-delete
+  labels:
+    helm.sh/hook: pre-delete
+    helm.sh/hook-delete-policy: hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: nirmata-cluster-registrator
+      containers:
+      - name: delete-items
+        image: ghcr.io/nirmata/kubectl:1.30.2
+        command: ["sh", "-c"]
+        args:
+        - |
+          #!/bin/bash 
+          echo "1"
+          set -e
+          echo "2"
+          # Fetch the ConfigMap and extract items data
+          items=$(kubectl get configmap items-created -n nirmata -o custom-columns=DATA:.data --no-headers | sed 's/map\[//;s/\]//;s/ /\n/g' | sed 's/[:=]/ /')
+          echo "3"
+          # Iterate through the items and delete them
+          echo "$items" | while read -r line; do
+            echo "4"
+            kind=$(echo $line | awk '{print $1}')
+            names=$(echo $line | awk '{print $2}')
+            
+            IFS=',' read -r -a nameArray <<< "$names"
+            for name in "${nameArray[@]}"; do
+              echo "5"
+              kubectl delete $kind $name -n nirmata || true
+            done
+          done
+          
+          # Delete the ConfigMap itself
+          kubectl delete configmap items-created -n nirmata || true
+
