@@ -454,3 +454,28 @@ spec:
       serviceAccountName: nirmata-cluster-registrator
       restartPolicy: Never
   backoffLimit: 0
+---
+{{- if not .Values.createNs }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: delete-resources
+rules:
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["clusterrolebindings", "clusterroles"]
+  verbs: ["delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: delete-resources-binding
+subjects:
+- kind: ServiceAccount
+  name: nirmata-cluster-registrator
+  namespace: {{ .Values.namespace }}
+roleRef:
+  kind: ClusterRole
+  name: delete-resources
+  apiGroup: rbac.authorization.k8s.io
+---
+{{- end }}

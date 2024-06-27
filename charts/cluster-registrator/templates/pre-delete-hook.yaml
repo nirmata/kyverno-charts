@@ -19,21 +19,15 @@ spec:
         command: ["sh", "-c"]
         args:
         - |
-          #!/bin/bash 
-          echo "1"
+          #!/bin/bash
           set -e
-          echo "2"
           # Fetch the ConfigMap and extract items data
-          items=$(kubectl get configmap items-created -n nirmata -o custom-columns=DATA:.data --no-headers | sed 's/map\[//;s/\]//;s/ /\n/g' | sed 's/[:=]/ /')
-          echo "3"
+          items=`kubectl get configmap items-created -n nirmata -o custom-columns=DATA:.data --no-headers | sed 's/map\[//;s/\]//;s/ /\n/g' | sed 's/[:=]/ /')`
           # Iterate through the items and delete them
-          echo "$items" | while read -r line; do
-            echo "4"
+          echo -n "$items" | while read -r line; do
             kind=$(echo $line | awk '{print $1}')
-            names=$(echo $line | awk '{print $2}')
-            
-            IFS=',' read -r -a nameArray <<< "$names"
-            for name in "${nameArray[@]}"; do
+            names=$(echo $line | awk '{print $2}' | sed -e 's/,/ /g')
+            for name in `echo $names`; do
               echo "5"
               kubectl delete $kind $name -n nirmata || true
             done
@@ -41,4 +35,3 @@ spec:
           
           # Delete the ConfigMap itself
           kubectl delete configmap items-created -n nirmata || true
-
