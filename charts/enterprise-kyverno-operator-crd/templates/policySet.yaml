@@ -2,8 +2,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.10.0
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.15.0
   name: policysets.security.nirmata.io
 spec:
   group: security.nirmata.io
@@ -24,14 +23,19 @@ spec:
           description: PolicySet is the Schema for the PolicySets API
           properties:
             apiVersion:
-              description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
               type: string
             kind:
-              description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
               type: string
             metadata:
               type: object
@@ -44,9 +48,10 @@ spec:
                   additionalProperties:
                     type: object
                     x-kubernetes-preserve-unknown-fields: true
-                  description: Finer customizations for each component are provided
-                    in a generic object structure, typically matching the value.yaml
-                    of individual components
+                  description: |-
+                    Finer customizations for each component are provided in a
+                    generic object structure, typically matching the
+                    value.yaml of individual components
                   type: object
                 source:
                   properties:
@@ -63,13 +68,13 @@ spec:
                             type: object
                             x-kubernetes-preserve-unknown-fields: true
                           type: object
-                        username:
-                          type: string
                         passwordSecret:
                           type: string
                         repoType:
                           type: string
                         repoUrl:
+                          type: string
+                        username:
                           type: string
                       type: object
                     helm:
@@ -104,7 +109,6 @@ spec:
                 git:
                   properties:
                     lastCommitId:
-                      description: Branch            string `json:"branch,omitempty"`
                       type: string
                     lastCommitMessage:
                       type: string
@@ -128,6 +132,7 @@ spec:
                 policies:
                   properties:
                     lastApplied:
+                      format: date-time
                       type: string
                     lastStatusUpdated:
                       format: date-time
@@ -139,12 +144,17 @@ spec:
                             type: string
                           ready:
                             type: boolean
+                        required:
+                          - ready
                         type: object
                       type: array
                     readyPolicies:
                       type: integer
                     totalPolicies:
                       type: integer
+                  required:
+                    - readyPolicies
+                    - totalPolicies
                   type: object
                 policiesNotReady:
                   items:
@@ -152,6 +162,7 @@ spec:
                   type: array
               required:
                 - allPoliciesReady
+                - lastSyncSuccess
               type: object
           type: object
       served: true
