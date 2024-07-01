@@ -99,30 +99,29 @@ kyverno:
         registry: ghcr.io
         # -- (string) Image repository
         repository: nirmata/kyverno-cli
-    groups:
-      kyverno:
-        admissionreports: true
-        backgroundscanreports: true
-        cleanuppolicies: true
-        clusteradmissionreports: true
-        clusterbackgroundscanreports: true
-        clustercleanuppolicies: true
-        clusterpolicies: true
-        globalcontextentries: true
-        policies: true
-        policyexceptions: true
-        updaterequests: true
-    # -- Install CRDs in group `reports.kyverno.io`
-      reports:
-        clusterephemeralreports: true
-        ephemeralreports: true
+  #   groups:
+  #     kyverno:
+  #       admissionreports: true
+  #       backgroundscanreports: true
+  #       cleanuppolicies: true
+  #       clusteradmissionreports: true
+  #       clusterbackgroundscanreports: true
+  #       clustercleanuppolicies: true
+  #       clusterpolicies: true
+  #       globalcontextentries: true
+  #       policies: true
+  #       policyexceptions: true
+  #       updaterequests: true
+  #   # -- Install CRDs in group `reports.kyverno.io`
+  #     reports:
+  #       clusterephemeralreports: true
+  #       ephemeralreports: true
 
-      # -- Install CRDs in group `wgpolicyk8s.io`
-      wgpolicyk8s:
-        clusterpolicyreports: true
-        policyreports: true
-    install: true
-    annotations: {}
+  #     # -- Install CRDs in group `wgpolicyk8s.io`
+  #     wgpolicyk8s:
+  #       clusterpolicyreports: true
+  #       policyreports: true
+  #   install: true
   cleanupController:
     # -- Enable cleanup controller.
     enabled: true
@@ -356,3 +355,116 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+
+# CRDs configuration
+crds:
+
+  # -- Whether to have Helm install the Kyverno CRDs, if the CRDs are not installed by Helm, they must be added before policies can be created
+  install: true
+
+  groups:
+
+    # -- Install CRDs in group `kyverno.io`
+    kyverno:
+      admissionreports: true
+      backgroundscanreports: true
+      cleanuppolicies: true
+      clusteradmissionreports: true
+      clusterbackgroundscanreports: true
+      clustercleanuppolicies: true
+      clusterpolicies: true
+      globalcontextentries: true
+      policies: true
+      policyexceptions: true
+      updaterequests: true
+
+    # -- Install CRDs in group `reports.kyverno.io`
+    reports:
+      clusterephemeralreports: true
+      ephemeralreports: true
+
+    # -- Install CRDs in group `wgpolicyk8s.io`
+    wgpolicyk8s:
+      clusterpolicyreports: true
+      policyreports: true
+
+  # -- Additional CRDs annotations
+  annotations: {}
+    # argocd.argoproj.io/sync-options: Replace=true
+    # strategy.spinnaker.io/replace: 'true'
+
+  # -- Additional CRDs labels
+  customLabels: {}
+
+  migration:
+
+    # -- Enable CRDs migration using helm post upgrade hook
+    enabled: true
+
+    # -- Resources to migrate
+    resources:
+      - admissionreports.kyverno.io
+      - backgroundscanreports.kyverno.io
+      - cleanuppolicies.kyverno.io
+      - clusteradmissionreports.kyverno.io
+      - clusterbackgroundscanreports.kyverno.io
+      - clustercleanuppolicies.kyverno.io
+      - clusterpolicies.kyverno.io
+      - globalcontextentries.kyverno.io
+      - policies.kyverno.io
+      - policyexceptions.kyverno.io
+      - updaterequests.kyverno.io
+
+    image:
+      # -- (string) Image registry
+      registry: ghcr.io
+      # -- (string) Image repository
+      repository: nirmata/kyverno-cli
+      # -- (string) Image tag
+      # Defaults to appVersion in Chart.yaml if omitted
+      tag: ~
+      # -- (string) Image pull policy
+      pullPolicy: IfNotPresent
+
+    # -- Image pull secrets
+    imagePullSecrets: []
+    # - name: secretName
+
+    # -- Security context for the pod
+    podSecurityContext: {}
+
+    # -- Node labels for pod assignment
+    nodeSelector: {}
+
+    # -- List of node taints to tolerate
+    tolerations: []
+
+    # -- Pod anti affinity constraints.
+    podAntiAffinity: {}
+
+    # -- Pod affinity constraints.
+    podAffinity: {}
+
+    # -- Pod labels.
+    podLabels: {}
+
+    # -- Pod annotations.
+    podAnnotations: {}
+
+    # -- Node affinity constraints.
+    nodeAffinity: {}
+
+    # -- Security context for the hook containers
+    securityContext:
+      runAsUser: 65534
+      runAsGroup: 65534
+      runAsNonRoot: true
+      privileged: false
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault

@@ -1,19 +1,19 @@
-{{- if and (eq .Values.kyverno.cleanupController.enabled true) (eq .Values.kyverno.crds.groups.kyverno.cleanuppolicies false) }}
+{{- if and (eq .Values.kyverno.cleanupController.enabled true) (eq .Values.crds.groups.kyverno.cleanuppolicies false) }}
 {{- fail "CRD cleanuppolicies disabled while cleanupController enabled" }}
 {{- end }}
-{{- if and (eq .Values.kyverno.cleanupController.enabled true) (eq .Values.kyverno.crds.groups.kyverno.clustercleanuppolicies false) }}
+{{- if and (eq .Values.kyverno.cleanupController.enabled true) (eq .Values.crds.groups.kyverno.clustercleanuppolicies false) }}
 {{- fail "CRD clustercleanuppolicies disabled while cleanupController enabled" }}
 {{- end }}
-{{- if and (eq .Values.kyverno.reportsController.enabled true) (eq .Values.kyverno.crds.groups.wgpolicyk8s.clusterpolicyreports false) }}
+{{- if and (eq .Values.kyverno.reportsController.enabled true) (eq .Values.crds.groups.wgpolicyk8s.clusterpolicyreports false) }}
 {{- fail "CRD clusterpolicyreports disabled while reportsController enabled" }}
 {{- end }}
-{{- if and (eq .Values.kyverno.reportsController.enabled true) (eq .Values.kyverno.crds.groups.wgpolicyk8s.clusterpolicyreports false) }}
+{{- if and (eq .Values.kyverno.reportsController.enabled true) (eq .Values.crds.groups.wgpolicyk8s.clusterpolicyreports false) }}
 {{- fail "CRD clusterpolicyreports disabled while reportsController enabled" }}
 {{- end }}
-{{- if and (eq .Values.kyverno.reportsController.enabled true) (eq .Values.kyverno.crds.groups.kyverno.backgroundscanreports false) }}
+{{- if and (eq .Values.kyverno.reportsController.enabled true) (eq .Values.crds.groups.kyverno.backgroundscanreports false) }}
 {{- fail "CRD backgroundscanreports disabled while reportsController enabled" }}
 {{- end }}
-{{- if and (eq .Values.kyverno.reportsController.enabled true) (eq .Values.kyverno.crds.groups.kyverno.clusterbackgroundscanreports false) }}
+{{- if and (eq .Values.kyverno.reportsController.enabled true) (eq .Values.crds.groups.kyverno.clusterbackgroundscanreports false) }}
 {{- fail "CRD backgroundscanreports disabled while reportsController enabled" }}
 {{- end }}
 

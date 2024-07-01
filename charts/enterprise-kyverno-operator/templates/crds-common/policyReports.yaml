@@ -3,7 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.3
-    {{- with .Values.kyverno.crds.annotations }}
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
@@ -368,7 +368,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.3
-    {{- with .Values.kyverno.crds.annotations }}
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
