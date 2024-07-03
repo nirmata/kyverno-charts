@@ -83,6 +83,14 @@ kyverno:
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
         extraResources:
+          - apiGroups:
+              - '*'
+            resources:
+              - '*'
+            verbs:
+              - get
+              - list
+              - watch
   templating:
     enabled: false
     image: ghcr.io/nirmata/kubectl:1.29.1
@@ -155,6 +163,14 @@ kyverno:
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
         extraResources:
+          - apiGroups:
+              - '*'
+            resources:
+              - '*'
+            verbs:
+              - get
+              - list
+              - watch
   backgroundController:
     # -- Enable background controller.
     enabled: true
@@ -171,6 +187,48 @@ kyverno:
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
         extraResources:
+          - apiGroups:
+              - '*'
+            resources:
+              - '*'
+            verbs:
+              - get
+              - list
+              - watch
+          - apiGroups:
+              - networking.k8s.io
+            resources:
+              - ingresses
+              - ingressclasses
+              - networkpolicies
+            verbs:
+              - create
+              - update
+              - patch
+              - delete
+          - apiGroups:
+              - rbac.authorization.k8s.io
+            resources:
+              - rolebindings
+              - roles
+            verbs:
+              - create
+              - update
+              - patch
+              - delete
+          - apiGroups:
+              - ''
+            resources:
+              - configmaps
+              - secrets
+              - resourcequotas
+              - limitranges
+            verbs:
+              - create
+              - update
+              - patch
+              - delete
+
   kyverno:
     customLabels: {}
   nameOverride: "kyverno"
