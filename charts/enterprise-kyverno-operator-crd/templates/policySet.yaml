@@ -134,12 +134,16 @@ spec:
                     lastApplied:
                       format: date-time
                       type: string
+                    lastAppliedCommit:
+                      type: string
                     lastStatusUpdated:
                       format: date-time
                       type: string
                     policiesStatus:
                       items:
                         properties:
+                          errorMessage:
+                            type: string
                           name:
                             type: string
                           ready:
