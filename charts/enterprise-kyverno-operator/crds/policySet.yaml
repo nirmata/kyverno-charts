@@ -131,11 +131,6 @@ spec:
                   type: string
                 policies:
                   properties:
-                    lastApplied:
-                      format: date-time
-                      type: string
-                    lastAppliedCommit:
-                      type: string
                     lastStatusUpdated:
                       format: date-time
                       type: string
@@ -143,6 +138,10 @@ spec:
                       items:
                         properties:
                           errorMessage:
+                            type: string
+                          lastApplied:
+                            type: string
+                          lastAppliedCommit:
                             type: string
                           name:
                             type: string
