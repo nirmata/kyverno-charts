@@ -29,14 +29,6 @@ metadata:
 {{- end }}
 rules:
   - apiGroups:
-      - '*'
-    resources:
-      - '*'
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
       - kyverno.io
     resources:
       - policies
