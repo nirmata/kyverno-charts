@@ -3,7 +3,7 @@ type: application
 name: kyverno
 
 version: 3.0.31-rc6
-appVersion: v1.10.7-n4k.nirmata.15
+appVersion: v1.10.7-n4k.nirmata.14
 
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
