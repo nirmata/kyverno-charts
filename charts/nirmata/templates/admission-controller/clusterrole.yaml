@@ -125,6 +125,30 @@ rules:
     verbs:
       - get
 
+  - apiGroups:
+      - ""
+    resources:
+      - "configmaps"
+    verbs:
+      - list
+      - get
+      - watch
+
+  - apiGroups:
+      - "coordination.k8s.io"
+    resources:
+      - "leases"
+    verbs:
+      - get
+      - list
+
+  - apiGroups:
+      - "kyverno.io"
+    resources:
+      - "policyexceptions"
+    verbs:
+      - list
+
 {{- with .Values.admissionController.rbac.coreClusterRole.extraResources }}
   {{- toYaml . | nindent 2 }}
 {{- end }}
