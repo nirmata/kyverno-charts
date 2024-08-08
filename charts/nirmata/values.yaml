@@ -358,7 +358,7 @@ webhooksCleanup:
     # -- (string) Image registry
     registry: ~
     # -- Image repository
-    repository: ghcr.io/nirmata/kubectl
+    repository: reg.nirmata.io/nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: '1.29.1'
@@ -410,7 +410,7 @@ policyReportsCleanup:
     # -- (string) Image registry
     registry: ~
     # -- Image repository
-    repository: ghcr.io/nirmata/kubectl
+    repository: reg.nirmata.io/nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: '1.29.1'
@@ -559,7 +559,7 @@ cleanupJobs:
       # -- (string) Image registry
       registry: ~
       # -- Image repository
-      repository: ghcr.io/nirmata/kubectl
+      repository: reg.nirmata.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
       tag: '1.29.1'
@@ -630,7 +630,7 @@ cleanupJobs:
       # -- (string) Image registry
       registry: ~
       # -- Image repository
-      repository: ghcr.io/nirmata/kubectl
+      repository: reg.nirmata.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
       tag: '1.29.1'
@@ -897,7 +897,7 @@ admissionController:
 
     image:
       # -- Image registry
-      registry: ghcr.io
+      registry: reg.nirmata.io
       # -- Image repository
       repository: nirmata/kyvernopre
       # -- (string) Image tag
@@ -939,7 +939,7 @@ admissionController:
 
     image:
       # -- Image registry
-      registry: ghcr.io
+      registry: reg.nirmata.io
       # -- Image repository
       repository: nirmata/kyverno
       # -- (string) Image tag
@@ -1143,7 +1143,7 @@ backgroundController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/background-controller
     # -- Image tag
@@ -1378,7 +1378,7 @@ cleanupController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/cleanup-controller
     # -- (string) Image tag
@@ -1661,7 +1661,7 @@ reportsController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/reports-controller
     # -- (string) Image tag
@@ -1889,7 +1889,7 @@ licenseManager:
   # -- Whether to use license manager
   enable: true
   # -- License manager repo
-  imageRepository: ghcr.io/nirmata/kyverno-license-manager
+  imageRepository: reg.nirmata.io/nirmata/kyverno-license-manager
   # -- Image tag
   imageTag: 0.1.13
   # -- Product name to be present in license, empty to ignore check
