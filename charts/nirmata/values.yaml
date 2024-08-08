@@ -330,7 +330,7 @@ webhooksCleanup:
   # -- Create a helm pre-delete hook to cleanup webhooks.
   enabled: true
   # -- `kubectl` image to run commands for deleting webhooks.
-  image: ghcr.io/nirmata/kubectl:1.29.0
+  image: reg.nirmata.io/nirmata/kubectl:1.29.0
   # -- Image pull secrets
   imagePullSecrets: []
 
@@ -461,7 +461,7 @@ cleanupJobs:
       # -- (string) Image registry
       registry: ~
       # -- Image repository
-      repository: ghcr.io/nirmata/kubectl
+      repository: reg.nirmata.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
       tag: '1.29.0'
@@ -532,7 +532,7 @@ cleanupJobs:
       # -- (string) Image registry
       registry: ~
       # -- Image repository
-      repository: ghcr.io/nirmata/kubectl
+      repository: reg.nirmata.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
       tag: '1.29.0'
@@ -777,7 +777,7 @@ admissionController:
 
     image:
       # -- Image registry
-      registry: ghcr.io
+      registry: reg.nirmata.io
       # -- Image repository
       repository: nirmata/kyvernopre
       # -- (string) Image tag
@@ -819,7 +819,7 @@ admissionController:
 
     image:
       # -- Image registry
-      registry: ghcr.io
+      registry: reg.nirmata.io
       # -- Image repository
       repository: nirmata/kyverno
       # -- (string) Image tag
@@ -990,7 +990,7 @@ backgroundController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/background-controller
     # -- Image tag
@@ -1221,7 +1221,7 @@ cleanupController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/cleanup-controller
     # -- (string) Image tag
@@ -1502,7 +1502,7 @@ reportsController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/reports-controller
     # -- (string) Image tag
@@ -1712,7 +1712,7 @@ licenseManager:
       memory: 128Mi
   enable: true
   # -- License manager repo
-  imageRepository: ghcr.io/nirmata/kyverno-license-manager
+  imageRepository: reg.nirmata.io/nirmata/kyverno-license-manager
   # -- Image tag
   imageTag: v0.1.8
   # -- Product name to be present in license, empty to ignore check
