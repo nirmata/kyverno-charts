@@ -39,10 +39,7 @@ spec:
           - sh
           - -c
           - >
-              for i in {{ include "enterprise-kyverno.policysetsStr" . }}; 
-              do 
-                kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete PolicySet $i;
-              done;
+              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete policyset --all;
               {{- if .Values.awsAdapter.createCR }}
               kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoadapters aws-adapter-config;
               {{- end }}
