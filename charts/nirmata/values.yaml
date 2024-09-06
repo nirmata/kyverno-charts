@@ -2158,3 +2158,13 @@ customCAConfigMap:
 
 # Path containing ssl certs within the container. Used only if customCAConfigMap is used
 systemCertPath: /etc/ssl/certs
+
+reportsServer:
+  # -- Enable reports server for policy reports management.
+  enabled: false
+
+# -- Reports server chart values
+reports-server:
+  config:
+    db:
+      host: reports-server-cluster-rw.kyverno

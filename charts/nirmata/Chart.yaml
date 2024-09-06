@@ -42,3 +42,7 @@ dependencies:
   - name: crds
     version: 3.2.2
     condition: crds.install
+  - name: reports-server
+    version: 0.1.2
+    condition: reportsServer.enabled
+    repository: https://nirmata.github.io/reports-server/

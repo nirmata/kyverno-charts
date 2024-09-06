@@ -1,0 +1,12 @@
+dependencies:
+- name: grafana
+  repository: ""
+  version: 3.2.2
+- name: crds
+  repository: ""
+  version: 3.2.2
+- name: reports-server
+  repository: https://nirmata.github.io/reports-server/
+  version: 0.1.2
+digest: sha256:287de1226ca7e1e778c0c4d5fb06d3fd5da598833f417a7e3fe8d1c10c095770
+generated: "2024-09-06T09:34:32.511779+05:30"
