@@ -1891,7 +1891,7 @@ licenseManager:
   # -- License manager repo
   imageRepository: reg.nirmata.io/nirmata/kyverno-license-manager
   # -- Image tag
-  imageTag: 0.1.13
+  imageTag: 0.1.16-rc.1
   # -- Product name to be present in license, empty to ignore check
   productName: ""
   # -- Validation interval in mins
