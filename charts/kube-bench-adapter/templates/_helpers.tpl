@@ -92,6 +92,9 @@ spec:
         "-kube-bench-image", "{{ .Values.kubeBench.kubeBenchImg }}",
         "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
         "-kube-bench-targets", "{{ .Values.kubeBench.kubeBenchTargets }}",
+        "-registry-name", "{{ .Values.kubeBench.registry-name }}",
+        "-registry-username", "{{ .Values.kubeBench.registry-username }}",
+        "-registry-password", "{{ .Values.kubeBench.registry-password }}",
         "-kube-bench-benchmark", "{{ .Values.kubeBench.kubeBenchBenchmark }}",
         {{- if .Values.kubeBench.timeout }}
         "-timeout", "{{ .Values.kubeBench.timeout }}",

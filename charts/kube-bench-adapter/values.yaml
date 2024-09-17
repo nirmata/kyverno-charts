@@ -48,8 +48,14 @@ kubeBench:
   name: "kube-bench"
   # -- specifies namespace where kube-bench job will run
   namespace: "default"
-  # -- kube-bench image used for the adapter
-  kubeBenchImg: "aquasec/kube-bench:v0.6.17"
+  # -- kube-bench image tag used for the adapter default v0.6.17
+  imageTag: "v0.6.17"
+  # -- registry name for kube-bench image  used for the adapter default aquasec
+  registry-name: ""
+  # -- registry user name for kube-bench image used for the adapter
+  registry-username: ""
+  # -- registry password for kube-bench image  used for the adapter
+  registry-password: ""
   # -- absolute path to the kubeconfig file
   kubeconfig: "$HOME/.kube/config"
   # -- benchmark for the kube-bench job
