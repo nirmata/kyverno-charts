@@ -23,8 +23,11 @@ spec:
             "-yaml", "{{ .Values.kubeBench.yaml }}",
             "-category", "{{ .Values.kubeBench.category }}",
             "-namespace", "{{ .Values.kubeBench.namespace }}",
-            "-kubebenchImg", "{{ .Values.kubeBench.kubebenchImg }}",
+            "-tag", "{{ .Values.kubeBench.imageTag }}",
             "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
+            "-registry-name", "{{ .Values.kubeBench.registry-name }}"
+            "-registry-username", "{{ .Values.kubeBench.registry-username }}"
+            "-registry-password", "{{ .Values.kubeBench.registry-password }}"
             "-kube-bench-targets", "{{ .Values.kubeBench.kubeBenchTargets }}",
             ]
             {{- with .Values.resources }}
