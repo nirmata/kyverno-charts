@@ -89,12 +89,12 @@ spec:
         args: [
         "-name","{{ .Values.kubeBench.name}}",
         "-namespace", "{{ .Values.kubeBench.namespace }}",
-        "-kube-bench-image", "{{ .Values.kubeBench.kubeBenchImg }}",
+        "-tag", "{{ .Values.kubeBench.imageTag }}",
         "-kubeconfig", "{{ .Values.kubeBench.kubeconfig }}",
         "-kube-bench-targets", "{{ .Values.kubeBench.kubeBenchTargets }}",
-        "-registry-name", "{{ .Values.kubeBench.registry-name }}",
-        "-registry-username", "{{ .Values.kubeBench.registry-username }}",
-        "-registry-password", "{{ .Values.kubeBench.registry-password }}",
+        "-registry-name", "{{ .Values.kubeBench.registryName }}",
+        "-registry-username", "{{ .Values.kubeBench.registryUserName }}",
+        "-registry-password", "{{ .Values.kubeBench.registryPassword }}",
         "-kube-bench-benchmark", "{{ .Values.kubeBench.kubeBenchBenchmark }}",
         {{- if .Values.kubeBench.timeout }}
         "-timeout", "{{ .Values.kubeBench.timeout }}",

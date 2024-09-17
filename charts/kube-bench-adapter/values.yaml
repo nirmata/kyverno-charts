@@ -51,11 +51,11 @@ kubeBench:
   # -- kube-bench image tag used for the adapter default v0.6.17
   imageTag: "v0.6.17"
   # -- registry name for kube-bench image  used for the adapter default aquasec
-  registry-name: ""
+  registryName: ""
   # -- registry user name for kube-bench image used for the adapter
-  registry-username: ""
+  registryUserName: ""
   # -- registry password for kube-bench image  used for the adapter
-  registry-password: ""
+  registryPassword: ""
   # -- absolute path to the kubeconfig file
   kubeconfig: "$HOME/.kube/config"
   # -- benchmark for the kube-bench job
