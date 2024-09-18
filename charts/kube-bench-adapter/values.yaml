@@ -10,7 +10,7 @@ image:
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
    # --tag of image repository of kube-bench-adapter
-  tag: "v0.2.6"
+  tag: "v0.2.7-rc1"
   pullSecrets:
     registry:
     # Leave blank, if no ImagePullSecret is needed.
@@ -48,8 +48,14 @@ kubeBench:
   name: "kube-bench"
   # -- specifies namespace where kube-bench job will run
   namespace: "default"
-  # -- kube-bench image used for the adapter
-  kubeBenchImg: "aquasec/kube-bench:v0.6.17"
+  # -- kube-bench image tag used for the adapter default v0.6.17
+  imageTag: "v0.6.17"
+  # -- registry name for kube-bench image  used for the adapter default aquasec
+  registryName: ""
+  # -- registry user name for kube-bench image used for the adapter
+  registryUserName: ""
+  # -- registry password for kube-bench image  used for the adapter
+  registryPassword: ""
   # -- absolute path to the kubeconfig file
   kubeconfig: "$HOME/.kube/config"
   # -- benchmark for the kube-bench job
