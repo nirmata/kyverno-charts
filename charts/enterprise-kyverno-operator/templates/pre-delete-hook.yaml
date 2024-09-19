@@ -22,7 +22,6 @@ spec:
         app: {{ template "enterprise-kyverno.name" . }}-operator
 {{ include "enterprise-kyverno.labels" . | indent 8 }}
     spec:
-      automountServiceAccountToken: false
       imagePullSecrets: 
       - name: {{ .Values.image.pullSecrets.name }}
       serviceAccountName: {{ template "enterprise-kyverno.rbac.serviceAccountName" . }}
@@ -40,10 +39,7 @@ spec:
           - sh
           - -c
           - >
-              for i in {{ include "enterprise-kyverno.policysetsStr" . }}; 
-              do 
-                kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete PolicySet $i;
-              done;
+              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete policyset --all;
               {{- if .Values.awsAdapter.createCR }}
               kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoadapters aws-adapter-config;
               {{- end }}
@@ -54,9 +50,13 @@ spec:
               kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoadapters cis-adapter-config;
               {{- end }}
               {{- if .Values.kyverno.createCR }}
+              kubectl patch kyvernoconfigs kyverno -p '{"metadata":{"finalizers":[]}}' --type=merge
+
               kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoconfigs kyverno;
+              
               sleep 10;
               {{- end }}
+              echo "OVER!"
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
