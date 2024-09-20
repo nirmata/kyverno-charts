@@ -22182,6 +22182,7 @@ spec:
                               default: true
                               description: AllowExistingViolations allows prexisting violating
                                 resources to continue violating a policy.
+                              type: boolean
                             anyPattern:
                               description: AnyPattern specifies list of validation
                                 patterns. At least one of the patterns must be satisfied
@@ -26864,6 +26865,7 @@ spec:
                           default: true
                           description: AllowExistingViolations allows prexisting violating
                             resources to continue violating a policy.
+                          type: boolean
                         anyPattern:
                           description: AnyPattern specifies list of validation patterns.
                             At least one of the patterns must be satisfied for the
@@ -31386,6 +31388,7 @@ spec:
                               default: true
                               description: AllowExistingViolations allows prexisting violating
                                 resources to continue violating a policy.
+                              type: boolean
                             anyPattern:
                               description: AnyPattern specifies list of validation
                                 patterns. At least one of the patterns must be satisfied
@@ -40285,6 +40288,7 @@ spec:
                               default: true
                               description: AllowExistingViolations allows prexisting violating
                                 resources to continue violating a policy.
+                              type: boolean
                             anyPattern:
                               description: AnyPattern specifies list of validation
                                 patterns. At least one of the patterns must be satisfied
