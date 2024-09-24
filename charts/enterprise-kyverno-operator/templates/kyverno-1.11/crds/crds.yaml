@@ -7863,6 +7863,11 @@ spec:
                       validate:
                         description: SeeDocs
                         properties:
+                          allowExistingViolations:
+                            default: true
+                            description: AllowExistingViolations allows prexisting violating
+                              resources to continue violating a policy.
+                            type: boolean
                           anyPattern:
                             description: SeeDocs
                             x-kubernetes-preserve-unknown-fields: true
@@ -10472,6 +10477,11 @@ spec:
                           validate:
                             description: SeeDocs
                             properties:
+                              allowExistingViolations:
+                                default: true
+                                description: AllowExistingViolations allows prexisting violating
+                                  resources to continue violating a policy.
+                                type: boolean
                               anyPattern:
                                 description: SeeDocs
                                 x-kubernetes-preserve-unknown-fields: true
@@ -15681,6 +15691,11 @@ spec:
                           validate:
                             description: SeeDocs
                             properties:
+                              allowExistingViolations:
+                                default: true
+                                description: AllowExistingViolations allows prexisting violating
+                                  resources to continue violating a policy.
+                                type: boolean
                               anyPattern:
                                 description: SeeDocs
                                 x-kubernetes-preserve-unknown-fields: true
@@ -18440,6 +18455,11 @@ spec:
                       validate:
                         description: SeeDocs
                         properties:
+                          allowExistingViolations:
+                            default: true
+                            description: AllowExistingViolations allows prexisting violating
+                              resources to continue violating a policy.
+                            type: boolean
                           anyPattern:
                             description: SeeDocs
                             x-kubernetes-preserve-unknown-fields: true
@@ -21073,6 +21093,11 @@ spec:
                           validate:
                             description: SeeDocs
                             properties:
+                              allowExistingViolations:
+                                default: true
+                                description: AllowExistingViolations allows prexisting violating
+                                  resources to continue violating a policy.
+                                type: boolean
                               anyPattern:
                                 description: SeeDocs
                                 x-kubernetes-preserve-unknown-fields: true
@@ -26282,6 +26307,11 @@ spec:
                           validate:
                             description: SeeDocs
                             properties:
+                              allowExistingViolations:
+                                default: true
+                                description: AllowExistingViolations allows prexisting violating
+                                  resources to continue violating a policy.
+                                type: boolean
                               anyPattern:
                                 description: SeeDocs
                                 x-kubernetes-preserve-unknown-fields: true
