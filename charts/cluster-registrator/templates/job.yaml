@@ -30,6 +30,8 @@ rules:
       - clusterrolebindings
       - clusterroles
     verbs:
+      - escalate
+      - bind
       - create
   {{- if eq .Values.controllerPerms "read-write-ndp" }}
   - apiGroups:
