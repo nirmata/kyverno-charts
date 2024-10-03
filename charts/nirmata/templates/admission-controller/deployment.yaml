@@ -218,6 +218,7 @@ spec:
               "configMapCaching"
               "deferredLoading"
               "dumpPayload"
+              "dumpPatches"
               "forceFailurePolicyIgnore"
               "logging"
               "omitEvents"
