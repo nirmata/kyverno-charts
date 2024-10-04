@@ -391,6 +391,7 @@ webhooksCleanup:
   securityContext:
     runAsUser: 1000
     runAsGroup: 65534
+    runAsNonRoot: true
     privileged: false
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -424,6 +425,7 @@ policyReportsCleanup:
   securityContext:
     runAsUser: 1000
     runAsGroup: 65534
+    runAsNonRoot: true
     privileged: false
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -587,6 +589,7 @@ cleanupJobs:
     securityContext:
       runAsUser: 1000
       privileged: false
+      runAsNonRoot: true
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: true
       capabilities:
@@ -658,6 +661,7 @@ cleanupJobs:
     securityContext:
       runAsUser: 1000
       privileged: false
+      runAsNonRoot: true
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: true
       capabilities:
