@@ -39,7 +39,7 @@ spec:
             image: {{ (include "kyverno.image" (dict "globalRegistry" ((.Values.global).image).registry "image" .Values.cleanupJobs.admissionReports.image)) | quote }}
             imagePullPolicy: {{ .Values.cleanupJobs.admissionReports.image.pullPolicy }}
             command:
-            - sh
+            - bash
             - -c
             - |
               COUNT=$(kubectl get admissionreports.kyverno.io -A | wc -l)

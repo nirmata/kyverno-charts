@@ -173,7 +173,7 @@ kyverno:
         pullPolicy: ~
       podSecurityContext: {}
       securityContext:
-        runAsUser: 65534
+        runAsUser: 1000
         runAsGroup: 65534
         runAsNonRoot: true
         privileged: false
