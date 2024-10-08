@@ -6564,6 +6564,55 @@ entries:
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: v1.10.7-n4k.nirmata.17-rc1
+    created: "2024-10-08T11:16:32.293337901Z"
+    description: Kubernetes Native Policy Management
+    digest: 3970491fdd3f3f5bef4f764534f5f961a0be25d5967af0825765b01ad22069bc
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - validating webhook
+    - admissions controller
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno
+    sources:
+    - https://github.com/nirmata/kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.0.34-rc2/kyverno-3.0.34-rc2.tgz
+    version: 3.0.34-rc2
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: only create ServiceMonitor if cluster supports it
+        - kind: fixed
+          description: rbac templating issues
+        - kind: added
+          description: define resources for cleanupJobs
+        - kind: changed
+          description: change to enable webhook cleanup hook by default
+        - kind: added
+          description: allow pod labels for cleanup jobs
+        - kind: added
+          description: allow nodeSelector for cleanup jobs
+        - kind: added
+          description: allow nodeSelector, tolerations and affinity settings for webhooksCleanup
+        - kind: added
+          description: allow affinity settings for cleanup jobs
+        - kind: added
+          description: Add helper to handle the labels for cleanup jobs, add component label
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: v1.10.7-n4k.nirmata.17-rc1
     created: "2024-10-03T15:59:47.817074401Z"
     description: Kubernetes Native Policy Management
     digest: 85e4e2ec4cd1d61a97d89c31d5045139c61f12328a94311736243aa0f8ea02a8
@@ -13041,4 +13090,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2024-10-04T21:25:00.983072881Z"
+generated: "2024-10-08T11:16:32.296129Z"
