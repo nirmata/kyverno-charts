@@ -37,6 +37,9 @@
 {{- with .dumpPayload -}}
   {{- $flags = append $flags (print "--dumpPayload=" .enabled) -}}
 {{- end -}}
+{{- with .dumpPatches -}}
+  {{- $flags = append $flags (print "--dumpPatches=" .enabled) -}}
+{{- end -}}
 {{- with .forceFailurePolicyIgnore -}}
   {{- $flags = append $flags (print "--forceFailurePolicyIgnore=" .enabled) -}}
 {{- end -}}
