@@ -2,23 +2,23 @@ apiVersion: v2
 type: application
 name: kyverno
 
-version: 3.0.34-rc1
+version: 3.0.34-rc2
 appVersion: v1.10.7-n4k.nirmata.17-rc1
 
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
-  - kubernetes
-  - nirmata
-  - policy agent
-  - validating webhook
-  - admissions controller
+- kubernetes
+- nirmata
+- policy agent
+- validating webhook
+- admissions controller
 home: https://kyverno.io/
 sources:
-  - https://github.com/nirmata/kyverno
+- https://github.com/nirmata/kyverno
 maintainers:
-  - name: Nirmata
-    url: https://nirmata.com/
+- name: Nirmata
+  url: https://nirmata.com/
 kubeVersion: ">=1.16.0-0"
 annotations:
   artifacthub.io/operator: "false"
