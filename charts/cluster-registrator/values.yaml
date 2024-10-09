@@ -9,6 +9,9 @@ cluster:
   name:
   type: "default-policy-manager-type"
 
+kubeController:
+  isReadOnly: true
+
 apiToken:
 
 proxy:
@@ -28,5 +31,9 @@ imageTag: v0.1.4
 # Currently simple read-only and read-write flag, but we could have more shorthands for
 # variations such as: * on polexes but read-only on policy-reports, etc.
 controllerPerms: 'read-write'
+
+privilegePerms:
+- escalate
+- bind
 
 namespace: nirmata

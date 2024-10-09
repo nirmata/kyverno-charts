@@ -30,8 +30,9 @@ rules:
       - clusterrolebindings
       - clusterroles
     verbs:
-      - escalate
-      - bind
+{{- if or (eq .Values.controllerPerms "read-write-ndp") (eq .Values.controllerPerms "admin") (eq .Values.controllerPerms "read-write")  }}
+{{ toYaml .Values.privilegePerms | indent 6 }}
+{{- end }}
       - create
   {{- if eq .Values.controllerPerms "read-write-ndp" }}
   - apiGroups:
@@ -236,7 +237,28 @@ rules:
       - operator.kyverno.io
       - kyverno.io
     resources:
-      - '*'
+      - policies
+      - policies/status
+      - clusterpolicies
+      - clusterpolicies/status
+      - policyexceptions
+      - cleanuppolicies
+      - clustercleanuppolicies
+      - generaterequests
+      - generaterequests/status
+      - reportchangerequests
+      - reportchangerequests/status
+      - clusterreportchangerequests
+      - clusterreportchangerequests/status
+      - kyvernooperators/status
+      - kyvernooperators
+      - imagekeys
+      - imagekeys/status
+      - imagekeys/finalizers
+      - kyvernoes
+      - kyvernoes/status
+      - kyvernoconfigs
+      - kyvernoconfigs/status
     verbs:
       - get
       - list
@@ -253,54 +275,43 @@ rules:
   - security.nirmata.io
   resources:
   - policies
-  - clusterpolicies
-  - cleanuppolicies
-  - clustercleanuppolicies
-  - kyvernoes
-  - kyvernoes/status
-  - policyexceptions
-  - reportchangerequests
-  - clusterreportchangerequests
-  - kyvernooperators/status
-  - kyvernooperators
-  - imagekeys
-  - imagekeys/status
-  - imagekeys/finalizers
-  verbs:
-  - get
-  - watch
-  - list
-- apiGroups:
-  - wgpolicyk8s.io/v1alpha1
-  - wgpolicyk8s.io/v1alpha2
-  resources:
-  - policyreports
-  - clusterpolicyreports
-  verbs:
-  - get
-  - watch
-  - list
-- apiGroups:
-  - '*'
-  resources:
-  - policies
   - policies/status
   - clusterpolicies
   - clusterpolicies/status
-  - policyreports
-  - policyreports/status
-  - clusterpolicyreports
-  - clusterpolicyreports/status
+  - policyexceptions
+  - cleanuppolicies
+  - clustercleanuppolicies
   - generaterequests
   - generaterequests/status
   - reportchangerequests
   - reportchangerequests/status
   - clusterreportchangerequests
   - clusterreportchangerequests/status
+  - kyvernooperators/status
+  - kyvernooperators
+  - imagekeys
+  - imagekeys/status
+  - imagekeys/finalizers
+  - kyvernoes
+  - kyvernoes/status
+  - kyvernoconfigs
+  - kyvernoconfigs/status
   verbs:
-  - get
-  - list
-  - watch
+  - 'get'
+  - 'watch'
+  - 'list'
+- apiGroups:
+  - wgpolicyk8s.io/v1alpha1
+  - wgpolicyk8s.io/v1alpha2
+  resources:
+  - policyreports
+  - policyreports/status
+  - clusterpolicyreports
+  - clusterpolicyreports/status
+  verbs:
+  - 'get'
+  - 'watch'
+  - 'list'
 - apiGroups:
   - apiextensions.k8s.io
   resources:
@@ -310,13 +321,12 @@ rules:
   - list
   - watch
 - apiGroups:
-  - '*'
+  - ''
   resources:
   - nodes
   - pods
   - pods/log
   - namespaces
-  - networkpolicies
   - secrets
   - configmaps
   - resourcequotas
@@ -324,31 +334,103 @@ rules:
   - deployments
   - services
   - serviceaccounts
+  - componentstatuses
+  - endpoints
+  - persistentvolumes
+  - replicasets
+  - statefulsets
+  - daemonsets
+  verbs:
+  - list
+  - get
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - networkpolicies
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
   - roles
   - rolebindings
   - clusterroles
   - clusterrolebindings
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ''
+  - events.k8s.io
+  resources:
   - events
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
   - mutatingwebhookconfigurations
   - validatingwebhookconfigurations
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - certificates.k8s.io
+  resources:
   - certificatesigningrequests
   - certificatesigningrequests/approval
-  - poddisruptionbudgets
-  - componentstatuses
-  - endpoints
-  - storageclasses
-  - priorityclasses
-  - clusterissuers
-  - podsecuritypolicies
-  - persistentvolumes
-  - replicasets
-  - cronjobs
-  - daemonsets
-  - jobs
-  - statefulsets
   verbs:
-  - list
   - get
+  - list
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  - podsecuritypolicies
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - scheduling.k8s.io
+  resources:
+  - priorityclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  - jobs
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - clusterissuers
+  verbs:
+  - get
+  - list
   - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -442,6 +524,8 @@ spec:
           value: "{{ .Values.tlsCert }}"
         - name: APIKEY_SECRET_NAMESPACE
           value: "{{ .Release.Namespace }}"
+        - name: READ_ONLY
+          value: "{{ .Values.kubeController.isReadOnly }}"
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
