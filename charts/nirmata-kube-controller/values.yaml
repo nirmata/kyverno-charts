@@ -13,7 +13,7 @@ cluster:
 
 # use either apiToken or apiTokenSecret to specify the api token in NPM
 # to use the apiTokenSecret, please create a secret with key 'apiKey'
-# here's the example 
+# here's the example
 # apiVersion: v1
 # kind: Secret
 # metadata:
@@ -23,7 +23,7 @@ cluster:
 #   apiKey: UWd4ZWVKTzZhR0Q0RWVBWU1uVW5oaTdIM3pSR3lkMVJuR2dKMDlQR0dDWnk4WUUvZ0diM3ZsVFQ0aDBUNE12L0MxenNWcHhseksxalNtdHMrOXNLdENVNXZ3U3c5Rlo2T1pCaXZkNEJXazQ9
 
 apiTokenSecret: "nirmata-api-token"
-#apiToken: "QgxeeJO6aGD4EeAYMnUnhi7H3zRGyd1RnGgJ09PGGCZy8YE/gGb3vlTT4h0T4Mv/C1zsVpxlzK1jSmts+9sKtCU5vwSw9FZ6OZBivd4BWk4="
+# apiToken: "QgxeeJO6aGD4EeAYMnUnhi7H3zRGyd1RnGgJ09PGGCZy8YE/gGb3vlTT4h0T4Mv/C1zsVpxlzK1jSmts+9sKtCU5vwSw9FZ6OZBivd4BWk4="
 
 proxy:
   httpProxy: ""
