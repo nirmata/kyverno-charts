@@ -1,29 +1,29 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 3.2.5-rc1
-appVersion: v1.12.5-n4k.nirmata.5
+version: 3.2.5-rc2
+appVersion: v1.12.5-n4k.nirmata.6-rc1
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
-  - kubernetes
-  - nirmata
-  - policy agent
-  - policy
-  - validating webhook
-  - admission controller
-  - mutation
-  - mutate
-  - validate
-  - generate
-  - supply chain
-  - security
+- kubernetes
+- nirmata
+- policy agent
+- policy
+- validating webhook
+- admission controller
+- mutation
+- mutate
+- validate
+- generate
+- supply chain
+- security
 home: https://kyverno.io/
 sources:
-  - https://github.com/nirmata/kyverno
+- https://github.com/nirmata/kyverno
 maintainers:
-  - name: Nirmata
-    url: https://kyverno.io/
+- name: Nirmata
+  url: https://kyverno.io/
 kubeVersion: ">=1.22.0-0"
 annotations:
   artifacthub.io/operator: "false"
@@ -36,9 +36,9 @@ annotations:
     - kind: added
       description: make webhook pod annotations configurable
 dependencies:
-  - name: grafana
-    version: 3.2.2
-    condition: grafana.enabled
-  - name: crds
-    version: 3.2.2
-    condition: crds.install
+- name: grafana
+  version: 3.2.2
+  condition: grafana.enabled
+- name: crds
+  version: 3.2.2
+  condition: crds.install
