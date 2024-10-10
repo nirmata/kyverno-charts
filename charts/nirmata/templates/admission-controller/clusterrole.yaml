@@ -13,9 +13,7 @@ metadata:
 aggregationRule:
   clusterRoleSelectors:
     - matchLabels:
-        rbac.kyverno.io/aggregate-to-admission-controller: "true"
-    - matchLabels:
-        rbac.kyverno.io/aggregate-to-admission-controller: "true"
+        {{- include "kyverno.admission-controller.matchLabels" . | nindent 8 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
