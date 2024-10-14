@@ -43,7 +43,7 @@ spec:
             image: {{ (include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.cleanupJobs.clusterAdmissionReports.image)) | quote }}
             imagePullPolicy: {{ .Values.cleanupJobs.clusterAdmissionReports.image.pullPolicy }}
             command:
-            - sh
+            - bash
             - -c
             - |
               set -euo pipefail
