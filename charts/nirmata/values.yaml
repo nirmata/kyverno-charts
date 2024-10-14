@@ -477,7 +477,7 @@ webhooksCleanup:
     repository: reg.nirmata.io/nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.29.4'
+    tag: '1.31.1'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -511,7 +511,7 @@ webhooksCleanup:
 
   # -- Security context for the hook containers
   securityContext:
-    runAsUser: 65534
+    runAsUser: 1000
     runAsGroup: 65534
     runAsNonRoot: true
     privileged: false
@@ -534,7 +534,7 @@ policyReportsCleanup:
     repository: reg.nirmata.io/nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.29.4'
+    tag: '1.31.1'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -569,7 +569,7 @@ policyReportsCleanup:
 
   # -- Security context for the hook containers
   securityContext:
-    runAsUser: 65534
+    runAsUser: 1000
     runAsGroup: 65534
     runAsNonRoot: true
     privileged: false
@@ -714,7 +714,7 @@ cleanupJobs:
       repository: reg.nirmata.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.29.4'
+      tag: '1.31.1'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
@@ -739,6 +739,7 @@ cleanupJobs:
 
     # -- Security context for the containers
     securityContext:
+      runAsUser: 1000
       runAsNonRoot: true
       privileged: false
       allowPrivilegeEscalation: false
@@ -791,7 +792,7 @@ cleanupJobs:
       repository: reg.nirmata.io/nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.29.1'
+      tag: '1.31.1'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
@@ -816,6 +817,7 @@ cleanupJobs:
 
     # -- Security context for the containers
     securityContext:
+      runAsUser: 1000
       runAsNonRoot: true
       privileged: false
       allowPrivilegeEscalation: false
