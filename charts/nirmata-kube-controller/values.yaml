@@ -4,14 +4,12 @@
 
 nirmataURL: "wss://nirmata.io/tunnels"
 
-namespace: "nirmata"
-
 # cluster name is required
 cluster:
   name: ""
   type: "default-policy-manager-type"
 
-# use either apiToken or apiTokenSecret to specify the api token in NPM
+# Use either apiToken or apiTokenSecret to specify the api token in NPM
 # to use the apiTokenSecret, please create a secret with key 'apiKey'
 # here's the example
 # apiVersion: v1
@@ -20,10 +18,11 @@ cluster:
 #   name: nirmata-api-token
 #   namespace: nirmata
 # data:
-#   apiKey: UWd4ZWVKTzZhR0Q0RWVBWU1uVW5oaTdIM3pSR3lkMVJuR2dKMDlQR0dDWnk4WUUvZ0diM3ZsVFQ0aDBUNE12L0MxenNWcHhseksxalNtdHMrOXNLdENVNXZ3U3c5Rlo2T1pCaXZkNEJXazQ9
+#   apiKey: "{base64 encoded api token}"
 
 apiTokenSecret: "nirmata-api-token"
-# apiToken: "QgxeeJO6aGD4EeAYMnUnhi7H3zRGyd1RnGgJ09PGGCZy8YE/gGb3vlTT4h0T4Mv/C1zsVpxlzK1jSmts+9sKtCU5vwSw9FZ6OZBivd4BWk4="
+# to use apiToken, please specify the token directly, no base64 encode needed
+# apiToken: ""
 
 proxy:
   httpProxy: ""
