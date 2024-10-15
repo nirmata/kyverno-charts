@@ -187,7 +187,7 @@ kyverno:
     apiVersionOverride:
       podDisruptionBudget: "policy/v1"
     licenseManager:
-      imageTag: v0.1.17-rc.1
+      imageTag: 0.1.17-rc.1
     webhooksCleanup:
       enabled: false
       image: ghcr.io/nirmata/kubectl:1.31.1
