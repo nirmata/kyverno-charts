@@ -10825,32 +10825,6 @@ entries:
     version: 0.1.0
   nirmata-kyverno-operator:
   - apiVersion: v2
-    appVersion: v0.4.0
-    created: "2024-10-17T07:58:09.384830135Z"
-    dependencies:
-    - condition: crds.install
-      name: crds
-      repository: ""
-      version: 3.2.2
-    description: Helm Chart for Enterprise Kyverno Operator
-    digest: aa11a18fbbddb0a203916213dac042d4a3deb8efec01a750709d427f6c7171f6
-    home: https://kyverno.io/
-    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
-    keywords:
-    - kubernetes
-    - nirmata
-    - enterprise kyverno operator
-    - kyverno operator
-    kubeVersion: '>=1.20.0-0'
-    maintainers:
-    - name: Nirmata
-      url: https://nirmata.com/
-    name: nirmata-kyverno-operator
-    type: application
-    urls:
-    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-kyverno-operator-v0.5.0/nirmata-kyverno-operator-v0.5.0.tgz
-    version: v0.5.0
-  - apiVersion: v2
     appVersion: v0.4.0-rc2
     created: "2024-09-28T19:25:53.030275785Z"
     dependencies:
