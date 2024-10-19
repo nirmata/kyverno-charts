@@ -93,7 +93,7 @@ kyverno:
               - watch
   templating:
     enabled: false
-    image: ghcr.io/nirmata/kubectl:1.29.1
+    image: ghcr.io/nirmata/kubectl:1.31.1
     version: ~
   customNamespaces: false
   webhooksCleanup:
@@ -257,7 +257,7 @@ kyverno:
       image:
         registry: ~
         repository: ghcr.io/nirmata/kubectl
-        tag: '1.29.1'
+        tag: '1.31.1'
         pullPolicy: ~
       podSecurityContext: {}
       securityContext:
@@ -278,14 +278,14 @@ kyverno:
       imageTag: 0.1.17
     webhooksCleanup:
       enabled: false
-      image: ghcr.io/nirmata/kubectl:1.29.1
+      image: ghcr.io/nirmata/kubectl:1.31.1
     cleanupJobs:
       admissionReports:
         image:
-          tag: '1.29.0'
+          tag: '1.31.1'
       clusterAdmissionReports:
         image:
-          tag: '1.29.0'
+          tag: '1.31.1'
 
 policies:
   chartRepoUsername:
