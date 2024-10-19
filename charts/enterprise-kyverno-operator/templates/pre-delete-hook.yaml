@@ -50,7 +50,7 @@ spec:
               kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoadapters cis-adapter-config;
               {{- end }}
               {{- if .Values.kyverno.createCR }}
-              kubectl patch kyvernoconfigs kyverno -p '{"metadata":{"finalizers":[]}}' --type=merge
+              kubectl -n {{ include "enterprise-kyverno.namespace" . }} patch kyvernoconfigs kyverno -p '{"metadata":{"finalizers":[]}}' --type=merge;
 
               kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoconfigs kyverno;
               
