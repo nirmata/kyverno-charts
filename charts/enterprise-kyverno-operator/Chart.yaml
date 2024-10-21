@@ -8,16 +8,16 @@ appVersion: v0.1.18
 
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 keywords:
-  - kubernetes
-  - nirmata
-  - enterprise kyverno operator
-  - kyverno operator
+- kubernetes
+- nirmata
+- enterprise kyverno operator
+- kyverno operator
 home: https://kyverno.io/
 maintainers:
-  - name: Nirmata
-    url: https://nirmata.com/
+- name: Nirmata
+  url: https://nirmata.com/
 kubeVersion: ">=1.20.0-0"
 dependencies:
-  - name: crds
-    version: 3.2.2
-    condition: crds.install
+- name: crds
+  version: 3.2.2
+  condition: crds.install
