@@ -69,6 +69,11 @@ kyverno:
       # -- Extra resource permissions to add in the cluster role
       extraResources: []
   admissionController:
+    # -- Create rolebinding to view role
+    createViewRoleBinding: true
+
+    # -- The view role to use in the rolebinding
+    viewRoleName: view
     replicas: ~
     rbac:
       create: true
@@ -81,15 +86,7 @@ kyverno:
         # -- Extra resource permissions to add in the core cluster role.
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
-        extraResources:
-          - apiGroups:
-              - '*'
-            resources:
-              - '*'
-            verbs:
-              - get
-              - list
-              - watch
+        extraResources: []
   templating:
     enabled: false
     image: ghcr.io/nirmata/kubectl:1.31.1
@@ -149,6 +146,12 @@ kyverno:
   reportsController:
     # -- Enable reports controller.
     enabled: true
+    # -- Create rolebinding to view role
+    createViewRoleBinding: true
+
+    # -- The view role to use in the rolebinding
+    viewRoleName: view
+
     rbac:
       # -- Create RBAC resources
       create: true
@@ -161,18 +164,16 @@ kyverno:
         # -- Extra resource permissions to add in the core cluster role.
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
-        extraResources:
-          - apiGroups:
-              - '*'
-            resources:
-              - '*'
-            verbs:
-              - get
-              - list
-              - watch
+        extraResources: []
   backgroundController:
     # -- Enable background controller.
     enabled: true
+
+    # -- Create rolebinding to view role
+    createViewRoleBinding: true
+
+    # -- The view role to use in the rolebinding
+    viewRoleName: view
     rbac:
       # -- Create RBAC resources
       create: true
@@ -186,14 +187,6 @@ kyverno:
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
         extraResources:
-          - apiGroups:
-              - '*'
-            resources:
-              - '*'
-            verbs:
-              - get
-              - list
-              - watch
           - apiGroups:
               - networking.k8s.io
             resources:
