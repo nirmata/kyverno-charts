@@ -2,10 +2,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.10.0
-  labels:
-    app.kubernetes.io/part-of: nirmata-kyverno-operator
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.15.0
   name: policysets.security.nirmata.io
 spec:
   group: security.nirmata.io
@@ -26,64 +23,153 @@ spec:
         description: PolicySet is the Schema for the PolicySets API
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
             type: string
           metadata:
             type: object
           spec:
             description: PolicySetSpec defines the desired state of PolicySet
             properties:
+              autoDeployChanges:
+                type: boolean
               helm:
                 additionalProperties:
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
-                description: Finer customizations for each component are provided
-                  in a generic object structure, typically matching the value.yaml
-                  of individual components
+                description: |-
+                  Finer customizations for each component are provided in a
+                  generic object structure, typically matching the
+                  value.yaml of individual components
                 type: object
               source:
                 properties:
                   description:
                     type: string
+                  git:
+                    properties:
+                      branch:
+                        type: string
+                      directoryPath:
+                        type: string
+                      helmCustomizations:
+                        additionalProperties:
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                        type: object
+                      passwordSecret:
+                        type: string
+                      repoType:
+                        type: string
+                      repoUrl:
+                        type: string
+                      username:
+                        type: string
+                    type: object
                   helm:
                     properties:
                       chartName:
                         type: string
                       chartRepo:
                         type: string
-                      version:
+                      helmCustomizations:
+                        additionalProperties:
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                        type: object
+                      passwordSecret:
                         type: string
                       username:
                         type: string
-                      passwordSecret:
+                      version:
                         type: string
                     type: object
+                  type:
+                    type: string
                 type: object
+              syncInterval:
+                type: integer
             type: object
           status:
             description: PolicySetStatus defines the observed state of PolicySet
             properties:
               allPoliciesReady:
                 type: boolean
+              git:
+                properties:
+                  lastCommitId:
+                    type: string
+                  lastCommitMessage:
+                    type: string
+                  lastCommitTime:
+                    type: string
+                  lastCommiter:
+                    type: string
+                type: object
+              lastSyncErrorMessage:
+                type: string
+              lastSyncSuccess:
+                type: boolean
+              lastSyncTime:
+                format: date-time
+                type: string
               lastUpdated:
                 format: date-time
                 type: string
+              phase:
+                type: string
+              policies:
+                properties:
+                  lastStatusUpdated:
+                    format: date-time
+                    type: string
+                  policiesStatus:
+                    items:
+                      properties:
+                        errorMessage:
+                          type: string
+                        lastApplied:
+                          type: string
+                        lastAppliedCommit:
+                          type: string
+                        name:
+                          type: string
+                        ready:
+                          type: boolean
+                      required:
+                      - ready
+                      type: object
+                    type: array
+                  readyPolicies:
+                    type: integer
+                  totalPolicies:
+                    type: integer
+                required:
+                - readyPolicies
+                - totalPolicies
+                type: object
               policiesNotReady:
                 items:
                   type: string
                 type: array
             required:
             - allPoliciesReady
+            - lastSyncSuccess
             type: object
         type: object
     served: true
     storage: true
     subresources:
       status: {}
+      
