@@ -22,8 +22,8 @@ rules:
   - get
   - create
   - update
-  - delete
   - patch
+  - delete
 - apiGroups:
   - "security.nirmata.io"
   resources:
