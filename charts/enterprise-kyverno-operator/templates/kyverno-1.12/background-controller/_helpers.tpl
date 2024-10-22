@@ -42,7 +42,7 @@
 {{- define "kyverno.background-controller.serviceAnnotations" -}}
   {{- template "kyverno.annotations.merge" (list
     (toYaml .Values.customAnnotations)
-    (toYaml .Values.admissionController.service.annotations)
+    (toYaml .Values.kyverno.admissionController.service.annotations)
   ) -}}
 {{- end -}}
 
@@ -53,6 +53,6 @@
 {{- define "kyverno.background-controller.serviceAccountAnnotations" -}}
   {{- template "kyverno.annotations.merge" (list
     (toYaml .Values.customAnnotations)
-    (toYaml .Values.backgroundController.rbac.serviceAccount.annotations)
+    (toYaml .Values.kyverno.backgroundController.rbac.serviceAccount.annotations)
   ) -}}
 {{- end -}}
