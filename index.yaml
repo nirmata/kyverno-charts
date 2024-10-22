@@ -10915,32 +10915,32 @@ entries:
     - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-kube-controller-0.1.0/nirmata-kube-controller-0.1.0.tgz
     version: 0.1.0
   nirmata-kyverno-operator:
-  # - apiVersion: v2
-  #   appVersion: v0.4.1
-  #   created: "2024-10-21T12:43:41.213983142Z"
-  #   dependencies:
-  #   - condition: crds.install
-  #     name: crds
-  #     repository: ""
-  #     version: 3.2.2
-  #   description: Helm Chart for Enterprise Kyverno Operator
-  #   digest: bc6372000abe1004f55f3fdebbf53fe643503d7a0fbcfc92f91d75f4cb044cee
-  #   home: https://kyverno.io/
-  #   icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
-  #   keywords:
-  #   - kubernetes
-  #   - nirmata
-  #   - enterprise kyverno operator
-  #   - kyverno operator
-  #   kubeVersion: '>=1.20.0-0'
-  #   maintainers:
-  #   - name: Nirmata
-  #     url: https://nirmata.com/
-  #   name: nirmata-kyverno-operator
-  #   type: application
-  #   urls:
-  #   - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-kyverno-operator-v0.5.1/nirmata-kyverno-operator-v0.5.1.tgz
-  #   version: v0.5.1
+  - apiVersion: v2
+    appVersion: v0.4.1
+    created: "2024-10-22T11:00:53.395061152Z"
+    dependencies:
+    - condition: crds.install
+      name: crds
+      repository: ""
+      version: 3.2.2
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: 91b53b11ac87868cd630bbf3f6d38e1588f9a341e34e67981764b1614fec5afe
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-kyverno-operator-v0.5.2/nirmata-kyverno-operator-v0.5.2.tgz
+    version: v0.5.2
   - apiVersion: v2
     appVersion: v0.4.1-rc1
     created: "2024-10-21T10:51:35.031027244Z"
@@ -13851,4 +13851,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2024-10-21T12:43:41.216728331Z"
+generated: "2024-10-22T11:00:53.397768343Z"
