@@ -8,6 +8,7 @@ createNs: true
 cluster:
   name:
   type: "default-policy-manager-type"
+  endpoint: ""
 
 apiToken:
 
@@ -18,7 +19,7 @@ proxy:
 
 tlsCert: ""
 
-imageTag: v0.1.4
+imageTag: v0.1.5-rc1
 
 # Whether registrator should install kube-controller with readonly or read-write permissions.
 # For NDP we provide a read-write-ndp role that has a lot more perms than read-write
