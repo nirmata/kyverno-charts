@@ -442,6 +442,8 @@ spec:
           value: "{{ .Values.tlsCert }}"
         - name: APIKEY_SECRET_NAMESPACE
           value: "{{ .Release.Namespace }}"
+        - name: "SERVER_ENDPOINT"
+          value: "{{ .Values.cluster.endpoint }}"
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
