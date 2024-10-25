@@ -1750,7 +1750,7 @@ reportsController:
           - rbac.authorization.k8s.io
         resources:
           - rolebindings
-          - clusterrolebindings # Added ClusterRoleBindings
+          - clusterrolebindings
           - clusterroles
           - roles
         verbs:
