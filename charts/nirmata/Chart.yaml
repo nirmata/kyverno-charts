@@ -1,7 +1,7 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 3.2.6-rc1
+version: 3.2.6-rc2
 appVersion: v1.12.6-n4k.nirmata.1-rc1
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
@@ -18,7 +18,7 @@ keywords:
 - generate
 - supply chain
 - security
-home: https://kyverno.io/ppred
+home: https://kyverno.io/
 sources:
 - https://github.com/nirmata/kyverno
 maintainers:
