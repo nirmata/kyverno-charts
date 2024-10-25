@@ -18,7 +18,7 @@ keywords:
 - generate
 - supply chain
 - security
-home: https://kyverno.io/ppred
+home: https://kyverno.io/
 sources:
 - https://github.com/nirmata/kyverno
 maintainers:

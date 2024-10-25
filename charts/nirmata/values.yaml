@@ -91,6 +91,7 @@ crds:
 
   # -- Additional CRDs labels
   customLabels: {}
+  customAnnotations: {}
 
   migration:
 
@@ -1627,11 +1628,22 @@ backgroundController:
 
     clusterRole:
       # -- Extra resource permissions to add in the cluster role
-      extraResources: []
-      # - apiGroups:
-      #     - ''
-      #   resources:
-      #     - pods
+      extraResources:
+      - apiGroups:
+          - ''
+        resources:
+          - pods
+      - apiGroups:
+          - rbac.authorization.k8s.io
+        resources:
+          - rolebindings
+          - clusterrolebindings
+          - clusterroles
+          - roles
+        verbs:
+          - get
+          - list
+          - watch
 
   image:
     # -- (string) Image registry
