@@ -1743,20 +1743,20 @@ reportsController:
       # -- Extra resource permissions to add in the cluster role
       extraResources:
       - apiGroups:
-        - ''
+          - ''
         resources:
-        - pods
-      - apiGroups: 
-        - rbac.authorization.k8s.io
-      resources: 
-        - rolebindings
-        - clusterrolebindings  # Added ClusterRoleBindings
-        - clusterroles
-        - roles
-      verbs: 
-        - get
-        - list
-        - watch
+          - pods
+      - apiGroups:
+          - rbac.authorization.k8s.io
+        resources:
+          - rolebindings
+          - clusterrolebindings # Added ClusterRoleBindings
+          - clusterroles
+          - roles
+        verbs:
+          - get
+          - list
+          - watch
 
   image:
     # -- Image registry
