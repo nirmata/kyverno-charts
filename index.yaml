@@ -2235,6 +2235,55 @@ entries:
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: v1.12.6-n4k.nirmata.1-rc1
+    created: "2024-10-25T16:33:14.56742513Z"
+    dependencies:
+    - condition: grafana.enabled
+      name: grafana
+      repository: ""
+      version: 3.2.2
+    - condition: crds.install
+      name: crds
+      repository: ""
+      version: 3.2.2
+    description: Kubernetes Native Policy Management
+    digest: 929f9a43d2352bcdf5a52d921a3a444300f2fd906ef63307b155fb5e6e7b4fdc
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy
+    - validating webhook
+    - admission controller
+    - mutation
+    - mutate
+    - validate
+    - generate
+    - supply chain
+    - security
+    kubeVersion: '>=1.22.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://kyverno.io/
+    name: kyverno
+    sources:
+    - https://github.com/nirmata/kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.2.6-rc3/kyverno-3.2.6-rc3.tgz
+    version: 3.2.6-rc3
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: make webhook pod annotations configurable
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: v1.12.6-n4k.nirmata.1-rc1
     created: "2024-10-25T16:14:37.69480761Z"
     dependencies:
     - condition: grafana.enabled
@@ -13962,4 +14011,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2024-10-25T16:14:37.697648388Z"
+generated: "2024-10-25T16:33:14.570271521Z"
