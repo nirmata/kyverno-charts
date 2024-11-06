@@ -203,7 +203,7 @@ spec:
         - name: NO_PROXY
           value: {{ .Values.proxy.noProxy }}
         {{- end }}
-        image: "{{ .Values.imageRegistry }}:{{ .Chart.AppVersion | default .Values.image.tag }}"
+        image: "{{ .Values.imageRegistry }}:{{ .Chart.AppVersion | default .Values.imageTag}}"
         imagePullPolicy: Always
         livenessProbe:
           exec:
