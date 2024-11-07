@@ -662,8 +662,8 @@ features:
   omitEvents:
     # -- Events which should not be emitted (possible values `PolicyViolation`, `PolicyApplied`, `PolicyError`, and `PolicySkipped`)
     eventTypes:
-    - PolicyApplied
-    - PolicySkipped
+    # - PolicyApplied
+    # - PolicySkipped
     # - PolicyViolation
     # - PolicyError
   policyExceptions:
