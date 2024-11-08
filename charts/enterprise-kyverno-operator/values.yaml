@@ -373,7 +373,7 @@ securityContext:
     - CAP_NET_RAW
 
 # -- Configmap storing custom CA certificate if any
-customCAConfigMap: 
+customCAConfigMap:
 # -- Path containing ssl certs within the container. Used only if customCAConfigMap is used
 
 systemCertPath: /etc/ssl/certs
