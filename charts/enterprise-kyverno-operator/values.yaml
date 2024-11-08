@@ -28,6 +28,7 @@ image:
     username:
     password:
 
+
 rbac:
   create: true
   operatorHasAdminPerms: false
@@ -83,14 +84,14 @@ kyverno:
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
         extraResources:
-          - apiGroups:
-              - '*'
-            resources:
-              - '*'
-            verbs:
-              - get
-              - list
-              - watch
+        - apiGroups:
+          - '*'
+          resources:
+          - '*'
+          verbs:
+          - get
+          - list
+          - watch
   templating:
     enabled: false
     image: ghcr.io/nirmata/kubectl:1.31.1
@@ -163,14 +164,14 @@ kyverno:
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
         extraResources:
-          - apiGroups:
-              - '*'
-            resources:
-              - '*'
-            verbs:
-              - get
-              - list
-              - watch
+        - apiGroups:
+          - '*'
+          resources:
+          - '*'
+          verbs:
+          - get
+          - list
+          - watch
   backgroundController:
     # -- Enable background controller.
     enabled: true
@@ -187,47 +188,47 @@ kyverno:
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
         extraResources:
-          - apiGroups:
-              - '*'
-            resources:
-              - '*'
-            verbs:
-              - get
-              - list
-              - watch
-          - apiGroups:
-              - networking.k8s.io
-            resources:
-              - ingresses
-              - ingressclasses
-              - networkpolicies
-            verbs:
-              - create
-              - update
-              - patch
-              - delete
-          - apiGroups:
-              - rbac.authorization.k8s.io
-            resources:
-              - rolebindings
-              - roles
-            verbs:
-              - create
-              - update
-              - patch
-              - delete
-          - apiGroups:
-              - ''
-            resources:
-              - configmaps
-              - secrets
-              - resourcequotas
-              - limitranges
-            verbs:
-              - create
-              - update
-              - patch
-              - delete
+        - apiGroups:
+          - '*'
+          resources:
+          - '*'
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - networking.k8s.io
+          resources:
+          - ingresses
+          - ingressclasses
+          - networkpolicies
+          verbs:
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - rolebindings
+          - roles
+          verbs:
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - ''
+          resources:
+          - configmaps
+          - secrets
+          - resourcequotas
+          - limitranges
+          verbs:
+          - create
+          - update
+          - patch
+          - delete
 
   kyverno:
     customLabels: {}
@@ -252,6 +253,13 @@ kyverno:
       generateValidatingAdmissionPolicy:
         # -- Enables the feature
         enabled: false
+    omitEvents:
+      # -- Events which should not be emitted (possible values `PolicyViolation`, `PolicyApplied`, `PolicyError`, and `PolicySkipped`)
+      eventTypes:
+        # - PolicyApplied
+        # - PolicySkipped
+        # - PolicyViolation
+        # - PolicyError
     policyReportsCleanup:
       enabled: false
       image:
@@ -269,7 +277,7 @@ kyverno:
         readOnlyRootFilesystem: true
         capabilities:
           drop:
-            - ALL
+          - ALL
         seccompProfile:
           type: RuntimeDefault
     apiVersionOverride:
@@ -291,6 +299,7 @@ policies:
   chartRepoUsername:
   policySets:
 
+
 awsAdapter:
   createCR: false
   namespace: kyverno-aws-adapter
@@ -308,6 +317,7 @@ awsAdapter:
   eksCluster:
     name:
     region:
+
 
 imageScanAdapter:
   createCR: false
@@ -366,6 +376,7 @@ securityContext:
 # -- Configmap storing custom CA certificate if any
 customCAConfigMap:
 # -- Path containing ssl certs within the container. Used only if customCAConfigMap is used
+
 systemCertPath: /etc/ssl/certs
 
 service:
@@ -379,10 +390,10 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
+  - host: chart-example.local
+    paths:
+    - path: /
+      pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -414,7 +425,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
 
 # CRDs configuration
 crds:
@@ -463,17 +473,17 @@ crds:
 
     # -- Resources to migrate
     resources:
-      - admissionreports.kyverno.io
-      - backgroundscanreports.kyverno.io
-      - cleanuppolicies.kyverno.io
-      - clusteradmissionreports.kyverno.io
-      - clusterbackgroundscanreports.kyverno.io
-      - clustercleanuppolicies.kyverno.io
-      - clusterpolicies.kyverno.io
-      - globalcontextentries.kyverno.io
-      - policies.kyverno.io
-      - policyexceptions.kyverno.io
-      - updaterequests.kyverno.io
+    - admissionreports.kyverno.io
+    - backgroundscanreports.kyverno.io
+    - cleanuppolicies.kyverno.io
+    - clusteradmissionreports.kyverno.io
+    - clusterbackgroundscanreports.kyverno.io
+    - clustercleanuppolicies.kyverno.io
+    - clusterpolicies.kyverno.io
+    - globalcontextentries.kyverno.io
+    - policies.kyverno.io
+    - policyexceptions.kyverno.io
+    - updaterequests.kyverno.io
 
     image:
       # -- (string) Image registry
@@ -524,6 +534,6 @@ crds:
       readOnlyRootFilesystem: true
       capabilities:
         drop:
-          - ALL
+        - ALL
       seccompProfile:
         type: RuntimeDefault
