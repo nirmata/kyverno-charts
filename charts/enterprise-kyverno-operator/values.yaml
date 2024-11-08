@@ -252,13 +252,13 @@ kyverno:
       generateValidatingAdmissionPolicy:
         # -- Enables the feature
         enabled: false
-    omitEvents:
-      # -- Events which should not be emitted (possible values `PolicyViolation`, `PolicyApplied`, `PolicyError`, and `PolicySkipped`)
-      eventTypes:
-        # - PolicyApplied
-        # - PolicySkipped
-        # - PolicyViolation
-        # - PolicyError
+      omitEvents:
+        # -- Events which should not be emitted (possible values `PolicyViolation`, `PolicyApplied`, `PolicyError`, and `PolicySkipped`)
+        eventTypes:
+          # - PolicyApplied
+          # - PolicySkipped
+          # - PolicyViolation
+          # - PolicyError
     policyReportsCleanup:
       enabled: false
       image:
