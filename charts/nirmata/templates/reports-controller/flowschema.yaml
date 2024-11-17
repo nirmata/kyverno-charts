@@ -5,11 +5,6 @@ metadata:
   name: {{ template "kyverno.reports-controller.name" . }}
   labels:
     {{- include "kyverno.reports-controller.labels" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
 spec:
   priorityLevelConfiguration:
     name: {{ template "kyverno.reports-controller.name" . }}
@@ -25,37 +20,6 @@ spec:
         - get
         - list
         - watch
-    - apiGroups:
-        - kyverno.io
-      clusterScope: true
-      resources:
-        - clusteradmissionreports
-        - clusterbackgroundscanreports
-      verbs:
-        - create
-        - delete
-        - get
-        - list
-        - patch
-        - update
-        - watch
-        - deletecollection
-    - apiGroups:
-        - kyverno.io
-      namespaces:
-        - '*'
-      resources:
-        - admissionreports
-        - backgroundscanreports
-      verbs:
-        - create
-        - delete
-        - get
-        - list
-        - patch
-        - update
-        - watch
-        - deletecollection
     - apiGroups:
         - reports.kyverno.io
       clusterScope: true

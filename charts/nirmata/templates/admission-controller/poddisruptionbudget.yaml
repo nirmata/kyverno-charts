@@ -6,11 +6,6 @@ metadata:
   namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.admission-controller.labels" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
 spec:
   {{- include "kyverno.pdb.spec" .Values.admissionController.podDisruptionBudget | nindent 2 }}
   selector:

@@ -5,11 +5,6 @@ metadata:
   name: {{ template "kyverno.rbac.roleName" . }}:admin:updaterequests
   labels:
     {{- include "kyverno.rbac.labels.admin" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
 rules:
   - apiGroups:
       - kyverno.io

@@ -12,6 +12,9 @@
 {{- $flags := list -}}
 {{- with .admissionReports -}}
   {{- $flags = append $flags (print "--admissionReports=" .enabled) -}}
+  {{- with .backPressureThreshold -}}
+    {{- $flags = append $flags (print "--maxAdmissionReports=" .) -}}
+  {{- end -}}
 {{- end -}}
 {{- with .aggregateReports -}}
   {{- $flags = append $flags (print "--aggregateReports=" .enabled) -}}
@@ -24,9 +27,6 @@
 {{- end -}}
 {{- with .autoUpdateWebhooks -}}
   {{- $flags = append $flags (print "--autoUpdateWebhooks=" .enabled) -}}
-{{- end -}}
-{{- with .disableAutoWebhookGeneration -}}
-  {{- $flags = append $flags (print "--disableAutoWebhookGeneration=" .enabled) -}}
 {{- end -}}
 {{- with .backgroundScan -}}
   {{- $flags = append $flags (print "--backgroundScan=" .enabled) -}}
@@ -49,6 +49,9 @@
 {{- with .generateValidatingAdmissionPolicy -}}
   {{- $flags = append $flags (print "--generateValidatingAdmissionPolicy=" .enabled) -}}
 {{- end -}}
+{{- with .dumpPatches -}}
+  {{- $flags = append $flags (print "--dumpPatches=" .enabled) -}}
+{{- end -}}
 {{- with .globalContext -}}
   {{- $flags = append $flags (print "--maxAPICallResponseLength=" (int .maxApiCallResponseLength)) -}}
 {{- end -}}
@@ -70,9 +73,6 @@
 {{- with .protectManagedResources -}}
   {{- $flags = append $flags (print "--protectManagedResources=" .enabled) -}}
 {{- end -}}
-{{- with .reports -}}
-  {{- $flags = append $flags (print "--reportsChunkSize=" .chunkSize) -}}
-{{- end -}}
 {{- with .registryClient -}}
   {{- $flags = append $flags (print "--allowInsecureRegistry=" .allowInsecure) -}}
   {{- $flags = append $flags (print "--registryCredentialHelpers=" (join "," .credentialHelpers)) -}}
@@ -90,6 +90,28 @@
   {{- with .root -}}
     {{- $flags = append $flags (print "--tufRoot=" .) -}}
   {{- end -}}
+  {{- with .rootRaw -}}
+    {{- $flags = append $flags (print "--tufRootRaw=" .) -}}
+  {{- end -}}
+{{- end -}}
+{{- with .reporting -}}
+  {{- $reportingConfig := list -}}
+  {{- with .validate -}}
+    {{- $reportingConfig = append $reportingConfig "validate" -}}
+  {{- end -}}
+  {{- with .mutate -}}
+    {{- $reportingConfig = append $reportingConfig "mutate" -}}
+  {{- end -}}
+  {{- with .mutateExisting -}}
+    {{- $reportingConfig = append $reportingConfig "mutateExisting" -}}
+  {{- end -}}
+  {{- with .imageVerify -}}
+    {{- $reportingConfig = append $reportingConfig "imageVerify" -}}
+  {{- end -}}
+  {{- with .generate -}}
+    {{- $reportingConfig = append $reportingConfig "generate" -}}
+  {{- end -}}
+  {{- $flags = append $flags (print "--enableReporting=" (join "," $reportingConfig)) -}}
 {{- end -}}
 {{- with $flags -}}
   {{- toYaml . -}}

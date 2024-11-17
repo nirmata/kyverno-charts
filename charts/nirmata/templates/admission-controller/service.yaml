@@ -6,17 +6,16 @@ metadata:
   namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.admission-controller.labels" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.admission-controller.serviceAnnotations" . | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
+  {{- with .Values.admissionController.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
 spec:
   ports:
   - port: {{ .Values.admissionController.service.port }}
     targetPort: https
     protocol: TCP
     name: https
+    appProtocol: https
     {{- if and (eq .Values.admissionController.service.type "NodePort") (not (empty .Values.admissionController.service.nodePort)) }}
     nodePort: {{ .Values.admissionController.service.nodePort }}
     {{- end }}
@@ -38,7 +37,7 @@ metadata:
 spec:
   ports:
   - port: {{ .Values.admissionController.metricsService.port }}
-    targetPort: 8000
+    targetPort: {{ .Values.admissionController.metering.port }}
     protocol: TCP
     name: metrics-port
     {{- if and (eq .Values.admissionController.metricsService.type "NodePort") (not (empty .Values.admissionController.metricsService.nodePort)) }}
