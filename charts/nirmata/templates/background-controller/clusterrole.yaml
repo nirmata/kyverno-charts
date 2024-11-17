@@ -6,11 +6,6 @@ metadata:
   name: {{ template "kyverno.background-controller.roleName" . }}
   labels:
     {{- include "kyverno.background-controller.labels" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
 aggregationRule:
   clusterRoleSelectors:
     - matchLabels:
@@ -24,11 +19,6 @@ metadata:
   name: {{ template "kyverno.background-controller.roleName" . }}:core
   labels:
     {{- include "kyverno.background-controller.labels" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
 rules:
   - apiGroups:
       - apiextensions.k8s.io
@@ -36,13 +26,13 @@ rules:
       - customresourcedefinitions
     verbs:
       - get
-      - list
-      - watch
   - apiGroups:
       - kyverno.io
     resources:
       - policies
+      - policies/status
       - clusterpolicies
+      - clusterpolicies/status
       - policyexceptions
       - updaterequests
       - updaterequests/status
@@ -89,19 +79,21 @@ rules:
     verbs:
       - create
       - update
-      - patch
-      - delete
+      - watch
   - apiGroups:
-      - rbac.authorization.k8s.io
+      - reports.kyverno.io
     resources:
-      - rolebindings
-      - roles
+      - ephemeralreports
+      - clusterephemeralreports
     verbs:
       - create
-      - update
-      - patch
       - delete
+      - get
+      - list
+      - patch
+      - update
       - watch
+      - deletecollection
 {{- with .Values.backgroundController.rbac.coreClusterRole.extraResources }}
   {{- toYaml . | nindent 2 }}
 {{- end }}
@@ -113,11 +105,6 @@ metadata:
   name: {{ template "kyverno.background-controller.roleName" $ }}:additional
   labels:
     {{- include "kyverno.background-controller.labels" $ | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
 rules:
   {{- range . }}
   - apiGroups:
@@ -135,4 +122,3 @@ rules:
 {{- end }}
 {{- end }}
 {{- end }}
-

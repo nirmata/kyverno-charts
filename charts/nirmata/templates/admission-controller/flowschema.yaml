@@ -5,11 +5,6 @@ metadata:
   name: {{ template "kyverno.admission-controller.name" . }}
   labels:
     {{- include "kyverno.admission-controller.labels" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
 spec:
   priorityLevelConfiguration:
     name: {{ template "kyverno.admission-controller.name" . }}
@@ -57,8 +52,6 @@ spec:
         - clusterpolicies/status
         - globalcontextentries
         - globalcontextentries/status
-        - clusteradmissionreports
-        - clusterbackgroundscanreports
       verbs:
         - create
         - delete
@@ -77,8 +70,6 @@ spec:
         - policies/status
         - updaterequests
         - updaterequests/status
-        - admissionreports
-        - backgroundscanreports
       verbs:
         - create
         - delete

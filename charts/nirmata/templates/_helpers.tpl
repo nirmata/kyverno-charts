@@ -12,6 +12,9 @@
 {{- $flags := list -}}
 {{- with .admissionReports -}}
   {{- $flags = append $flags (print "--admissionReports=" .enabled) -}}
+  {{- with .backPressureThreshold -}}
+    {{- $flags = append $flags (print "--maxAdmissionReports=" .) -}}
+  {{- end -}}
 {{- end -}}
 {{- with .aggregateReports -}}
   {{- $flags = append $flags (print "--aggregateReports=" .enabled) -}}
@@ -24,9 +27,6 @@
 {{- end -}}
 {{- with .autoUpdateWebhooks -}}
   {{- $flags = append $flags (print "--autoUpdateWebhooks=" .enabled) -}}
-{{- end -}}
-{{- with .disableAutoWebhookGeneration -}}
-  {{- $flags = append $flags (print "--disableAutoWebhookGeneration=" .enabled) -}}
 {{- end -}}
 {{- with .backgroundScan -}}
   {{- $flags = append $flags (print "--backgroundScan=" .enabled) -}}

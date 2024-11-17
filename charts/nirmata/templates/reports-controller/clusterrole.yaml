@@ -6,11 +6,6 @@ metadata:
   name: {{ template "kyverno.reports-controller.roleName" . }}
   labels:
     {{- include "kyverno.reports-controller.labels" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
 aggregationRule:
   clusterRoleSelectors:
     - matchLabels:
@@ -24,11 +19,6 @@ metadata:
   name: {{ template "kyverno.reports-controller.roleName" . }}:core
   labels:
     {{- include "kyverno.reports-controller.labels" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
 rules:
   - apiGroups:
       - apiextensions.k8s.io
@@ -39,7 +29,6 @@ rules:
   - apiGroups:
       - ''
     resources:
-      - secrets
       - configmaps
       - namespaces
     verbs:
@@ -51,10 +40,6 @@ rules:
     resources:
       - globalcontextentries
       - globalcontextentries/status
-      - admissionreports
-      - clusteradmissionreports
-      - backgroundscanreports
-      - clusterbackgroundscanreports
       - policyexceptions
       - policies
       - clusterpolicies
@@ -115,11 +100,6 @@ metadata:
   name: {{ template "kyverno.reports-controller.roleName" $ }}:additional
   labels:
     {{- include "kyverno.reports-controller.labels" $ | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.annotations.common" $ | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
 rules:
   {{- range . }}
   - apiGroups:

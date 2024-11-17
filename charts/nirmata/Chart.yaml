@@ -6,25 +6,25 @@ appVersion: v1.9.5-n4k.nirmata.4
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
-- kubernetes
-- nirmata
-- policy agent
-- policy
-- validating webhook
-- admission controller
-- mutation
-- mutate
-- validate
-- generate
-- supply chain
-- security
+  - kubernetes
+  - nirmata
+  - policy agent
+  - policy
+  - validating webhook
+  - admission controller
+  - mutation
+  - mutate
+  - validate
+  - generate
+  - supply chain
+  - security
 home: https://kyverno.io/
 sources:
-- https://github.com/nirmata/kyverno
+- https://github.com/nirmata/enterprise-kyverno
 maintainers:
-- name: Nirmata
-  url: https://kyverno.io/
-kubeVersion: ">=1.22.0-0"
+  - name: Nirmata
+    url: https://kyverno.io/
+kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/operator: "false"
   artifacthub.io/prerelease: "false"

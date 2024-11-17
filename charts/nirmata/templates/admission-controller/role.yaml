@@ -4,22 +4,27 @@ kind: Role
 metadata:
   name: {{ template "kyverno.admission-controller.roleName" . }}
   namespace: {{ template "kyverno.namespace" . }}
+  {{- if .Values.webhooksCleanup.autoDeleteWebhooks.enabled }}
+  {{- if not .Values.templating.enabled }}
+  finalizers:
+  - kyverno.io/webhooks
+  - kyverno.io/exceptionwebhooks
+  - kyverno.io/globalcontextwebhooks
+  {{- end }}
+  {{- end }}
   labels:
     {{- include "kyverno.admission-controller.labels" . | nindent 4 }}
-{{- $commonAnnotations := include "kyverno.annotations.common" . | nindent 4 }}
-{{- if $commonAnnotations }}
-  annotations:
-{{ $commonAnnotations }}
-{{- end }}
 rules:
   - apiGroups:
       - ''
     resources:
       - secrets
+      - serviceaccounts
     verbs:
       - get
       - list
       - watch
+      - patch
       - create
       - update
   - apiGroups:
@@ -30,19 +35,9 @@ rules:
       - get
       - list
       - watch
-      - create
-      - delete
-      - update
     resourceNames:
       - {{ include "kyverno.config.configMapName" . }}
       - {{ include "kyverno.config.metricsConfigMapName" . }}
-      - license-check-success
-  - apiGroups:
-      - ''
-    resources:
-      - configmaps
-    verbs:
-      - create
   - apiGroups:
       - coordination.k8s.io
     resources:
