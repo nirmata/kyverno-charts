@@ -1,3 +1,4 @@
+{{- if .Release.IsUpgrade }} 
 {{- if .Values.kyverno.crds.migration.enabled -}}
 {{- if not .Values.kyverno.templating.enabled -}}
 apiVersion: rbac.authorization.k8s.io/v1
@@ -111,5 +112,6 @@ spec:
       imagePullSecrets:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+{{- end -}}
 {{- end -}}
 {{- end -}}
