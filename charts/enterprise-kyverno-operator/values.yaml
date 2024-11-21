@@ -241,7 +241,7 @@ kyverno:
     # -- Image repository
     repository: ghcr.io
     # -- Image tag
-    tag: v1.12.6-n4k.nirmata.1
+    tag: v1.12.6-n4k.nirmata.2
 
   # -- Override default exclude namespaces (default kyverno, kube-system, nirmata, nirmata-system )
   excludedNamespacesForWebhook: []
