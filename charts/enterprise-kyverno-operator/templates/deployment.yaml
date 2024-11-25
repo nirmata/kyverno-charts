@@ -63,6 +63,7 @@ spec:
           args:
             - --profile={{- .Values.profile | default "prod" }}
             - --enable-webhook={{- .Values.enableWebhook | default false}}
+            - --enable-policyset={{- .Values.enablePolicyset | default false}}
             - --kyverno-deployment={{- .Values.kyvernoDeployment | default "kyverno-admission-controller"}}
             - --kyverno-namespace={{- .Values.kyvernoNamespace | default "kyverno"}}            
             - --install-rbac={{- .Values.rbac.operatorHasAdminPerms | default false }}
