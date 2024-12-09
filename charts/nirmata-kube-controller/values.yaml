@@ -32,4 +32,4 @@ proxy:
   noProxy: ""
 
 imageRegistry: "ghcr.io/nirmata/nirmata-kube-controller"
-imageTag: "v3.10.6"
+imageTag: "v3.10.7"
