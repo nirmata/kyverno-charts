@@ -497,6 +497,9 @@ features:
   deferredLoading:
     # -- Enables the feature
     enabled: true
+  dumpPatches:
+    # -- Enables the feature 
+    enabled: false
   dumpPayload:
     # -- Enables the feature
     enabled: false
