@@ -236,6 +236,7 @@ spec:
               "configMapCaching"
               "deferredLoading"
               "dumpPayload"
+              "dumpPatches"
               "forceFailurePolicyIgnore"
               "generateValidatingAdmissionPolicy"
               "logging"
