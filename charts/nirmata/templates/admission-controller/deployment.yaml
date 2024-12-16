@@ -168,6 +168,7 @@ spec:
               "configMapCaching"
               "deferredLoading"
               "dumpPayload"
+              "dumpPatches"
               "forceFailurePolicyIgnore"
               "generateValidatingAdmissionPolicy"
               "globalContext"
