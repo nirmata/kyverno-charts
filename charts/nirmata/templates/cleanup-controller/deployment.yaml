@@ -82,7 +82,7 @@ spec:
       serviceAccountName: {{ template "kyverno.cleanup-controller.serviceAccountName" . }}
       containers:
         - name: controller
-          image: {{ include "kyverno.cleanup-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.cleanupController.image "defaultTag" .Chart.AppVersion) | quote }}
+          image: {{ include "kyverno.cleanup-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.cleanupController.image "defaultTag" .Chart.AppVersion "fipsEnabled" .Values.fipsEnabled) | quote }}
           imagePullPolicy: {{ .Values.cleanupController.image.pullPolicy }}
           ports:
           - containerPort: 9443
@@ -169,6 +169,9 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+            {{ if not .Values.fipsEnabled }}
+            runAsNonRoot: true
+            {{- end }}
           {{- with .Values.cleanupController.startupProbe }}
           startupProbe:
             {{- tpl (toYaml .) $ | nindent 12 }}
