@@ -84,7 +84,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         - name: kyverno-pre
-          image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.admissionController.initContainer.image "defaultTag" (default .Chart.AppVersion .Values.admissionController.container.image.tag)) | quote }}
+          image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.admissionController.initContainer.image "defaultTag" (default .Chart.AppVersion .Values.admissionController.container.image.tag) "fipsEnabled" .Values.fipsEnabled) | quote }}
           imagePullPolicy: {{ default .Values.admissionController.container.image.pullPolicy .Values.admissionController.initContainer.image.pullPolicy }}
           args:
             {{- include "kyverno.features.flags" (pick (mergeOverwrite .Values.features .Values.admissionController.featuresOverride)
@@ -103,6 +103,9 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+            {{ if not .Values.fipsEnabled }}
+            runAsNonRoot: true
+            {{- end }}
           env:
           - name: KYVERNO_SERVICEACCOUNT_NAME
             value: {{ template "kyverno.admission-controller.serviceAccountName" . }}
@@ -130,7 +133,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         - name: kyverno
-          image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.admissionController.container.image "defaultTag" .Chart.AppVersion) | quote }}
+          image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.admissionController.container.image "defaultTag" .Chart.AppVersion "fipsEnabled" .Values.fipsEnabled) | quote }}
           imagePullPolicy: {{ .Values.admissionController.container.image.pullPolicy }}
           args:
             - --caSecretName={{ template "kyverno.admission-controller.serviceName" . }}.{{ template "kyverno.namespace" . }}.svc.kyverno-tls-ca
@@ -168,7 +171,6 @@ spec:
               "configMapCaching"
               "deferredLoading"
               "dumpPayload"
-              "dumpPatches"
               "forceFailurePolicyIgnore"
               "generateValidatingAdmissionPolicy"
               "globalContext"
@@ -196,6 +198,9 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+            {{ if not .Values.fipsEnabled }}
+            runAsNonRoot: true
+            {{- end }}
           ports:
           - containerPort: 9443
             name: https

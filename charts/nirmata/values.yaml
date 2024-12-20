@@ -46,6 +46,9 @@ fullnameOverride: ~
 # -- (string) Override the namespace the chart deploys to
 namespaceOverride: ~
 
+# -- (bool) Deploy FIPS compliant images of all the components of n4k
+fipsEnabled: true
+
 customNamespace: false
 
 upgrade:
@@ -645,9 +648,6 @@ features:
   dumpPayload:
     # -- Enables the feature
     enabled: false
-  dumpPatches:
-    # -- Enables the feature
-    enabled: false
   forceFailurePolicyIgnore:
     # -- Enables the feature
     enabled: false
@@ -945,7 +945,6 @@ admissionController:
 
     # -- Container security context
     securityContext:
-      runAsNonRoot: true
       privileged: false
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: true
@@ -989,7 +988,6 @@ admissionController:
 
     # -- Container security context
     securityContext:
-      runAsNonRoot: true
       privileged: false
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: true
@@ -1294,7 +1292,6 @@ backgroundController:
 
   # -- Security context for the containers
   securityContext:
-    runAsNonRoot: true
     privileged: false
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -1601,7 +1598,6 @@ cleanupController:
 
   # -- Security context for the containers
   securityContext:
-    runAsNonRoot: true
     privileged: false
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -1888,7 +1884,6 @@ reportsController:
 
   # -- Security context for the containers
   securityContext:
-    runAsNonRoot: true
     privileged: false
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
