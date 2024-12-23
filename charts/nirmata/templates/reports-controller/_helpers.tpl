@@ -23,7 +23,7 @@
 {{- $fipsEnabled := .fipsEnabled -}}
 {{- if $imageRegistry -}}
     {{- if $fipsEnabled -}}
-      {{ .image.registry }}/{{ required "An image repository is required" .image.repository }}-fips:fips-support-1-12
+      {{ .image.registry }}/{{ required "An image repository is required" .image.repository }}-fips:v1.12.6-n4k.nirmata.3-rc3
     {{- else -}}
       {{ $imageRegistry }}/{{ required "An image repository is required" .image.repository }}:{{ default .defaultTag .image.tag }}
     {{- end -}}
