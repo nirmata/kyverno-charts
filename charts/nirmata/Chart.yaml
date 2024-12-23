@@ -45,8 +45,8 @@ annotations:
       description: ImagePullSecrets made configurable for tests
 dependencies:
   - name: grafana
-    version: 3.3.0
+    version: 3.3.4
     condition: grafana.enabled
   - name: crds
-    version: 3.3.0
+    version: 3.3.4
     condition: crds.install
