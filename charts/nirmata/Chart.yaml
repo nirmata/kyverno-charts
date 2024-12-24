@@ -24,7 +24,7 @@ sources:
 maintainers:
   - name: Nirmata
     url: https://kyverno.io/
-kubeVersion: ">=1.25.0-0"
+kubeVersion: ">=1.22.0-0"
 annotations:
   artifacthub.io/operator: "false"
   artifacthub.io/prerelease: "false"
