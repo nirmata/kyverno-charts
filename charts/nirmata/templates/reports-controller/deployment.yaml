@@ -174,9 +174,7 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-            {{ if not .Values.fipsEnabled }}
             runAsNonRoot: true
-            {{- end }}
           volumeMounts:
             - mountPath: {{ .Values.reportsController.tufRootMountPath }}
               name: sigstore

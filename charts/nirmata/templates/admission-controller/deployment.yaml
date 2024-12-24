@@ -103,9 +103,7 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-            {{ if not .Values.fipsEnabled }}
             runAsNonRoot: true
-            {{- end }}
           env:
           - name: KYVERNO_SERVICEACCOUNT_NAME
             value: {{ template "kyverno.admission-controller.serviceAccountName" . }}
@@ -198,9 +196,7 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-            {{ if not .Values.fipsEnabled }}
             runAsNonRoot: true
-            {{- end }}
           ports:
           - containerPort: 9443
             name: https
