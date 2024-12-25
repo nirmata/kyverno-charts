@@ -198,8 +198,8 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           runAsUser: 1001
-runAsGroup: 1001
-runAsNonRoot: true
+          runAsGroup: 1001
+          runAsNonRoot: true
           ports:
           - containerPort: 9443
             name: https
