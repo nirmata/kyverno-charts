@@ -168,6 +168,7 @@ spec:
           {{- with .Values.cleanupController.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
+          {{- end }}
           runAsUser: 1001
           runAsGroup: 1001
           runAsNonRoot: true
