@@ -168,8 +168,9 @@ spec:
           {{- with .Values.cleanupController.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-            runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          runAsNonRoot: true
           {{- with .Values.cleanupController.startupProbe }}
           startupProbe:
             {{- tpl (toYaml .) $ | nindent 12 }}

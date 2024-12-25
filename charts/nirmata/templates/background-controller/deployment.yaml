@@ -163,8 +163,9 @@ spec:
           {{- with .Values.backgroundController.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-            runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          runAsNonRoot: true
           {{- if or .Values.backgroundController.caCertificates.data .Values.global.caCertificates.data .Values.backgroundController.caCertificates.volume .Values.global.caCertificates.volume }}
           volumeMounts:
             - name: ca-certificates
