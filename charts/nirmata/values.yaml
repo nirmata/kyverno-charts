@@ -546,9 +546,9 @@ policyReportsCleanup:
 
   image:
     # -- (string) Image registry
-    registry: ~
+    registry: ghcr.io
     # -- Image repository
-    repository: ghcr.io/kubectl
+    repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: '1.31.1'
