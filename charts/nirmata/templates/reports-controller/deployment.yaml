@@ -174,8 +174,10 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          runAsUser: 1001
-          runAsGroup: 1001
+          {{ if .Values.fipsEnabled }}
+            runAsUser: 1001
+            runAsGroup: 1001
+          {{- end }}
           runAsNonRoot: true
           volumeMounts:
             - mountPath: {{ .Values.reportsController.tufRootMountPath }}
