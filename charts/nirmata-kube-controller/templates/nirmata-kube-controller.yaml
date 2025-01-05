@@ -19,11 +19,11 @@ type: kubernetes.io/service-account-token
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: nirmata:readonly
+  name: nirmata:readonly-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: nirmata:readonly
+  name: view
 subjects:
 - kind: ServiceAccount
   name: nirmata
@@ -42,29 +42,15 @@ subjects:
 - kind: ServiceAccount
   name: nirmata
   namespace: {{ .Values.namespace }}
----   
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: nirmata:view
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: view
-subjects:
-- kind: ServiceAccount
-  name: nirmata
-  namespace: {{ .Values.namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  annotations: {}
   name: nirmata:readonly
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
 rules:
-- apiGroups:
-  - kyverno.io
-  - operator.kyverno.io
+- apiGroups: ["kyverno.io", "operator.kyverno.io"]
   resources:
   - policies
   - policies/status
@@ -77,10 +63,15 @@ rules:
   - generaterequests/status
   verbs:
   - get
-  - watch
   - list
-- apiGroups:
-  - wgpolicyk8s.io
+  - watch
+  {{ if .Values.enablePolicyExceptions }}
+  - create
+  - update
+  - patch
+  - delete
+  {{ end }}
+- apiGroups: ["wgpolicyk8s.io"]
   resources:
   - policyreports
   - policyreports/status
@@ -88,10 +79,9 @@ rules:
   - clusterpolicyreports/status
   verbs:
   - get
-  - watch
   - list
-- apiGroups:
-  - policy.kubernetes.io
+  - watch
+- apiGroups: ["policy.kubernetes.io"]
   resources:
   - reportchangerequests
   - reportchangerequests/status
@@ -99,14 +89,12 @@ rules:
   - clusterreportchangerequests/status
   verbs:
   - get
-  - watch
   - list
-- apiGroups:
-  - security.nirmata.io
+  - watch
+- apiGroups: ["security.nirmata.io"]
   resources:
   - imagekeys
   - imagekeys/status
-  - imagekeys/finalizers
   - kyvernoes
   - kyvernoes/status
   - policysets
@@ -117,17 +105,22 @@ rules:
   - kyvernoconfigs/status
   verbs:
   - get
-  - watch
   - list
-- apiGroups:
-  - ''
+  - watch
+  {{ if .Values.enablePolicySets }}
+  - create
+  - update
+  - patch
+  - delete
+  {{ end }}
+- apiGroups: [""]
   resources:
   - nodes
   - componentstatuses
   verbs:
   - get
-  - watch
   - list
+  - watch
 ---
 apiVersion: v1
 kind: ConfigMap

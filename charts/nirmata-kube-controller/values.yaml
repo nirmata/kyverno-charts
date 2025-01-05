@@ -26,6 +26,10 @@ cluster:
 # to use apiToken, please specify the token directly, no base64 encode needed
 # apiToken: ""
 
+enablePolicyExceptions: false
+enablePolicySets: false
+
+
 proxy:
   httpProxy: ""
   httpsProxy: ""
