@@ -645,6 +645,9 @@ features:
   dumpPayload:
     # -- Enables the feature
     enabled: false
+  dumpPatches:
+    # -- Enables the feature
+    enabled: false
   forceFailurePolicyIgnore:
     # -- Enables the feature
     enabled: false
