@@ -40,15 +40,6 @@ spec:
           - -c
           - >
               kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete policyset --all;
-              {{- if .Values.awsAdapter.createCR }}
-              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoadapters aws-adapter-config;
-              {{- end }}
-              {{- if .Values.imageScanAdapter.createCR }}
-              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoadapters image-scan-adapter-config;
-              {{- end }}
-              {{- if .Values.cisAdapter.createCR }}
-              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoadapters cis-adapter-config;
-              {{- end }}
               {{- if .Values.kyverno.createCR }}
               kubectl -n {{ include "enterprise-kyverno.namespace" . }} patch kyvernoconfigs kyverno -p '{"metadata":{"finalizers":[]}}' --type=merge;
 
