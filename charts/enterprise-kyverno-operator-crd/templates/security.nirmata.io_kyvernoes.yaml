@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.15.0
   name: kyvernoconfigs.security.nirmata.io
 spec:
   group: security.nirmata.io
@@ -59,38 +59,6 @@ spec:
             type: object
           spec:
             description: KyvernoConfigSpec defines the desired state of Kyverno
-            properties:
-              apiKey:
-                type: string
-              helm:
-                additionalProperties:
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
-                description: |-
-                  Finer customizations for each component are provided in a
-                  generic object structure, typically matching the
-                  value.yaml of individual components
-                type: object
-              licenseKey:
-                type: string
-              namespace:
-                default: kyverno
-                enum:
-                - kyverno
-                type: string
-              replicas:
-                default: 1
-                format: int32
-                type: integer
-              repository:
-                default: ghcr.io/nirmata
-                type: string
-              secrets:
-                description: Secrets storing licenseKey, apiKey
-                type: string
-              version:
-                default: v1.9.1-n4k.nirmata.1
-                type: string
             type: object
           status:
             description: KyvernoStatus defines the observed state of Kyverno
@@ -149,6 +117,13 @@ spec:
                 type: boolean
               lastUpdated:
                 format: date-time
+                type: string
+              namespace:
+                type: string
+              replicas:
+                format: int32
+                type: integer
+              version:
                 type: string
             required:
             - isHA
