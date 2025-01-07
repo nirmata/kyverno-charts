@@ -180,6 +180,11 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{ if .Values.fipsEnabled }}
+            # runAsUser: 1001
+            # runAsGroup: 1001
+          {{- end }}
+          runAsNonRoot: true
           {{- with .Values.cleanupController.startupProbe }}
           startupProbe:
             {{- tpl (toYaml .) $ | nindent 12 }}

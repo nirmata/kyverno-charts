@@ -21,7 +21,11 @@
 {{- define "kyverno.cleanup-controller.image" -}}
 {{- $imageRegistry := default .image.registry .globalRegistry -}}
 {{- if $imageRegistry -}}
-  {{ $imageRegistry }}/{{ required "An image repository is required" .image.repository }}:{{ default .defaultTag .image.tag }}
+    {{- if $fipsEnabled -}}
+      {{ .image.registry }}/{{ required "An image repository is required" .image.repository }}-fips: $tag
+    {{- else -}}
+      {{ $imageRegistry }}/{{ required "An image repository is required" .image.repository }}:{{ default .defaultTag .image.tag }}
+    {{- end -}}
 {{- else -}}
   {{ required "An image repository is required" .image.repository }}:{{ default .defaultTag .image.tag }}
 {{- end -}}
