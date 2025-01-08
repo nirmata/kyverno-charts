@@ -20,7 +20,7 @@
 
 {{- define "kyverno.background-controller.image" -}}
 {{- $imageRegistry := default .image.registry .globalRegistry -}}
-{{- $fipsEnabled := .fipsEnabled -}}
+{{- $fipsEnabled := .Values.fipsEnabled -}}
 {{- if $imageRegistry -}}
     {{- if $fipsEnabled -}}
       {{ .image.registry }}/{{ required "An image repository is required" .image.repository }}-fips:$tag
