@@ -26,7 +26,7 @@
       {{ .image.registry }}/{{ required "An image repository is required" .image.repository }}-fips:$tag
     {{- else -}}
       {{ $imageRegistry }}/{{ required "An image repository is required" .image.repository }}:{{ default .defaultTag .image.tag }}
-  {{ $imageRegistry }}/{{ required "An image repository is required" .image.repository }}:{{ default .defaultTag .image.tag }}
+    {{- end -}}
 {{- else -}}
   {{ required "An image repository is required" .image.repository }}:{{ default .defaultTag .image.tag }}
 {{- end -}}
