@@ -19,11 +19,12 @@
 {{- end -}}
 
 {{- define "kyverno.reports-controller.image" -}}
+{{- $tag := default .defaultTag .image.tag -}}
 {{- $imageRegistry := default .image.registry .globalRegistry -}}
-{{- $fipsEnabled := .Values.fipsEnabled -}}
+{{- $fipsEnabled := .fipsEnabled -}}
 {{- if $imageRegistry -}}
     {{- if $fipsEnabled -}}
-      {{ .image.registry }}/{{ required "An image repository is required" .image.repository }}-fips:$tag
+      {{ .image.registry }}/{{ required "An image repository is required" .image.repository }}-fips:{{ $tag }}
     {{- else -}}
       {{ $imageRegistry }}/{{ required "An image repository is required" .image.repository }}:{{ default .defaultTag .image.tag }}
     {{- end -}}

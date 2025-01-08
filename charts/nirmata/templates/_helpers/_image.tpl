@@ -6,7 +6,7 @@
   {{ fail "Image tags must be strings." }}
 {{- end -}}
 {{- $imageRegistry := default .image.registry .globalRegistry -}}
-{{- $fipsEnabled := .Values.fipsEnabled -}}
+{{- $fipsEnabled := .fipsEnabled -}}
 {{- if $imageRegistry -}}
   {{- if $fipsEnabled -}}
     {{- print $imageRegistry "/" (required "An image repository is required" .image.repository) "-fips:" $tag -}}
