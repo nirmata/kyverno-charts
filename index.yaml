@@ -12207,6 +12207,19 @@ entries:
   nirmata-kube-controller:
   - apiVersion: v2
     appVersion: v3.10.7
+    created: "2025-01-09T06:28:24.009592905Z"
+    description: A Helm chart for Kubernetes
+    digest: d0fe284f449bed4b4337a7322ea8629a93dccc7f5c753d134f0c1f72fd409689
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-kube-controller
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-kube-controller-0.1.7-rc1/nirmata-kube-controller-0.1.7-rc1.tgz
+    version: 0.1.7-rc1
+  - apiVersion: v2
+    appVersion: v3.10.7
     created: "2025-01-05T12:50:09.016841116Z"
     description: A Helm chart for Kubernetes
     digest: 63a10b6fb8f9bd01d159c63be11e3f781c1a87d9690a48260f81350162f272fd
@@ -15645,4 +15658,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-01-06T06:28:19.247267765Z"
+generated: "2025-01-09T06:28:24.013546278Z"
