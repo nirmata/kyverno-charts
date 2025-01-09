@@ -44,6 +44,10 @@ annotations:
     - kind: added
       description: ImagePullSecrets made configurable for tests
 dependencies:
+- name: reportsServer
+  version: 0.1.4
+  condition: reportsServer.enabled
+  repository: https://github.com/nirmata/reports-server/
 - name: grafana
   version: 3.3.4
   condition: grafana.enabled

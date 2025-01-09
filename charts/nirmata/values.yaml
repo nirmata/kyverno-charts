@@ -2059,3 +2059,65 @@ reportsController:
     # -- Service node port.
     # Only used if `type` is `NodePort`.
     nodePort:
+reportsServer:
+  enabled: true
+  image:
+    registry: ghcr.io
+    repository: nirmata/reports-server
+    pullPolicy: IfNotPresent
+    tag: v0.1.4
+  # -- Image pull secrets
+  imagePullSecrets: []
+
+  # -- Priority class name
+  priorityClassName: system-cluster-critical
+  
+  config:
+    # 
+    postgresql:
+      enabled: false
+      auth:
+        postgresPassword: reports
+        database: reportsdb
+    etcd:
+      enabled: true
+      endpoints: ~
+      insecure: true
+    db:
+      # -- If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, and `db.password`.
+      secretName: ""
+
+      # -- Database host
+      host: reports-server-cluster-rw.reports-server
+      # -- The database host will be read from this `key` in the specified Secret, when `db.secretName` is set.
+      hostSecretKeyName: "host"
+
+      # -- Database name
+      name: reportsdb
+      # -- The database name will be read from this `key` in the specified Secret, when `db.secretName` is set.
+      dbNameSecretKeyName: "dbname"
+
+      # -- Database user
+      user: app
+
+      # -- The database username will be read from this `key` in the specified Secret, when `db.secretName` is set.
+      userSecretKeyName: "username"
+
+      # -- Database password
+      password: password
+
+      # -- The database password will be read from this `key` in the specified Secret, when `db.secretName` is set.
+      passwordSecretKeyName: "password"
+
+      # -- Database SSL
+      sslmode: disable
+
+      # -- Database SSL root cert
+      sslrootcert: ""
+
+      # -- Database SSL key
+      sslkey: ""
+
+      # -- Database SSL cert
+      sslcert: ""
+
