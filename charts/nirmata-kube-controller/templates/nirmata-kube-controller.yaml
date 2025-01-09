@@ -86,6 +86,8 @@ rules:
   - "imagekeys/status"
   - "imagekeys/finalizers"
   - "policyexceptions"
+  - "policysets"
+  - "policysets/status"
   - "cleanuppolicies"
   - "clustercleanuppolicies"
   - "kyvernoes"
