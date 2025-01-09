@@ -110,11 +110,6 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{ if .Values.fipsEnabled }}
-            # runAsUser: 1001
-            # runAsGroup: 1001
-          {{- end }}
-          runAsNonRoot: true
           env:
           - name: KYVERNO_SERVICEACCOUNT_NAME
             value: {{ template "kyverno.admission-controller.serviceAccountName" . }}
@@ -214,13 +209,8 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{ if .Values.fipsEnabled }}
-            # runAsUser: 1001
-            # runAsGroup: 1001
-          {{- end }}
-          runAsNonRoot: true
           ports:
-          - containerPort: 9443
+          - containerPort: {{ .Values.admissionController.webhookServer.port }}
             name: https
             protocol: TCP
           - containerPort: {{ .Values.admissionController.metering.port }}
