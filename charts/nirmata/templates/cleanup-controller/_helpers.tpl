@@ -23,11 +23,11 @@
 {{- $imageRegistry := default .image.registry .globalRegistry -}}
 {{- $fipsEnabled := .fipsEnabled -}}
 {{- if $imageRegistry -}}
-    {{- if $fipsEnabled -}}
-      {{ $imageRegistry }}/{{ required "An image repository is required" .image.repository }}-fips:{{ $tag }}
-    {{- else -}}
-      {{ $imageRegistry }}/{{ required "An image repository is required" .image.repository }}:{{ $tag }}
-    {{- end -}}
+  {{- if $fipsEnabled -}}
+    {{ $imageRegistry }}/{{ required "An image repository is required" .image.repository }}-fips:{{ $tag }}
+  {{- else -}}
+    {{ $imageRegistry }}/{{ required "An image repository is required" .image.repository }}:{{ $tag }}
+  {{- end -}}
 {{- else -}}
   {{ required "An image repository is required" .image.repository }}:{{ $tag }}
 {{- end -}}
