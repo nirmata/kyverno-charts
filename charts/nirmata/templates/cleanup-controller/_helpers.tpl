@@ -20,7 +20,7 @@
 
 {{- define "kyverno.cleanup-controller.image" -}}
 {{- $imageRegistry := default .image.registry .globalRegistry -}}
-{{- $tag := default .image.tag .defaultTag "" }}
+{{- $tag := default .image.tag .defaultTag -}}
 {{- $fipsEnabled := .fipsEnabled -}}
 {{- if $imageRegistry -}}
     {{- if $fipsEnabled -}}
