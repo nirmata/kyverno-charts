@@ -1,29 +1,29 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 3.3.0
-appVersion: v1.13.2-n4k.nirmata.1
+version: 3.3.1-rc1
+appVersion: v1.13.2-n4k.nirmata.2-rc4
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
-  - kubernetes
-  - nirmata
-  - policy agent
-  - policy
-  - validating webhook
-  - admission controller
-  - mutation
-  - mutate
-  - validate
-  - generate
-  - supply chain
-  - security
+- kubernetes
+- nirmata
+- policy agent
+- policy
+- validating webhook
+- admission controller
+- mutation
+- mutate
+- validate
+- generate
+- supply chain
+- security
 home: https://kyverno.io/
 sources:
 - https://github.com/nirmata/enterprise-kyverno
 maintainers:
-  - name: Nirmata
-    url: https://kyverno.io/
+- name: Nirmata
+  url: https://kyverno.io/
 kubeVersion: ">=1.22.0-0"
 annotations:
   artifacthub.io/operator: "false"
@@ -44,9 +44,9 @@ annotations:
     - kind: added
       description: ImagePullSecrets made configurable for tests
 dependencies:
-  - name: grafana
-    version: 3.3.4
-    condition: grafana.enabled
-  - name: crds
-    version: 3.3.4
-    condition: crds.install
+- name: grafana
+  version: 3.3.4
+  condition: grafana.enabled
+- name: crds
+  version: 3.3.4
+  condition: crds.install
