@@ -2059,6 +2059,8 @@ reportsController:
     # -- Service node port.
     # Only used if `type` is `NodePort`.
     nodePort:
+
+    
 reportsServer:
   enabled: true
   # -- Internal settings used with `helm template` to generate install manifest
