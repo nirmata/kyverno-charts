@@ -2061,210 +2061,184 @@ reportsController:
     nodePort:
 reportsServer:
   enabled: true
+  # -- Internal settings used with `helm template` to generate install manifest
+  # @ignored
+  templating:
+    enabled: false
+
+  cloudnative-pg:
+    crds:
+      create: false
+
+  postgresql:
+
+    # -- Deploy postgresql dependency chart
+    enabled: false
+
+    auth:
+
+      postgresPassword: reports
+
+      database: reportsdb
+
+  # -- Name override
+  nameOverride: ""
+
+  # -- Full name override
+  fullnameOverride: ""
+
+  # -- Number of pod replicas
+  replicaCount: 1
 
   image:
+    # -- Image registry
     registry: ghcr.io
-    repository: nirmata/reports-server
-    pullPolicy: IfNotPresent
-    tag: v0.1.4
-  # -- Image pull secrets, when we are using private registry for report server image i.e. self created report server image
-  imagePullSecrets: []
-
-  # -- Priority class name, pod configurations 
-  priorityClassName: system-cluster-critical
-  
-  #  this is required for using embedded postgresql
-  # cloudnative-pg:
-  # crds:
-  #   create: false
-
-
-# -- Container security context
-# @default -- See [values.yaml](values.yaml)
-securityContext:
-  capabilities:
-    drop:
-    - ALL
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 1000
-  privileged: false
-  allowPrivilegeEscalation: false
-  seccompProfile:
-    type: RuntimeDefault
-
-# -- Liveness probe
-livenessProbe:
-  initialDelaySeconds: 20
-  failureThreshold: 10
-  periodSeconds: 10
-  httpGet:
-    path: /livez
-    port: https
-    scheme: HTTPS
-
-# -- Readiness probe
-readinessProbe:
-  initialDelaySeconds: 30
-  failureThreshold: 10
-  periodSeconds: 10
-  httpGet:
-    path: /readyz
-    port: https
-    scheme: HTTPS
-    
-metrics:
-  # -- Enable prometheus metrics
-  enabled: true
-
-  serviceMonitor:
-    # -- Enable service monitor for scraping prometheus metrics
-    enabled: false
-
-    # -- Service monitor additional labels
-    additionalLabels: {}
-
-    # -- Service monitor scrape interval
-    interval: ""
-
-    # -- Service monitor metric relabelings
-    metricRelabelings: []
-
-    # -- Service monitor relabelings
-    relabelings: []
-
-    # -- Service monitor scrape timeout
-    scrapeTimeout: ""
-
-# We usually recommend not to specify default resources and to leave this as a conscious
-# choice for the user. This also increases chances charts run on environments with little
-# resources, such as Minikube. If you do want to specify resources, uncomment the following
-# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-resources:
-  # -- Container resource limits
-  limits:
-    # cpu: 100m
-    # memory: 128Mi
-
-  # -- Container resource requests
-  requests:
-    # cpu: 100m
-    # memory: 128Mi
-
-autoscaling:
-  # -- Enable autoscaling
-  enabled: false
-
-  # -- Min number of replicas
-  minReplicas: 1
-
-  # -- Max number of replicas
-  maxReplicas: 100
-
-  # -- Target CPU utilisation
-  targetCPUUtilizationPercentage: 80
-
-  # -- Target Memory utilisation
-  targetMemoryUtilizationPercentage: ~
-
-# -- Node selector
-nodeSelector: {}
-
-# -- Tolerations
-tolerations: []
-
-# -- Affinity
-affinity: {}
-
-service:
-  # -- Service type
-  type: ClusterIP
-
-  # -- Service port
-  port: 443
-
-apiServicesManagement:
-  # -- Create a helm hooks to install and delete api services
-  enabled: true
-
-  # -- Install api services in manifest
-  installApiServices:
-
-    # -- Store reports in reports-server
-    enabled: false
-
-    # -- Store ephemeral reports in reports-server
-    installEphemeralReportsService: true
-
-# will need to add nirmta kubectl and watch for CVEs
-  image:
-    # -- (string) Image registry
-    registry: docker.io
     # -- Image repository
-    repository: bitnami/kubectl
-    # -- Image tag
-    # Defaults to `latest` if omitted
-    tag: '1.30.2'
-    # -- (string) Image pull policy
-    # Defaults to image.pullPolicy if omitted
-    pullPolicy: ~
-
+    repository: nirmata/reports-server
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+    # -- Image tag (will default to app version if not set)
+    tag: ~
 
   # -- Image pull secrets
   imagePullSecrets: []
 
-  # -- Security context for the pod
-  podSecurityContext: {}
+  # -- Priority class name
+  priorityClassName: system-cluster-critical
 
-  # -- Node labels for pod assignment
-  nodeSelector: {}
+  serviceAccount:
+    # -- Create service account
+    create: true
 
-  # -- List of node taints to tolerate
-  tolerations: []
+    # -- Service account annotations
+    annotations: {}
 
-  # -- Pod anti affinity constraints.
-  podAntiAffinity: {}
+    # -- Service account name (required if `serviceAccount.create` is `false`)
+    name: ""
 
-  # -- Pod affinity constraints.
-  podAffinity: {}
-
-  # -- Pod labels.
-  podLabels: {}
-
-  # -- Pod annotations.
+  # -- Pod annotations
   podAnnotations: {}
 
-  # -- Node affinity constraints.
-  nodeAffinity: {}
+  # -- Pod security context
+  podSecurityContext:
+    fsGroup: 2000
 
-  # -- Security context for the hook containers
+  # -- Container security context
+  # @default -- See [values.yaml](values.yaml)
   securityContext:
-    runAsUser: 65534
-    runAsGroup: 65534
-    runAsNonRoot: true
-    privileged: false
-    allowPrivilegeEscalation: false
-    readOnlyRootFilesystem: true
     capabilities:
       drop:
-        - ALL
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+    privileged: false
+    allowPrivilegeEscalation: false
     seccompProfile:
       type: RuntimeDefault
 
+  # -- Liveness probe
+  livenessProbe:
+    initialDelaySeconds: 20
+    failureThreshold: 10
+    periodSeconds: 10
+    httpGet:
+      path: /livez
+      port: https
+      scheme: HTTPS
+
+  # -- Readiness probe
+  readinessProbe:
+    initialDelaySeconds: 30
+    failureThreshold: 10
+    periodSeconds: 10
+    httpGet:
+      path: /readyz
+      port: https
+      scheme: HTTPS
+
+  metrics:
+    # -- Enable prometheus metrics
+    enabled: true
+
+    serviceMonitor:
+      # -- Enable service monitor for scraping prometheus metrics
+      enabled: false
+
+      # -- Service monitor additional labels
+      additionalLabels: {}
+
+      # -- Service monitor scrape interval
+      interval: ""
+
+      # -- Service monitor metric relabelings
+      metricRelabelings: []
+
+      # -- Service monitor relabelings
+      relabelings: []
+
+      # -- Service monitor scrape timeout
+      scrapeTimeout: ""
+
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  resources:
+    # -- Container resource limits
+    limits:
+      # cpu: 100m
+      # memory: 128Mi
+
+    # -- Container resource requests
+    requests:
+      # cpu: 100m
+      # memory: 128Mi
+
+  autoscaling:
+    # -- Enable autoscaling
+    enabled: false
+
+    # -- Min number of replicas
+    minReplicas: 1
+
+    # -- Max number of replicas
+    maxReplicas: 100
+
+    # -- Target CPU utilisation
+    targetCPUUtilizationPercentage: 80
+
+    # -- Target Memory utilisation
+    targetMemoryUtilizationPercentage: ~
+
+  # -- Node selector
+  nodeSelector: {}
+
+  # -- Tolerations
+  tolerations: []
+
+  # -- Affinity
+  affinity: {}
+
+  service:
+    # -- Service type
+    type: ClusterIP
+
+    # -- Service port
+    port: 443
+
   config:
-    # postgresql:
-    #   enabled: false
+
     etcd:
       enabled: true
-      # service URL, this will be removed, no point testing this
-      # endpoints: ~
-      # not doing TLS handshake to etcd pod for grpc call.
+      endpoints: ~
       insecure: true
+
     db:
       # -- If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, and `db.password`.
       secretName: ""
 
-      # -- Database host, service URL of PG pod.
+      # -- Database host
       host: reports-server-cluster-rw.reports-server
       # -- The database host will be read from this `key` in the specified Secret, when `db.secretName` is set.
       hostSecretKeyName: "host"
@@ -2286,7 +2260,7 @@ apiServicesManagement:
       # -- The database password will be read from this `key` in the specified Secret, when `db.secretName` is set.
       passwordSecretKeyName: "password"
 
-      # -- Database SSL, 
+      # -- Database SSL
       sslmode: disable
 
       # -- Database SSL root cert
@@ -2298,3 +2272,68 @@ apiServicesManagement:
       # -- Database SSL cert
       sslcert: ""
 
+  apiServicesManagement:
+    # -- Create a helm hooks to install and delete api services
+    enabled: true
+
+    # -- Install api services in manifest
+    installApiServices:
+
+      # -- Store reports in reports-server
+      enabled: false
+
+      # -- Store ephemeral reports in reports-server
+      installEphemeralReportsService: true
+
+    image:
+      # -- (string) Image registry
+      registry: docker.io
+      # -- Image repository
+      repository: bitnami/kubectl
+      # -- Image tag
+      # Defaults to `latest` if omitted
+      tag: '1.30.2'
+      # -- (string) Image pull policy
+      # Defaults to image.pullPolicy if omitted
+      pullPolicy: ~
+
+    # -- Image pull secrets
+    imagePullSecrets: []
+
+    # -- Security context for the pod
+    podSecurityContext: {}
+
+    # -- Node labels for pod assignment
+    nodeSelector: {}
+
+    # -- List of node taints to tolerate
+    tolerations: []
+
+    # -- Pod anti affinity constraints.
+    podAntiAffinity: {}
+
+    # -- Pod affinity constraints.
+    podAffinity: {}
+
+    # -- Pod labels.
+    podLabels: {}
+
+    # -- Pod annotations.
+    podAnnotations: {}
+
+    # -- Node affinity constraints.
+    nodeAffinity: {}
+
+    # -- Security context for the hook containers
+    securityContext:
+      runAsUser: 65534
+      runAsGroup: 65534
+      runAsNonRoot: true
+      privileged: false
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+        - ALL
+      seccompProfile:
+        type: RuntimeDefault
