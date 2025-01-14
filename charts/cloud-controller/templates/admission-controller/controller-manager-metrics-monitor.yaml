@@ -1,0 +1,18 @@
+{{- if .Values.admissionController.metricsService.createServiceMonitor }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "cloud-control.admission-controller.name" . }}-metrics-monitor
+  namespace: {{ template "cloud-control.namespace" . }}
+  labels:
+    control-plane: controller-manager
+  {{- include "cloud-control.admission-controller.matchLabels" . | nindent 4 }}
+spec:
+  endpoints:
+  - path: /metrics
+    port: http
+    scheme: http
+  selector:
+    matchLabels:
+      control-plane: controller-manager
+{{- end }}

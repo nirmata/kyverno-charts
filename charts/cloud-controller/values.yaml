@@ -1,0 +1,238 @@
+# -- (string) Override the name of the chart
+nameOverride: ~
+
+# -- (string) Override the expanded name of the chart
+fullnameOverride: ~
+
+# -- (string) Override the namespace the chart deploys to
+namespaceOverride: ~
+
+# Admission controller configuration
+admissionController:
+  
+  serviceAccount:
+    # -- The ServiceAccount name
+    name:
+
+    # -- Annotations for the ServiceAccount
+    annotations: {}
+      # example.com/annotation: value
+
+  # -- (int) Desired number of pods
+  replicas: ~
+
+  image:
+    # -- Image registry
+    registry: ghcr.io
+    # -- Image repository
+    repository: nirmata/cloud-admission-controller
+    # -- (string) Image tag
+    tag: ""
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+
+  resources:
+    # -- Pod resource limits
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    # -- Pod resource requests
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  # -- Container security context
+  securityContext:
+    runAsNonRoot: true
+    privileged: false
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+  
+  # -- Container arguments
+  args:
+    - --metrics-bind-address=:8080
+    - --leader-elect
+    - --health-probe-bind-address=:8081
+
+  service:
+    # -- Service ports
+    ports:
+    - name: http
+      port: 8443
+      protocol: TCP
+      targetPort: http-proxy-svc
+    # -- Service type
+    type: ClusterIP
+
+  metricsService:
+    # -- Create service.
+    createServiceMonitor: false
+    # -- Service ports
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    # -- Service type
+    type: ClusterIP
+  
+  # -- Image pull secrets
+  imagePullSecrets: {}
+    # my-secret:
+    #   registry: ghcr.io
+    #   username: MariamFahmy98
+    #   password: secret
+    # regcred2:
+    #   registry: bar.example.com
+    #   username: barbaz
+    #   password: secret2
+
+# Scanner configuration
+scanner:
+  
+  serviceAccount:
+    # -- The ServiceAccount name
+    name:
+
+    # -- Annotations for the ServiceAccount
+    annotations: {}
+      # example.com/annotation: value
+
+  # -- (int) Desired number of pods
+  replicas: ~
+
+  image:
+    # -- Image registry
+    registry: ghcr.io
+    # -- Image repository
+    repository: nirmata/cloud-scanner
+    # -- (string) Image tag
+    tag: ""
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+
+  resources:
+    # -- Pod resource limits
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    # -- Pod resource requests
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  # -- Container security context
+  securityContext:
+    runAsNonRoot: true
+    privileged: false
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+  
+  # -- Container arguments
+  args:
+    - --metrics-bind-address=:8080
+    - --leader-elect
+    - --health-probe-bind-address=:8081
+  
+  # -- AWS configuration
+  debug:
+    # -- Enable debug mode
+    mode: false
+    # -- AWS access key ID
+    awsAccessKeyId: ""
+    # -- AWS secret access key
+    awsSecretAccessKey: ""
+    # -- AWS session token
+    awsSessionToken: ""
+
+  primaryAWSAccountConfig:
+    accountID: ""
+    accountName: "" 
+    regions: []
+    scanInterval: 1h
+    services: []
+  
+  # -- Image pull secrets
+  imagePullSecrets: {}
+    # my-secret:
+    #   registry: ghcr.io
+    #   username: MariamFahmy98
+    #   password: secret
+    # regcred2:
+    #   registry: bar.example.com
+    #   username: barbaz
+    #   password: secret2
+
+# Reports controller configuration
+reportsController:
+  
+  serviceAccount:
+    # -- The ServiceAccount name
+    name:
+
+    # -- Annotations for the ServiceAccount
+    annotations: {}
+      # example.com/annotation: value
+
+  # -- (int) Desired number of pods
+  replicas: ~
+
+  image:
+    # -- Image registry
+    registry: ghcr.io
+    # -- Image repository
+    repository: nirmata/cloud-reports-controller
+    # -- (string) Image tag
+    tag: ""
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+
+  resources:
+    # -- Pod resource limits
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    # -- Pod resource requests
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  # -- Container security context
+  securityContext:
+    runAsNonRoot: true
+    privileged: false
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+  
+  # -- Container arguments
+  args:
+    - --metrics-bind-address=:8080
+    - --health-probe-bind-address=:8081
+
+  # -- Image pull secrets
+  imagePullSecrets: {}
+    # my-secret:
+    #   registry: ghcr.io
+    #   username: MariamFahmy98
+    #   password: secret
+    # regcred2:
+    #   registry: bar.example.com
+    #   username: barbaz
+    #   password: secret2
+
+kubernetesClusterDomain: cluster.local
