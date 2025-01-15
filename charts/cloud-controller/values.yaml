@@ -147,14 +147,12 @@ scanner:
     awsSecretAccessKey: ""
     # -- AWS session token
     awsSessionToken: ""
-
   primaryAWSAccountConfig:
     accountID: ""
     accountName: "" 
     regions: []
     scanInterval: 1h
     services: []
-  
   # -- Image pull secrets
   imagePullSecrets: {}
     # my-secret:
@@ -208,7 +206,6 @@ reportsController:
         - ALL
     seccompProfile:
       type: RuntimeDefault
-  
   # -- Container arguments
   args:
     - --metrics-bind-address=:8080
