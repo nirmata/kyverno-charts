@@ -131,7 +131,7 @@ scanner:
       drop:
         - ALL
     seccompProfile:
-      type: RuntimeDefault 
+      type: RuntimeDefault
   # -- Container arguments
   args:
     - --metrics-bind-address=:8080
@@ -149,7 +149,7 @@ scanner:
     awsSessionToken: ""
   primaryAWSAccountConfig:
     accountID: ""
-    accountName: "" 
+    accountName: ""
     regions: []
     scanInterval: 1h
     services: []
