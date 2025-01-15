@@ -1,0 +1,61 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ template "cloud-control.scanner.name" . }}-role
+  labels:
+  {{- include "cloud-control.scanner.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ''
+  - events.k8s.io
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+  - update
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - nirmata.io
+  resources:
+  - imageverificationpolicies
+  - validatingpolicies
+  - awsaccountconfigs
+  - preprocessors
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+- apiGroups:
+  - reports.kyverno.io
+  resources:
+  - clusterephemeralreports
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "cloud-control.scanner.name" . }}-rolebinding
+  labels:
+  {{- include "cloud-control.scanner.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "cloud-control.scanner.name" . }}-role
+subjects:
+- kind: ServiceAccount
+  name: {{ template "cloud-control.scanner.serviceAccountName" . }}
+  namespace: {{ template "cloud-control.namespace" . }}

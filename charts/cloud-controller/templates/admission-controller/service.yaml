@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "cloud-control.admission-controller.serviceName" . }}
+  namespace: {{ template "cloud-control.namespace" . }}
+  labels:
+    control-plane: controller-manager
+  {{- include "cloud-control.admission-controller.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.admissionController.service.type }}
+  selector:
+  {{- include "cloud-control.admission-controller.matchLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.admissionController.service.ports | toYaml | nindent 2 }}

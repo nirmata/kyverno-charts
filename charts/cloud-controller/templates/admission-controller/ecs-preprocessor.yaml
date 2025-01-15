@@ -1,0 +1,13 @@
+apiVersion: nirmata.io/v1alpha1
+kind: Preprocessor
+metadata:
+  name: aws
+spec:
+  match:
+    provider: AWS
+  admission:
+    apiDefinitions:
+      - https://raw.githubusercontent.com/aws/aws-sdk-go/refs/heads/main/models/apis/ecs/2014-11-13/api-2.json
+      - https://raw.githubusercontent.com/aws/aws-sdk-go/refs/heads/main/models/apis/lambda/2015-03-31/api-2.json
+      - https://raw.githubusercontent.com/aws/aws-sdk-go/refs/heads/main/models/apis/eks/2017-11-01/api-2.json
+      - https://raw.githubusercontent.com/aws/aws-sdk-go/refs/heads/main/models/apis/eks-auth/2023-11-26/api-2.json
