@@ -41,6 +41,20 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/best-practice-policies-0.1.0/best-practice-policies-0.1.0.tgz
     version: 0.1.0
+  cloud-controller:
+  - apiVersion: v2
+    appVersion: v0.1.0-rc.1
+    created: "2025-01-15T06:21:28.88265582Z"
+    description: A Helm chart for Kubernetes
+    digest: 37d18afc38946ace00f0a386bb80b026496ee1ec4b2ca0a9942b9cc05a9549b0
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: cloud-controller
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/cloud-controller-v0.0.1/cloud-controller-v0.0.1.tgz
+    version: v0.0.1
   cluster-registrator:
   - apiVersion: v2
     appVersion: 1.0.1
@@ -15873,4 +15887,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-01-12T19:06:19.665500127Z"
+generated: "2025-01-15T06:21:28.886592895Z"
