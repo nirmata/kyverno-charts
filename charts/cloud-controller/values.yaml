@@ -9,7 +9,6 @@ namespaceOverride: ~
 
 # Admission controller configuration
 admissionController:
-  
   serviceAccount:
     # -- The ServiceAccount name
     name:
@@ -52,7 +51,6 @@ admissionController:
         - ALL
     seccompProfile:
       type: RuntimeDefault
-  
   # -- Container arguments
   args:
     - --metrics-bind-address=:8080
@@ -80,7 +78,6 @@ admissionController:
       targetPort: 8080
     # -- Service type
     type: ClusterIP
-  
   # -- Image pull secrets
   imagePullSecrets: {}
     # my-secret:
@@ -94,11 +91,9 @@ admissionController:
 
 # Scanner configuration
 scanner:
-  
   serviceAccount:
     # -- The ServiceAccount name
     name:
-
     # -- Annotations for the ServiceAccount
     annotations: {}
       # example.com/annotation: value
@@ -136,14 +131,12 @@ scanner:
       drop:
         - ALL
     seccompProfile:
-      type: RuntimeDefault
-  
+      type: RuntimeDefault 
   # -- Container arguments
   args:
     - --metrics-bind-address=:8080
     - --leader-elect
     - --health-probe-bind-address=:8081
-  
   # -- AWS configuration
   debug:
     # -- Enable debug mode
@@ -172,14 +165,11 @@ scanner:
     #   registry: bar.example.com
     #   username: barbaz
     #   password: secret2
-
 # Reports controller configuration
 reportsController:
-  
   serviceAccount:
     # -- The ServiceAccount name
     name:
-
     # -- Annotations for the ServiceAccount
     annotations: {}
       # example.com/annotation: value
