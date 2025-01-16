@@ -2094,7 +2094,7 @@ reports-server:
 
   image:
     # -- Image registry
-    registry: reg.nirmata.io 
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/reports-server
     # -- Image pull policy
