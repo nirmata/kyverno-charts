@@ -114,7 +114,7 @@ crds:
 
     image:
       # -- (string) Image registry
-      registry: ghcr.io
+      registry: reg.nirmata.io
       # -- (string) Image repository
       repository: nirmata/kyverno-cli
       # -- (string) Image tag
@@ -556,7 +556,7 @@ policyReportsCleanup:
 
   image:
     # -- (string) Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/kubectl
     # -- Image tag
@@ -865,7 +865,7 @@ admissionController:
 
     image:
       # -- Image registry
-      registry: ghcr.io
+      registry: reg.nirmata.io
       # -- Image repository
       repository: nirmata/kyvernopre
       # -- (string) Image tag
@@ -911,7 +911,7 @@ admissionController:
 
     image:
       # -- Image registry
-      registry: ghcr.io
+      registry: reg.nirmata.io
       # -- Image repository
       repository: nirmata/kyverno
       # -- (string) Image tag
@@ -1113,7 +1113,7 @@ cleanupController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/cleanup-controller
     # -- (string) Image tag
@@ -1374,7 +1374,7 @@ reportsController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/reports-controller
     # -- (string) Image tag
