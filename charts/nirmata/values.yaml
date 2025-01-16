@@ -2062,7 +2062,7 @@ reportsController:
 
 
 reports-server:
-  enabled: false 
+  enabled: false
   # -- Internal settings used with `helm template` to generate install manifest
   # @ignored
   templating:
