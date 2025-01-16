@@ -56,7 +56,7 @@ fullnameOverride: ~
 namespaceOverride: ~
 
 # -- (bool) Deploy FIPS compliant images of all the components of n4k
-fipsEnabled: true
+fipsEnabled: false
 
 upgrade:
   # -- Upgrading from v2 to v3 is not allowed by default, set this to true once changes have been reviewed.
@@ -121,7 +121,7 @@ crds:
 
     image:
       # -- (string) Image registry
-      registry: ghcr.io
+      registry: reg.nirmata.io
       # -- (string) Image repository
       repository: nirmata/kyverno-cli
       # -- (string) Image tag
@@ -549,7 +549,7 @@ policyReportsCleanup:
 
   image:
     # -- (string) Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/kubectl
     # -- Image tag
@@ -962,7 +962,7 @@ admissionController:
 
     image:
       # -- Image registry
-      registry: ghcr.io
+      registry: reg.nirmata.io
       # -- Image repository
       repository: nirmata/kyvernopre
       # -- (string) Image tag
@@ -1008,7 +1008,7 @@ admissionController:
 
     image:
       # -- Image registry
-      registry: ghcr.io
+      registry: reg.nirmata.io
       # -- Image repository
       repository: nirmata/kyverno
       # -- (string) Image tag
@@ -1225,7 +1225,7 @@ backgroundController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/background-controller
     # -- Image tag
@@ -1491,7 +1491,7 @@ cleanupController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/cleanup-controller
     # -- (string) Image tag
@@ -1807,7 +1807,7 @@ reportsController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/reports-controller
     # -- (string) Image tag
@@ -2060,8 +2060,8 @@ reportsController:
     # Only used if `type` is `NodePort`.
     nodePort:
 
-    
-reportsServer:
+
+reports-server:
   enabled: false 
   # -- Internal settings used with `helm template` to generate install manifest
   # @ignored
@@ -2094,7 +2094,7 @@ reportsServer:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io 
     # -- Image repository
     repository: nirmata/reports-server
     # -- Image pull policy

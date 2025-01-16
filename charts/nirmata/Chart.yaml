@@ -46,7 +46,7 @@ annotations:
 dependencies:
 - name: reports-server
   version: 0.1.5-rc.1
-  condition: reportsServer.enabled
+  condition: reports-server.enabled
   repository: https://nirmata.github.io/reports-server
 - name: grafana
   version: 3.3.4
