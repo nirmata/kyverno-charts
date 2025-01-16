@@ -20,6 +20,11 @@ jobs:
       with:
         python-version: 3.8
 
+    - name: Add Helm repository
+      run: |
+        helm repo add nirmata https://nirmata.github.io/reports-server
+        helm repo update
+
     - name: Set up chart-testing
       uses: helm/chart-testing-action@v2.2.0
 
