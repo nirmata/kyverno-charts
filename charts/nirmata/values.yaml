@@ -2102,8 +2102,8 @@ reports-server:
     # -- Image tag (will default to app version if not set)
     tag: ~
 
-  # # -- Image pull secrets
-  # imagePullSecrets: []
+  # -- Image pull secrets
+  imagePullSecrets: []
 
   # -- Priority class name
   priorityClassName: system-cluster-critical
@@ -2299,8 +2299,8 @@ reports-server:
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
 
-    # # -- Image pull secrets
-    # imagePullSecrets: []
+    # -- Image pull secrets
+    imagePullSecrets: []
 
     # -- Security context for the pod
     podSecurityContext: {}
