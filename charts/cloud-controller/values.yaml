@@ -22,7 +22,7 @@ admissionController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/cloud-admission-controller
     # -- (string) Image tag
@@ -81,7 +81,7 @@ admissionController:
   # -- Image pull secrets
   imagePullSecrets: {}
     # my-secret:
-    #   registry: ghcr.io
+    #   registry: reg.nirmata.io
     #   username: MariamFahmy98
     #   password: secret
     # regcred2:
@@ -103,7 +103,7 @@ scanner:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/cloud-scanner
     # -- (string) Image tag
@@ -156,7 +156,7 @@ scanner:
   # -- Image pull secrets
   imagePullSecrets: {}
     # my-secret:
-    #   registry: ghcr.io
+    #   registry: reg.nirmata.io
     #   username: MariamFahmy98
     #   password: secret
     # regcred2:
@@ -177,7 +177,7 @@ reportsController:
 
   image:
     # -- Image registry
-    registry: ghcr.io
+    registry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/cloud-reports-controller
     # -- (string) Image tag
@@ -214,7 +214,7 @@ reportsController:
   # -- Image pull secrets
   imagePullSecrets: {}
     # my-secret:
-    #   registry: ghcr.io
+    #   registry: reg.nirmata.io
     #   username: MariamFahmy98
     #   password: secret
     # regcred2:
