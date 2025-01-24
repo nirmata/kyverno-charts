@@ -55,7 +55,7 @@ primaryAWSAccountConfig:
 |-----|------|---------|-------------|
 | admissionController.args | list | `["--metrics-bind-address=:8080","--leader-elect","--health-probe-bind-address=:8081"]` | Container arguments |
 | admissionController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| admissionController.image.registry | string | `"ghcr.io"` | Image registry |
+| admissionController.image.registry | string | `"reg.nirmata.io"` | Image registry |
 | admissionController.image.repository | string | `"nirmata/cloud-admission-controller"` | Image repository |
 | admissionController.image.tag | string | `"latest"` | Image tag |
 | admissionController.imagePullSecrets | object | `{}` | Image pull secrets |
