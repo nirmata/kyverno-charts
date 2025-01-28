@@ -28,7 +28,8 @@ This chart changed significantly between `v2` and `v3`. If you are upgrading fro
 **Add the Kyverno Helm repository:**
 
 ```console
-$ helm repo add kyverno https://kyverno.github.io/kyverno/
+$ helm repo add nirmata https://nirmata.github.io/kyverno-charts/
+$ helm repo update nirmata
 ```
 
 **Create a namespace:**
@@ -42,7 +43,8 @@ $ kubectl create namespace kyverno
 **Install the Kyverno chart:**
 
 ```console
-$ helm install kyverno --namespace kyverno kyverno/kyverno
+$ helm install kyverno --namespace kyverno nirmata/kyverno
+
 ```
 
 The command deploys Kyverno on the Kubernetes cluster with default configuration. The [installation](https://kyverno.io/docs/installation/) guide lists the parameters that can be configured during installation.
