@@ -346,6 +346,14 @@ config:
     # Example to disable admission enforcer on AKS:
     'admissions.enforcer/disabled': 'true'
 
+  # -- Disable generation and management of webhooks by kyverno
+  disableAutoWebhookGeneration:
+    enable: false
+    webhooks:
+      # Example to disable
+      # - kyverno-policy-validating-webhook-cfg
+      # - kyverno-exception-validating-webhook-cfg
+
   # -- Defines labels to set on webhook configurations.
   webhookLabels: {}
     # Example to adopt webhook resources in ArgoCD:
