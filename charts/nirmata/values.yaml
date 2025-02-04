@@ -1807,12 +1807,12 @@ reportsController:
 
   image:
     # -- Image registry
-    registry: reg.nirmata.io
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     # -- Image repository
-    repository: nirmata/reports-controller
+    repository: nirmata/usage-reports-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
-    tag: ~
+    tag: v2.0.0
     # -- Image pull policy
     pullPolicy: IfNotPresent
 
