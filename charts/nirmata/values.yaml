@@ -121,12 +121,12 @@ crds:
 
     image:
       # -- (string) Image registry
-      registry: reg.nirmata.io
+      registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
       # -- (string) Image repository
-      repository: nirmata/kyverno-cli
+      repository: nirmata/usage-kyverno-cli
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
-      tag: ~
+      tag: v2.0.0
       # -- (string) Image pull policy
       pullPolicy: IfNotPresent
 
