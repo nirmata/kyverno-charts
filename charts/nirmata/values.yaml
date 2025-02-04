@@ -549,12 +549,12 @@ policyReportsCleanup:
 
   image:
     # -- (string) Image registry
-    registry: reg.nirmata.io
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     # -- Image repository
-    repository: nirmata/kubectl
+    repository: nirmata/usage-kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.31.1'
+    tag: v2.0.0
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
