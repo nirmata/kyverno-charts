@@ -962,12 +962,12 @@ admissionController:
 
     image:
       # -- Image registry
-      registry: reg.nirmata.io
+      registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
       # -- Image repository
-      repository: nirmata/kyvernopre
+      repository: nirmata/usage-kyvernopre
       # -- (string) Image tag
       # If missing, defaults to image.tag
-      tag: ~
+      tag: v2.0.0
       # -- (string) Image pull policy
       # If missing, defaults to image.pullPolicy
       pullPolicy: ~
