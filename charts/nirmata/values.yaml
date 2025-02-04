@@ -1008,9 +1008,9 @@ admissionController:
 
     image:
       # -- Image registry
-      registry: reg.nirmata.io
+      registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
       # -- Image repository
-      repository: nirmata/kyverno
+      repository: nirmata/usage-kyverno
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
