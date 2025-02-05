@@ -123,7 +123,7 @@ crds:
       # -- (string) Image registry
       registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
       # -- (string) Image repository
-      repository: nirmata/usage-kyverno-cli
+      repository: nirmata/test-kyverno-cli
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: v2.0.0
@@ -551,7 +551,7 @@ policyReportsCleanup:
     # -- (string) Image registry
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     # -- Image repository
-    repository: nirmata/usage-kubectl
+    repository: nirmata/test-kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: v2.0.0
@@ -938,7 +938,7 @@ admissionController:
       # -- Image registry
       registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
       # -- Image repository
-      repository: nirmata/usage-kyvernopre
+      repository: nirmata/test-kyvernopre
       # -- (string) Image tag
       # If missing, defaults to image.tag
       tag: v2.0.0
@@ -984,7 +984,7 @@ admissionController:
       # -- Image registry
       registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
       # -- Image repository
-      repository: nirmata/usage-kyverno
+      repository: nirmata/test-kyverno
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
@@ -1201,7 +1201,7 @@ backgroundController:
     # -- Image registry
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     # -- Image repository
-    repository: nirmata/usage-background-controller
+    repository: nirmata/test-background-controller
     # -- Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -1467,7 +1467,7 @@ cleanupController:
     # -- Image registry
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     # -- Image repository
-    repository: nirmata/usage-cleanup-controller
+    repository: nirmata/test-cleanup-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -1783,7 +1783,7 @@ reportsController:
     # -- Image registry
     registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
     # -- Image repository
-    repository: nirmata/usage-reports-controller
+    repository: nirmata/test-reports-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: v2.0.0
