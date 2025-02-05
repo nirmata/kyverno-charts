@@ -45,9 +45,9 @@ annotations:
       description: ImagePullSecrets made configurable for tests
 dependencies:
 - name: reports-server
-  version: 0.1.6
+  version: v2.0.0
   condition: reports-server.enabled
-  repository: https://nirmata.github.io/reports-server
+  repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/nirmata/test-reports-server
 - name: crds
   version: 3.3.4
   condition: crds.install
