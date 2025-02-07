@@ -1,0 +1,22 @@
+Chart version: {{ .Chart.Version }}
+Cloud Controller version: {{ .Chart.AppVersion }}
+
+Thank you for installing {{ .Chart.Name }}! Your release is named {{ .Release.Name }}.
+
+The following components have been installed in your cluster:
+- Admission Controller
+- Report Controller
+- Scanner
+
+
+{{- if .Values.scanner.primaryAWSAccountConfig.regions }}
+Scanner Regions: {{ .Values.scanner.primaryAWSAccountConfig.regions | join ", " }}
+{{- end }}
+
+{{- if .Values.scanner.primaryAWSAccountConfig.services }}
+Scanner Services: {{ .Values.scanner.primaryAWSAccountConfig.services | join ", " }}
+{{- end }}
+
+{{- if .Values.scanner.debug.mode }}
+Scanner Deployed in Debug mode.
+{{- end }}

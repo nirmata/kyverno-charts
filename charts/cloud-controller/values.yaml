@@ -223,3 +223,6 @@ reportsController:
     #   password: secret2
 
 kubernetesClusterDomain: cluster.local
+
+policies: 
+  enabled: false
