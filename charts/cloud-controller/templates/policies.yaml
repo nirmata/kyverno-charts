@@ -1,0 +1,6 @@
+{{- if .Values.policies.enabled }}
+{{- range $path, $_ := .Files.Glob "policies/**.yaml" }}
+{{ $.Files.Get $path }}
+---
+{{- end }}
+{{- end }}
