@@ -9,7 +9,7 @@ metadata:
     policies.kyverno.io/description: >-
       Ensuring that the Amazon EKS public endpoint is not accessible to 0.0.0.0/0 is a fundamental security measure that helps protect your EKS clusters from unauthorized access, security threats, and compliance violations.
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   failureAction: Audit
   scan: true

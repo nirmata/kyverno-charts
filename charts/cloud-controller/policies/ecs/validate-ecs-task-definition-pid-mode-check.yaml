@@ -13,7 +13,7 @@ metadata:
       These circumstances could lead to unauthorized access to processes on the host itself, including 
       the ability to manipulate and terminate them. Customers shouldn't share the host's process namespace with containers running on it.
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   failureAction: Audit
   scan: true

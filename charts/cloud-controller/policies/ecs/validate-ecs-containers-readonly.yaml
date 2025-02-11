@@ -11,7 +11,7 @@ metadata:
       One significant aspect is restricting write access to the containers' root filesystem.
       This policy checks if ECS Containers have read-only access to its root filesystem.
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   failureAction: Audit
   scan: true

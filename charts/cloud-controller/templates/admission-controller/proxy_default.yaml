@@ -11,4 +11,4 @@ spec:
     - ".*.amazonaws.com"
   policySelectors:
     - matchLabels:
-        app: kyverno
+        app: cloud-control-point

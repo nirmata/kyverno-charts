@@ -10,7 +10,7 @@ metadata:
       VPC provides isolation and enhanced security to Lambda functions. 
       This policy validates whether vpc_config is specified for the Lambda function.
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   failureAction: Audit
   scan: true
