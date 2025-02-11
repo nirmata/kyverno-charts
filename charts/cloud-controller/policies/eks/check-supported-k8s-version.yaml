@@ -9,7 +9,7 @@ metadata:
     policies.kyverno.io/description: >-
       This policy checks that EKS clusters are on a standard supported Kubernetes version
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   failureAction: Audit
   scan: true

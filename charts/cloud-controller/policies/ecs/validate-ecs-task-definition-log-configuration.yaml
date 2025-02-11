@@ -12,7 +12,7 @@ metadata:
       to access container logs. It also allows integration with monitoring tools to set up metrics and alerts based on log data. 
       This policy checks if ECS TaskDefinitions and Services have logConfiguration defined. 
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   failureAction: Audit
   scan: true

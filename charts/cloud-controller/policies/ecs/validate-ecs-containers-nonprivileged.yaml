@@ -10,7 +10,7 @@ metadata:
       When privileged is set to true, the container is given elevated permissions on the host container instance (similar to the root user). 
       This policy checks that the privileged parameter in the container definition is set to false.
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   failureAction: Audit
   scan: true

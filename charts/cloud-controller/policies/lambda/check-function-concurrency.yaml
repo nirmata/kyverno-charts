@@ -9,7 +9,7 @@ metadata:
         policies.kyverno.io/description: >-
           This policy checks whether concurrency level config is set for the Lambda function.
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   scan: true
   rules:

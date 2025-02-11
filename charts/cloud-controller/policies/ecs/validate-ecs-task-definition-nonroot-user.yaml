@@ -15,7 +15,7 @@ metadata:
       It also follows the security principle of least privilege, which dictates that applications and processes 
       should operate with minimum privileges necessary to perform their functions.
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   failureAction: Audit
   scan: true

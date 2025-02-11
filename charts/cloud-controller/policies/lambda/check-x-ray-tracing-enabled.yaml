@@ -12,7 +12,7 @@ metadata:
           resulted in an error. This policy checks whether X-Ray is enabled
           for Labmda function.
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   failureAction: Audit
   scan: true

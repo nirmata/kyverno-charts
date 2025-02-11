@@ -11,7 +11,7 @@ metadata:
       In scenarios where tasks employ the `host` network mode, it's crucial to avoid running containers with the root user (UID 0) for enhanced security. 
       As a recommended security practice, it is recommended to opt for a non-root user.
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   failureAction: Audit
   scan: true

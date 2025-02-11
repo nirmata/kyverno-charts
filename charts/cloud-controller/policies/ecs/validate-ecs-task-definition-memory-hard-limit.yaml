@@ -13,7 +13,7 @@ metadata:
       Therefore, it is crucial to enforce a hard memory limit on each container to prevent resource contention. 
       If a container exceeds its memory limit, it will be terminated by ECS.
   labels:
-    app: kyverno
+    app: cloud-control-point
 spec:
   failureAction: Audit
   scan: true
