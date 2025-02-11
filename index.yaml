@@ -44,6 +44,19 @@ entries:
   cloud-controller:
   - apiVersion: v2
     appVersion: v0.1.2
+    created: "2025-02-11T16:20:16.593841645Z"
+    description: A Helm chart for Kubernetes
+    digest: 3d2c6d8ff2e69b505b4eaa6577f81eee22c2d82fac2726b6c30e6a94f74c7abe
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: cloud-controller
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/cloud-controller-v0.0.6/cloud-controller-v0.0.6.tgz
+    version: v0.0.6
+  - apiVersion: v2
+    appVersion: v0.1.2
     created: "2025-02-07T19:16:01.449159734Z"
     description: A Helm chart for Kubernetes
     digest: 5526575936af5e0af68747b1c5507906ca522e60202249eee9c55cef9afb59fa
@@ -2315,6 +2328,21 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/kube-bench-adapter-v1.1.0/kube-bench-adapter-v1.1.0.tgz
     version: v1.1.0
+  - apiVersion: v2
+    appVersion: v0.2.8-rc1
+    created: "2025-02-11T16:20:16.730039561Z"
+    description: The kube-bench adapter periodically runs a CIS benchmark check using
+      cron-job with a tool called kube-bench and produces a cluster-wide policy report
+      based on the Policy Report Custom Resource Definition.
+    digest: 996b96d06d38dec6a27e1a91c1fc690b0ec41a1800ae2599b06b93509d4e4ab4
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kube-bench-adapter
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kube-bench-adapter-v0.2.8-rc1/kube-bench-adapter-v0.2.8-rc1.tgz
+    version: v0.2.8-rc1
   kyverno:
   - annotations:
       artifacthub.io/changes: |
@@ -16540,4 +16568,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-02-07T19:16:01.452183734Z"
+generated: "2025-02-11T16:20:16.733940228Z"
