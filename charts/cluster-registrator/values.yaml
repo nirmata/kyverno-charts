@@ -17,7 +17,12 @@ proxy:
   httpsProxy: ""
   noProxy: ""
 
+image:
+  registry: ""
+  repository: ""
+
 tlsCert: ""
+tlsKey: ""
 
 imageTag: v0.1.5
 

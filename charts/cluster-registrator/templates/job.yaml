@@ -415,7 +415,7 @@ spec:
     spec:
       containers:
       - name: cluster-registrator
-        image: ghcr.io/nirmata/cluster-registrator:{{ .Values.imageTag }}
+        image: {{ .Values.registry | default "ghcr.io" }}/{{ .Values.repository | default "nirmata" }}/cluster-registrator:{{ .Chart.AppVersion }}
         args:
         - "--cluster-name"
         - "{{ .Values.cluster.name }}"
@@ -439,7 +439,10 @@ spec:
         - name: NO_PROXY
           value: "{{ .Values.proxy.noProxy }}"
         - name: TLS_CERT
-          value: "{{ .Values.tlsCert }}"
+          valueFrom:
+            secretKeyRef:
+              name: cluster-registrator
+              key: tls.crt
         - name: APIKEY_SECRET_NAMESPACE
           value: "{{ .Release.Namespace }}"
         - name: "SERVER_ENDPOINT"
