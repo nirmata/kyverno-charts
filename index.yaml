@@ -122,6 +122,19 @@ entries:
     version: v0.0.1
   cluster-registrator:
   - apiVersion: v2
+    appVersion: v0.1.5
+    created: "2025-02-14T08:33:50.901883641Z"
+    description: A Helm chart for Nirmata Kubernetes Controller Registrator
+    digest: 38b3b7f8424dce917ff7a2fd4ec160ced595674e58572b73a996cae9834f8852
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: cluster-registrator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/cluster-registrator-0.1.17-rc1/cluster-registrator-0.1.17-rc1.tgz
+    version: 0.1.17-rc1
+  - apiVersion: v2
     appVersion: 1.0.1
     created: "2024-10-29T12:44:32.374445842Z"
     description: A Helm chart for Nirmata Kubernetes Controller Registrator
@@ -16617,4 +16630,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-02-14T05:25:12.789627705Z"
+generated: "2025-02-14T08:33:50.905190162Z"
