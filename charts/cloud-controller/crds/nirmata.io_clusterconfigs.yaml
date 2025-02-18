@@ -1,0 +1,66 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.15.0
+  name: clusterconfigs.nirmata.io
+spec:
+  group: nirmata.io
+  names:
+    kind: ClusterConfig
+    listKind: ClusterConfigList
+    plural: clusterconfigs
+    singular: clusterconfig
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: ClusterConfig is the configuration for an kubernetes cluster
+          in cloud.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: AWS account configuration spec.
+            properties:
+              cloudProvider:
+                description: CloudProvider is the cloud service provider.
+                type: string
+              clusterEndpoint:
+                description: ClusterEndpoint is the kubernetes cluster identifier.
+                type: string
+              clusterName:
+                description: ClusterName is the kubernetes cluster name.
+                type: string
+              scanInterval:
+                default: 1h
+                description: |-
+                  ScanInterval defines the interval in duration at which to scan the cloud resources.
+                  The duration is a sequence of decimal numbers, each with optional fraction and a unit suffix,
+                  such as "300ms", "1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+                format: duration
+                type: string
+            required:
+            - clusterEndpoint
+            - clusterName
+            type: object
+        type: object
+    served: true
+    storage: true

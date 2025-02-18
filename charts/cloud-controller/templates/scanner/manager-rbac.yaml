@@ -33,6 +33,8 @@ rules:
   - validatingpolicies
   - awsaccountconfigs
   - preprocessors
+  - awsorgconfigs
+  - clusterconfigs
   verbs:
   - get
   - list

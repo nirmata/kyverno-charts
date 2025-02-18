@@ -14,7 +14,26 @@ spec:
     singular: validatingpolicy
   scope: Cluster
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    - description: 'Specifies if scan is enabled (default: true)'
+      jsonPath: .spec.scan
+      name: Scan
+      priority: 1
+      type: boolean
+    - description: 'Specifies if admission control is enabled (default: true)'
+      jsonPath: .spec.admission
+      name: Admission
+      priority: 1
+      type: boolean
+    - description: 'Failure action (default: Audit)'
+      jsonPath: .spec.failureAction
+      name: FailureAction
+      priority: 1
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: ValidatingPolicy is the resource that contains the policy definition.
@@ -192,3 +211,4 @@ spec:
         type: object
     served: true
     storage: true
+    subresources: {}

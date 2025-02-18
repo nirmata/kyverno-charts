@@ -224,5 +224,5 @@ reportsController:
 
 kubernetesClusterDomain: cluster.local
 
-policies: 
+policies:
   enabled: false
