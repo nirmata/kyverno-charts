@@ -1,4 +1,3 @@
-{{- if .Release.IsUpgrade }} 
 {{- if .Values.crds.migration.enabled -}}
 {{- if not .Values.templating.enabled -}}
 apiVersion: rbac.authorization.k8s.io/v1
@@ -135,6 +134,5 @@ spec:
           {{- tpl (toYaml .) $ | nindent 10 }}
         {{- end }}
       {{- end }}
-{{- end -}}
 {{- end -}}
 {{- end -}}

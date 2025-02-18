@@ -10,7 +10,7 @@ global:
   image:
     # -- (string) Global value that allows to set a single image registry across all deployments.
     # When set, it will override any values set under `.image.registry` across the chart.
-    registry: ~
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
 
   caCertificates:
     # -- Global CA certificates to use with Kyverno deployments
@@ -474,9 +474,9 @@ webhooksCleanup:
 
   image:
     # -- (string) Image registry
-    registry: ~
+    registry: reg.nirmata.io
     # -- Image repository
-    repository: reg.nirmata.io/nirmata/kubectl
+    repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: '1.31.1'
@@ -531,9 +531,9 @@ policyReportsCleanup:
 
   image:
     # -- (string) Image registry
-    registry: ~
+    registry: reg.nirmata.io
     # -- Image repository
-    repository: reg.nirmata.io/nirmata/kubectl
+    repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: '1.31.1'
