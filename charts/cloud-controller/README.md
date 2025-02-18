@@ -75,3 +75,13 @@ primaryAWSAccountConfig:
 | nameOverride | string | `nil` | Override the name of the chart |
 | namespaceOverride | string | `nil` | Override the namespace the chart deploys to |
 
+
+## Enabling Policy Application
+To enable policy resource application by default, update the values.yaml file with the following configuration:
+```
+policies:
+  enabled: true
+```
+**Default Behavior:**
+
+By default, policies.enabled is set to false, meaning policies are not deployed unless explicitly enabled. ```
