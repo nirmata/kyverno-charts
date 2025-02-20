@@ -49,8 +49,8 @@ dependencies:
   condition: reports-server.enabled
   repository: https://nirmata.github.io/reports-server
 - name: grafana
-  version: 3.3.4
+  version: 3.3.6
   condition: grafana.enabled
 - name: crds
-  version: 3.3.4
+  version: 3.3.6
   condition: crds.install
