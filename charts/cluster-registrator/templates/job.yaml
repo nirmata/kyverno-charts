@@ -439,10 +439,12 @@ spec:
         - name: NO_PROXY
           value: "{{ .Values.proxy.noProxy }}"
         - name: TLS_CERT
+          {{- if .Values.tlsCert }}
           valueFrom:
             secretKeyRef:
               name: cluster-registrator
               key: tls.crt
+          {{- end }}
         - name: APIKEY_SECRET_NAMESPACE
           value: "{{ .Release.Namespace }}"
         - name: "SERVER_ENDPOINT"
