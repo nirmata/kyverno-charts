@@ -5,7 +5,7 @@
 {{- if not (typeIs "string" $tag) -}}
   {{ fail "Image tags must be strings." }}
 {{- end -}}
-{{- $imageRegistry := default .image.registry .globalRegistry -}}
+{{- $imageRegistry := default (default .image.defaultRegistry .globalRegistry) .image.registry -}}
 {{- $fipsEnabled := .fipsEnabled -}}
 {{- if $imageRegistry -}}
   {{- if $fipsEnabled -}}
