@@ -2302,9 +2302,9 @@ reports-server:
 
     image:
       # -- (string) Image registry
-      registry: docker.io
+      registry: ghcr.io
       # -- Image repository
-      repository: bitnami/kubectl
+      repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
       tag: '1.30.2'
