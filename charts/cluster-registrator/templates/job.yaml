@@ -415,7 +415,7 @@ spec:
     spec:
       containers:
       - name: cluster-registrator
-        image: {{ .Values.registry | default "ghcr.io" }}/{{ .Values.repository | default "nirmata" }}/cluster-registrator:{{ .Chart.AppVersion }}
+        image: {{ .Values.registrator.image.registry | default "ghcr.io" }}/{{ .Values.registrator.image.repository | default "nirmata" }}/cluster-registrator:{{ .Chart.AppVersion }}
         args:
         - "--cluster-name"
         - "{{ .Values.cluster.name }}"
