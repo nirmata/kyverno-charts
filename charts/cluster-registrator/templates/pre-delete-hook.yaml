@@ -15,7 +15,7 @@ spec:
       serviceAccountName: nirmata-cluster-registrator
       containers:
       - name: delete-items
-        image: ghcr.io/nirmata/kubectl:1.30.2
+        image: {{ .Values.hooks.image.registry | default "ghcr.io" }}/{{ .Values.hooks.image.repository | default "nirmata" }}/kubectl:{{ .Values.hooks.image.tag }}
         command: ["sh", "-c"]
         args:
         - |

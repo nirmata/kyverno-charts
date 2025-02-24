@@ -17,9 +17,16 @@ proxy:
   httpsProxy: ""
   noProxy: ""
 
-image:
-  registry: ""
-  repository: ""
+registrator:
+  image:
+    registry: ""
+    repository: ""
+
+hooks:
+  image:
+    registry: ""
+    repository: ""
+    tag: "1.30.2"
 
 tlsCert: ""
 tlsKey: ""

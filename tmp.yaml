@@ -1,0 +1,323 @@
+---
+# Source: cluster-registrator/templates/job.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nirmata
+---
+# Source: cluster-registrator/templates/job.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+  labels: 
+    helm.sh/chart: cluster-registrator-0.1.17-rc3
+    app.kubernetes.io/name: cluster-registrator
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v0.1.5"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: cluster-registrator/templates/job.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nirmata:cluster-registrator
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - namespaces
+    verbs:
+      - create
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterrolebindings
+      - clusterroles
+    verbs:
+      - escalate
+      - bind
+      - create
+  - apiGroups:
+      - kyverno.io
+    resources:
+      - clusterpolicies
+      - policies
+      - policyexceptions
+      - clustercleanuppolicies
+      - cleanuppolicies
+    verbs:
+      - '*'
+  - apiGroups:
+      - security.nirmata.io
+      - operator.kyverno.io
+      - kyverno.io
+    resources:
+      - '*'
+    verbs:
+      - get
+      - list
+      - watch
+---
+# Source: cluster-registrator/templates/job.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nirmata:cluster-registrator-nirmata-readonly
+rules:
+- apiGroups:
+  - kyverno.io
+  - operator.kyverno.io
+  - security.nirmata.io
+  resources:
+  - policies
+  - clusterpolicies
+  - cleanuppolicies
+  - clustercleanuppolicies
+  - kyvernoes
+  - kyvernoes/status
+  - policyexceptions
+  - reportchangerequests
+  - clusterreportchangerequests
+  - kyvernooperators/status
+  - kyvernooperators
+  - imagekeys
+  - imagekeys/status
+  - imagekeys/finalizers
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - wgpolicyk8s.io/v1alpha1
+  - wgpolicyk8s.io/v1alpha2
+  resources:
+  - policyreports
+  - clusterpolicyreports
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - '*'
+  resources:
+  - policies
+  - policies/status
+  - clusterpolicies
+  - clusterpolicies/status
+  - policyreports
+  - policyreports/status
+  - clusterpolicyreports
+  - clusterpolicyreports/status
+  - generaterequests
+  - generaterequests/status
+  - reportchangerequests
+  - reportchangerequests/status
+  - clusterreportchangerequests
+  - clusterreportchangerequests/status
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - '*'
+  resources:
+  - nodes
+  - pods
+  - pods/log
+  - namespaces
+  - networkpolicies
+  - secrets
+  - configmaps
+  - resourcequotas
+  - limitranges
+  - deployments
+  - services
+  - serviceaccounts
+  - roles
+  - rolebindings
+  - clusterroles
+  - clusterrolebindings
+  - events
+  - mutatingwebhookconfigurations
+  - validatingwebhookconfigurations
+  - certificatesigningrequests
+  - certificatesigningrequests/approval
+  - poddisruptionbudgets
+  - componentstatuses
+  - endpoints
+  - storageclasses
+  - priorityclasses
+  - clusterissuers
+  - podsecuritypolicies
+  - persistentvolumes
+  - replicasets
+  - cronjobs
+  - daemonsets
+  - jobs
+  - statefulsets
+  verbs:
+  - list
+  - get
+  - watch
+---
+# Source: cluster-registrator/templates/job.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata:cluster-registrator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nirmata:cluster-registrator
+subjects:
+- kind: ServiceAccount
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+---
+# Source: cluster-registrator/templates/job.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata:cluster-registrator-readonly
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nirmata:cluster-registrator-nirmata-readonly
+subjects:
+- kind: ServiceAccount
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+---
+# Source: cluster-registrator/templates/job.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata:cluster-registrator-nirmata-readonly
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+---
+# Source: cluster-registrator/templates/job.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nirmata:cluster-registrator-ns-admin
+  namespace: nirmata
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+- kind: ServiceAccount
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+---
+# Source: cluster-registrator/templates/job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nirmata-cluster-registrator
+  namespace: nirmata
+  labels: 
+    helm.sh/chart: cluster-registrator-0.1.17-rc3
+    app.kubernetes.io/name: cluster-registrator
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v0.1.5"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  template:
+    spec:
+      containers:
+      - name: cluster-registrator
+        image: ghcr.io/nirmata/cluster-registrator:v0.1.5
+        args:
+        - "--cluster-name"
+        - ""
+        env:
+        - name: CLUSTER_NAME
+          value: ""
+        - name: NIRMATA_TOKEN
+          value: ""
+        - name: NIRMATA_URL
+          value: "https://nirmata.io"
+        - name: NIRMATA_CLUSTER_TYPE
+          value: "default-policy-manager-type"
+        - name: HTTP_PROXY
+          value: ""
+        - name: HTTPS_PROXY
+          value: ""
+        - name: NO_PROXY
+          value: ""
+        - name: TLS_CERT
+        - name: APIKEY_SECRET_NAMESPACE
+          value: "default"
+        - name: "SERVER_ENDPOINT"
+          value: ""
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - "ALL"
+          readOnlyRootFilesystem: true
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 1000
+          seccompProfile:
+            type: "RuntimeDefault"
+      serviceAccountName: nirmata-cluster-registrator
+      restartPolicy: Never
+  backoffLimit: 0
+---
+# Source: cluster-registrator/templates/pre-delete-hook.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pre-delete-job
+  namespace: nirmata
+  annotations:
+    "helm.sh/hook": pre-delete
+  labels:
+    helm.sh/hook: pre-delete
+    helm.sh/hook-delete-policy: hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: nirmata-cluster-registrator
+      containers:
+      - name: delete-items
+        image: ksdfjklsd/skjfjskjkasskakfak/kubectl:1.30.2
+        command: ["sh", "-c"]
+        args:
+        - |
+          #!/bin/bash
+          set -e
+          # Fetch the ConfigMap and extract items data
+          items=`kubectl get configmap items-created -n nirmata -o custom-columns=DATA:.data --no-headers | sed 's/map\[//;s/\]//;s/ /\n/g' | sed 's/[:=]/ /')`
+          # Iterate through the items and delete them
+          echo -n "$items" | while read -r line; do
+            kind=$(echo $line | awk '{print $1}')
+            names=$(echo $line | awk '{print $2}' | sed -e 's/,/ /g')
+            for name in `echo $names`; do
+              echo "5"
+              kubectl delete $kind $name -n nirmata || true
+            done
+          done
+          
+          # Delete the ConfigMap itself
+          kubectl delete configmap items-created -n nirmata || true
