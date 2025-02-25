@@ -739,6 +739,9 @@ features:
 
 # Admission controller configuration
 admissionController:
+  # mocked license guardian
+  licenseGuardian:
+    mocked: false # Only make it true when you are testing, else kyverno will fail
 
   # -- Overrides features defined at the root level
   featuresOverride:
