@@ -413,6 +413,10 @@ metadata:
 spec:
   template:
     spec:
+      {{  if and .Values.imagePullSecret.registryName .Values.imagePullSecret.userName .Values.imagePullSecret.password }}
+      imagePullSecrets:
+      - name: cluster-registrator-imagepullsecret
+      {{ end }}
       containers:
       - name: cluster-registrator
         image: {{ .Values.registrator.image.registry | default "ghcr.io" }}/{{ .Values.registrator.image.repository | default "nirmata" }}/cluster-registrator:{{ .Chart.AppVersion }}
@@ -423,6 +427,10 @@ spec:
         - "--token-secret"
         - "{{ .Values.apiTokenSecret }}"
         {{- end }}
+        {{ range $key, $value := .Values.clusterLabels }}
+        - "--labels"
+        - "{{$key}}:{{$value}}"
+        {{ end }}
         env:
         - name: CLUSTER_NAME
           value: "{{ .Values.cluster.name }}"

@@ -17,6 +17,14 @@ proxy:
   httpsProxy: ""
   noProxy: ""
 
+imagePullSecret:
+  registryName: ""
+  userName: ""
+  password: ""
+
+clusterLabels:
+  # key: value
+
 registrator:
   image:
     registry: ""
