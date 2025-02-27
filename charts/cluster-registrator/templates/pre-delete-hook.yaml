@@ -13,6 +13,10 @@ spec:
     spec:
       restartPolicy: Never
       serviceAccountName: nirmata-cluster-registrator
+      {{  if and .Values.imagePullSecret.registryName .Values.imagePullSecret.userName .Values.imagePullSecret.password }}
+      imagePullSecrets:
+      - name: cluster-registrator-imagepullsecret
+      {{ end }}
       containers:
       - name: delete-items
         image: {{ .Values.hooks.image.registry | default "ghcr.io" }}/{{ .Values.hooks.image.repository | default "nirmata" }}/kubectl:{{ .Values.hooks.image.tag }}
