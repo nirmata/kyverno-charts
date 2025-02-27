@@ -60,3 +60,7 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{- define "registrator.imagePullSecret" }}
+{{- printf "{\"auths\":{\"%s\":{\"auth\":\"%s\"}}}" .registryName (printf "%s:%s" .userName .password | b64enc) | b64enc }}
+{{- end }}

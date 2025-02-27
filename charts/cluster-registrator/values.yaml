@@ -1,7 +1,7 @@
 # Default values for cluster registrator chart
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-nirmataURL: "https://nirmata.io"
+nirmataURL: "https://staging.nirmata.co"
 
 createNs: true
 
@@ -16,6 +16,14 @@ proxy:
   httpProxy: ""
   httpsProxy: ""
   noProxy: ""
+
+imagePullSecret:
+  registryName: ""
+  userName: ""
+  password: ""
+
+clusterLabels:
+  # key: value
 
 registrator:
   image:
