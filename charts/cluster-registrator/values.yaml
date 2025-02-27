@@ -1,7 +1,7 @@
 # Default values for cluster registrator chart
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-nirmataURL: "https://staging.nirmata.co"
+nirmataURL: "https://nirmata.io"
 
 createNs: true
 
