@@ -21,8 +21,8 @@ cluster:
   name: ""
   type: default-policy-manager-type
   labels:
-    app: nirmata-kube-controller
-    app1: ksfdksafka
+    # key: value
+    
 
 # Use either apiToken or apiTokenSecret to specify the api token in NPM
 
