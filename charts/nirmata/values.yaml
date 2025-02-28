@@ -123,7 +123,7 @@ crds:
       # -- (string) Image registry
       registry: ~
       # -- (string) Image repository
-      repository: nirmata/kyverno-cli
+      repository: nirmata/usage-kyverno-cli
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
@@ -502,7 +502,7 @@ webhooksCleanup:
     # -- (string) Image registry
     registry: ~
     # -- Image repository
-    repository: nirmata/kubectl
+    repository: nirmata/usage-kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: '1.32.1'
@@ -559,7 +559,7 @@ policyReportsCleanup:
     # -- (string) Image registry
     registry: ~
     # -- Image repository
-    repository: nirmata/kubectl
+    repository: nirmata/usage-kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: '1.32.1'
@@ -972,7 +972,7 @@ admissionController:
       # -- Image registry
       registry: ~
       # -- Image repository
-      repository: nirmata/kyvernopre
+      repository: nirmata/usage-kyvernopre
       # -- (string) Image tag
       # If missing, defaults to image.tag
       tag: ~
@@ -1018,7 +1018,7 @@ admissionController:
       # -- Image registry
       registry: ~
       # -- Image repository
-      repository: nirmata/kyverno
+      repository: nirmata/usage-kyverno
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
@@ -1235,7 +1235,7 @@ backgroundController:
     # -- Image registry
     registry: ~
     # -- Image repository
-    repository: nirmata/background-controller
+    repository: nirmata/usage-background-controller
     # -- Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -1501,7 +1501,7 @@ cleanupController:
     # -- Image registry
     registry: ~
     # -- Image repository
-    repository: nirmata/cleanup-controller
+    repository: nirmata/usage-cleanup-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -1817,7 +1817,7 @@ reportsController:
     # -- Image registry
     registry: ~
     # -- Image repository
-    repository: nirmata/reports-controller
+    repository: nirmata/usage-reports-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -2104,7 +2104,7 @@ reports-server:
     # -- Image registry
     registry: ~
     # -- Image repository
-    repository: nirmata/reports-server
+    repository: nirmata/usage-reports-server
     # -- Image pull policy
     pullPolicy: IfNotPresent
     # -- Image tag (will default to app version if not set)
@@ -2299,7 +2299,7 @@ reports-server:
       # -- (string) Image registry
       registry: ~
       # -- Image repository
-      repository: nirmata/kubectl
+      repository: nirmata/usage-kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
       tag: '1.32.1'
