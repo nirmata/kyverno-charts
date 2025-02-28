@@ -394,6 +394,10 @@ spec:
         - -api-token
         - {{ .Values.apiToken }}
         {{- end }}
+        {{ range $key, $value := .Values.cluster.labels }}
+        - "-cluster-labels"
+        - "{{ $key }}:{{ $value }}"
+        {{ end }}
         {{- if .Values.apiTokenSecret }}
         - -api-token-secret
         - {{ .Values.apiTokenSecret }}

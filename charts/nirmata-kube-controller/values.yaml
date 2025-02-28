@@ -8,6 +8,9 @@ nirmataURL: "wss://nirmata.io/tunnels"
 cluster:
   name: ""
   type: "default-policy-manager-type"
+  labels:
+    app: nirmata-kube-controller
+    app1: ksfdksafka
 
 # Use either apiToken or apiTokenSecret to specify the api token in NPM
 
