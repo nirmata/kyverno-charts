@@ -3,11 +3,23 @@
 # # Declare variables to be passed into your templates.
 
 nirmataURL: "wss://nirmata.io/tunnels"
+global:
+  imageRegistry: ghcr.io
+  imageRepository: nirmata
 
+kubeController:
+  imageRegistry:
+  imageRepository:
+  imageTag:
+
+otelAgent:
+  imageRegistry:
+  imageRepository:
+  imageTag: "0.92.0"
 # cluster name is required
 cluster:
   name: ""
-  type: "default-policy-manager-type"
+  type: default-policy-manager-type
   labels:
     app: nirmata-kube-controller
     app1: ksfdksafka
@@ -41,5 +53,4 @@ proxy:
   httpsProxy: ""
   noProxy: ""
 
-imageRegistry: "ghcr.io/nirmata/nirmata-kube-controller"
-imageTag: "v3.10.7"
+
