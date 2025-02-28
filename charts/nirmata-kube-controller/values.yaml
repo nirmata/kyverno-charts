@@ -22,7 +22,6 @@ cluster:
   type: default-policy-manager-type
   labels:
     # key: value
-    
 
 # Use either apiToken or apiTokenSecret to specify the api token in NPM
 
@@ -52,5 +51,3 @@ proxy:
   httpProxy: ""
   httpsProxy: ""
   noProxy: ""
-
-
