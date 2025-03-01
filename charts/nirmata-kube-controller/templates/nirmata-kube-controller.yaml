@@ -390,18 +390,12 @@ spec:
         - 10m
         - -cluster-name
         - {{ .Values.cluster.name }}
-        {{- if .Values.apiToken }}
-        - -api-token
-        - {{ .Values.apiToken }}
-        {{- end }}
         {{ range $key, $value := .Values.cluster.labels }}
         - "-cluster-labels"
         - "{{ $key }}:{{ $value }}"
         {{ end }}
-        {{- if .Values.apiTokenSecret }}
         - -api-token-secret
-        - {{ .Values.apiTokenSecret }}
-        {{- end }}
+        - nirmata-api-token
         command:
         - /nirmata-kube-controller
         env:
