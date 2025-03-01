@@ -2,10 +2,13 @@
 # # This is a YAML-formatted file.
 # # Declare variables to be passed into your templates.
 
-nirmataURL: "wss://nirmata.io/tunnels"
+nirmataURL: "wss://nirmata.co/tunnels"
+namespace: "nirmata"
 global:
   imageRegistry: ghcr.io
   imageRepository: nirmata
+  registryUserName:
+  registryPassword:
 
 kubeController:
   imageRegistry:
@@ -22,23 +25,10 @@ cluster:
   type: default-policy-manager-type
   labels:
     # key: value
+    # key2: value2
 
-# Use either apiToken or apiTokenSecret to specify the api token in NPM
+apiToken: ""
 
-# to use the apiTokenSecret, please create a secret with key 'apiKey'
-# here's the example
-# apiVersion: v1
-# kind: Secret
-# metadata:
-#   name: nirmata-api-token
-#   namespace: nirmata
-# data:
-#   apiKey: "{base64 encoded api token}"
-
-# apiTokenSecret: "nirmata-api-token"
-
-# to use apiToken, please specify the token directly, no base64 encode needed
-# apiToken: ""
 features:
   policyExceptions:
     enabled: false
