@@ -2,7 +2,7 @@
 # # This is a YAML-formatted file.
 # # Declare variables to be passed into your templates.
 
-nirmataURL: "wss://nirmata.co/tunnels"
+nirmataURL: "wss://nirmata.io/tunnels"
 namespace: "nirmata"
 global:
   imageRegistry: ghcr.io
