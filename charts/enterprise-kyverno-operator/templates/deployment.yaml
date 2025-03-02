@@ -57,6 +57,8 @@ spec:
             value: /var/local
           - name: HELM_CACHE_HOME
             value: /var/local/helmcache
+          - name: SYSTEM_CERT_PATH
+            value: "{{ .Values.systemCertPath | default "/etc/ssl/certs" }}"
           {{- with .Values.envVars }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
