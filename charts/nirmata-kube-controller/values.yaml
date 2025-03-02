@@ -16,7 +16,7 @@ global:
   # The repository from which images will be pulled.
   # Replace with your desired container repository.
   imageRepository: nirmata
-  # Credentials for the container registry (if required).
+  # Credentials for the private container registry (if required).
   registryUserName:
   registryPassword:
 
@@ -25,16 +25,21 @@ otelAgent:
   # imageTag is the tag or version of the otel-agent image.
   imageTag: "0.92.0"
 
+# kubeController contains configuration for the nirmata-kube-controller.
+kubeController:
+  # imageTag is the tag or version of the nirmata-kube-controller image. If added, it will override the  .Chart.AppVersion
+  imageTag: ""
+
 
 # cluster contains configuration related to the Kubernetes cluster which is being onboarded to NCH.
 cluster:
-# name is the name by which the local cluster will be onboarded to NCH. (Default: kubesystem namespace ID)
+# name used for cluster by nch (Default: kubesystem namespace ID)
   name: ""
 
-# type is the type of policy manager associated with the cluster.
+# type of the cluster categorised by nch. (Default value is "default-policy-manager-type")
   type: default-policy-manager-type
 
-# labels is a set of key-value pairs that can be used to label the cluster while onboarding the cluster to NCH.
+# labels is a set of key-value pairs that can be used to label the cluster while onboarding the cluster to Nirmata Control Hub.
 # These labels are passed as command-line arguments to the Nirmata Kubernetes controller in the deployment.
 # Example:
 # labels:
@@ -49,7 +54,7 @@ cluster:
 #       - "key2:value2"
   labels: {}
 
-# apiToken is the API token used for authenticating with the Nirmata Control Hub.
+# api token is just for registering the cluster to Nirmata Control Hub.
 # This token is required for the nirmata-kube-controller to communicate with the Nirmata Control Hub. (Required)
 apiToken: ""
 
@@ -66,7 +71,7 @@ features:
 # When set to `true`, the controller can make changes to the CR. When `false`, it operates in a read-only manner.
 readWriteMode: false
 
-# proxy contains configuration for proxy settings if the Nirmata  needs to communicate through a proxy.
+# proxy contains configuration for proxy settings if the KubeController needs to communicate through a proxy.
 proxy:
  # httpProxy is the HTTP proxy URL.
   httpProxy: ""

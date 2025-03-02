@@ -409,7 +409,7 @@ spec:
         - name: NO_PROXY
           value: {{ .Values.proxy.noProxy }}
         {{- end }}
-        image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/nirmata-kube-controller:{{ .Chart.AppVersion }}"
+        image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/nirmata-kube-controller:{{ .Chart.AppVersion | default .Values.kubeController.imageTag }}"
         imagePullPolicy: Always
         livenessProbe:
           exec:
