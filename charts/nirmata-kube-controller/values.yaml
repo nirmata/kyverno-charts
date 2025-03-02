@@ -2,42 +2,75 @@
 # # This is a YAML-formatted file.
 # # Declare variables to be passed into your templates.
 
+# Specifies the WebSocket URL for connecting to the Nirmata service.
 nirmataURL: "wss://nirmata.io/tunnels"
+
+# Defines the Kubernetes namespace where the Nirmata components will be deployed.
 namespace: "nirmata"
+
+#  Contains global configuration settings that is applied across different components.
 global:
+  # The container registry from which images will be pulled.
+  # Replace with your desired container registry.
   imageRegistry: ghcr.io
+  # The repository from which images will be pulled.
+  # Replace with your desired container repository.
   imageRepository: nirmata
+  # Credentials for the container registry (if required).
   registryUserName:
   registryPassword:
 
-kubeController:
-  imageRegistry:
-  imageRepository:
-  imageTag:
-
+# otelAgent contains configuration for the nirmata otel agent, which is used for observability and monitoring.
 otelAgent:
-  imageRegistry:
-  imageRepository:
+  # imageTag is the tag or version of the otel-agent image.
   imageTag: "0.92.0"
-# cluster name is required
-cluster:
-  name: ""
-  type: default-policy-manager-type
-  labels:
-    # key: value
-    # key2: value2
 
+
+# cluster contains configuration related to the Kubernetes cluster which is being onboarded to NCH.
+cluster:
+# name is the name by which the local cluster will be onboarded to NCH. (Default: kubesystem namespace ID)
+  name: ""
+
+# type is the type of policy manager associated with the cluster.
+  type: default-policy-manager-type
+
+# labels is a set of key-value pairs that can be used to label the cluster while onboarding the cluster to NCH.
+# These labels are passed as command-line arguments to the Nirmata Kubernetes controller in the deployment.
+# Example:
+# labels:
+#   key1: value1
+#   key2: value2
+#
+# When set, the labels are reflected in the Helm template as follows:
+# In the `deployment.yaml`:
+#       - "-cluster-labels"
+#       - "key1:value1"
+#       - "-cluster-labels"
+#       - "key2:value2"
+  labels: {}
+
+# apiToken is the API token used for authenticating with the Nirmata Control Hub.
+# This token is required for the nirmata-kube-controller to communicate with the Nirmata Control Hub. (Required)
 apiToken: ""
 
+# features enables or disables specific features while installing kube-controller.
 features:
+# to provide additional write permissions to deploy policy-exceptions.
   policyExceptions:
     enabled: false
+# to provide additional write permissions to deploy policy-sets.
   policySets:
     enabled: false
 
+# readWriteMode determines whether the nirmata-kube-controller operates in read-write mode or read-only mode.
+# When set to `true`, the controller can make changes to the CR. When `false`, it operates in a read-only manner.
 readWriteMode: false
 
+# proxy contains configuration for proxy settings if the Nirmata  needs to communicate through a proxy.
 proxy:
+ # httpProxy is the HTTP proxy URL.
   httpProxy: ""
+ # httpsProxy is the HTTPS proxy URL.
   httpsProxy: ""
+ # noProxy is a comma-separated list of domains or IP addresses that should bypass the proxy.
   noProxy: ""

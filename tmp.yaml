@@ -1,0 +1,330 @@
+---
+# Source: nirmata-kube-controller/templates/nirmata-kube-controller.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nirmata
+  namespace: default
+secrets:
+- name: nirmata-sa-secret
+---
+# Source: nirmata-kube-controller/templates/nirmata-kube-controller.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nirmata-sa-secret
+  namespace: nirmata
+  annotations:
+    kubernetes.io/service-account.name: nirmata
+type: kubernetes.io/service-account-token
+---
+# Source: nirmata-kube-controller/templates/nirmata-kube-controller.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nirmata-kube-controller-config
+  namespace: nirmata
+data:
+  WatchedResources: |-
+    events.v1.
+    policies.v1.kyverno.io
+    clusterpolicies.v1.kyverno.io
+    policyexceptions.v2alpha1.kyverno.io
+    policyexceptions.v2beta1.kyverno.io
+    policyexceptions.v2.kyverno.io
+    policysets.v1alpha1.security.nirmata.io
+  IgnoreEvents: Normal.PolicyPlaceHolder.*
+  FilterPatches: |-
+    /metadata/resourceVersion
+    /metadata/generation
+    /results/*/timestamp/*
+  IgnoreFields: metadata.managedFields
+  FilterEvents: Warning.PolicyViolation.*,Normal.PolicySkipped.*,Normal.PolicyModified.*,Normal.PolicyDeleted.*,Normal.PolicyApplied.Resource\
+    \ Generated.*,Normal.PolicyApplied.Resource Mutated.*,Normal.PolicyTamperDetected.*,Normal.PolicyTamperReverted.*
+---
+# Source: nirmata-kube-controller/templates/nirmata-kube-controller.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-agent-config
+  namespace: nirmata
+data:
+  config.yaml: |-
+    receivers:
+      prometheus:
+        config:
+          scrape_configs:
+          - job_name: kyverno
+            scrape_interval: 1m
+            static_configs:
+            - targets: [kyverno-svc-metrics.kyverno.svc.cluster.local:8000]
+            metric_relabel_configs:
+            - source_labels: [__name__]
+              regex: (kyverno_admission_review_duration_seconds.*|kyverno_policy_execution_duration_seconds.*|kyverno_policy_results_total|kyverno_policy_rule_info_total|kyverno_admission_requests_total|kyverno_controller_reconcile_total|kyverno_controller_requeue_total|kyverno_controller_drop_total)
+              action: keep
+    exporters:
+      prometheusremotewrite:
+        endpoint: https://staging.nirmata.co/host-gateway/metrics-receiver
+        external_labels:
+          clusterId: 8b0919f4-2ed8-4c7d-94cc-f04ab849a2a7
+        remote_write_queue:
+          queue_size: 2000
+          num_consumers: 1
+        timeout: 300s
+    service:
+      pipelines:
+        metrics:
+          receivers: [prometheus]
+          exporters: [prometheusremotewrite]
+---
+# Source: nirmata-kube-controller/templates/nirmata-kube-controller.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nirmata:readonly
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+rules:
+- apiGroups: ["kyverno.io", "operator.kyverno.io"]
+  resources:
+  - policies
+  - policies/status
+  - clusterpolicies
+  - clusterpolicies/status
+  - policyexceptions
+  - cleanuppolicies
+  - clustercleanuppolicies
+  - generaterequests
+  - generaterequests/status
+  verbs:
+  - get
+  - list
+  - watch
+  
+- apiGroups: ["wgpolicyk8s.io"]
+  resources:
+  - policyreports
+  - policyreports/status
+  - clusterpolicyreports
+  - clusterpolicyreports/status
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups: ["policy.kubernetes.io"]
+  resources:
+  - reportchangerequests
+  - reportchangerequests/status
+  - clusterreportchangerequests
+  - clusterreportchangerequests/status
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups: ["security.nirmata.io"]
+  resources:
+  - imagekeys
+  - imagekeys/status
+  - kyvernoes
+  - kyvernoes/status
+  - policysets
+  - policysets/status
+  - kyvernooperators
+  - kyvernooperators/status
+  - kyvernoconfigs
+  - kyvernoconfigs/status
+  verbs:
+  - get
+  - list
+  - watch
+  
+- apiGroups: [""]
+  resources:
+  - nodes
+  - componentstatuses
+  verbs:
+  - get
+  - list
+  - watch
+---
+# Source: nirmata-kube-controller/templates/nirmata-kube-controller.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata:readonly-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: nirmata
+  namespace: nirmata
+---
+# Source: nirmata-kube-controller/templates/nirmata-kube-controller.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nirmata:controller
+  namespace: nirmata
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+- kind: ServiceAccount
+  name: nirmata
+  namespace: nirmata
+---
+# Source: nirmata-kube-controller/templates/nirmata-kube-controller.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nirmata-kube-controller
+  namespace: nirmata
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nirmata-kube-controller
+      nirmata.io/container.type: system
+      app.kubernetes.io/name: nirmata
+      app.kubernetes.io/instance: nirmata
+  template:
+    metadata:
+      labels:
+        app: nirmata-kube-controller
+        nirmata.io/container.type: system
+        app.kubernetes.io/name: nirmata
+        app.kubernetes.io/instance: nirmata
+    spec:
+      containers:
+      - args:
+        - -url
+        - $(URL)
+        - -event-aggregation
+        - -upstream-connect-fail-timeout
+        - 10m
+        - -cluster-name
+        - 
+        
+        - "-cluster-labels"
+        - "key:value"
+        
+        - "-cluster-labels"
+        - "key2:value2"
+        
+        - -api-token-secret
+        - nirmata-api-token
+        command:
+        - /nirmata-kube-controller
+        env:
+        - name: URL
+          value: wss://nirmata.io/tunnels
+        image: "ghcr.io/nirmata/nirmata-kube-controller:v3.10.9"
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - /nirmata-kube-controller
+        name: nirmata-kube-controller
+        readinessProbe:
+          exec:
+            command:
+            - /nirmata-kube-controller
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            memory: 200Mi
+            cpu: 250m
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+      hostNetwork: false
+      imagePullSecrets:
+      - name: nirmata-controller-registry-secret
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: nirmata
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+---
+# Source: nirmata-kube-controller/templates/nirmata-kube-controller.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-agent
+  namespace: nirmata
+  labels:
+    app: opentelemetry
+    component: otel-agent
+    app.kubernetes.io/instance: nirmata
+    app.kubernetes.io/name: nirmata
+spec:
+  selector:
+    matchLabels:
+      app: opentelemetry
+      component: otel-agent
+      app.kubernetes.io/instance: nirmata
+      app.kubernetes.io/name: nirmata
+  template:
+    metadata:
+      labels:
+        app: opentelemetry
+        component: otel-agent
+        app.kubernetes.io/instance: nirmata
+        app.kubernetes.io/name: nirmata
+    spec:
+      containers:
+      - name: otel-agent
+        command:
+        - /otelcol
+        - --config=/etc/otel/config.yaml
+        image: "ghcr.io/nirmata/opentelemetry-collector:0.92.0"
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8888
+            scheme: HTTP
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 8888
+            scheme: HTTP
+        volumeMounts:
+        - mountPath: /etc/otel/config.yaml
+          name: data
+          subPath: config.yaml
+          readOnly: true
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: data
+        configMap:
+          name: otel-agent-config
+      imagePullSecrets:
+      - name: nirmata-controller-registry-secret

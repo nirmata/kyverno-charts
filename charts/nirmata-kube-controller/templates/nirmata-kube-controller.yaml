@@ -409,7 +409,7 @@ spec:
         - name: NO_PROXY
           value: {{ .Values.proxy.noProxy }}
         {{- end }}
-        image: "{{ default .Values.global.imageRegistry .Values.kubeController.imageRegistry}}/{{  default .Values.global.imageRepository .Values.kubeController.imageRepository }}/nirmata-kube-controller:{{ .Chart.AppVersion | default .Values.kubeController.imageTag }}"
+        image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/nirmata-kube-controller:{{ .Chart.AppVersion }}"
         imagePullPolicy: Always
         livenessProbe:
           exec:
@@ -511,7 +511,7 @@ spec:
         command:
         - /otelcol
         - --config=/etc/otel/config.yaml
-        image: "{{ default .Values.global.imageRegistry .Values.otelAgent.imageRegistry}}/{{  default .Values.global.imageRepository .Values.otelAgent.imageRepository }}/opentelemetry-collector:{{ .Values.otelAgent.imageTag }}"
+        image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/opentelemetry-collector:{{ .Values.otelAgent.imageTag }}"
         resources:
           limits:
             memory: 512Mi
