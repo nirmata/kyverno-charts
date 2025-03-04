@@ -39,7 +39,10 @@ rules:
   - get
   - list
   - watch
+  - create
   - update
+  - patch
+  - delete
 - apiGroups:
   - reports.kyverno.io
   resources:
