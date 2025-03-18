@@ -10,7 +10,7 @@ global:
   image:
     # -- (string) Global value that allows to set a single image registry across all deployments.
     # When set, it will override any values set under `.image.registry` across the chart.
-    registry: ~
+    registry: 709825985650.dkr.ecr.us-east-1.amazonaws.com
   # -- (list) Global list of Image pull secrets
   # When set, it will override any values set under `imagePullSecrets` under different components across the chart.
   imagePullSecrets: []
@@ -124,7 +124,7 @@ crds:
       registry: ~
       defaultRegistry: reg.nirmata.io
       # -- (string) Image repository
-      repository: nirmata/kyverno-cli
+      repository: nirmata/usage-kyverno-cli
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
@@ -501,7 +501,7 @@ webhooksCleanup:
     # -- (string) Image registry
     registry: ~
     # -- Image repository
-    repository: reg.nirmata.io/nirmata/kubectl
+    repository: nirmata/usage-kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: '1.32.1'
@@ -556,12 +556,12 @@ policyReportsCleanup:
 
   image:
     # -- (string) Image registry
-    registry: reg.nirmata.io
+    registry: ~
     # -- Image repository
-    repository: nirmata/kubectl
+    repository: nirmata/usage-kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.31.1'
+    tag: '1.32.1'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -739,6 +739,8 @@ features:
 
 # Admission controller configuration
 admissionController:
+  licenseGuardian:
+    mocked: false  # Only make it true when you are testing, else kyverno will fail
 
   # -- Overrides features defined at the root level
   featuresOverride:
@@ -972,7 +974,7 @@ admissionController:
       registry: ~
       defaultRegistry: reg.nirmata.io
       # -- Image repository
-      repository: nirmata/kyvernopre
+      repository: nirmata/usage-kyvernopre
       # -- (string) Image tag
       # If missing, defaults to image.tag
       tag: ~
@@ -1019,7 +1021,7 @@ admissionController:
       registry: ~
       defaultRegistry: reg.nirmata.io
       # -- Image repository
-      repository: nirmata/kyverno
+      repository: nirmata/usage-kyverno
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
@@ -1237,7 +1239,7 @@ backgroundController:
     registry: ~
     defaultRegistry: reg.nirmata.io
     # -- Image repository
-    repository: nirmata/background-controller
+    repository: nirmata/usage-background-controller
     # -- Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -1504,7 +1506,7 @@ cleanupController:
     registry: ~
     defaultRegistry: reg.nirmata.io
     # -- Image repository
-    repository: nirmata/cleanup-controller
+    repository: nirmata/usage-cleanup-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -1821,7 +1823,7 @@ reportsController:
     registry: ~
     defaultRegistry: reg.nirmata.io
     # -- Image repository
-    repository: nirmata/reports-controller
+    repository: nirmata/usage-reports-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~

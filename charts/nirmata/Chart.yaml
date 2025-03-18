@@ -1,8 +1,8 @@
 apiVersion: v2
 type: application
-name: kyverno
-version: 3.3.8
-appVersion: v1.13.4-n4k.nirmata.1
+name: kyverno-chart
+version: 4.0.6
+appVersion: v1.13.4-n4k.nirmata.1-eks-beta-16
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
@@ -44,13 +44,13 @@ annotations:
     - kind: added
       description: ImagePullSecrets made configurable for tests
 dependencies:
-- name: reports-server
-  version: 0.1.9
-  condition: reports-server.enabled
-  repository: https://nirmata.github.io/reports-server
-- name: grafana
-  version: 3.3.6
-  condition: grafana.enabled
+# - name: reports-server
+#   version: 0.1.6
+#   condition: reports-server.enabled
+#   repository: https://nirmata.github.io/reports-server
+# - name: grafana
+#   version: 3.3.4
+#   condition: grafana.enabled
 - name: crds
   version: 3.3.6
   condition: crds.install
