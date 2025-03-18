@@ -43,7 +43,7 @@ annotations:
       description: Deprecated configuration `features.reports.chunkSize` was removed
     - kind: added
       description: ImagePullSecrets made configurable for tests
-# dependencies:
+dependencies:
 # - name: reports-server
 #   version: 0.1.6
 #   condition: reports-server.enabled
@@ -51,6 +51,6 @@ annotations:
 # - name: grafana
 #   version: 3.3.4
 #   condition: grafana.enabled
-# - name: crds
-#   version: 3.3.4
-#   condition: crds.install
+- name: crds
+  version: 3.3.4
+  condition: crds.install
