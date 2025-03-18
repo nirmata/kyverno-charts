@@ -52,5 +52,5 @@ dependencies:
 #   version: 3.3.4
 #   condition: grafana.enabled
 - name: crds
-  version: 3.3.4
+  version: 3.3.6
   condition: crds.install
