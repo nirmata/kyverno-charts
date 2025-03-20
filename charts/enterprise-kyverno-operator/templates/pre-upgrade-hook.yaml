@@ -63,17 +63,22 @@ spec:
         args:
         - |
           {{- if .Values.secureOperator }}
-          echo "Deleting webhook configurations..."
           kubectl delete validatingwebhookconfigurations --all --ignore-not-found
           kubectl delete mutatingwebhookconfigurations --all --ignore-not-found
           {{- end }}
+        env:
+        - name: KUBERNETES_SERVICE_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: KUBERNETES_SERVICE_PORT
+          value: "443"
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
             - ALL
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
+          readOnlyRootFilesystem: false
           seccompProfile:
             type: RuntimeDefault
       restartPolicy: OnFailure 
