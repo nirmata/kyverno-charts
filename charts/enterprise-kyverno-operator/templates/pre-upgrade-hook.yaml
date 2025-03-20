@@ -15,7 +15,7 @@ spec:
       serviceAccountName: nirmata
       containers:
       - name: pre-upgrade-hook
-        image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/kubectl:latest"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         command: ["/bin/sh", "-c"]
         args:
         - |
