@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ .Release.Name }}-pre-upgrade-hook
+  name: kyverno-operator-pre-upgrade-hook
   namespace: {{ .Release.Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ .Release.Name }}-pre-upgrade-hook
+  name: kyverno-operator-pre-upgrade-hook
 rules:
 - apiGroups: ["admissionregistration.k8s.io"]
   resources: ["validatingwebhookconfigurations", "mutatingwebhookconfigurations"]
@@ -17,20 +17,20 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ .Release.Name }}-pre-upgrade-hook
+  name: kyverno-operator-pre-upgrade-hook
 subjects:
 - kind: ServiceAccount
-  name: {{ .Release.Name }}-pre-upgrade-hook
+  name: kyverno-operator-pre-upgrade-hook
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: {{ .Release.Name }}-pre-upgrade-hook
+  name: kyverno-operator-pre-upgrade-hook
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-pre-upgrade-hook
+  name: kyverno-operator-pre-upgrade-hook
   namespace: {{ .Release.Namespace }}
   annotations:
     "helm.sh/hook": pre-upgrade
@@ -39,9 +39,10 @@ metadata:
 spec:
   template:
     metadata:
-      name: {{ .Release.Name }}-pre-upgrade-hook
+      name: kyverno-operator-pre-upgrade-hook
     spec:
-      serviceAccountName: {{ .Release.Name }}-pre-upgrade-hook
+      serviceAccountName: kyverno-operator-pre-upgrade-hook
+      automountServiceAccountToken: false
       containers:
       - name: pre-upgrade-hook
         image: "ghcr.io/nirmata/kubectl:1.31.1"
