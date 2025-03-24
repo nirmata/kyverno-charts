@@ -368,21 +368,7 @@ metadata:
   annotations:
     nirmata.io/namespace: {{ .Values.namespace | quote }}
     nirmata.io/cluster-name: {{ .Values.cluster.name | quote }}
-    nirmata.io/cluster-type: {{ .Values.cluster.type | quote }}
-    nirmata.io/read-write-mode: {{ .Values.readWriteMode | quote }}
-    nirmata.io/features.policy-exceptions: {{ .Values.features.policyExceptions.enabled | quote }}
-    nirmata.io/features.policy-sets: {{ .Values.features.policySets.enabled | quote }}
-    nirmata.io/chart-version: {{ .Chart.Version | quote }}
-    nirmata.io/app-version: {{ .Chart.AppVersion | quote }}
-    {{- if .Values.proxy.httpProxy }}
-    nirmata.io/proxy/http: {{ .Values.proxy.httpProxy | quote }}
-    {{- end }}
-    {{- if .Values.proxy.httpsProxy }}
-    nirmata.io/proxy/https: {{ .Values.proxy.httpsProxy | quote }}
-    {{- end }}
-    {{- if .Values.proxy.noProxy }}
-    nirmata.io/proxy/no-proxy: {{ .Values.proxy.noProxy | quote }}
-    {{- end }}
+    nirmata.io/helm: {{ $values := deepCopy .Values }}{{ if .Values.readWriteMode }}{{ $_ := set (index $values "features" "policyExceptions") "enabled" true }}{{ $_ := set (index $values "features" "policySets") "enabled" true }}{{ end }}{{ toJson $values | quote }}
 spec:
   replicas: 1
   selector:
