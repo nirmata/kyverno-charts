@@ -2074,7 +2074,7 @@ reportsController:
 
 
 reports-server:
-  enabled: false
+  enabled: true
   fipsEnabled: false
   # -- Internal settings used with `helm template` to generate install manifest
   # @ignored
