@@ -335,6 +335,15 @@ rules:
   - get
   - list
   - watch
+- apiGroups: ["apps"]
+  resources:
+  - deployments
+  resourceNames:
+  - nirmata-kube-controller
+  verbs:
+  - get
+  - list
+  - watch
 {{- end }}
 ---
 apiVersion: v1
