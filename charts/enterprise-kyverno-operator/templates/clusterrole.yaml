@@ -31,8 +31,6 @@ rules:
   - kyvernoconfigs/status
   - policysets
   - policysets/status
-  - kyvernoadapters
-  - kyvernoadapters/status
   verbs:
   - watch
   - list
@@ -45,7 +43,6 @@ rules:
   resources:
   - kyvernoconfigs/finalizers
   - policysets/finalizers
-  - kyvernoadapters/finalizers
   verbs:
   - update
 - apiGroups:
@@ -116,18 +113,6 @@ rules:
   resources:
   - clusterpolicies
   - policies
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - security.nirmata.io
-  resources:
-  - awsadapterconfigs
   verbs:
   - get
   - list
