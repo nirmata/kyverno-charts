@@ -1,7 +1,7 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 4.0.12-payg-licensing
+version: 4.0.13-payg-licensing
 appVersion: v1.13.4-n4k.nirmata.1-eks-beta-16
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
