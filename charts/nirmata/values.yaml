@@ -46,6 +46,7 @@ global:
   # -- Global List of node taints to tolerate. Non-global values will override the global value.
   tolerations: []
 
+
 # -- (string) Override the name of the chart
 nameOverride: ~
 
@@ -125,6 +126,7 @@ crds:
       defaultRegistry: reg.nirmata.io
       # -- (string) Image repository
       repository: nirmata/usage-kyverno-cli
+
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
@@ -739,6 +741,7 @@ features:
 
 # Admission controller configuration
 admissionController:
+  serviceAccountRoleArn: ""
   licenseGuardian:
     mocked: false  # Only make it true when you are testing, else kyverno will fail
 
