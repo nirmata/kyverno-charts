@@ -125,7 +125,7 @@ crds:
       registry: ~
       defaultRegistry: reg.nirmata.io
       # -- (string) Image repository
-      repository: nirmata/usage-kyverno-cli
+      repository: nirmata/nirmata-kyverno-cli
 
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
@@ -503,7 +503,7 @@ webhooksCleanup:
     # -- (string) Image registry
     registry: ~
     # -- Image repository
-    repository: nirmata/usage-kubectl
+    repository: nirmata/nirmata-kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: '1.32.1'
@@ -560,7 +560,7 @@ policyReportsCleanup:
     # -- (string) Image registry
     registry: ~
     # -- Image repository
-    repository: nirmata/usage-kubectl
+    repository: nirmata/nirmata-kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: '1.32.1'
@@ -977,7 +977,7 @@ admissionController:
       registry: ~
       defaultRegistry: reg.nirmata.io
       # -- Image repository
-      repository: nirmata/usage-kyvernopre
+      repository: nirmata/nirmata-kyvernopre
       # -- (string) Image tag
       # If missing, defaults to image.tag
       tag: ~
@@ -1024,7 +1024,7 @@ admissionController:
       registry: ~
       defaultRegistry: reg.nirmata.io
       # -- Image repository
-      repository: nirmata/usage-kyverno
+      repository: nirmata/nirmata-kyverno
       # -- (string) Image tag
       # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
@@ -1242,7 +1242,7 @@ backgroundController:
     registry: ~
     defaultRegistry: reg.nirmata.io
     # -- Image repository
-    repository: nirmata/usage-background-controller
+    repository: nirmata/nirmata-background-controller
     # -- Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -1509,7 +1509,7 @@ cleanupController:
     registry: ~
     defaultRegistry: reg.nirmata.io
     # -- Image repository
-    repository: nirmata/usage-cleanup-controller
+    repository: nirmata/nirmata-cleanup-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
@@ -1826,7 +1826,7 @@ reportsController:
     registry: ~
     defaultRegistry: reg.nirmata.io
     # -- Image repository
-    repository: nirmata/usage-reports-controller
+    repository: nirmata/nirmata-reports-controller
     # -- (string) Image tag
     # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
