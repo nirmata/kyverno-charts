@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "isPodIdentityCompatible": true,
+    "permissionsList": [
+      {
+        "serviceAccount": "kyverno-chart-admission-controller",
+        "managedPolicies": [
+          "arn:aws:iam::aws:policy/AWSMarketplaceMeteringFullAccess",
+          "arn:aws:iam::aws:policy/AWSMarketplaceMeteringRegisterUsage"
+        ]
+      }
+    ]
+  }
+}

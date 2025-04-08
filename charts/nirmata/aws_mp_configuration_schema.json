@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Add-On Configuration",
+  "type": "object",
+  "properties": {
+    "admissionController": {
+      "type": "object",
+      "properties": {
+        "serviceAccountRoleArn": {
+          "title": "IAM Role ARN",
+          "description": "Enter the ARN of the IAM role to attach to the service account. This ARN must belong to your AWS account.",
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": ["serviceAccountRoleArn"]
+    }
+  },
+  "required": ["admissionController"]
+}

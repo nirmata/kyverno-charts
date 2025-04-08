@@ -222,6 +222,8 @@ spec:
             protocol: TCP
           {{- end }}
           env:
+          - name: MOCKED_LICENSE_GUARDIAN
+            value: {{ .Values.admissionController.licenseGuardian.mocked | quote }}
           - name: INIT_CONFIG
             value: {{ template "kyverno.config.configMapName" . }}
           - name: METRICS_CONFIG
