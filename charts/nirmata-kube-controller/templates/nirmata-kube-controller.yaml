@@ -279,12 +279,6 @@ rules:
   - get
   - list
   - watch
-  {{ if .Values.features.policyExceptions.enabled }}
-  - create
-  - update
-  - patch
-  - delete
-  {{ end }}
 - apiGroups: ["wgpolicyk8s.io"]
   resources:
   - policyreports
@@ -321,12 +315,6 @@ rules:
   - get
   - list
   - watch
-  {{ if .Values.features.policySets.enabled }}
-  - create
-  - update
-  - patch
-  - delete
-  {{ end }}
 - apiGroups: [""]
   resources:
   - nodes
@@ -344,6 +332,65 @@ rules:
   - get
   - list
   - watch
+{{- if .Values.features.policyExceptions.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nirmata:policy-exceptions
+rules:
+- apiGroups: ["kyverno.io"]
+  resources:
+  - policyexceptions
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata:policy-exceptions-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nirmata:policy-exceptions
+subjects:
+- kind: ServiceAccount
+  name: nirmata
+  namespace: {{ .Values.namespace }}
+{{- end }}
+{{- if .Values.features.policySets.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nirmata:policy-sets
+rules:
+- apiGroups: ["security.nirmata.io"]
+  resources:
+  - policysets
+  - policysets/status
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata:policy-sets-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nirmata:policy-sets
+subjects:
+- kind: ServiceAccount
+  name: nirmata
+  namespace: {{ .Values.namespace }}
+{{- end }}
 {{- end }}
 ---
 apiVersion: v1
@@ -450,7 +497,7 @@ spec:
             type: RuntimeDefault
       hostNetwork: false
       imagePullSecrets:
-      - name: nirmata-controller-registry-secret
+      - name: {{ default "nirmata-controller-registry-secret" .Values.imagePullSecretName }}
       securityContext:
         seccompProfile:
           type: RuntimeDefault
