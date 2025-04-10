@@ -19,6 +19,7 @@ global:
   # Credentials for the private container registry (if required).
   registryUserName:
   registryPassword:
+  imagePullSecretName: nirmata-controller-registry-secret
 
 # otelAgent contains configuration for the nirmata otel agent, which is used for observability and monitoring.
 otelAgent:
