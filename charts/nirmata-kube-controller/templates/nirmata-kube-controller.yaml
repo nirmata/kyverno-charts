@@ -24,7 +24,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: nirmata:nirmata-privileged
+  name: view
 subjects:
 - kind: ServiceAccount
   name: nirmata
@@ -63,154 +63,136 @@ subjects:
   name: nirmata-controller
   namespace: nirmata
 ---
-apiVersion: "rbac.authorization.k8s.io/v1"
-kind: "ClusterRole"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
-  annotations: {}
   name: "nirmata:nirmata-privileged"
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
 rules:
-- apiGroups:
-  - "kyverno.io"
-  - "operator.kyverno.io"
-  - "security.nirmata.io"
-  nonResourceURLs: []
-  resourceNames: []
+- apiGroups: ["kyverno.io", "operator.kyverno.io"]
   resources:
-  - "policies"
-  - "clusterpolicies"
-  - "reportchangerequests"
-  - "clusterreportchangerequests"
-  - "kyvernooperators/status"
-  - "kyvernooperators"
-  - "imagekeys"
-  - "imagekeys/status"
-  - "imagekeys/finalizers"
-  - "policyexceptions"
-  - "policysets"
-  - "policysets/status"
-  - "cleanuppolicies"
-  - "clustercleanuppolicies"
-  - "kyvernoes"
-  - "kyvernoes/status"
-  - "kyvernoconfigs"
-  - "kyvernoconfigs/status"
+  - policies
+  - policies/status
+  - clusterpolicies
+  - clusterpolicies/status
+  - policyexceptions
+  - cleanuppolicies
+  - clustercleanuppolicies
+  - generaterequests
+  - generaterequests/status
   verbs:
-  - "*"
-- apiGroups:
-  - "wgpolicyk8s.io/v1alpha1"
-  - "wgpolicyk8s.io/v1alpha2"
-  nonResourceURLs: []
-  resourceNames: []
+  - get
+  - list
+  - watch
+- apiGroups: ["wgpolicyk8s.io"]
   resources:
-  - "policyreports"
-  - "clusterpolicyreports"
+  - policyreports
+  - policyreports/status
+  - clusterpolicyreports
+  - clusterpolicyreports/status
   verbs:
-  - "*"
-- apiGroups:
-  - "*"
-  nonResourceURLs: []
-  resourceNames: []
+  - get
+  - list
+  - watch
+- apiGroups: ["policy.kubernetes.io"]
   resources:
-  - "policies"
-  - "policies/status"
-  - "clusterpolicies"
-  - "clusterpolicies/status"
-  - "policyreports"
-  - "policyreports/status"
-  - "clusterpolicyreports"
-  - "clusterpolicyreports/status"
-  - "generaterequests"
-  - "generaterequests/status"
-  - "reportchangerequests"
-  - "reportchangerequests/status"
-  - "clusterreportchangerequests"
-  - "clusterreportchangerequests/status"
+  - reportchangerequests
+  - reportchangerequests/status
+  - clusterreportchangerequests
+  - clusterreportchangerequests/status
   verbs:
-  - "create"
-  - "delete"
-  - "get"
-  - "list"
-  - "patch"
-  - "update"
-  - "watch"
-  - "deletecollection"
-- apiGroups:
-  - "apiextensions.k8s.io"
-  nonResourceURLs: []
-  resourceNames: []
+  - get
+  - list
+  - watch
+- apiGroups: ["security.nirmata.io"]
   resources:
-  - "customresourcedefinitions"
+  - imagekeys
+  - imagekeys/status
+  - kyvernoes
+  - kyvernoes/status
+  - policysets
+  - policysets/status
+  - kyvernooperators
+  - kyvernooperators/status
+  - kyvernoconfigs
+  - kyvernoconfigs/status
   verbs:
-  - "get"
-  - "list"
-  - "watch"
-- apiGroups:
-  - "*"
-  nonResourceURLs: []
-  resourceNames: []
+  - get
+  - list
+  - watch
+- apiGroups: [""]
   resources:
-  - "namespaces"
-  - "networkpolicies"
-  - "secrets"
-  - "configmaps"
-  - "resourcequotas"
-  - "limitranges"
-  - "deployments"
-  - "services"
-  - "serviceaccounts"
-  - "roles"
-  - "rolebindings"
-  - "clusterroles"
-  - "clusterrolebindings"
-  - "events"
-  - "mutatingwebhookconfigurations"
-  - "validatingwebhookconfigurations"
-  - "certificatesigningrequests"
-  - "certificatesigningrequests/approval"
-  - "poddisruptionbudgets"
+  - nodes
+  - componentstatuses
   verbs:
-  - "list"
-  - "get"
-  - "watch"
-- apiGroups:
-  - "*"
-  nonResourceURLs: []
-  resourceNames: []
+  - get
+  - list
+  - watch
+- apiGroups: ["apps"]
   resources:
-  - "*"
-  verbs:
-  - "get"
-  - "list"
-  - "watch"
-- apiGroups:
-  - "certificates.k8s.io"
-  nonResourceURLs: []
+  - deployments
   resourceNames:
-  - "kubernetes.io/legacy-unknown"
-  resources:
-  - "certificatesigningrequests"
-  - "certificatesigningrequests/approval"
-  - "certificatesigningrequests/status"
+  - nirmata-kube-controller
   verbs:
-  - "get"
-  - "watch"
-- apiGroups:
-  - "certificates.k8s.io"
-  nonResourceURLs: []
-  resourceNames:
-  - "kubernetes.io/legacy-unknown"
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nirmata:policy-exceptions
+rules:
+- apiGroups: ["kyverno.io"]
   resources:
-  - "signers"
+  - policyexceptions
   verbs:
-  - "approve"
-- apiGroups:
-  - "coordination.k8s.io"
-  nonResourceURLs: []
-  resourceNames: []
+  - create
+  - update
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata:policy-exceptions-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nirmata:policy-exceptions
+subjects:
+- kind: ServiceAccount
+  name: nirmata
+  namespace: {{ .Values.namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nirmata:policy-sets
+rules:
+- apiGroups: ["security.nirmata.io"]
   resources:
-  - "leases"
+  - policysets
+  - policysets/status
   verbs:
-  - "get"
+  - create
+  - update
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata:policy-sets-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nirmata:policy-sets
+subjects:
+- kind: ServiceAccount
+  name: nirmata
+  namespace: {{ .Values.namespace }}
 {{- else }}
 ---
 apiVersion: v1
