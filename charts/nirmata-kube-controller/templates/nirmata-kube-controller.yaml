@@ -1,217 +1,13 @@
-{{- if .Values.readWriteMode }}
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: nirmata
-  namespace: nirmata
-secrets:
-- name: nirmata-sa-secret
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: nirmata-sa-secret
-  namespace: nirmata
-  annotations:
-    kubernetes.io/service-account.name: nirmata
-type: kubernetes.io/service-account-token
----   
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: nirmata-cluster-admin-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: nirmata:nirmata-privileged
-subjects:
-- kind: ServiceAccount
-  name: nirmata
-  namespace: nirmata
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: nirmata-admin-binding
-  namespace: nirmata
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: admin
-subjects:
-- kind: ServiceAccount
-  name: nirmata
-  namespace: nirmata
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: nirmata-controller
-  namespace: nirmata
----   
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: nirmata-controller-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: view
-subjects:
-- kind: ServiceAccount
-  name: nirmata-controller
-  namespace: nirmata
----
-apiVersion: "rbac.authorization.k8s.io/v1"
-kind: "ClusterRole"
-metadata:
-  annotations: {}
-  name: "nirmata:nirmata-privileged"
-rules:
-- apiGroups:
-  - "kyverno.io"
-  - "operator.kyverno.io"
-  - "security.nirmata.io"
-  nonResourceURLs: []
-  resourceNames: []
-  resources:
-  - "policies"
-  - "clusterpolicies"
-  - "reportchangerequests"
-  - "clusterreportchangerequests"
-  - "kyvernooperators/status"
-  - "kyvernooperators"
-  - "imagekeys"
-  - "imagekeys/status"
-  - "imagekeys/finalizers"
-  - "policyexceptions"
-  - "policysets"
-  - "policysets/status"
-  - "cleanuppolicies"
-  - "clustercleanuppolicies"
-  - "kyvernoes"
-  - "kyvernoes/status"
-  - "kyvernoconfigs"
-  - "kyvernoconfigs/status"
-  verbs:
-  - "*"
-- apiGroups:
-  - "wgpolicyk8s.io/v1alpha1"
-  - "wgpolicyk8s.io/v1alpha2"
-  nonResourceURLs: []
-  resourceNames: []
-  resources:
-  - "policyreports"
-  - "clusterpolicyreports"
-  verbs:
-  - "*"
-- apiGroups:
-  - "*"
-  nonResourceURLs: []
-  resourceNames: []
-  resources:
-  - "policies"
-  - "policies/status"
-  - "clusterpolicies"
-  - "clusterpolicies/status"
-  - "policyreports"
-  - "policyreports/status"
-  - "clusterpolicyreports"
-  - "clusterpolicyreports/status"
-  - "generaterequests"
-  - "generaterequests/status"
-  - "reportchangerequests"
-  - "reportchangerequests/status"
-  - "clusterreportchangerequests"
-  - "clusterreportchangerequests/status"
-  verbs:
-  - "create"
-  - "delete"
-  - "get"
-  - "list"
-  - "patch"
-  - "update"
-  - "watch"
-  - "deletecollection"
-- apiGroups:
-  - "apiextensions.k8s.io"
-  nonResourceURLs: []
-  resourceNames: []
-  resources:
-  - "customresourcedefinitions"
-  verbs:
-  - "get"
-  - "list"
-  - "watch"
-- apiGroups:
-  - "*"
-  nonResourceURLs: []
-  resourceNames: []
-  resources:
-  - "namespaces"
-  - "networkpolicies"
-  - "secrets"
-  - "configmaps"
-  - "resourcequotas"
-  - "limitranges"
-  - "deployments"
-  - "services"
-  - "serviceaccounts"
-  - "roles"
-  - "rolebindings"
-  - "clusterroles"
-  - "clusterrolebindings"
-  - "events"
-  - "mutatingwebhookconfigurations"
-  - "validatingwebhookconfigurations"
-  - "certificatesigningrequests"
-  - "certificatesigningrequests/approval"
-  - "poddisruptionbudgets"
-  verbs:
-  - "list"
-  - "get"
-  - "watch"
-- apiGroups:
-  - "*"
-  nonResourceURLs: []
-  resourceNames: []
-  resources:
-  - "*"
-  verbs:
-  - "get"
-  - "list"
-  - "watch"
-- apiGroups:
-  - "certificates.k8s.io"
-  nonResourceURLs: []
-  resourceNames:
-  - "kubernetes.io/legacy-unknown"
-  resources:
-  - "certificatesigningrequests"
-  - "certificatesigningrequests/approval"
-  - "certificatesigningrequests/status"
-  verbs:
-  - "get"
-  - "watch"
-- apiGroups:
-  - "certificates.k8s.io"
-  nonResourceURLs: []
-  resourceNames:
-  - "kubernetes.io/legacy-unknown"
-  resources:
-  - "signers"
-  verbs:
-  - "approve"
-- apiGroups:
-  - "coordination.k8s.io"
-  nonResourceURLs: []
-  resourceNames: []
-  resources:
-  - "leases"
-  verbs:
-  - "get"
-{{- else }}
+{{- $readWriteMode := .Values.readWriteMode | default false }}
+
+{{- $features := .Values.features | default dict }}
+
+{{- $policyExceptions := get $features "policyExceptions" | default dict }}
+{{- $peEnabled := hasKey $policyExceptions "enabled" | ternary $policyExceptions.enabled $readWriteMode }}
+
+{{- $policySets := get $features "policySets" | default dict }}
+{{- $psEnabled := hasKey $policySets "enabled" | ternary $policySets.enabled $readWriteMode }}
+
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -229,7 +25,7 @@ metadata:
   annotations:
     kubernetes.io/service-account.name: nirmata
 type: kubernetes.io/service-account-token
----   
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -332,7 +128,7 @@ rules:
   - get
   - list
   - watch
-{{- if .Values.features.policyExceptions.enabled }}
+{{- if $peEnabled }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -361,7 +157,7 @@ subjects:
   name: nirmata
   namespace: {{ .Values.namespace }}
 {{- end }}
-{{- if .Values.features.policySets.enabled }}
+{{- if $psEnabled }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -390,7 +186,6 @@ subjects:
 - kind: ServiceAccount
   name: nirmata
   namespace: {{ .Values.namespace }}
-{{- end }}
 {{- end }}
 ---
 apiVersion: v1
@@ -424,7 +219,7 @@ metadata:
   annotations:
     nirmata.io/namespace: {{ .Values.namespace | quote }}
     nirmata.io/cluster-name: {{ .Values.cluster.name | quote }}
-    nirmata.io/helm: {{ $values := deepCopy .Values }}{{ if .Values.readWriteMode }}{{ $_ := set (index $values "features" "policyExceptions") "enabled" true }}{{ $_ := set (index $values "features" "policySets") "enabled" true }}{{ end }}{{ toJson $values | quote }}
+    nirmata.io/helm: {{ $values := deepCopy .Values }}{{ if not (hasKey $values "features") }}{{ $_ := set $values "features" dict }}{{ end }}{{ if not (hasKey $values.features "policyExceptions") }}{{ $_ := set $values.features "policyExceptions" dict }}{{ end }}{{ if not (hasKey $values.features "policySets") }}{{ $_ := set $values.features "policySets" dict }}{{ end }}{{ $_ := set $values.features.policyExceptions "enabled" $peEnabled }}{{ $_ := set $values.features.policySets "enabled" $psEnabled }}{{ toJson $values | quote }}
 spec:
   replicas: 1
   selector:
