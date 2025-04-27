@@ -35,6 +35,8 @@ rules:
   - preprocessors
   - awsorgconfigs
   - clusterconfigs
+  - awsaccountconfigs/status
+  - awsorgconfigs/status
   verbs:
   - get
   - list
