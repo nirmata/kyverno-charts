@@ -378,8 +378,9 @@ securityContext:
 
 # -- Configmap storing custom CA certificate if any
 customCAConfigMap:
+# -- CA certificate data to be stored in a ConfigMap and mounted to the deployment
+customCACert: ""
 # -- Path containing ssl certs within the container. Used only if customCAConfigMap is used
-
 systemCertPath: /etc/ssl/certs
 
 service:

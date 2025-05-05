@@ -57,7 +57,7 @@ spec:
             value: /var/local
           - name: HELM_CACHE_HOME
             value: /var/local/helmcache
-          {{- if .Values.customCAConfigMap }}
+          {{- if or .Values.customCAConfigMap .Values.customCACert }}
           - name: SYSTEM_CERT_PATH
             value: "{{ .Values.systemCertPath | default "/etc/ssl/certs" }}/custom-ca.pem"
           {{- end}}
@@ -83,9 +83,9 @@ spec:
             name: cert
             readOnly: true
           {{- end }}
-          {{- if .Values.customCAConfigMap }}
+          {{- if or .Values.customCAConfigMap .Values.customCACert }}
           - name: custom-ca-store
-            mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
+            mountPath: {{ .Values.systemCertPath | default "/etc/ssl/certs" }}/custom-ca.pem
             subPath: custom-ca.pem
           {{- end}}
           readinessProbe:
@@ -129,4 +129,8 @@ spec:
       - name: custom-ca-store
         configMap:
           name: {{ .Values.customCAConfigMap }}
+      {{- else if .Values.customCACert }}
+      - name: custom-ca-store
+        configMap:
+          name: {{ include "enterprise-kyverno.fullname" . }}-custom-ca
       {{- end}}
