@@ -263,6 +263,9 @@ spec:
         {{ end }}
         - -api-token-secret
         - nirmata-api-token
+        {{- if .Values.kubeController.insecure }}
+        - -insecure
+        {{- end }}
         command:
         - /nirmata-kube-controller
         env:
