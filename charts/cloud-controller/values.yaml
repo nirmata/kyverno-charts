@@ -228,17 +228,14 @@ reportsController:
 eventsController:
   # -- Enable the events controller
   enabled: true
-  
   serviceAccount:
     # -- The ServiceAccount name
     name:
     # -- Annotations for the ServiceAccount
     annotations: {}
       # example.com/annotation: value
-
   # -- (int) Desired number of pods
   replicas: ~
-  
   image:
     # -- Image registry
     registry: reg.nirmata.io
@@ -248,7 +245,6 @@ eventsController:
     tag: ""
     # -- Image pull policy
     pullPolicy: IfNotPresent
-  
   resources:
     # -- Pod resource limits
     limits:
@@ -258,7 +254,6 @@ eventsController:
     requests:
       cpu: 10m
       memory: 64Mi
-  
   # -- Container security context
   securityContext:
     runAsNonRoot: true
@@ -270,28 +265,15 @@ eventsController:
         - ALL
     seccompProfile:
       type: RuntimeDefault
-
   service:
     # -- Service type (e.g., ClusterIP, NodePort, LoadBalancer). Set to LoadBalancer for AWS default.
     type: LoadBalancer
     # -- Service ports configuration
     ports:
-      - name: http # Example port, adjust as needed
-        port: 80  # Example port, adjust as needed
+      - name: http
+        port: 80
         protocol: TCP
-        targetPort: 8080 # Example target port, adjust as needed
-
-  # -- Image pull secrets
-  imagePullSecrets: {}
-    # my-secret:
-    #   registry: reg.nirmata.io
-    #   username: MariamFahmy98
-    #   password: secret
-    # regcred2:
-    #   registry: bar.example.com
-    #   username: barbaz
-    #   password: secret2
-
+        targetPort: 8080
   # -- (string) The address the health probe endpoint binds to
   healthProbeBindAddress: :8082
   # -- (bool) If set the metrics endpoint is served securely
