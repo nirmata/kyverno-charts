@@ -30,7 +30,10 @@ otelAgent:
 kubeController:
   # imageTag is the tag or version of the nirmata-kube-controller image. If added, it will override the  .Chart.AppVersion
   imageTag: ""
-
+  # customCACert contains the custom CA certificate data in base64 encoded format
+  customCACert: ""
+  # customCaConfigMap specifies an existing ConfigMap containing CA certificate. If provided, this will be used instead of creating a new ConfigMap from customCACert
+  customCaConfigMap: ""
 
 # cluster contains configuration related to the Kubernetes cluster which is being onboarded to NCH.
 cluster:
