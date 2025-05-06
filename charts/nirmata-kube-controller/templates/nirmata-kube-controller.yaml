@@ -250,7 +250,7 @@ spec:
         - "{{ $key }}:{{ $value }}"
         {{ end }}
         - -api-token-secret
-        - nirmata-api-token
+        - {{ .Values.apiTokenSecret }}
         command:
         - /nirmata-kube-controller
         env:
