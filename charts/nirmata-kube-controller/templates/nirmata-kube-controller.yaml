@@ -251,9 +251,6 @@ spec:
         {{ end }}
         - -api-token-secret
         - {{ .Values.apiTokenSecret }}
-        {{- if .Values.kubeController.insecure }}
-        - -insecure
-        {{- end }}
         command:
         - /nirmata-kube-controller
         env:
