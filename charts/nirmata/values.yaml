@@ -2134,9 +2134,15 @@ reports-server:
   # -- Pod annotations
   podAnnotations: {}
 
+  # -- Labels to add to resources managed by the chart
+  commonLabels: {}
+
   # -- Pod security context
   podSecurityContext:
     fsGroup: 2000
+
+  # -- Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env.
+  podEnv: {}
 
   # -- Container security context
   # @default -- See [values.yaml](values.yaml)
@@ -2226,6 +2232,16 @@ reports-server:
     # -- Target Memory utilisation
     targetMemoryUtilizationPercentage: ~
 
+
+  # -- Using a PDB is highly recommended for highly available deployments. Defaults to enabled. The default configuration doesn't prevent disruption when using a single replica
+  pdb:
+    # -- Enable PodDisruptionBudget
+    enabled: true
+    # -- minAvailable pods for PDB, cannot be used together with maxUnavailable
+    minAvailable: ~
+    # -- maxUnavailable pods for PDB, will take precedence over minAvailable if both are defined
+    maxUnavailable: 50%
+
   # -- Node selector
   nodeSelector: {}
 
@@ -2271,13 +2287,20 @@ reports-server:
       tolerations: []
 
     db:
-      # -- If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, and `db.password`.
+      # -- If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password` and `db.readReplicaHosts`.
       secretName: ""
 
       # -- Database host
       host: reports-server-cluster-rw.reports-server
+
       # -- The database host will be read from this `key` in the specified Secret, when `db.secretName` is set.
       hostSecretKeyName: "host"
+
+      # -- Database read replica hosts
+      readReplicaHosts: ""
+
+      # -- The database read replica hosts will be read from this `key` in the specified Secret, when `db.secretName` is set.
+      readReplicaHostsSecretKeyName: readReplicaHosts
 
       # -- Database port
       port:
