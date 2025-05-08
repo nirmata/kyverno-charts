@@ -8,6 +8,18 @@
 {{- $policySets := get $features "policySets" | default dict }}
 {{- $psEnabled := hasKey $policySets "enabled" | ternary $policySets.enabled $readWriteMode }}
 
+{{- if and .Values.kubeController.customCACert (not .Values.kubeController.customCaConfigMap) }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nirmata-ca-cert
+  namespace: {{ .Values.namespace }}
+data:
+  ca.crt: |
+{{ .Values.kubeController.customCACert | indent 4 }}
+{{- end }}
+
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -251,6 +263,9 @@ spec:
         {{ end }}
         - -api-token-secret
         - {{ .Values.apiTokenSecret }}
+        {{- if .Values.kubeController.insecure }}
+        - -insecure
+        {{- end }}
         command:
         - /nirmata-kube-controller
         env:
@@ -290,6 +305,13 @@ spec:
           runAsNonRoot: true
           seccompProfile:
             type: RuntimeDefault
+        {{- if or .Values.kubeController.customCACert .Values.kubeController.customCaConfigMap }}
+        volumeMounts:
+        - name: ca-cert
+          mountPath: /etc/ssl/certs/ca.crt
+          subPath: ca.crt
+          readOnly: true
+        {{- end }}
       hostNetwork: false
       imagePullSecrets:
       - name: {{ default "nirmata-controller-registry-secret" .Values.imagePullSecretName }}
@@ -297,6 +319,12 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       serviceAccountName: nirmata
+      {{- if or .Values.kubeController.customCACert .Values.kubeController.customCaConfigMap }}
+      volumes:
+      - name: ca-cert
+        configMap:
+          name: {{ if .Values.kubeController.customCaConfigMap }}{{ .Values.kubeController.customCaConfigMap }}{{ else }}nirmata-ca-cert{{ end }}
+      {{- end }}
       tolerations:
       - effect: NoSchedule
         key: node-role.kubernetes.io/master
@@ -397,10 +425,21 @@ spec:
           name: data
           subPath: config.yaml
           readOnly: true
+        {{- if or .Values.kubeController.customCACert .Values.kubeController.customCaConfigMap }}
+        - name: ca-cert
+          mountPath: /etc/ssl/certs/ca.crt
+          subPath: ca.crt
+          readOnly: true
+        {{- end }}
       terminationGracePeriodSeconds: 30
       volumes:
       - name: data
         configMap:
           name: otel-agent-config
+      {{- if or .Values.kubeController.customCACert .Values.kubeController.customCaConfigMap }}
+      - name: ca-cert
+        configMap:
+          name: {{ if .Values.kubeController.customCaConfigMap }}{{ .Values.kubeController.customCaConfigMap }}{{ else }}nirmata-ca-cert{{ end }}
+      {{- end }}
       imagePullSecrets:
       - name: nirmata-controller-registry-secret
