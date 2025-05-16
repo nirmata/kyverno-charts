@@ -14579,6 +14579,32 @@ entries:
     version: 0.1.0
   nirmata-kyverno-operator:
   - apiVersion: v2
+    appVersion: v0.4.7-rc3
+    created: "2025-05-16T17:43:33.131580441Z"
+    dependencies:
+    - condition: crds.install
+      name: crds
+      repository: ""
+      version: 3.2.2
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: 47d1259e1b55b35c91f0ff6930e384a3c26adf9547ef0e38e8b2f98e6ad0eff3
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-kyverno-operator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-kyverno-operator-v0.7.0/nirmata-kyverno-operator-v0.7.0.tgz
+    version: v0.7.0
+  - apiVersion: v2
     appVersion: v0.4.4
     created: "2025-03-01T07:03:54.834312078Z"
     dependencies:
@@ -17972,6 +17998,27 @@ entries:
   nirmata-kyverno-operator-crd:
   - apiVersion: v2
     appVersion: v0.3.3
+    created: "2025-05-16T17:43:32.964450395Z"
+    description: Helm Chart for Enterprise Kyverno Operator
+    digest: 1e57cd8a0a9272e6fa8796de471504327dfcee30e1dd11ce80bfaa9aabbb7b6c
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - enterprise kyverno operator
+    - kyverno operator
+    kubeVersion: '>=1.20.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-kyverno-operator-crd
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-kyverno-operator-crd-v0.7.0/nirmata-kyverno-operator-crd-v0.7.0.tgz
+    version: v0.7.0
+  - apiVersion: v2
+    appVersion: v0.3.3
     created: "2025-01-12T19:06:19.535575413Z"
     description: Helm Chart for Enterprise Kyverno Operator
     digest: 6f6eb2fa6878eea7820fc3e9e776701373994b9ea25272f0539b40569f2c2fb8
@@ -18441,4 +18488,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-05-16T17:05:17.891458846Z"
+generated: "2025-05-16T17:43:33.135487067Z"
