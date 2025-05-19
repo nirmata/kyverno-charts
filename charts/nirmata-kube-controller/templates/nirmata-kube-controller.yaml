@@ -180,6 +180,10 @@ rules:
   resources:
   - policysets
   - policysets/status
+  - policies
+  - policies/status
+  - clusterpolicies
+  - clusterpolicies/status
   verbs:
   - create
   - update
