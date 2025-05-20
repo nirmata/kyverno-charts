@@ -2264,6 +2264,10 @@ reports-server:
   config:
 
     etcd:
+      image:
+        registry: ghcr.io
+        repository: nirmata/etcd
+        tag: v3.5.18-cve-free
       enabled: true
       endpoints: ~
       insecure: true
@@ -2345,7 +2349,7 @@ reports-server:
         mountPath: "/etc/ssl/rds"
 
   apiServicesManagement:
-    # -- Create a helm hooks to install and delete api services
+    # -- Create a helm hooks to delete api services on uninstall
     enabled: true
 
     # -- Install api services in manifest
@@ -2358,6 +2362,7 @@ reports-server:
       installEphemeralReportsService: true
 
     image:
+      # -- (string) Image registry
       # -- (string) Image registry
       registry: ghcr.io
       # -- Image repository
@@ -2406,9 +2411,8 @@ reports-server:
       readOnlyRootFilesystem: true
       capabilities:
         drop:
-        - ALL
+          - ALL
       seccompProfile:
         type: RuntimeDefault
-
   # -- Enable sanity check for reports CRDs
   sanityChecks: true
