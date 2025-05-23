@@ -180,6 +180,13 @@ rules:
   resources:
   - policysets
   - policysets/status
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups: ["kyverno.io", "operator.kyverno.io"]
+  resources:
   - policies
   - policies/status
   - clusterpolicies
