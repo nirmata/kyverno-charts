@@ -16,10 +16,28 @@ global:
   # The repository from which images will be pulled.
   # Replace with your desired container repository.
   imageRepository: nirmata
-  # Credentials for the private container registry (if required).
-  registryUserName:
-  registryPassword:
+
+  # ImagePullSecret Configuration
+  # Set to true to create the imagePullSecret, false to use an existing secret
+  createSecret: false
+  # Name of the imagePullSecret to use (created or existing)
   imagePullSecretName: nirmata-controller-registry-secret
+  
+  # Credentials for the private container registry (required only if createSecret: true).
+  registryUserName: 
+  registryPassword: 
+  
+  # Usage Examples:
+  # 1. Create secret with AWS ECR credentials:
+  #    createSecret: true
+  #    registryUserName: AWS  
+  #    registryPassword: <base64-encoded-ecr-token>
+  #    imagePullSecretName: my-ecr-secret
+  #
+  # 2. Use existing secret:
+  #    createSecret: false
+  #    imagePullSecretName: my-existing-secret
+  #    (registryUserName and registryPassword not needed)
 
 # otelAgent contains configuration for the nirmata otel agent, which is used for observability and monitoring.
 otelAgent:

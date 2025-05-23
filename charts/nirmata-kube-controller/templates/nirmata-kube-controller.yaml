@@ -319,7 +319,7 @@ spec:
         {{- end }}
       hostNetwork: false
       imagePullSecrets:
-      - name: {{ default "nirmata-controller-registry-secret" .Values.imagePullSecretName }}
+      - name: {{ default "nirmata-controller-registry-secret" .Values.global.imagePullSecretName }}
       securityContext:
         seccompProfile:
           type: RuntimeDefault
@@ -448,4 +448,4 @@ spec:
           name: {{ if .Values.kubeController.customCaConfigMap }}{{ .Values.kubeController.customCaConfigMap }}{{ else }}nirmata-ca-cert{{ end }}
       {{- end }}
       imagePullSecrets:
-      - name: nirmata-controller-registry-secret
+      - name: {{ default "nirmata-controller-registry-secret" .Values.global.imagePullSecretName }}
