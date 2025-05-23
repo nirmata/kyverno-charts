@@ -18,20 +18,20 @@ global:
   imageRepository: nirmata
 
   # ImagePullSecret Configuration
-  # Set to true to create the imagePullSecret, false to use an existing secret
+  # Set to true to create the imagePullSecret, false to use an existing secre
   createSecret: false
   # Name of the imagePullSecret to use (created or existing)
   imagePullSecretName: nirmata-controller-registry-secret
-  
+
   # Credentials for the private container registry (required only if createSecret: true).
-  registryUserName: 
-  registryPassword: 
-  
+  registryUserName:
+  registryPassword:
+
   # Usage Examples:
   # 1. Create secret with AWS ECR credentials:
   #    createSecret: true
-  #    registryUserName: AWS  
-  #    registryPassword: <base64-encoded-ecr-token>
+  #    registryUserName: AWS
+  #    registryPassword: 
   #    imagePullSecretName: my-ecr-secret
   #
   # 2. Use existing secret:
@@ -43,7 +43,7 @@ global:
 otelAgent:
   # imageTag is the tag or version of the otel-agent image.
   imageTag: "0.92.0"
-  # resources defines the resource requests and limits for the otel-agent
+  # resources defines the resource requests and limits for the otel-agen
   resources:
     requests:
       cpu: 100m
@@ -56,9 +56,9 @@ otelAgent:
 kubeController:
   # imageTag is the tag or version of the nirmata-kube-controller image. If added, it will override the  .Chart.AppVersion
   imageTag: ""
-  # customCACert contains the custom CA certificate data in base64 encoded format
+  # customCACert contains the custom CA certificate data in base64 encoded forma
   customCACert: ""
-  # customCaConfigMap specifies an existing ConfigMap containing CA certificate. If provided, this will be used instead of creating a new ConfigMap from customCACert
+  # customCaConfigMap specifies an existing ConfigMap containing CA certificate. If provided, this will be used instead of creating a new ConfigMap from customCACer
   customCaConfigMap: ""
   # insecure enables insecure communication with the Nirmata service (skips TLS verification)
   insecure: false
