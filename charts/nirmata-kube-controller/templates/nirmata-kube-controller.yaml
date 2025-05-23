@@ -303,10 +303,11 @@ spec:
             - /nirmata-kube-controller
         resources:
           limits:
-            memory: 2Gi
+            cpu: {{ .Values.kubeController.resources.limits.cpu }}
+            memory: {{ .Values.kubeController.resources.limits.memory }}
           requests:
-            memory: 200Mi
-            cpu: 250m
+            cpu: {{ .Values.kubeController.resources.requests.cpu }}
+            memory: {{ .Values.kubeController.resources.requests.memory }}
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -325,7 +326,7 @@ spec:
         {{- end }}
       hostNetwork: false
       imagePullSecrets:
-      - name: {{ default "nirmata-controller-registry-secret" .Values.imagePullSecretName }}
+      - name: {{ default "nirmata-controller-registry-secret" .Values.global.imagePullSecretName }}
       securityContext:
         seccompProfile:
           type: RuntimeDefault
@@ -408,10 +409,11 @@ spec:
         image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/opentelemetry-collector:{{ .Values.otelAgent.imageTag }}"
         resources:
           limits:
-            memory: 512Mi
+            cpu: {{ .Values.otelAgent.resources.limits.cpu }}
+            memory: {{ .Values.otelAgent.resources.limits.memory }}
           requests:
-            cpu: 100m
-            memory: 200Mi
+            cpu: {{ .Values.otelAgent.resources.requests.cpu }}
+            memory: {{ .Values.otelAgent.resources.requests.memory }}
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -453,4 +455,4 @@ spec:
           name: {{ if .Values.kubeController.customCaConfigMap }}{{ .Values.kubeController.customCaConfigMap }}{{ else }}nirmata-ca-cert{{ end }}
       {{- end }}
       imagePullSecrets:
-      - name: nirmata-controller-registry-secret
+      - name: {{ default "nirmata-controller-registry-secret" .Values.global.imagePullSecretName }}
