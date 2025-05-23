@@ -22,16 +22,16 @@ global:
   createSecret: false
   # Name of the imagePullSecret to use (created or existing)
   imagePullSecretName: nirmata-controller-registry-secret
-  
+
   # Credentials for the private container registry (required only if createSecret: true).
-  registryUserName: 
-  registryPassword: 
-  
+  registryUserName:
+  registryPassword:
+
   # Usage Examples:
   # 1. Create secret with AWS ECR credentials:
   #    createSecret: true
-  #    registryUserName: AWS  
-  #    registryPassword: <base64-encoded-ecr-token>
+  #    registryUserName: AWS
+  #    registryPassword:
   #    imagePullSecretName: my-ecr-secret
   #
   # 2. Use existing secret:
