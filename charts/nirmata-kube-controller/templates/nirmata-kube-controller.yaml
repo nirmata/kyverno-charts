@@ -277,8 +277,6 @@ spec:
         {{- if .Values.kubeController.insecure }}
         - -insecure
         {{- end }}
-        command:
-        - /nirmata-kube-controller
         env:
         - name: URL
           value: {{ default "wss://nirmata.io/tunnels" .Values.nirmataURL }}
@@ -293,14 +291,18 @@ spec:
         image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/nirmata-kube-controller:{{ .Values.kubeController.imageTag | default .Chart.AppVersion }}"
         imagePullPolicy: Always
         livenessProbe:
-          exec:
-            command:
-            - /nirmata-kube-controller
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 10
+          periodSeconds: 10
         name: nirmata-kube-controller
         readinessProbe:
-          exec:
-            command:
-            - /nirmata-kube-controller
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
         resources:
           limits:
             cpu: {{ .Values.kubeController.resources.limits.cpu }}
