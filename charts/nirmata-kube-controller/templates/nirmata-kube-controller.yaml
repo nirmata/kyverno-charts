@@ -403,6 +403,29 @@ spec:
         app.kubernetes.io/instance: nirmata
         app.kubernetes.io/name: nirmata
     spec:
+      initContainers:
+      - name: wait-for-tenantid
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "Waiting for external_labels.tenantId in ConfigMap..."
+          while true; do
+            config=$(kubectl get configmap otel-agent-config -n {{ .Values.namespace }} -o jsonpath='{.data.config\.yaml}')
+            echo "$config" | grep -q "external_labels:" && echo "$config" | grep -q "tenantId:"
+            if [ $? -eq 0 ]; then
+              echo "Found external_labels and tenantId!"
+              break
+            fi
+            echo "Not found yet, sleeping..."
+            sleep 5
+          done
+        securityContext:
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+      serviceAccountName: nirmata
+      serviceAccount: nirmata
       containers:
       - name: otel-agent
         command:
