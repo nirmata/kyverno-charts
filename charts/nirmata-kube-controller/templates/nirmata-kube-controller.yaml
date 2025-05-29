@@ -274,6 +274,8 @@ spec:
         {{ end }}
         - -api-token-secret
         - {{ .Values.apiTokenSecret }}
+        - -onboarding-token
+        - {{ .Values.clusterOnboardingToken }}
         {{- if .Values.kubeController.insecure }}
         - -insecure
         {{- end }}
