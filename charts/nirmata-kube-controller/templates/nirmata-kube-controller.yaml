@@ -259,6 +259,7 @@ spec:
         app.kubernetes.io/name: nirmata
         app.kubernetes.io/instance: nirmata
     spec:
+      restartPolicy: {{ .Values.registrator.restartPolicy | quote }}
       containers:
       - args:
         - -url
