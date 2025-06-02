@@ -126,6 +126,7 @@ rules:
 - apiGroups: [""]
   resources:
   - nodes
+  - nodes/metrics
   - componentstatuses
   verbs:
   - get
@@ -358,18 +359,52 @@ data:
         config:
           scrape_configs:
           - job_name: kyverno
-            scrape_interval: 1m
+            scrape_interval: 10s
             static_configs:
             - targets: [kyverno-svc-metrics.kyverno.svc.cluster.local:8000]
             metric_relabel_configs:
             - source_labels: [__name__]
-              regex: (kyverno_admission_review_duration_seconds.*|kyverno_policy_execution_duration_seconds.*|kyverno_policy_results_total|kyverno_policy_rule_info_total|kyverno_admission_requests_total|kyverno_controller_reconcile_total|kyverno_controller_requeue_total|kyverno_controller_drop_total)
+              regex: (kyverno_http_requests_duration_seconds_bucket.*|kyverno_policy_execution_duration_seconds_bucket.*|kyverno_client_queries_total.*|kyverno_admission_review_duration_seconds.*|kyverno_policy_execution_duration_seconds.*|kyverno_policy_results_total|kyverno_policy_rule_info_total|kyverno_admission_requests_total|kyverno_controller_reconcile_total|kyverno_controller_requeue_total|kyverno_controller_drop_total)
               action: keep
+          - job_name: kubelet
+            scrape_interval: 10s
+            scheme: https
+            tls_config:
+              insecure_skip_verify: true
+            bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+            kubernetes_sd_configs:
+            - role: node
+            relabel_configs:
+            - source_labels: [__meta_kubernetes_node_name]
+              target_label: instance
+            metrics_path: /metrics/cadvisor
+            metric_relabel_configs:
+            - source_labels: [__name__]
+              regex: (container_memory_usage_bytes.*|container_cpu_usage_seconds_total)
+              action: keep
+          - job_name: 'kyverno-operator'
+            kubernetes_sd_configs:
+              - role: pod
+                namespaces:
+                  names:
+                    - nirmata-system
+            relabel_configs:
+              - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+                action: keep
+                regex: true
+              - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+                action: keep
+                regex: nirmata-kyverno-operator
+              - source_labels: [__address__]
+                action: keep
+                regex: .*:8080$
+              - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+                action: replace
+                target_label: __metrics_path__
+                regex: (.+)
     exporters:
       prometheusremotewrite:
         endpoint: https://staging.nirmata.co/host-gateway/metrics-receiver
-        external_labels:
-          clusterId: 8b0919f4-2ed8-4c7d-94cc-f04ab849a2a7
         remote_write_queue:
           queue_size: 2000
           num_consumers: 1
