@@ -405,6 +405,8 @@ data:
     exporters:
       prometheusremotewrite:
         endpoint: https://staging.nirmata.co/host-gateway/metrics-receiver
+        external_labels:
+          tenantId: default
         remote_write_queue:
           queue_size: 2000
           num_consumers: 1
