@@ -29,7 +29,6 @@ registrator:
   image:
     registry: ""
     repository: ""
-  restartPolicy: "OnFailure"  # Can be either "OnFailure" or "Never"
 
 hooks:
   image:
