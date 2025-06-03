@@ -469,7 +469,7 @@ spec:
           seccompProfile:
             type: "RuntimeDefault"
       serviceAccountName: nirmata-cluster-registrator
-      restartPolicy: {{ .Values.registrator.restartPolicy | quote }}
+      restartPolicy: Never
   backoffLimit: 0
 ---
 {{- if not .Values.createNs }}
