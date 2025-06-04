@@ -280,6 +280,10 @@ spec:
         {{- if .Values.kubeController.insecure }}
         - -insecure
         {{- end }}
+        {{- if .Values.isNpmOnly }}
+        - -gateway-url
+        - {{ .Values.nirmataURL | default "wss://nirmata.io/tunnels" | replace "/tunnels" "/gateway-service" }}
+        {{- end }}
         env:
         - name: URL
           value: {{ default "wss://nirmata.io/tunnels" .Values.nirmataURL }}
@@ -404,7 +408,7 @@ data:
                 regex: (kyverno_.*)
     exporters:
       prometheusremotewrite:
-        endpoint: https://staging.nirmata.co/host-gateway/metrics-receiver
+        endpoint: https://{{ include "controller.metricsEndpointDomain" . }}{{ if .Values.isNpmOnly }}/gateway-service{{ else }}/host-gateway{{ end }}/metrics-receiver
         external_labels:
           tenantId: default
         remote_write_queue:
