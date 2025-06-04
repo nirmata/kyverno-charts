@@ -175,6 +175,19 @@ entries:
   cluster-registrator:
   - apiVersion: v2
     appVersion: v0.1.5
+    created: "2025-06-04T16:48:32.150865585Z"
+    description: A Helm chart for Nirmata Kubernetes Controller Registrator
+    digest: 54cdf02ddb1f75654c341aa439c4910d2f0185b4dac242153f57bb78cc803f87
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: cluster-registrator
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/cluster-registrator-0.1.20/cluster-registrator-0.1.20.tgz
+    version: 0.1.20
+  - apiVersion: v2
+    appVersion: v0.1.5
     created: "2025-06-03T11:52:52.341627458Z"
     description: A Helm chart for Nirmata Kubernetes Controller Registrator
     digest: c7a77f6f1b450d2c386bf87ab6efdfca5eb967e54c34a2c99c8006117f9e1fd9
@@ -14588,6 +14601,19 @@ entries:
     version: 0.1.0
   nirmata-kube-controller:
   - apiVersion: v2
+    appVersion: v3.10.11-rc4
+    created: "2025-06-04T16:48:32.289798562Z"
+    description: A Helm chart for Kubernetes
+    digest: 38293a52bb3a301c00292aa7a05992a0c6afae6cb96745ec414c955b2a8e688e
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-kube-controller
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-kube-controller-0.2.8-rc8/nirmata-kube-controller-0.2.8-rc8.tgz
+    version: 0.2.8-rc8
+  - apiVersion: v2
     appVersion: v3.10.11-rc1
     created: "2025-06-02T15:45:49.121365118Z"
     description: A Helm chart for Kubernetes
@@ -19057,4 +19083,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-06-03T11:52:52.346843856Z"
+generated: "2025-06-04T16:48:32.295183581Z"
