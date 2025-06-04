@@ -281,7 +281,7 @@ spec:
         - -insecure
         {{- end }}
         {{- if .Values.isNpmOnly }}
-        - -gateway-url
+        - -gatewayUrl
         - {{ .Values.nirmataURL | default "wss://nirmata.io/tunnels" | replace "/tunnels" "/gateway-service" }}
         {{- end }}
         env:
