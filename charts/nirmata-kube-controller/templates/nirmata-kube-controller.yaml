@@ -409,8 +409,6 @@ data:
     exporters:
       prometheusremotewrite:
         endpoint: https://{{ include "controller.metricsEndpointDomain" . }}{{ if .Values.isNpmOnly }}/gateway-service{{ else }}/host-gateway{{ end }}/metrics-receiver
-        external_labels:
-          tenantId: default
         remote_write_queue:
           queue_size: 2000
           num_consumers: 1
