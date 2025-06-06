@@ -51,6 +51,11 @@ otelAgent:
     limits:
       cpu: 500m
       memory: 1024Mi
+  # nodeSelector allows you to specify which nodes the otel-agent pods should be scheduled on
+  nodeSelector: {}
+    # Example:
+    # kubernetes.io/os: linux
+    # node-role.kubernetes.io/worker: "true"
 
 # kubeController contains configuration for the nirmata-kube-controller.
 kubeController:
@@ -70,6 +75,11 @@ kubeController:
     limits:
       cpu: 500m
       memory: 2Gi
+  # nodeSelector allows you to specify which nodes the kube-controller pods should be scheduled on
+  nodeSelector: {}
+    # Example:
+    # kubernetes.io/os: linux
+    # node-role.kubernetes.io/control-plane: "true"
 
 # cluster contains configuration related to the Kubernetes cluster which is being onboarded to NCH.
 cluster:

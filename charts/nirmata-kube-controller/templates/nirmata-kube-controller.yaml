@@ -339,6 +339,10 @@ spec:
         configMap:
           name: {{ if .Values.kubeController.customCaConfigMap }}{{ .Values.kubeController.customCaConfigMap }}{{ else }}nirmata-ca-cert{{ end }}
       {{- end }}
+      {{- if .Values.kubeController.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.kubeController.nodeSelector | indent 8 }}
+      {{- end }}
       tolerations:
       - effect: NoSchedule
         key: node-role.kubernetes.io/master
@@ -458,3 +462,7 @@ spec:
       {{- end }}
       imagePullSecrets:
       - name: {{ default "nirmata-controller-registry-secret" .Values.global.imagePullSecretName }}
+      {{- if .Values.otelAgent.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.otelAgent.nodeSelector | indent 8 }}
+      {{- end }}
