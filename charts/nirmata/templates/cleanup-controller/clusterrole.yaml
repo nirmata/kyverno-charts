@@ -9,15 +9,30 @@ metadata:
 aggregationRule:
   clusterRoleSelectors:
     - matchLabels:
+        rbac.kyverno.io/aggregate-to-cleanup-controller: "true"
+    - matchLabels:
         {{- include "kyverno.cleanup-controller.matchLabels" . | nindent 8 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ template "kyverno.cleanup-controller.roleName" . }}:core
+  {{- if .Values.webhooksCleanup.autoDeleteWebhooks.enabled }}
+  {{- if not .Values.templating.enabled }}
+  finalizers:
+  - kyverno.io/policywebhooks
+  - kyverno.io/ttlwebhooks
+  {{- end }}
+  {{- end }}
   labels:
     {{- include "kyverno.cleanup-controller.labels" . | nindent 4 }}
 rules:
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - get
   - apiGroups:
       - admissionregistration.k8s.io
     resources:
@@ -42,8 +57,14 @@ rules:
     resources:
       - clustercleanuppolicies
       - cleanuppolicies
-      - clustercleanuppolicies/*
-      - cleanuppolicies/*
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - kyverno.io
+    resources:
+      - globalcontextentries
+      - globalcontextentries/status
     verbs:
       - create
       - delete
@@ -54,23 +75,60 @@ rules:
       - watch
       - deletecollection
   - apiGroups:
-      - batch
+      - kyverno.io
     resources:
-      - cronjobs
+      - clustercleanuppolicies/status
+      - cleanuppolicies/status
     verbs:
-      - create
-      - delete
+      - update
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
       - get
       - list
-      - update
       - watch
   - apiGroups:
-    - ""
+      - ''
+      - events.k8s.io
     resources:
-    - events
+      - events
     verbs:
-    - create
-    - patch
+      - create
+      - patch
+      - update
+  - apiGroups:
+      - authorization.k8s.io
+    resources:
+      - subjectaccessreviews
+    verbs:
+      - create
+  {{- if .Values.webhooksCleanup.autoDeleteWebhooks.enabled }}
+  {{- if not .Values.templating.enabled }}
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterroles
+      - clusterrolebindings
+    resourceNames:
+      - {{ template "kyverno.cleanup-controller.roleName" . }}
+      - {{ template "kyverno.cleanup-controller.roleName" . }}:core
+      - {{ template "kyverno.cleanup-controller.roleName" . }}:temporary
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterroles
+      - clusterrolebindings
+    verbs:
+      - create
+      - list
+  {{- end }}
+  {{- end }}
 {{- with .Values.cleanupController.rbac.clusterRole.extraResources }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -80,15 +138,7 @@ metadata:
   labels:
     {{- include "kyverno.cleanup-controller.labels" $ | nindent 4 }}
 rules:
-  {{- range . }}
-  - apiGroups:
-      {{- toYaml .apiGroups | nindent 6 }}
-    resources:
-      {{- toYaml .resources | nindent 6 }}
-    verbs:
-      - delete
-      - list
-  {{- end }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}
 {{- end }}

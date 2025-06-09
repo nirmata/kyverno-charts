@@ -12,7 +12,7 @@ metadata:
   labels:
     {{- include "kyverno.cleanup-controller.labels" . | nindent 4 }}
     {{- with .Values.cleanupController.serviceMonitor.additionalLabels }}
-    {{- toYaml .Values.cleanupController.serviceMonitor.additionalLabels | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
   selector:
@@ -29,6 +29,14 @@ spec:
     scheme: https
     tlsConfig:
       {{- toYaml .Values.cleanupController.serviceMonitor.tlsConfig | nindent 8 }}
+    {{- end }}
+    {{- with .Values.cleanupController.serviceMonitor.relabelings }}
+    relabelings:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.cleanupController.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+      {{- toYaml . | nindent 6 }}
     {{- end }}
 {{- end -}}
 {{- end -}}
