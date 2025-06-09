@@ -1,3 +1,19 @@
 {{- if eq (include "enterprise-kyverno.namespace" .) "kube-system" }}
     {{ fail "Enterprise Kyverno cannot be installed in namespace kube-system." }}
 {{- end }}
+
+{{- $v2 := lookup "apps/v1" "Deployment" (include "kyverno.namespace" .) (include "kyverno.fullname" .) -}}
+{{- if $v2 -}}
+{{- fail (join "\n" (list
+    ""
+    ""
+    "  +------------------------------------------------------------------------------------------------------------------------+"
+    "  | An earlier Helm installation of Kyverno was detected.                                                                  |"
+    "  | Given this chart version has significant breaking changes, the upgrade has been blocked.                               |"
+    "  | A fresh install of Kyverno, Operator, Policysets and Adapters is needed, after taking necessary backups.               |"
+    "  | Please review the chart README section on upgrading from earlier verisons, and once prepared, start the clean install. |"
+    "  +------------------------------------------------------------------------------------------------------------------------+"
+    ""
+    ))
+-}}
+{{- end -}}

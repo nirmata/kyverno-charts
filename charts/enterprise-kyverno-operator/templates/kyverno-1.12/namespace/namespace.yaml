@@ -1,0 +1,8 @@
+{{- if not .Values.kyverno.customNamespaces -}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    {{- include "kyverno.labels.common" . | nindent 4 }}
+  name: {{ include "kyverno.namespace" . }}
+{{- end -}}

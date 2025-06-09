@@ -1,8 +1,11 @@
 {{- if .Values.kyverno.createCR }}
 apiVersion: security.nirmata.io/v1alpha1
-kind: Kyverno
+kind: KyvernoConfig
 metadata:
   annotations:
+    {{- if .Values.globalAnnotations }}
+    {{- toYaml .Values.globalAnnotations | nindent 4 }}
+    {{- end }}
   labels:
     {{- include "enterprise-kyverno.labels" . | nindent 4 }}
   name: kyverno

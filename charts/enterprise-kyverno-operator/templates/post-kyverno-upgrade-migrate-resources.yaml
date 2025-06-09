@@ -1,0 +1,115 @@
+{{- if .Values.kyverno.crds.migration.enabled -}}
+{{- if not .Values.kyverno.templating.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ template "kyverno.fullname" . }}:migrate-resources
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
+    helm.sh/hook-weight: "100"
+rules:
+  - apiGroups:
+    - kyverno.io
+    resources:
+    - '*'
+    verbs:
+    - get
+    - list
+    - update
+  - apiGroups:
+    - apiextensions.k8s.io
+    resources:
+    - customresourcedefinitions
+    verbs:
+    - get
+  - apiGroups:
+    - apiextensions.k8s.io
+    resources:
+    - customresourcedefinitions/status
+    verbs:
+    - update
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ template "kyverno.fullname" . }}:migrate-resources
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
+    helm.sh/hook-weight: "100"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "kyverno.fullname" . }}:migrate-resources
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "kyverno.fullname" . }}-migrate-resources
+    namespace: {{ template "kyverno.namespace" . }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "kyverno.fullname" . }}-migrate-resources
+  namespace: {{ template "kyverno.namespace" . }}
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-weight: "100"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "kyverno.fullname" . }}-migrate-resources
+  namespace: {{ template "kyverno.namespace" . }}
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
+    helm.sh/hook-weight: "200"
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      {{- with .Values.kyverno.crds.migration.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.kyverno.crds.migration.podLabels }}
+      labels:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccount: {{ template "kyverno.fullname" . }}-migrate-resources
+      {{- with .Values.kyverno.crds.migration.podSecurityContext }}
+      securityContext:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      containers:
+        - name: kubectl
+          image: {{ (include "kyverno.image" (dict "globalRegistry" ((.Values.kyverno.global).image).registry "image" .Values.kyverno.crds.migration.image "defaultTag" (default .Values.kyverno.image.tag .Values.kyverno.crds.migration.image.tag))) | quote }}
+          imagePullPolicy: {{ .Values.kyverno.crds.migration.image.pullPolicy }}
+          args:
+            - migrate
+            {{- range .Values.kyverno.crds.migration.resources }}
+            - --resource
+            - {{ . }}
+            {{- end }}
+          {{- with .Values.kyverno.crds.migration.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.kyverno.crds.migration.imagePullSecrets }}
+      imagePullSecrets:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+{{- end -}}
+{{- end -}}

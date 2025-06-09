@@ -1,8 +1,0 @@
-{{- if and (eq .Values.kyverno.rbac.create true) (contains "v1.9" .Values.kyverno.image.tag) }}
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    {{- include "kyverno19.labels" . | nindent 4 }}
-  name: {{ include "kyverno.namespace" . }}
-{{- end }}
