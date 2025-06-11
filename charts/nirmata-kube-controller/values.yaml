@@ -143,6 +143,9 @@ apiTokenSecret: "nirmata-api-token"
 # When set to `true`, the controller can make changes to the CR. When `false`, it operates in a read-only manner.
 readWriteMode: false
 
+# isNpmOnly determines whether the nirmata-kube-controller is only for NPM.
+isNpmOnly: false
+
 # proxy contains configuration for proxy settings if the KubeController needs to communicate through a proxy.
 proxy:
  # httpProxy is the HTTP proxy URL.
