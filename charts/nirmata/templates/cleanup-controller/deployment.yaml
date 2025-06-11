@@ -41,7 +41,7 @@ spec:
     spec:
       {{- with .Values.cleanupController.imagePullSecrets | default .Values.global.imagePullSecrets }}
       imagePullSecrets:
-        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- tpl (include "kyverno.sortedImagePullSecrets" .) $ | nindent 8 }}
       {{- end }}
       {{- with .Values.cleanupController.podSecurityContext }}
       securityContext:
@@ -68,6 +68,10 @@ spec:
       {{- with .Values.cleanupController.dnsPolicy }}
       dnsPolicy: {{ . }}
       {{- end }}
+      {{- with .Values.cleanupController.dnsConfig }}
+      dnsConfig:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
       {{- if or .Values.cleanupController.antiAffinity.enabled .Values.cleanupController.podAffinity .Values.cleanupController.nodeAffinity }}
       affinity:
         {{- if .Values.cleanupController.antiAffinity.enabled }}
@@ -88,7 +92,7 @@ spec:
       serviceAccountName: {{ template "kyverno.cleanup-controller.serviceAccountName" . }}
       containers:
         - name: controller
-          image: {{ include "kyverno.cleanup-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.cleanupController.image "defaultTag" .Chart.AppVersion "fipsEnabled" .Values.fipsEnabled) | quote }}
+          image: {{ include "kyverno.cleanup-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.cleanupController.image "defaultTag" .Chart.AppVersion) | quote }}
           imagePullPolicy: {{ .Values.cleanupController.image.pullPolicy }}
           ports:
           - containerPort: {{ .Values.cleanupController.server.port }}

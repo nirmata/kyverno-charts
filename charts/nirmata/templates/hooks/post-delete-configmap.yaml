@@ -67,6 +67,7 @@ metadata:
 spec:
   backoffLimit: 2
   template:
+    {{- if or .Values.webhooksCleanup.podAnnotations .Values.webhooksCleanup.podLabels }}
     metadata:
       {{- with .Values.webhooksCleanup.podAnnotations }}
       annotations:
@@ -76,8 +77,9 @@ spec:
       labels:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+    {{- end }}
     spec:
-      serviceAccount: {{ template "kyverno.fullname" . }}-remove-configmap
+      serviceAccountName: {{ template "kyverno.fullname" . }}-remove-configmap
       {{- with .Values.webhooksCleanup.podSecurityContext }}
       securityContext:
         {{- tpl (toYaml .) $ | nindent 8 }}
@@ -85,7 +87,7 @@ spec:
       restartPolicy: Never
       {{- with .Values.webhooksCleanup.imagePullSecrets | default .Values.global.imagePullSecrets }}
       imagePullSecrets:
-        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- tpl (include "kyverno.sortedImagePullSecrets" .) $ | nindent 8 }}
       {{- end }}
       containers:
         - name: kubectl
@@ -96,12 +98,16 @@ spec:
             - '-c'
             - |-
               set -euo pipefail
-              kubectl delete cm -n {{ template "kyverno.namespace" . }} {{ template "kyverno.config.configMapName" . }}
+              kubectl delete cm --ignore-not-found -n {{ template "kyverno.namespace" . }} {{ template "kyverno.config.configMapName" . }}
           {{- with .Values.webhooksCleanup.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.webhooksCleanup.tolerations }}
+          {{- with .Values.webhooksCleanup.resources }}
+          resources:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}      
+      {{- with .Values.webhooksCleanup.tolerations | default .Values.global.tolerations }}
       tolerations:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
