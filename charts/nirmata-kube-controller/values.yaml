@@ -42,7 +42,7 @@ global:
 # otelAgent contains configuration for the nirmata otel agent, which is used for observability and monitoring.
 otelAgent:
   # imageTag is the tag or version of the otel-agent image.
-  imageTag: "0.92.0"
+  imageTag: "0.108.0"
   # resources defines the resource requests and limits for the otel-agent
   resources:
     requests:
@@ -51,6 +51,20 @@ otelAgent:
     limits:
       cpu: 500m
       memory: 1024Mi
+  # nodeSelector allows scheduling the pod on specific nodes
+  # Example:
+  # nodeSelector:
+  #   kubernetes.io/os: linux
+  #   node-type: worker
+  nodeSelector: {}
+  # tolerations allows the pod to be scheduled on nodes with matching taints
+  # Example:
+  # tolerations:
+  # - key: "dedicated"
+  #   operator: "Equal"
+  #   value: "nirmata"
+  #   effect: "NoSchedule"
+  tolerations: []
 
 # kubeController contains configuration for the nirmata-kube-controller.
 kubeController:
@@ -70,6 +84,21 @@ kubeController:
     limits:
       cpu: 500m
       memory: 2Gi
+  # nodeSelector allows scheduling the pod on specific nodes
+  # Example:
+  # nodeSelector:
+  #   kubernetes.io/os: linux
+  #   node-type: worker
+  nodeSelector: {}
+  # tolerations allows the pod to be scheduled on nodes with matching taints
+  # Note: A default toleration for master nodes is automatically included
+  # Example:
+  # tolerations:
+  # - key: "dedicated"
+  #   operator: "Equal"
+  #   value: "nirmata"
+  #   effect: "NoSchedule"
+  tolerations: []
 
 # cluster contains configuration related to the Kubernetes cluster which is being onboarded to NCH.
 cluster:
