@@ -46,6 +46,9 @@ secureOperator: true
 kyvernoDeployment: kyverno-admission-controller
 kyvernoNamespace: kyverno
 enablePolicyset: false
+
+preventPolicyTamper: true
+
 # Whether certificate management is done by "cert-manager", "operator", "other"
 certManager: operator
 

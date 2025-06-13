@@ -2,8 +2,8 @@ apiVersion: v2
 name: nirmata-kyverno-operator
 description: Helm Chart for Enterprise Kyverno Operator
 type: application
-version: 0.8.0
-appVersion: v0.4.8
+version: 0.8.1
+appVersion: v0.4.9
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 keywords:
 - kubernetes
