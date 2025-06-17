@@ -1,7 +1,7 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 3.3.21
+version: 3.3.22
 appVersion: v1.13.6-n4k.nirmata.2
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
@@ -45,7 +45,7 @@ annotations:
       description: ImagePullSecrets made configurable for tests
 dependencies:
 - name: reports-server
-  version: 0.1.26
+  version: 0.1.29
   condition: reports-server.enabled
   repository: https://nirmata.github.io/reports-server
 - name: grafana
