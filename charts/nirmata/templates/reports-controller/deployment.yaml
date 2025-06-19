@@ -144,6 +144,9 @@ spec:
             - --profile=true
             - --profilePort={{ .Values.reportsController.profiling.port }}
             {{- end }}
+            {{- if or (not .Values.reportsController.sanityChecks) .Values.crds.reportsServer.enabled }}
+            - --reportsCRDsSanityChecks=false
+            {{- end }}
           env:
           - name: KYVERNO_SERVICEACCOUNT_NAME
             value: {{ template "kyverno.reports-controller.serviceAccountName" . }}
