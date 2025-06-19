@@ -370,7 +370,7 @@ data:
         config:
           scrape_configs:
           - job_name: kyverno
-            scrape_interval: 10s
+            scrape_interval: 5m
             static_configs:
             - targets: [kyverno-svc-metrics.kyverno.svc.cluster.local:8000]
             metric_relabel_configs:
@@ -378,7 +378,7 @@ data:
               regex: (kyverno_http_requests_duration_seconds_bucket.*|kyverno_policy_execution_duration_seconds_bucket.*|kyverno_client_queries_total.*|kyverno_admission_review_duration_seconds.*|kyverno_policy_execution_duration_seconds.*|kyverno_policy_results_total|kyverno_policy_rule_info_total|kyverno_admission_requests_total|kyverno_controller_reconcile_total|kyverno_controller_requeue_total|kyverno_controller_drop_total)
               action: keep
           - job_name: kubelet
-            scrape_interval: 10s
+            scrape_interval: 5m
             scheme: https
             tls_config:
               insecure_skip_verify: true
@@ -394,6 +394,7 @@ data:
               regex: (container_memory_usage_bytes.*|container_cpu_usage_seconds_total)
               action: keep
           - job_name: 'kyverno-operator'
+            scrape_interval: 5m
             kubernetes_sd_configs:
               - role: pod
                 namespaces:
