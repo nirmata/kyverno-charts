@@ -12,6 +12,7 @@ cloudProvider: AWS
 
 # Admission controller configuration
 admissionController:
+  enabled: false
   serviceAccount:
     # -- The ServiceAccount name
     name:
@@ -98,6 +99,7 @@ admissionController:
 
 # Scanner configuration
 scanner:
+  enabled: false
   serviceAccount:
     # -- The ServiceAccount name
     name:
@@ -172,6 +174,7 @@ scanner:
     #   password: secret2
 # Reports controller configuration
 reportsController:
+  enabled: true
   serviceAccount:
     # -- The ServiceAccount name
     name:
