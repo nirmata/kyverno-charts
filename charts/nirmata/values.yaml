@@ -96,6 +96,9 @@ crds:
       clusterpolicyreports: true
       policyreports: true
 
+  reportsServer:
+    enabled: false
+
   # -- Additional CRDs annotations
   annotations: {}
     # argocd.argoproj.io/sync-options: Replace=true
@@ -2077,7 +2080,6 @@ reportsController:
 
 
 reports-server:
-  enabled: false
   fipsEnabled: false
   # -- Internal settings used with `helm template` to generate install manifest
   # @ignored
@@ -2423,5 +2425,3 @@ reports-server:
           - ALL
       seccompProfile:
         type: RuntimeDefault
-  # -- Enable sanity check for reports CRDs
-  sanityChecks: true
