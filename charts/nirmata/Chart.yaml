@@ -1,8 +1,8 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 3.3.24
-appVersion: v1.13.6-n4k.nirmata.2
+version: 3.4.0
+appVersion: v1.14.3-n4k.nirmata.1
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
@@ -24,7 +24,7 @@ sources:
 maintainers:
 - name: Nirmata
   url: https://kyverno.io/
-kubeVersion: ">=1.22.0-0"
+kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/operator: "false"
   artifacthub.io/prerelease: "false"
@@ -34,23 +34,29 @@ annotations:
   # valid kinds are: added, changed, deprecated, removed, fixed and security
   artifacthub.io/changes: |
     - kind: added
-      description: Add a key to preserve configmap settings during upgrade
+      description: Add Horizontal Pod Autoscaler support for admission controller
     - kind: added
-      description: Make admission reports breaker threshold configurable
+      description: Add Controller Runtime Metrics feature
     - kind: added
-      description: ImagePullSecrets made globally configurable
-    - kind: removed
-      description: Deprecated configuration `features.reports.chunkSize` was removed
+      description: Add CRD Watcher feature for cache invalidation
     - kind: added
-      description: ImagePullSecrets made configurable for tests
+      description: Add profiling support for all controllers
+    - kind: added
+      description: Add RBAC roles aggregation support
+    - kind: added
+      description: Add new CRD groups (policies.kyverno.io)
+    - kind: added
+      description: Add enhanced DNS configuration support
+    - kind: changed
+      description: Update to Kyverno 1.14.3 with enterprise capabilities
 dependencies:
 - name: reports-server
   version: 0.1.29
   condition: crds.reportsServer.enabled
   repository: https://nirmata.github.io/reports-server
 - name: grafana
-  version: 3.3.6
+  version: 3.4.3
   condition: grafana.enabled
 - name: crds
-  version: 3.3.6
+  version: 3.4.3
   condition: crds.install
