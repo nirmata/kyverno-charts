@@ -235,7 +235,7 @@ reportsController:
 eventsController:
   # -- Enable the events controller
   enabled: true
-  
+
   serviceAccount:
     # -- The ServiceAccount name
     name:
@@ -245,7 +245,7 @@ eventsController:
 
   # -- (int) Desired number of pods
   replicas: ~
-  
+
   image:
     # -- Image registry
     registry: reg.nirmata.io
@@ -255,7 +255,7 @@ eventsController:
     tag: ""
     # -- Image pull policy
     pullPolicy: IfNotPresent
-  
+
   resources:
     # -- Pod resource limits
     limits:
@@ -265,7 +265,7 @@ eventsController:
     requests:
       cpu: 10m
       memory: 64Mi
-  
+
   # -- Container security context
   securityContext:
     runAsNonRoot: true
@@ -283,10 +283,10 @@ eventsController:
     type: LoadBalancer
     # -- Service ports configuration
     ports:
-      - name: http # Example port, adjust as needed
+      - name: http  # Example port, adjust as needed
         port: 80  # Example port, adjust as needed
         protocol: TCP
-        targetPort: 8080 # Example target port, adjust as needed
+        targetPort: 8080  # Example target port, adjust as needed
 
   # -- (string) The address the health probe endpoint binds to
   healthProbeBindAddress: :8082
@@ -322,7 +322,6 @@ eventsController:
     #   registry: bar.example.com
     #   username: barbaz
     #   password: secret2
-
 
 kubernetesClusterDomain: cluster.local
 
