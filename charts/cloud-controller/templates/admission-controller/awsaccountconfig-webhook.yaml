@@ -1,0 +1,45 @@
+{{- if .Values.admissionController.enabled -}}
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: {{ template "cloud-control.admission-controller.name" . }}-aws-config-webhook
+  labels:
+    {{- include "cloud-control.admission-controller.labels" . | nindent 4 }}
+    app.kubernetes.io/component: admission-controller
+    app.kubernetes.io/instance: cloud-controller
+webhooks:
+- name: awsaccountconfig.nirmata.io
+  clientConfig:
+    service:
+      name: {{ template "cloud-control.admission-controller.serviceName" . }}
+      namespace: {{ template "cloud-control.namespace" . }}
+      path: "/validate-nirmata-io-v1alpha1-awsaccountconfig"
+      port: 9443
+    # caBundle will be automatically updated by WebhookCABundleReconciler
+    caBundle: ""
+  rules:
+  - operations: ["CREATE", "UPDATE"]
+    apiGroups: ["nirmata.io"]
+    apiVersions: ["v1alpha1"]
+    resources: ["awsaccountconfigs"]
+  admissionReviewVersions: ["v1", "v1beta1"]
+  sideEffects: None
+  failurePolicy: Fail
+- name: awsorgconfig.nirmata.io
+  clientConfig:
+    service:
+      name: {{ template "cloud-control.admission-controller.serviceName" . }}
+      namespace: {{ template "cloud-control.namespace" . }}
+      path: "/validate-nirmata-io-v1alpha1-awsorgconfig"
+      port: 9443
+    # caBundle will be automatically updated by WebhookCABundleReconciler
+    caBundle: ""
+  rules:
+  - operations: ["CREATE", "UPDATE"]
+    apiGroups: ["nirmata.io"]
+    apiVersions: ["v1alpha1"]
+    resources: ["awsorgconfigs"]
+  admissionReviewVersions: ["v1", "v1beta1"]
+  sideEffects: None
+  failurePolicy: Fail 
+{{- end }}

@@ -1,3 +1,4 @@
+{{if .Values.eventsController.enabled}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -16,3 +17,4 @@ spec:
   {{- include "cloud-control.events-controller.matchLabels" . | nindent 4 }}
   ports:
 	{{- .Values.eventsController.service.ports | toYaml | nindent 2 }}
+{{- end }}

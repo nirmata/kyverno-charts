@@ -1,3 +1,4 @@
+{{- if .Values.reportsController.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -51,3 +52,4 @@ spec:
           type: RuntimeDefault
       serviceAccountName: {{ template "cloud-control.reportsController.serviceAccountName" . }}
       terminationGracePeriodSeconds: 10
+{{- end }}

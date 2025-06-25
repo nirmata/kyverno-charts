@@ -1,3 +1,4 @@
+{{- if .Values.admissionController.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -44,6 +45,8 @@ spec:
         ports:
         - containerPort: 8443
           name: http-proxy-svc
+        - containerPort: 9443
+          name: webhook
         readinessProbe:
           httpGet:
             path: /readyz
@@ -52,6 +55,10 @@ spec:
           periodSeconds: 10
         resources: {{- toYaml .Values.admissionController.resources | nindent 10 }}
         securityContext: {{- toYaml .Values.admissionController.securityContext | nindent 10 }}
+        volumeMounts:
+        - name: webhook-certs
+          mountPath: /tmp/k8s-webhook-server/serving-certs
+          readOnly: true
       {{- if .Values.admissionController.imagePullSecrets }}
       imagePullSecrets:
         {{ range $name, $secret := .Values.admissionController.imagePullSecrets }}
@@ -64,3 +71,9 @@ spec:
           type: RuntimeDefault
       serviceAccountName: {{ template "cloud-control.admission-controller.serviceAccountName" . }}
       terminationGracePeriodSeconds: 10
+      volumes:
+      - name: webhook-certs
+        secret:
+          optional: true
+          secretName: {{ include "cloud-control.admission-controller.serviceName" . }}.{{ template "cloud-control.namespace" . }}.svc.tls-pair
+{{- end }}
