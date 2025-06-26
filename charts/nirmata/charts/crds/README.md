@@ -1,12 +1,14 @@
 # crds
 
-![Version: 3.3.6](https://img.shields.io/badge/Version-3.3.6-informational?style=flat-square)
+![Version: 3.4.3](https://img.shields.io/badge/Version-3.4.3-informational?style=flat-square)
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| reportsServer.enabled | bool | `false` | Kyverno reports-server is used in your cluster |
 | groups.kyverno | object | `{"cleanuppolicies":true,"clustercleanuppolicies":true,"clusterpolicies":true,"globalcontextentries":true,"policies":true,"policyexceptions":true,"updaterequests":true}` | This field can be overwritten by setting crds.labels in the parent chart |
+| groups.policies | object | `{"imagevalidatingpolicies":true,"policyexceptions":true,"validatingpolicies":true}` | Install CRDs in group `reports.kyverno.io` |
 | groups.reports | object | `{"clusterephemeralreports":true,"ephemeralreports":true}` | This field can be overwritten by setting crds.labels in the parent chart |
 | groups.wgpolicyk8s | object | `{"clusterpolicyreports":true,"policyreports":true}` | This field can be overwritten by setting crds.labels in the parent chart |
 | annotations | object | `{}` | This field can be overwritten by setting crds.annotations in the parent chart |
