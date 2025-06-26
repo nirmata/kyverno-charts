@@ -20,6 +20,13 @@ groups:
     policies: true
     policyexceptions: true
     updaterequests: true
+    validatingpolicies: true
+
+  # -- Install CRDs in group `policies.kyverno.io`
+  policies:
+    validatingpolicies: true
+    policyexceptions: true
+    imagevalidatingpolicies: true
 
   # -- Install CRDs in group `reports.kyverno.io`
   policies:
