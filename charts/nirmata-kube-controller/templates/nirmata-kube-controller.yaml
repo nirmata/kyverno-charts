@@ -334,8 +334,10 @@ spec:
           readOnly: true
         {{- end }}
       hostNetwork: false
+      {{- if .Values.global.createSecret }}
       imagePullSecrets:
       - name: {{ default "nirmata-controller-registry-secret" .Values.global.imagePullSecretName }}
+      {{- end }}
       securityContext:
         seccompProfile:
           type: RuntimeDefault
@@ -540,8 +542,10 @@ spec:
         configMap:
           name: {{ if .Values.kubeController.customCaConfigMap }}{{ .Values.kubeController.customCaConfigMap }}{{ else }}nirmata-ca-cert{{ end }}
       {{- end }}
+      {{- if .Values.global.createSecret }}
       imagePullSecrets:
       - name: {{ default "nirmata-controller-registry-secret" .Values.global.imagePullSecretName }}
+      {{- end }}
       {{- if .Values.otelAgent.nodeSelector }}
       nodeSelector:
         {{- toYaml .Values.otelAgent.nodeSelector | nindent 8 }}
