@@ -26,55 +26,59 @@
 {{- end -}}
 
 
-{{- if eq .Values.crds.reportsServer.enabled true -}}
+{{- if and (eq .Values.crds.reportsServer.enabled true)-}}
   {{- $reportsServerPods := lookup "v1" "Pod" (include "kyverno.namespace" .) "" -}}
-  {{- $reportsServerRunning := false -}}
-  {{- range $reportsServerPods.items -}}
-    {{- if contains "reports-server" .metadata.name -}}
-      {{- if eq .status.phase "Running" -}}
-        {{- $reportsServerRunning = true -}}
+  {{- $apiServices := lookup "apiregistration.k8s.io/v1" "APIService" "" "" -}}
+  
+  {{/* Only perform validation if lookup returned data (i.e., we're in install mode, not template mode) */}}
+  {{- if or $reportsServerPods $apiServices -}}
+    {{- $reportsServerRunning := false -}}
+    {{- range $reportsServerPods.items -}}
+      {{- if contains "reports-server" .metadata.name -}}
+        {{- if eq .status.phase "Running" -}}
+          {{- $reportsServerRunning = true -}}
+        {{- end -}}
       {{- end -}}
     {{- end -}}
-  {{- end -}}
-  
-  {{- $apiServices := lookup "apiregistration.k8s.io/v1" "APIService" "" "" -}}
-  {{- $reportsServerAPIAvailable := false -}}
-  {{- range $apiServices.items -}}
-    {{- if and .spec.service (contains "reports-server" .spec.service.name) -}}
-      {{- if .status.conditions -}}
-        {{- range .status.conditions -}}
-          {{- if and (eq .type "Available") (eq .status "True") -}}
-            {{- $reportsServerAPIAvailable = true -}}
+    
+    {{- $reportsServerAPIAvailable := false -}}
+    {{- range $apiServices.items -}}
+      {{- if and .spec.service (contains "reports-server" .spec.service.name) -}}
+        {{- if .status.conditions -}}
+          {{- range .status.conditions -}}
+            {{- if and (eq .type "Available") (eq .status "True") -}}
+              {{- $reportsServerAPIAvailable = true -}}
+            {{- end -}}
           {{- end -}}
         {{- end -}}
       {{- end -}}
     {{- end -}}
-  {{- end -}}
-  
-  {{- if not $reportsServerRunning -}}
-    {{- fail (join "\n" (list
-      ""
-      ""
-      "  +--------------------------------------------------------------------------------------------------------------------------------------+"
-      "  | Reports Server is enabled but no running reports-server pod was found.                                                               |"
-      "  | Please ensure the reports-server is deployed and running before proceeding.                                                          |"
-      "  +--------------------------------------------------------------------------------------------------------------------------------------+"
-      ""
-      ))
-    -}}
-  {{- end -}}
-  
-  {{- if not $reportsServerAPIAvailable -}}
-    {{- fail (join "\n" (list
-      ""
-      ""
-      "  +--------------------------------------------------------------------------------------------------------------------------------------+"
-      "  | Reports Server is enabled but the reports-server APIService is not available.                                                        |"
-      "  | Please ensure the reports-server APIService is registered and available before proceeding.                                            |"
-      "  +--------------------------------------------------------------------------------------------------------------------------------------+"
-      ""
-      ))
-    -}}
+    
+    {{- if not $reportsServerRunning -}}
+      {{- fail (join "\n" (list
+        ""
+        ""
+        "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+        "  | Reports Server is enabled but no running reports-server pod was found.                                                               |"
+        "  | Please ensure the reports-server is deployed and running before proceeding.                                                          |"
+        "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+        ""
+        ))
+      -}}
+    {{- end -}}
+    
+    {{- if not $reportsServerAPIAvailable -}}
+      {{- fail (join "\n" (list
+        ""
+        ""
+        "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+        "  | Reports Server is enabled but the reports-server APIService is not available.                                                        |"
+        "  | Please ensure the reports-server APIService is registered and available before proceeding.                                            |"
+        "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+        ""
+        ))
+      -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 
