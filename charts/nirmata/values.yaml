@@ -114,7 +114,7 @@ crds:
       policyreports: true
 
   reportsServer:
-    enabled: false
+    enabled: true
 
   # -- Additional CRDs annotations
   annotations: {}
