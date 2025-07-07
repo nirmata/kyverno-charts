@@ -462,13 +462,6 @@ spec:
         - -c
         - |
           echo "Waiting for external_labels.tenantId in ConfigMap..."
-          # Configure kubectl to use service account token
-          export KUBECONFIG=/tmp/kubeconfig
-          kubectl config set-cluster default --server=https://kubernetes.default.svc --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-          kubectl config set-credentials default --token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-          kubectl config set-context default --cluster=default --user=default
-          kubectl config use-context default
-          
           while true; do
             config=$(kubectl get configmap otel-agent-config -n {{ .Values.namespace }} -o jsonpath='{.data.config\.yaml}')
             echo "$config" | grep -q "external_labels:" && echo "$config" | grep -q "tenantId:"
@@ -480,8 +473,9 @@ spec:
             sleep 5
           done
         securityContext:
+          runAsUser: 1000
+          runAsGroup: 3000
           runAsNonRoot: true
-          readOnlyRootFilesystem: false
         volumeMounts:
         - name: tmp-volume
           mountPath: /tmp
