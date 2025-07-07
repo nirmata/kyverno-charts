@@ -26,7 +26,7 @@
 {{- end -}}
 
 
-{{- if eq .Values.crds.reportsServer.enabled true -}}
+{{- if and (eq .Values.crds.reportsServer.enabled true) (eq (include "kyverno.installReportsServer" .) "false") -}}
   {{- $reportsServerPods := lookup "v1" "Pod" (include "kyverno.namespace" .) "" -}}
   {{- $apiServices := lookup "apiregistration.k8s.io/v1" "APIService" "" "" -}}
   
