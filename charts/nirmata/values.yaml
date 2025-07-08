@@ -15,7 +15,7 @@ global:
   # When set, it will override any values set under `imagePullSecrets` under different components across the chart.
   imagePullSecrets: []
 
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.31"
+  kubectlImage: "ghcr.io/nirmata/kubectl:1.33.1"
 
   # -- Resync period for informers
   resyncPeriod: 15m
