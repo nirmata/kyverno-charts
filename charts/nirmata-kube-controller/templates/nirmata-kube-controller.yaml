@@ -381,6 +381,7 @@ data:
               action: keep
           - job_name: kubelet
             scrape_interval: 5m
+            honor_timestamps: false
             scheme: https
             tls_config:
               insecure_skip_verify: true
