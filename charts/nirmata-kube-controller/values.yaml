@@ -44,7 +44,7 @@ otelAgent:
   # imageTag is the tag or version of the otel-agent image.
   imageTag: "0.108.0"
 
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.31"
+  kubectlImage: "ghcr.io/nirmata/kubectl:1.33.1"
   # resources defines the resource requests and limits for the otel-agent
   resources:
     requests:
