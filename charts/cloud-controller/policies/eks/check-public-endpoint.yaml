@@ -14,19 +14,25 @@ metadata:
     app: cloud-control-point
 spec:
   failureAction: Audit
-  scan: true
-  rules:
-    - name: check-public-endpoint
-      identifier: payload.clusterName
-      match:
-        all:
-        - (metadata.provider): "AWS"
-        - (metadata.service): EKS
-        - (metadata.resource): "Cluster"
-      assert:
-        all:
-        - message: "Public access to EKS cluster endpoint must be explicitly set to false"
-          check:
-            payload:
-              resourcesVpcConfig:
-                endpointPublicAccess: false
+  matchConditions:
+    - name: match-create-update
+      expression: >
+        request.operation in ['CREATE', 'UPDATE']
+    - name: aws-eks-cluster
+      expression: >
+        object.TypeName == 'AWS::EKS::Cluster'
+  validations:
+    - expression: >
+        has(object.ResourceDescription) ?
+        (
+          has(object.ResourceDescription.Properties) &&
+          has(object.ResourceDescription.Properties.resourcesVpcConfig) &&
+          has(object.ResourceDescription.Properties.resourcesVpcConfig.endpointPublicAccess) &&
+          object.ResourceDescription.Properties.resourcesVpcConfig.endpointPublicAccess == false
+        ) :
+        (
+          has(object.resourcesVpcConfig) &&
+          has(object.resourcesVpcConfig.endpointPublicAccess) &&
+          object.resourcesVpcConfig.endpointPublicAccess == false
+        )
+      message: "Public access to EKS cluster endpoint must be explicitly set to false"

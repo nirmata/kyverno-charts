@@ -13,19 +13,24 @@ metadata:
     app: cloud-control-point
 spec:
   failureAction: Audit
-  scan: true
-  rules:
-    - name: check-lambda-vpc
-      identifier: payload.functionName
-      match:
-        all:
-        - (metadata.provider): "AWS"
-        - (metadata.service): "Lambda"
-        - (metadata.resource): "Function"
-      assert:
-        all:
-        - message: VPCConfig must be present for the Lambda function
-          check:
-            payload:
-              (vpcConfig != null): true
+  matchConditions:
+    - name: match-create-update
+      expression: >
+        request.operation in ['CREATE', 'UPDATE']
+    - name: aws-lambda-function
+      expression: >
+        object.TypeName == 'AWS::Lambda::Function'
+  validations:
+    - expression: >
+        has(object.ResourceDescription) ?
+        (
+          has(object.ResourceDescription.Properties) &&
+          has(object.ResourceDescription.Properties.vpcConfig) &&
+          object.ResourceDescription.Properties.vpcConfig != null
+        ) :
+        (
+          has(object.vpcConfig) &&
+          object.vpcConfig != null
+        )
+      message: "VPCConfig must be present for the Lambda function"
 
