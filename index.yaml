@@ -43,6 +43,19 @@ entries:
     version: 0.1.0
   cloud-controller:
   - apiVersion: v2
+    appVersion: v0.4.0
+    created: "2025-07-09T14:11:22.089300885Z"
+    description: A Helm chart for Kubernetes
+    digest: 80e196ae6a56899b7dfb403e7c3edcab8b44de1d2f9f256136a780d00a42838b
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: cloud-controller
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/cloud-controller-v0.4.0/cloud-controller-v0.4.0.tgz
+    version: v0.4.0
+  - apiVersion: v2
     appVersion: v0.3.1
     created: "2025-06-25T16:00:53.281540617Z"
     description: A Helm chart for Kubernetes
@@ -20651,4 +20664,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-07-08T14:05:50.765009552Z"
+generated: "2025-07-09T14:11:22.093678112Z"
