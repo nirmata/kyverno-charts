@@ -14,20 +14,27 @@ metadata:
     app: cloud-control-point
 spec:
   failureAction: Audit
-  scan: true
-  rules:
-    - name: validate-ecs-containers-readonly
-      identifier: payload.family
-      match:
-        all:
-        - (metadata.provider): AWS
-        - (metadata.service): ECS
-        - (metadata.resource): TaskDefinition
-      assert:
-        all:
-        - message: >- 
-            ECS Containers should have read-only access to its root filesystem
-          check:
-            payload:
-              ~.(containerDefinitions):
-                  readonlyRootFilesystem: true
+  matchConditions:
+    - name: match-create-update
+      expression: >
+        request.operation in ['CREATE', 'UPDATE']
+    - name: aws-ecs-taskdefinition
+      expression: >
+        object.TypeName == 'AWS::ECS::TaskDefinition'
+  validations:
+    - expression: >
+        has(object.ResourceDescription) ?
+        (
+          has(object.ResourceDescription.Properties) &&
+          has(object.ResourceDescription.Properties.containerDefinitions) &&
+          object.ResourceDescription.Properties.containerDefinitions.all(container,
+            has(container.readonlyRootFilesystem) && container.readonlyRootFilesystem == true
+          )
+        ) :
+        (
+          has(object.containerDefinitions) &&
+          object.containerDefinitions.all(container,
+            has(container.readonlyRootFilesystem) && container.readonlyRootFilesystem == true
+          )
+        )
+      message: "ECS Containers should have read-only access to its root filesystem"

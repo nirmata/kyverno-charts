@@ -12,19 +12,37 @@ metadata:
     app: cloud-control-point
 spec:
   failureAction: Audit
-  scan: true
-  rules:
-    - name: check-public-access-cidr
-      identifier: payload.clusterName
-      match:
-        all:
-        - (metadata.provider): "AWS"
-        - (metadata.service): EKS
-        - (metadata.resource): "Cluster"
-      assert:
-        all:
-        - message: "Ensuring that the Amazon EKS public endpoint is not accessible to 0.0.0.0/0"
-          check:
-            payload:
-              resourcesVpcConfig:
-                ((endpointPublicAccess == `false`) || (endpointPublicAccess == `true` && publicAccessCidrs[?@ == '0.0.0.0/0'] | length(@) == `0`)): true
+  matchConditions:
+    - name: match-create-update
+      expression: >
+        request.operation in ['CREATE', 'UPDATE']
+    - name: aws-eks-cluster
+      expression: >
+        object.TypeName == 'AWS::EKS::Cluster'
+  validations:
+    - expression: >
+        has(object.ResourceDescription) ?
+        (
+          has(object.ResourceDescription.Properties) &&
+          has(object.ResourceDescription.Properties.resourcesVpcConfig) &&
+          (
+            object.ResourceDescription.Properties.resourcesVpcConfig.endpointPublicAccess == false ||
+            (
+              object.ResourceDescription.Properties.resourcesVpcConfig.endpointPublicAccess == true &&
+              has(object.ResourceDescription.Properties.resourcesVpcConfig.publicAccessCidrs) &&
+              !object.ResourceDescription.Properties.resourcesVpcConfig.publicAccessCidrs.exists(cidr, cidr == '0.0.0.0/0')
+            )
+          )
+        ) :
+        (
+          has(object.resourcesVpcConfig) &&
+          (
+            object.resourcesVpcConfig.endpointPublicAccess == false ||
+            (
+              object.resourcesVpcConfig.endpointPublicAccess == true &&
+              has(object.resourcesVpcConfig.publicAccessCidrs) &&
+              !object.resourcesVpcConfig.publicAccessCidrs.exists(cidr, cidr == '0.0.0.0/0')
+            )
+          )
+        )
+      message: "Ensuring that the Amazon EKS public endpoint is not accessible to 0.0.0.0/0"

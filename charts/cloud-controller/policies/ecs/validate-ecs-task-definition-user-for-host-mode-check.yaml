@@ -14,21 +14,46 @@ metadata:
     app: cloud-control-point
 spec:
   failureAction: Audit
-  scan: true
-  rules:
-    - name: validate-ecs-task-definition-user-for-host-mode-check
-      identifier: payload.family
-      match:
-        all:
-        - (metadata.provider): AWS
-        - (metadata.service): ECS
-        - (metadata.resource): TaskDefinition
-      assert:
-        all:
-        - message: >- 
-            User should be set to a non-root user when NetworkMode is set to host and privileged is set to false or not specified
-          check:
-            payload:
-              ~.(containerDefinitions[?!privileged]):
-                  (user == null || user == 'root' || user == '0' || starts_with(user, '0:') || ends_with(user, ':0')): false
+  matchConditions:
+    - name: match-create-update
+      expression: >
+        request.operation in ['CREATE', 'UPDATE']
+    - name: aws-ecs-taskdefinition
+      expression: >
+        object.TypeName == 'AWS::ECS::TaskDefinition'
+  validations:
+    - expression: >
+        has(object.ResourceDescription) ?
+        (
+          has(object.ResourceDescription.Properties) &&
+          has(object.ResourceDescription.Properties.containerDefinitions) &&
+          object.ResourceDescription.Properties.containerDefinitions.all(container,
+            has(container.privileged) && container.privileged == true ||
+            (
+              (!has(container.privileged) || container.privileged == false) &&
+              has(container.user) && 
+              container.user != null && 
+              container.user != 'root' && 
+              container.user != '0' && 
+              !container.user.startsWith('0:') && 
+              !container.user.endsWith(':0')
+            )
+          )
+        ) :
+        (
+          has(object.containerDefinitions) &&
+          object.containerDefinitions.all(container,
+            has(container.privileged) && container.privileged == true ||
+            (
+              (!has(container.privileged) || container.privileged == false) &&
+              has(container.user) && 
+              container.user != null && 
+              container.user != 'root' && 
+              container.user != '0' && 
+              !container.user.startsWith('0:') && 
+              !container.user.endsWith(':0')
+            )
+          )
+        )
+      message: "User should be set to a non-root user when NetworkMode is set to host and privileged is set to false or not specified"
               

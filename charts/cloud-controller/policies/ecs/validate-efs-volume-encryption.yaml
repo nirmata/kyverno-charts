@@ -13,21 +13,29 @@ metadata:
     app: cloud-control-point
 spec:
   failureAction: Audit
-  scan: true
-  rules:
-    - name: validate-efs-volume-encryption
-      identifier: payload.family
-      match:
-        all:
-        - (metadata.provider): AWS
-        - (metadata.service): ECS
-        - (metadata.resource): TaskDefinition
-      assert:
-        all:
-        - message: >- 
-            Transit Encryption should be set to ENABLED for EFS volumes in ECS Task Definitions
-          check:
-            payload:
-              ~.(volumes[?eFSVolumeConfiguration || efsVolumeConfiguration]):
-                    (eFSVolumeConfiguration || efsVolumeConfiguration):
-                        transitEncryption: ENABLED
+  matchConditions:
+    - name: match-create-update
+      expression: >
+        request.operation in ['CREATE', 'UPDATE']
+    - name: aws-ecs-taskdefinition
+      expression: >
+        object.TypeName == 'AWS::ECS::TaskDefinition'
+  validations:
+    - expression: >
+        has(object.ResourceDescription) ?
+        (
+          has(object.ResourceDescription.Properties) &&
+          has(object.ResourceDescription.Properties.volumes) &&
+          object.ResourceDescription.Properties.volumes.all(volume,
+            !has(volume.eFSVolumeConfiguration) || 
+            (has(volume.eFSVolumeConfiguration.transitEncryption) && volume.eFSVolumeConfiguration.transitEncryption == 'ENABLED')
+          )
+        ) :
+        (
+          has(object.volumes) &&
+          object.volumes.all(volume,
+            !has(volume.eFSVolumeConfiguration) || 
+            (has(volume.eFSVolumeConfiguration.transitEncryption) && volume.eFSVolumeConfiguration.transitEncryption == 'ENABLED')
+          )
+        )
+      message: "Transit Encryption should be set to ENABLED for EFS volumes in ECS Task Definitions"

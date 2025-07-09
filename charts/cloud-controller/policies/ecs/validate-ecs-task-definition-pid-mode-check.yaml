@@ -16,19 +16,21 @@ metadata:
     app: cloud-control-point
 spec:
   failureAction: Audit
-  scan: true
-  rules:
-    - name: validate-ecs-task-definition-pid-mode-check
-      identifier: payload.family
-      match:
-        all:
-        - (metadata.provider): AWS
-        - (metadata.service): ECS
-        - (metadata.resource): TaskDefinition
-      assert:
-        all:
-        - message: >- 
-            ECS task definitions containers should not share the host's process namespace
-          check:
-            payload:
-              (pidMode != 'host'): true
+  matchConditions:
+    - name: match-create-update
+      expression: >
+        request.operation in ['CREATE', 'UPDATE']
+    - name: aws-ecs-taskdefinition
+      expression: >
+        object.TypeName == 'AWS::ECS::TaskDefinition'
+  validations:
+    - expression: >
+        has(object.ResourceDescription) ?
+        (
+          has(object.ResourceDescription.Properties) &&
+          (!has(object.ResourceDescription.Properties.pidMode) || object.ResourceDescription.Properties.pidMode != 'host')
+        ) :
+        (
+          !has(object.pidMode) || object.pidMode != 'host'
+        )
+      message: "ECS task definitions containers should not share the host's process namespace"

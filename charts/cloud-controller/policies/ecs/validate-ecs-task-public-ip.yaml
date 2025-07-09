@@ -13,22 +13,28 @@ metadata:
     app: cloud-control-point
 spec:
   failureAction: Audit
-  scan: true
-  rules:
-    - name: validate-ecs-task-public-ip
-      identifier: payload.family
-      match:
-        all:
-        - (metadata.provider): AWS
-        - (metadata.service): ECS
-        - (metadata.resource): Service
-      assert:
-        all:
-        - message: >- 
-            Public IP address should not be enabled
-          check:
-            payload:
-              networkConfiguration:
-                    awsvpcConfiguration:
-                        assignPublicIp: DISABLED
+  matchConditions:
+    - name: match-create-update
+      expression: >
+        request.operation in ['CREATE', 'UPDATE']
+    - name: aws-ecs-service
+      expression: >
+        object.TypeName == 'AWS::ECS::Service'
+  validations:
+    - expression: >
+        has(object.ResourceDescription) ?
+        (
+          has(object.ResourceDescription.Properties) &&
+          has(object.ResourceDescription.Properties.networkConfiguration) &&
+          has(object.ResourceDescription.Properties.networkConfiguration.awsvpcConfiguration) &&
+          has(object.ResourceDescription.Properties.networkConfiguration.awsvpcConfiguration.assignPublicIp) &&
+          object.ResourceDescription.Properties.networkConfiguration.awsvpcConfiguration.assignPublicIp == 'DISABLED'
+        ) :
+        (
+          has(object.networkConfiguration) &&
+          has(object.networkConfiguration.awsvpcConfiguration) &&
+          has(object.networkConfiguration.awsvpcConfiguration.assignPublicIp) &&
+          object.networkConfiguration.awsvpcConfiguration.assignPublicIp == 'DISABLED'
+        )
+      message: "Public IP address should not be enabled"
               
