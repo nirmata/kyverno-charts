@@ -4,10 +4,6 @@ permissions:
   contents: read
 
 on:
-  pull_request:
-    branches:
-      - main
-      - 'release-*'
   push:
     branches-ignore:
       - main
@@ -17,7 +13,4 @@ on:
 
 jobs:
   lint:
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
     uses: ./.github/workflows/chart-lint.yml
