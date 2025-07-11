@@ -3,10 +3,6 @@ name: Lint and Test Charts
 permissions:
   contents: read
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 on:
   pull_request:
     branches:
@@ -21,4 +17,8 @@ on:
 
 jobs:
   lint:
+    # Prevent duplicate run when both push and PR events trigger simultaneously
+    if: |
+      github.event_name == 'pull_request' || 
+      github.event_name == 'push' && github.event.pull_request == null
     uses: ./.github/workflows/chart-lint.yml
