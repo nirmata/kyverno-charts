@@ -9,7 +9,8 @@ Thank you for installing {{ .Chart.Name }}! Your release is named {{ .Release.Na
 ********************************************************************************
 ⚠️  WARNING: Required Kyverno CRDs are missing
 --------------------------------------------------------------------------------
-The policyset controller requires the following Kyverno CRDs to function:
+The policyset controller requires the following Kyverno CRDs to function. 
+Without these, you will see error logs in the controller with every reconciliation:
 
 - Policy (`policies.kyverno.io`)
 - ClusterPolicy (`clusterpolicies.kyverno.io`)
@@ -18,8 +19,6 @@ The policyset controller requires the following Kyverno CRDs to function:
    Please install Kyverno or ensure its CRDs are present before using this chart.
 {{- end }}
 {{- end }}
-
-💡 Note: There is a trade-off when deciding which approach to take regarding Namespace exclusions. Please see the documentation at https://kyverno.io/docs/installation/#security-vs-operability to understand the risks.
 
 {{- if semverCompare "<1.21.0" .Capabilities.KubeVersion.Version }}
 
