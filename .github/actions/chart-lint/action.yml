@@ -1,0 +1,35 @@
+name: 'Chart Lint Action'
+description: 'Lint Helm charts using chart-testing'
+inputs:
+  target-branch:
+    description: 'Target branch for chart-testing'
+    required: false
+    default: 'main'
+  helm-version:
+    description: 'Helm version to use'
+    required: false
+    default: 'v3.13.0'
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.13'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: ${{ inputs.helm-version }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        
+    - name: Set up chart-testing
+      uses: helm/chart-testing-action@v2.6.1
+
+    - name: Run chart-testing (lint)
+      shell: bash
+      run: ct lint --target-branch ${{ inputs.target-branch }} 

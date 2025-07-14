@@ -8,7 +8,17 @@ on:
 
 jobs:
   lint:
-    uses: ./.github/workflows/chart-lint.yml
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lint Charts
+        uses: ./.github/actions/chart-lint
+        with:
+          target-branch: main
 
   release:
     runs-on: ubuntu-latest
