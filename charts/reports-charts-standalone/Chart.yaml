@@ -18,4 +18,3 @@ dependencies:
 - condition: postgresql.enabled
   name: cloudnative-pg
   version: 0.22.0
-  repository: https://cloudnative-pg.github.io/charts
