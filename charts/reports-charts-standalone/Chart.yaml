@@ -1,0 +1,21 @@
+apiVersion: v2
+name: reports-server
+type: application
+version: 0.1.27
+appVersion: v0.1.20
+keywords:
+- kubernetes
+- policy reports storage
+- postgresql
+sources:
+- https://github.com/nirmata/kyverno-charts
+maintainers:
+- name: Nirmata
+  url: https://kyverno.io/
+  email: cncf-kyverno-maintainers@lists.cncf.io
+kubeVersion: ">=1.16.0-0"
+dependencies:
+- condition: postgresql.enabled
+  name: cloudnative-pg
+  version: 0.22.0
+  repository: https://cloudnative-pg.github.io/charts
