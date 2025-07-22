@@ -226,6 +226,7 @@ data:
     policyexceptions.v2beta1.kyverno.io
     policyexceptions.v2.kyverno.io
     policysets.v1alpha1.security.nirmata.io
+    kyvernoconfigs.v1alpha1.security.nirmata.io
   IgnoreEvents: Normal.PolicyPlaceHolder.*
   FilterPatches: |-
     /metadata/resourceVersion
