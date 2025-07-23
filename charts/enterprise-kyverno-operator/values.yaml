@@ -100,7 +100,7 @@ kyverno:
           - watch
   templating:
     enabled: false
-    image: ghcr.io/nirmata/kubectl:1.31.1
+    image: ghcr.io/nirmata/kubectl:1.33.2
     version: ~
   customNamespaces: false
   webhooksCleanup:
