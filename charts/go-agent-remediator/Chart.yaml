@@ -1,0 +1,17 @@
+apiVersion: v2
+name: go-agent-remediator
+description: A Helm chart for the Go Agent Remediator Operator
+type: application
+version: 0.0.3
+appVersion: "v0.0.3"
+keywords:
+  - kubernetes
+  - operator
+  - argocd
+  - remediation
+maintainers:
+  - name: "Suhas Gumma"
+    email: "suhas.gumma@nirmata.com"
+  - name: "Anusha Hegde"
+    email: "anusha.hegde@nirmata.com"
+dependencies: []

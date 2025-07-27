@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "go-agent-remediator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-agent-remediator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "go-agent-remediator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "go-agent-remediator.selectorLabels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "go-agent-remediator.serviceAccountName" . }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 8 }}
+      containers:
+        - name: manager
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --metrics-bind-address=:{{ .Values.operator.metricsPort }}
+            {{- if .Values.operator.leaderElection }}
+            - --leader-elect
+            {{- end }}
+            - --health-probe-bind-address=:{{ .Values.operator.healthProbePort }}
+          ports:
+            - containerPort: {{ .Values.operator.metricsPort }}
+              name: metrics
+              protocol: TCP
+            - containerPort: {{ .Values.operator.healthProbePort }}
+              name: health
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: health
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: health
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: LOCAL_CLUSTER
+              value: {{ .Values.operator.environment.localCluster | quote }}
+            - name: ARGOCD_HUB
+              value: {{ .Values.operator.environment.argoCD.hub | quote }}
+            - name: REMEDIATION_PROVIDER_TYPE
+              value: {{ .Values.operator.remediation.provider.providerType }}
+            {{- if .Values.operator.remediation.provider.bedrockModel }}
+            - name: BEDROCK_MODEL
+              value: {{ .Values.operator.remediation.provider.bedrockModel }}
+            {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }} 
