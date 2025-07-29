@@ -488,7 +488,7 @@ spec:
         command:
         - /otelcol
         - --config=/etc/otel/config.yaml
-        image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/opentelemetry-collector:{{ .Values.otelAgent.imageTag }}"
+        image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/otel-collector:{{ .Values.otelAgent.imageTag }}"
         resources:
           limits:
             cpu: {{ .Values.otelAgent.resources.limits.cpu }}
