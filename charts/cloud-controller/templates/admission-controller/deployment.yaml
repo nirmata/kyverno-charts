@@ -1,4 +1,3 @@
-{{- if .Values.admissionController.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -74,6 +73,4 @@ spec:
       volumes:
       - name: webhook-certs
         secret:
-          optional: true
           secretName: {{ include "cloud-control.admission-controller.serviceName" . }}.{{ template "cloud-control.namespace" . }}.svc.tls-pair
-{{- end }}

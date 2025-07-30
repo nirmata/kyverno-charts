@@ -1,4 +1,3 @@
-{{- if .Values.admissionController.enabled -}}
 apiVersion: nirmata.io/v1alpha1
 kind: Proxy
 metadata:
@@ -13,4 +12,3 @@ spec:
   policySelectors:
     - matchLabels:
         app: cloud-control-point
-{{- end }}

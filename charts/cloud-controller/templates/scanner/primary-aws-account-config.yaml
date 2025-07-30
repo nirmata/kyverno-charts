@@ -1,4 +1,3 @@
-{{- if .Values.scanner.enabled -}}
 {{- if and .Values.scanner.primaryAWSAccountConfig.accountID .Values.scanner.primaryAWSAccountConfig.accountName (not (empty .Values.scanner.primaryAWSAccountConfig.regions)) (not (empty .Values.scanner.primaryAWSAccountConfig.services)) }}
 apiVersion: nirmata.io/v1alpha1
 kind: AWSAccountConfig
@@ -16,5 +15,4 @@ spec:
     {{- range .Values.scanner.primaryAWSAccountConfig.services }}
     - {{ . }}
     {{- end }}
-{{- end }}
 {{- end }}

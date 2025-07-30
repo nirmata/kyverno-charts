@@ -1,9 +1,13 @@
 apiVersion: v2
-name: cloud-controller
-description: A Helm chart for Kubernetes
-type: application
-version: v0.4.0
-appVersion: v0.4.0
-maintainers:
-  - name: Nirmata
-    url: https://nirmata.com/
+name: cloud-controlll
+description: A Helm chart for Kubernetesssss
+type: applicationssss
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: v0.0.9
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: v0.3.0-rc3

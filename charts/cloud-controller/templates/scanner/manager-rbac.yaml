@@ -1,4 +1,3 @@
-{{- if .Values.scanner.enabled -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -67,4 +66,3 @@ subjects:
 - kind: ServiceAccount
   name: {{ template "cloud-control.scanner.serviceAccountName" . }}
   namespace: {{ template "cloud-control.namespace" . }}
-{{- end }}

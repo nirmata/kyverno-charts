@@ -19,7 +19,7 @@ spec:
         control-plane: controller-manager
       {{- include "cloud-control.events-controller.labels" . | nindent 8 }}
       annotations:
-        kubectl.kubernetes.io/default-container: manager
+        kubectl.kubernetes.io/default-container: manager  
     spec:
       containers:
       - args: {{- toYaml .Values.eventsController.args | nindent 8 }}
@@ -63,4 +63,4 @@ spec:
           type: RuntimeDefault
       serviceAccountName: {{ template "cloud-control.events-controller.serviceAccountName" . }}
       terminationGracePeriodSeconds: 10
-{{- end }}
+{{- end }} 

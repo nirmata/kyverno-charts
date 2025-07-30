@@ -1,4 +1,3 @@
-{{- if .Values.scanner.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -63,4 +62,3 @@ spec:
           type: RuntimeDefault
       serviceAccountName: {{ template "cloud-control.scanner.serviceAccountName" . }}
       terminationGracePeriodSeconds: 10
-{{- end }}

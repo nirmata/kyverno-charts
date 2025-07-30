@@ -38,4 +38,4 @@ subjects:
 - kind: ServiceAccount
   name: {{ template "cloud-control.events-controller.serviceAccountName" . }}
   namespace: {{ template "cloud-control.namespace" . }}
-{{- end }}
+{{- end }} 
