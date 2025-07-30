@@ -1,0 +1,41 @@
+{{- if .Values.eventsController.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ template "cloud-control.events-controller.name" . }}-role
+  labels:
+    {{- include "cloud-control.events-controller.labels" . | nindent 4 }}
+rules:
+# Permissions for leader election
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+# Permissions for reading policies, preprocessors, awsaccountconfigs
+- apiGroups: ["nirmata.io"]
+  resources: ["validatingpolicies", "imageverificationpolicies", "preprocessors", "awsaccountconfigs"]
+  verbs: ["get", "list", "watch"]
+# Permissions for creating Kyverno reports
+- apiGroups: ["reports.kyverno.io"]
+  resources: ["clusterephemeralreports"]
+  verbs: ["create", "delete"]
+- apiGroups: ["wgpolicyk8s.io"]
+  resources: ["clusterpolicyreports"]
+  verbs: ["create", "delete"]
+
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "cloud-control.events-controller.name" . }}-rolebinding
+  labels:
+    {{- include "cloud-control.events-controller.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "cloud-control.events-controller.name" . }}-role
+subjects:
+- kind: ServiceAccount
+  name: {{ template "cloud-control.events-controller.serviceAccountName" . }}
+  namespace: {{ template "cloud-control.namespace" . }}
+{{- end }} 

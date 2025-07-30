@@ -1,0 +1,338 @@
+# -- (string) Override the name of the chart
+nameOverride: ~
+
+# -- (string) Override the expanded name of the chart
+fullnameOverride: ~
+
+# -- (string) Override the namespace the chart deploys to
+namespaceOverride: ~
+
+# -- (string) Cloud provider (e.g., AWS, GCP, Azure). Default is AWS.
+cloudProvider: AWS
+
+# Admission controller configuration
+admissionController:
+  serviceAccount:
+    # -- The ServiceAccount name
+    name:
+
+    # -- Annotations for the ServiceAccount
+    annotations: {}
+      # example.com/annotation: value
+
+  # -- (int) Desired number of pods
+  replicas: ~
+
+  image:
+    # -- Image registry
+    registry: reg.nirmata.io
+    # -- Image repository
+    repository: nirmata/cloud-admission-controller
+    # -- (string) Image tag
+    tag: ""
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+
+  resources:
+    # -- Pod resource limits
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    # -- Pod resource requests
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  # -- Container security context
+  securityContext:
+    runAsNonRoot: true
+    privileged: false
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+  # -- Container arguments
+  args:
+    - --metrics-bind-address=:8080
+    - --leader-elect
+    - --health-probe-bind-address=:8081
+
+  service:
+    # -- Service ports
+    ports:
+    - name: http-proxy
+      port: 8443
+      protocol: TCP
+      targetPort: http-proxy-svc
+    - name: webhook
+      port: 9443
+      protocol: TCP
+      targetPort: 9443
+    # -- Service type
+    type: ClusterIP
+
+  metricsService:
+    # -- Create service.
+    createServiceMonitor: false
+    # -- Service ports
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    # -- Service type
+    type: ClusterIP
+  # -- Image pull secrets
+  imagePullSecrets: {}
+    # my-secret:
+    #   registry: reg.nirmata.io
+    #   username: MariamFahmy98
+    #   password: secret
+    # regcred2:
+    #   registry: bar.example.com
+    #   username: barbaz
+    #   password: secret2
+
+# Scanner configuration
+scanner:
+  serviceAccount:
+    # -- The ServiceAccount name
+    name:
+    # -- Annotations for the ServiceAccount
+    annotations: {}
+      # example.com/annotation: value
+
+  # -- (int) Desired number of pods
+  replicas: ~
+
+  image:
+    # -- Image registry
+    registry: reg.nirmata.io
+    # -- Image repository
+    repository: nirmata/cloud-scanner
+    # -- (string) Image tag
+    tag: ""
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+
+  resources:
+    # -- Pod resource limits
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    # -- Pod resource requests
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  # -- Container security context
+  securityContext:
+    runAsNonRoot: true
+    privileged: false
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+  # -- Container arguments
+  args:
+    - --metrics-bind-address=:8080
+    - --leader-elect
+    - --health-probe-bind-address=:8081
+  # -- AWS configuration
+  debug:
+    # -- Enable debug mode
+    mode: false
+    # -- AWS access key ID
+    awsAccessKeyId: ""
+    # -- AWS secret access key
+    awsSecretAccessKey: ""
+    # -- AWS session token
+    awsSessionToken: ""
+  primaryAWSAccountConfig:
+    accountID: ""
+    accountName: ""
+    regions: []
+    scanInterval: 1h
+    services: []
+  # -- Image pull secrets
+  imagePullSecrets: {}
+    # my-secret:
+    #   registry: reg.nirmata.io
+    #   username: MariamFahmy98
+    #   password: secret
+    # regcred2:
+    #   registry: bar.example.com
+    #   username: barbaz
+    #   password: secret2
+# Reports controller configuration
+reportsController:
+  serviceAccount:
+    # -- The ServiceAccount name
+    name:
+    # -- Annotations for the ServiceAccount
+    annotations: {}
+      # example.com/annotation: value
+
+  # -- (int) Desired number of pods
+  replicas: ~
+
+  image:
+    # -- Image registry
+    registry: reg.nirmata.io
+    # -- Image repository
+    repository: nirmata/cloud-reports-controller
+    # -- (string) Image tag
+    tag: ""
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+
+  resources:
+    # -- Pod resource limits
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    # -- Pod resource requests
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  # -- Container security context
+  securityContext:
+    runAsNonRoot: true
+    privileged: false
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+  # -- Container arguments
+  args:
+    - --metrics-bind-address=:8080
+    - --health-probe-bind-address=:8081
+
+  # -- Image pull secrets
+  imagePullSecrets: {}
+    # my-secret:
+    #   registry: reg.nirmata.io
+    #   username: MariamFahmy98
+    #   password: secret
+    # regcred2:
+    #   registry: bar.example.com
+    #   username: barbaz
+    #   password: secret2
+# -- Events controller configuration
+eventsController:
+  # -- Enable the events controller
+  enabled: true
+  
+  serviceAccount:
+    # -- The ServiceAccount name
+    name:
+    # -- Annotations for the ServiceAccount
+    annotations: {}
+      # example.com/annotation: value
+
+  # -- (int) Desired number of pods
+  replicas: ~
+  
+  image:
+    # -- Image registry
+    registry: reg.nirmata.io
+    # -- Image repository
+    repository: nirmata/cloud-events-controller
+    # -- (string) Image tag
+    tag: ""
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+  
+  resources:
+    # -- Pod resource limits
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    # -- Pod resource requests
+    requests:
+      cpu: 10m
+      memory: 64Mi
+  
+  # -- Container security context
+  securityContext:
+    runAsNonRoot: true
+    privileged: false
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+  service:
+    # -- Service type (e.g., ClusterIP, NodePort, LoadBalancer). Set to LoadBalancer for AWS default.
+    type: LoadBalancer
+    # -- Service ports configuration
+    ports:
+      - name: http # Example port, adjust as needed
+        port: 80  # Example port, adjust as needed
+        protocol: TCP
+        targetPort: 8080 # Example target port, adjust as needed
+
+  # -- Image pull secrets
+  imagePullSecrets: {}
+    # my-secret:
+    #   registry: reg.nirmata.io
+    #   username: MariamFahmy98
+    #   password: secret
+    # regcred2:
+    #   registry: bar.example.com
+    #   username: barbaz
+    #   password: secret2
+
+  # -- (string) The address the health probe endpoint binds to
+  healthProbeBindAddress: :8082
+  # -- (bool) If set the metrics endpoint is served securely
+  metricsSecure: false
+  # -- (bool) If set, HTTP/2 will be enabled for the metrics and webhook servers
+  enableHttp2: false
+  # -- (string) Log level (debug, info, warn, error)
+  logLevel: info
+
+  # -- Container arguments
+  args:
+    - --metrics-bind-address=:8081
+    - --leader-elect
+    - --log-level=info
+  # -- AWS configuration
+  debug:
+    # -- Enable debug mode
+    mode: false
+    # -- AWS access key ID
+    awsAccessKeyId: ""
+    # -- AWS secret access key
+    awsSecretAccessKey: ""
+    # -- AWS session token
+    awsSessionToken: ""
+  # -- Image pull secrets
+  imagePullSecrets: {}
+    # my-secret:
+    #   registry: reg.nirmata.io
+    #   username: MariamFahmy98
+    #   password: secret
+    # regcred2:
+    #   registry: bar.example.com
+    #   username: barbaz
+    #   password: secret2
+
+
+kubernetesClusterDomain: cluster.local
+
+policies: 
+  enabled: false
