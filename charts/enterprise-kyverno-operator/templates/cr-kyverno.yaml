@@ -3,6 +3,10 @@ apiVersion: security.nirmata.io/v1alpha1
 kind: KyvernoConfig
 metadata:
   annotations:
+    helm.sh/chart: {{ include "enterprise-kyverno.chart" . }}
+    {{- if .Chart.AppVersion }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    {{- end }}
     {{- if .Values.globalAnnotations }}
     {{- toYaml .Values.globalAnnotations | nindent 4 }}
     {{- end }}
