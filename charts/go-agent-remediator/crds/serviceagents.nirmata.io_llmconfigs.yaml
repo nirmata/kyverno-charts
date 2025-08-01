@@ -1,0 +1,118 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.18.0
+  name: llmconfigs.serviceagents.nirmata.io
+spec:
+  group: serviceagents.nirmata.io
+  names:
+    kind: LLMConfig
+    listKind: LLMConfigList
+    plural: llmconfigs
+    singular: llmconfig
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: LLMConfig is the Schema for the llmconfigs API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: LLMConfigSpec defines the desired state of LLMConfig
+            properties:
+              azureOpenAI:
+                description: AzureOpenAI defines configuration for Azure OpenAI provider
+                properties:
+                  deploymentName:
+                    description: DeploymentName defines the name of the deployment
+                    type: string
+                  endpoint:
+                    description: Endpoint defines the Azure OpenAI endpoint URL
+                    type: string
+                  secretRef:
+                    description: SecretRef defines the reference to a secret containing
+                      Azure OpenAI credentials
+                    properties:
+                      key:
+                        description: Key is the key within the secret
+                        type: string
+                      name:
+                        description: Name is the name of the secret
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                required:
+                - deploymentName
+                - endpoint
+                - secretRef
+                type: object
+              bedrock:
+                description: Bedrock defines configuration for Amazon Bedrock provider
+                properties:
+                  externalId:
+                    description: ExternalId defines the external ID for role assumption
+                    type: string
+                  model:
+                    description: Model defines the Bedrock model to use (can be model
+                      ID or inference profile ARN)
+                    type: string
+                  region:
+                    description: Region defines the AWS region for Bedrock service
+                    type: string
+                  roleArn:
+                    description: RoleArn defines the ARN of the IAM role to assume
+                      for accessing Bedrock
+                    type: string
+                  secretRef:
+                    description: SecretRef defines the reference to a secret containing
+                      AWS credentials
+                    properties:
+                      key:
+                        description: Key is the key within the secret
+                        type: string
+                      name:
+                        description: Name is the name of the secret
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                required:
+                - model
+                - region
+                type: object
+              type:
+                description: Type defines the type of provider (e.g., "bedrock", "azure-openai")
+                type: string
+            required:
+            - type
+            type: object
+          status:
+            description: LLMConfigStatus defines the observed state of LLMConfig
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

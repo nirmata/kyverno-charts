@@ -1,0 +1,256 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.18.0
+  name: remediators.serviceagents.nirmata.io
+spec:
+  group: serviceagents.nirmata.io
+  names:
+    kind: Remediator
+    listKind: RemediatorList
+    plural: remediators
+    singular: remediator
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Remediator is the Schema for the remediators API.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: RemediatorSpec defines the desired state of Remediator.
+            properties:
+              environment:
+                description: Environment defines the environment configuration for
+                  the remediator
+                properties:
+                  argoCD:
+                    description: ArgoCD defines ArgoCD specific configuration
+                    properties:
+                      hub:
+                        description: Hub indicates if this is an ArgoCD hub cluster
+                        type: boolean
+                    required:
+                    - hub
+                    type: object
+                  localCluster:
+                    description: LocalCluster indicates if this is a local cluster
+                      deployment
+                    type: boolean
+                required:
+                - argoCD
+                - localCluster
+                type: object
+              remediation:
+                description: Remediation defines the remediation configuration
+                properties:
+                  actions:
+                    description: Actions defines what actions to take during remediation
+                    items:
+                      description: Action defines what action to take during remediation
+                      properties:
+                        toolRef:
+                          description: ToolRef defines the reference to the tool configuration
+                          properties:
+                            apiVersion:
+                              default: serviceagents.nirmata.io/v1alpha1
+                              description: APIVersion is the API version of the referenced
+                                object
+                              type: string
+                            kind:
+                              default: ToolConfig
+                              description: Kind is the kind of the referenced object
+                              type: string
+                            name:
+                              description: Name is the name of the tool configuration
+                              type: string
+                            namespace:
+                              description: Namespace is the namespace of the tool
+                                configuration
+                              type: string
+                          required:
+                          - name
+                          type: object
+                        type:
+                          description: Type defines the type of action to perform
+                          type: string
+                      required:
+                      - toolRef
+                      - type
+                      type: object
+                    type: array
+                  filters:
+                    description: Filters defines what should be filtered for remediation
+                    properties:
+                      policySelector:
+                        description: PolicySelector defines policy-based filtering
+                        properties:
+                          matchSeverity:
+                            description: MatchSeverity defines severity levels to
+                              match
+                            items:
+                              type: string
+                            type: array
+                        required:
+                        - matchSeverity
+                        type: object
+                    required:
+                    - policySelector
+                    type: object
+                  llmConfigRef:
+                    description: LLMConfigRef defines a reference to a LLMConfig resource
+                    properties:
+                      apiVersion:
+                        default: serviceagents.nirmata.io/v1alpha1
+                        description: APIVersion is the API version of the referenced
+                          object
+                        type: string
+                      kind:
+                        default: LLMConfig
+                        description: Kind is the kind of the referenced object
+                        type: string
+                      name:
+                        description: Name is the name of the provider configuration
+                        type: string
+                      namespace:
+                        description: Namespace is the namespace of the provider configuration
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  triggers:
+                    description: Triggers defines when remediation should be triggered
+                    items:
+                      description: Trigger defines when remediation should be triggered
+                      properties:
+                        schedule:
+                          description: Schedule defines a cron-based schedule trigger
+                          properties:
+                            crontab:
+                              description: Crontab defines the cron expression for
+                                scheduling
+                              type: string
+                          required:
+                          - crontab
+                          type: object
+                      type: object
+                    type: array
+                required:
+                - actions
+                - filters
+                - llmConfigRef
+                - triggers
+                type: object
+              target:
+                description: Target defines the target configuration for remediation
+                properties:
+                  argoAppSelector:
+                    description: |-
+                      ArgoAppSelector defines how to select Argo applications for remediation
+                      If not specified, no applications will be selected
+                    properties:
+                      allApps:
+                        description: |-
+                          AllApps indicates whether to select all applications (wildcard behavior)
+                          When true, other selector fields are ignored
+                        type: boolean
+                      labelSelector:
+                        description: LabelSelector is used to select applications
+                          based on their labels
+                        properties:
+                          matchExpressions:
+                            description: matchExpressions is a list of label selector
+                              requirements. The requirements are ANDed.
+                            items:
+                              description: |-
+                                A label selector requirement is a selector that contains values, a key, and an operator that
+                                relates the key and values.
+                              properties:
+                                key:
+                                  description: key is the label key that the selector
+                                    applies to.
+                                  type: string
+                                operator:
+                                  description: |-
+                                    operator represents a key's relationship to a set of values.
+                                    Valid operators are In, NotIn, Exists and DoesNotExist.
+                                  type: string
+                                values:
+                                  description: |-
+                                    values is an array of string values. If the operator is In or NotIn,
+                                    the values array must be non-empty. If the operator is Exists or DoesNotExist,
+                                    the values array must be empty. This array is replaced during a strategic
+                                    merge patch.
+                                  items:
+                                    type: string
+                                  type: array
+                                  x-kubernetes-list-type: atomic
+                              required:
+                              - key
+                              - operator
+                              type: object
+                            type: array
+                            x-kubernetes-list-type: atomic
+                          matchLabels:
+                            additionalProperties:
+                              type: string
+                            description: |-
+                              matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+                              map is equivalent to an element of matchExpressions, whose key field is "key", the
+                              operator is "In", and the values array contains only "value". The requirements are ANDed.
+                            type: object
+                        type: object
+                        x-kubernetes-map-type: atomic
+                      names:
+                        description: Names is a list of specific Argo application
+                          names to select
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  clusterNames:
+                    description: ClusterNames is a list of cluster names to remediate
+                    items:
+                      type: string
+                    type: array
+                  clusterServerUrls:
+                    description: ClusterServerUrls is a list of cluster server URLs
+                      (optional)
+                    items:
+                      type: string
+                    type: array
+                required:
+                - clusterNames
+                type: object
+            required:
+            - environment
+            - remediation
+            - target
+            type: object
+          status:
+            description: RemediatorStatus defines the observed state of Remediator.
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
