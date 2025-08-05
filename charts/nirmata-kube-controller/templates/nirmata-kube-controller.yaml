@@ -505,16 +505,6 @@ spec:
           runAsNonRoot: true
           seccompProfile:
             type: RuntimeDefault
-        livenessProbe:
-          httpGet:
-            path: /metrics
-            port: 8888
-            scheme: HTTP
-        readinessProbe:
-          httpGet:
-            path: /metrics
-            port: 8888
-            scheme: HTTP
         volumeMounts:
         - mountPath: /etc/otel/config.yaml
           name: data
