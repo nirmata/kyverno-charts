@@ -52,6 +52,13 @@ rules:
       - watch
       - deletecollection
   - apiGroups:
+      - apiregistration.k8s.io
+    resources:
+      - apiservices
+    verbs:
+      - get
+      - list
+  - apiGroups:
       - rbac.authorization.k8s.io
     resources:
       - roles
@@ -131,6 +138,7 @@ rules:
       - ''
     resources:
       - configmaps
+      - pods
       - namespaces
     verbs:
       - get
