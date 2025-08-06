@@ -8,6 +8,15 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "kyverno.installReportsServer" -}}
+{{- if (index .Values "reports-server").install -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
 {{- define "kyverno.features.flags" -}}
 {{- $flags := list -}}
 {{- with .admissionReports -}}
