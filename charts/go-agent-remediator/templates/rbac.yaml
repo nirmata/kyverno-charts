@@ -4,7 +4,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "go-agent-remediator.fullname" . }}-role
+  name: {{ include "go-agent-remediator.name" . }}-role
   labels:
     app.kubernetes.io/name: {{ include "go-agent-remediator.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
@@ -83,7 +83,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "go-agent-remediator.fullname" . }}-rolebinding
+  name: {{ include "go-agent-remediator.name" . }}-rolebinding
   labels:
     app.kubernetes.io/name: {{ include "go-agent-remediator.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
@@ -91,7 +91,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "go-agent-remediator.fullname" . }}-role
+  name: {{ include "go-agent-remediator.name" . }}-role
 subjects:
 - kind: ServiceAccount
   name: {{ include "go-agent-remediator.serviceAccountName" . }}

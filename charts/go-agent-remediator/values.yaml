@@ -3,7 +3,6 @@ replicaCount: 1
 image:
   repository: ghcr.io/nirmata/go-agent-remediator
   pullPolicy: IfNotPresent
-  tag: "v0.0.3"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -27,7 +26,6 @@ securityContext:
 
 resources:
   limits:
-    cpu: 500m
     memory: 512Mi
   requests:
     cpu: 100m
@@ -37,74 +35,46 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
-# Operator Configuration
-operator:
-  metricsPort: 8443
-  healthProbePort: 8081
-  leaderElection: true
-  
-  # Environment configuration
+# LLM provider configuration for creating an LLMConfig CR
+llm:
+  enabled: true
+  provider: bedrock
+  model: ""
+  region: ""
+  secretName: ""
+
+
+# ToolConfig for GitHub (used by CreateGithubPR)
+tool:
+  enabled: true
+  name: github-tool
+  type: github
+  secretName: "github-token"
+  # optional; defaults to "token" if empty
+  secretKey: "token"
+  defaults:
+    prBranchPrefix: remediation-
+    prTitleTemplate: "[Auto-Remediation] Fix policy violations"
+    commitMessageTemplate: "Auto-fix: Remediate policy violations"
+
+# Remediator CR
+remediator:
+  enabled: true
+  name: remediator-agent
   environment:
     localCluster: false
     argoCD:
       hub: true
-
-  # Target configuration
   target:
     clusterNames: []
-    clusterServerUrls: []  # Optional
-    argoAppSelector: {}
-  # Example configurations for flexible Argo application targeting:
-  # 
-  # target:
-  #   clusterNames:
-  #     - cluster1
-  #     - cluster2
-  #     - cluster3
-  #   clusterServerUrls:  # Optional cluster server URLs for validation
-  #     - "https://cluster1.example.com"
-  #     - "https://cluster2.example.com"
-  #   argoAppSelector:
-  #     # Option 1: Select specific applications by name
-  #     names:
-  #       - web-frontend
-  #       - api-backend
-  #       - database-service
-  #     
-  #     # Option 2: Select applications by labels
-  #     labelSelector:
-  #       matchLabels:
-  #         team: platform
-  #         environment: production
-  #       matchExpressions:
-  #         - key: criticality
-  #           operator: In
-  #           values: ["high", "critical"]
-  #     
-  #     # Option 3: Select all applications (wildcard)
-  #     allApps: true
-
-  # Remediation configuration
+    clusterServerUrls: []
+    argoAppSelector:
+      allApps: true
   remediation:
-    triggers: []
-    # - schedule:
-    #     crontab: "0 * * * *"
-    
-    filters:
-      policySelector:
-        matchSeverity:
-          - high
-          - critical
-    
-    actions: []
-    # - type: github-pr
-    #   toolRef:
-    #     name: github-tool
-    #     namespace: default
-    
-    provider:
-      providerType: bedrock
-      bedrockModel: ""
+    schedule: "0 9 * * 1"
+    actions:
+      - type: CreateGithubPR
+        toolRefName: github-tool
 
 # Tool configurations
 toolConfigs: []

@@ -1,180 +1,297 @@
 # Go Agent Remediator Helm Chart
 
-This Helm chart deploys the Go Agent Remediator operator in a Kubernetes cluster. The operator works with ArgoCD to monitor applications, detect policy violations, and create automated remediation pull requests.
+This Helm chart deploys the Go Agent Remediator in a Kubernetes cluster. The remediator agent works with ArgoCD hub clusters to monitor applications, detect policy violations, and create automated remediation pull requests using AI models.
 
-## Prerequisites
+## What Gets Deployed
 
-- Kubernetes 1.16+
-- Helm 3.0+
-- ArgoCD installed in the cluster (if using ArgoCD integration)
+This chart creates:
+- **Deployment**: The remediator agent controller
+- **LLMConfig**: AI model configuration (Bedrock/Azure OpenAI)
+- **ToolConfig**: External tool configuration (GitHub)
+- **Remediator**: Main orchestration resource with targets, schedule, and actions
+- **RBAC**: ClusterRole and bindings for required permissions
 
-## Installing the Chart
+## Quick Start
 
-1. Add the Helm repository (replace with your actual repository):
+1. **Create required secrets first:**
 ```bash
-helm repo add your-repo https://your-helm-repo.example.com
-helm repo update
+# AWS Bedrock credentials
+kubectl create secret generic aws-bedrock-credentials \
+  --from-literal=aws_access_key_id=YOUR_ACCESS_KEY \
+  --from-literal=aws_secret_access_key=YOUR_SECRET_KEY \
+  --namespace your-namespace
+
+# GitHub token  
+kubectl create secret generic github-token \
+  --from-literal=token=YOUR_GITHUB_TOKEN \
+  --namespace your-namespace
 ```
 
-2. Install the chart:
+2. **Install the chart:**
 ```bash
-helm install go-agent-remediator your-repo/go-agent-remediator \
+helm install remediator ./charts/go-agent-remediator \
   --namespace your-namespace \
   --create-namespace \
-  --values values.yaml
+  --set llm.model="anthropic.claude-3-sonnet-20240229-v1:0" \
+  --set llm.region="us-west-2" \
+  --set llm.secretName="aws-bedrock-credentials" \
+  --set tool.secretName="github-token" \
+  --set remediator.target.clusterNames="{cluster-1,cluster-2}"
 ```
 
 ## Configuration
 
-The following table lists the configurable parameters of the Go Agent Remediator chart and their default values.
+### Core Parameters
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `replicaCount` | Number of operator replicas | `1` |
-| `image.repository` | Operator image repository | `your-registry/go-agent-remediator` |
-| `image.tag` | Operator image tag | `latest` |
+| `replicaCount` | Number of controller replicas | `1` |
+| `image.repository` | Container image repository | `ghcr.io/nirmata/go-agent-remediator` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
-| `operator.environment.localCluster` | Whether running in local cluster | `false` |
-| `operator.environment.argoCD.hub` | Whether this is an ArgoCD hub cluster | `true` |
-| `resources.limits.cpu` | CPU limit | `500m` |
-| `resources.limits.memory` | Memory limit | `512Mi` |
-| `resources.requests.cpu` | CPU request | `100m` |
-| `resources.requests.memory` | Memory request | `128Mi` |
 
-### Operator Configuration
+*Note: Image tag is automatically set to Chart.yaml appVersion*
 
-The operator can be configured using the following sections in your values.yaml:
+### LLM Configuration
 
-1. Environment Configuration:
+Configure your AI model provider:
+
 ```yaml
-operator:
+llm:
+  enabled: true
+  provider: bedrock                           # Currently supports "bedrock"
+  model: "anthropic.claude-3-sonnet-20240229-v1:0"
+  region: "us-west-2"
+  secretName: "aws-bedrock-credentials"       # Secret with AWS credentials
+  secretKey: "aws_access_key_id"              # Optional, key in secret
+```
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `llm.enabled` | Create LLMConfig resource | `true` |
+| `llm.provider` | LLM provider type | `bedrock` |
+| `llm.model` | Model ID or ARN | `""` |
+| `llm.region` | AWS region for Bedrock | `""` |
+| `llm.secretName` | Secret containing credentials | `""` |
+| `llm.secretKey` | Key within secret | `"aws_access_key_id"` |
+
+### Tool Configuration
+
+Configure external tools (GitHub for PRs):
+
+```yaml
+tool:
+  enabled: true
+  name: github-tool                           # ToolConfig name
+  type: github                                # Tool type
+  secretName: "github-token"                  # Secret with GitHub token
+  secretKey: "token"                          # Key in secret (optional)
+  defaults:
+    prBranchPrefix: remediation-
+    prTitleTemplate: "[Auto-Remediation] Fix policy violations"
+    commitMessageTemplate: "Auto-fix: Remediate policy violations"
+```
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `tool.enabled` | Create ToolConfig resource | `true` |
+| `tool.name` | ToolConfig resource name | `github-tool` |
+| `tool.type` | Tool type | `github` |
+| `tool.secretName` | Secret containing token | `"github-token"` |
+| `tool.secretKey` | Key within secret | `"token"` |
+
+### Remediator Configuration
+
+Main orchestration configuration:
+
+```yaml
+remediator:
+  enabled: true
+  name: nirmata-remediator
   environment:
-    localCluster: false
+    localCluster: false                       # Must be false for ArgoCD hub
     argoCD:
-      hub: true
-```
-
-### Target Configuration
-
-The operator supports a unified target configuration that applies a single application selector across multiple clusters:
-
-```yaml
-operator:
+      hub: true                               # Must be true for ArgoCD hub
   target:
-    # Example 1: Multiple clusters with specific application names
-    clusterNames:
-      - cluster1
-      - cluster2
-      - cluster3
-    clusterServerUrls:  # Optional for validation/filtering
-      - "https://cluster1.example.com"
-      - "https://cluster2.example.com"
-    argoAppSelector:
-      names:
-        - web-frontend
-        - api-service
-        - payment-processor
-      
-    # Example 2: Multiple clusters with label-based selection
-    # clusterNames:
-    #   - production-cluster
-    #   - staging-cluster
-    # argoAppSelector:
-    #   labelSelector:
-    #     matchLabels:
-    #       team: platform
-    #       environment: production
-    #     matchExpressions:
-    #       - key: criticality
-    #         operator: In
-    #         values: ["high", "critical"]
-    
-    # Example 3: Multiple clusters selecting all applications
-    # clusterNames:
-    #   - dev-cluster
-    #   - test-cluster
-    # argoAppSelector:
-    #   allApps: true
-    
-    # Example 4: Combined criteria (applications must match ALL criteria)
-    # clusterNames:
-    #   - production-cluster
-    # argoAppSelector:
-    #   names:
-    #     - critical-app
-    #   labelSelector:
-    #     matchLabels:
-    #       team: platform
-```
-
-#### Target Configuration Options
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `clusterNames` | `[]string` | List of cluster names to target for remediation |
-| `clusterServerUrls` | `[]string` | Optional list of cluster server URLs for validation/filtering |
-| `argoAppSelector` | `ArgoAppSelector` | Application selector that applies to all clusters |
-
-#### ArgoAppSelector Options
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `names` | `[]string` | List of specific Argo application names to select |
-| `labelSelector` | `metav1.LabelSelector` | Kubernetes label selector to match applications |
-| `allApps` | `bool` | Select all applications in all clusters (overrides other criteria) |
-
-**Selection Logic:**
-- **Single selector**: One ArgoAppSelector applies to all specified clusters
-- **Multiple criteria**: When multiple selection methods are specified, applications must match ALL criteria (AND logic)
-- **No default selection**: If `argoAppSelector` is omitted, no applications will be selected
-- **Priority**: `allApps: true` overrides all other selection criteria
-
-3. Remediation Settings:
-```yaml
-operator:
+    clusterNames: ["cluster-1", "cluster-2"] # Target clusters
+    clusterServerUrls: []                     # Optional validation URLs
+    argoAppSelector:                          # App selection criteria
+      allApps: true                           # Select all apps, OR:
+      # names: ["app-1", "app-2"]             # Specific app names, OR:
+      # labelSelector:                        # Label-based selection
+      #   matchLabels:
+      #     team: platform
   remediation:
-    triggers:
-      - schedule:
-          crontab: "0 * * * *"
-    filters:
-      policySelector:
-        matchSeverity:
-          - high
-          - critical
+    schedule: "0 9 * * 1"                     # Cron schedule (Mon 9am)
+    matchSeverity: ["high", "critical"]       # OPTIONAL: Policy severity filter
     actions:
-      - type: github-pr
-        toolRef:
-          name: github-tool
-          namespace: default
-    provider:
-      providerType: bedrock
-      bedrockModel: ""
+      - type: CreateGithubPR                  # Action type
+        toolRefName: github-tool              # Reference to ToolConfig
 ```
 
-4. Tool Configurations:
+### Policy Filtering
+
+Policy filters are **optional**. If not specified, the remediator will process all policy violations without severity filtering:
+
 ```yaml
-toolConfigs:
-  - name: github-tool
-    type: github
-    org: your-org
-    credentials:
-      secretRef:
-        name: github-secret
-        key: token
-    defaults:
-      repoUrl: ""
-      baseBranch: main
-      targetPath: ""
-      prBranchPrefix: fix/
-      commitAuthor:
-        name: Bot
-        email: bot@example.com
+remediation:
+  schedule: "0 9 * * 1"
+  # matchSeverity omitted - processes all violations
+  actions:
+    - type: CreateGithubPR
+      toolRefName: github-tool
 ```
 
-## Uninstalling the Chart
+To filter by severity levels:
+```yaml
+remediation:
+  schedule: "0 9 * * 1"
+  matchSeverity: ["high", "critical"]  # Only process high/critical violations
+  actions:
+    - type: CreateGithubPR
+      toolRefName: github-tool
+```
 
-To uninstall/delete the `go-agent-remediator` deployment:
+### Application Selection
+
+The `argoAppSelector` supports three selection methods:
+
+1. **Select all applications:**
+```yaml
+argoAppSelector:
+  allApps: true
+```
+
+2. **Select by application names:**
+```yaml
+argoAppSelector:
+  names:
+    - web-frontend
+    - api-backend
+    - payment-service
+```
+
+3. **Select by labels:**
+```yaml
+argoAppSelector:
+  labelSelector:
+    matchLabels:
+      team: platform
+      environment: production
+    matchExpressions:
+      - key: criticality
+        operator: In
+        values: ["high", "critical"]
+```
+
+4. **Combined selection (AND logic):**
+```yaml
+argoAppSelector:
+  names: ["critical-app"]
+  labelSelector:
+    matchLabels:
+      team: platform
+```
+
+### Resource Configuration
+
+```yaml
+resources:
+  limits:
+    memory: 512Mi                             # Memory limit (CPU limits removed - anti-pattern)
+  requests:
+    cpu: 100m                                 # CPU request for scheduling
+    memory: 128Mi                             # Memory request
+```
+
+## Examples
+
+### Basic Setup
+```yaml
+# values.yaml
+llm:
+  model: "anthropic.claude-3-sonnet-20240229-v1:0"
+  region: "us-west-2"
+  secretName: "aws-bedrock-credentials"
+
+tool:
+  secretName: "github-token"
+
+remediator:
+  target:
+    clusterNames: ["production-cluster"]
+    argoAppSelector:
+      allApps: true
+```
+
+### Advanced Setup with Label Selection
+```yaml
+# values.yaml
+llm:
+  model: "anthropic.claude-3-sonnet-20240229-v1:0"
+  region: "us-west-2"
+  secretName: "aws-bedrock-credentials"
+
+tool:
+  secretName: "github-token"
+  defaults:
+    prBranchPrefix: "auto-fix/"
+    prTitleTemplate: "[Security] Fix violations in {{.Application}}"
+
+remediator:
+  target:
+    clusterNames: ["prod-east", "prod-west"]
+    argoAppSelector:
+      labelSelector:
+        matchLabels:
+          team: security
+          criticality: high
+  remediation:
+    schedule: "0 2 * * *"                     # Run at 2am daily
+    matchSeverity: ["critical"]               # Only critical violations
+```
+
+## Prerequisites
+
+1. **ArgoCD Hub Cluster**: Must be deployed in an ArgoCD hub cluster
+2. **Policy Engine**: Kyverno or similar must be generating PolicyReports
+3. **Secrets**: AWS Bedrock credentials and GitHub token
+4. **RBAC**: Chart creates required ClusterRole permissions
+
+## Troubleshooting
+
+### Common Issues
+
+1. **LLMConfig not working:**
+   - Verify AWS credentials in secret
+   - Check Bedrock model availability in your region
+   - Ensure IAM permissions for Bedrock access
+
+2. **No applications selected:**
+   - Verify `argoAppSelector` configuration
+   - Check ArgoCD Application labels/names
+   - Ensure clusters exist in ArgoCD
+
+3. **GitHub PR creation fails:**
+   - Verify GitHub token permissions
+   - Check repository access
+   - Ensure token has PR creation rights
+
+### Debugging
+
+Check the controller logs:
+```bash
+kubectl logs -n your-namespace deployment/remediator-go-agent-remediator -f
+```
+
+Check resource status:
+```bash
+kubectl get remediator,llmconfig,toolconfig -n your-namespace
+```
+
+## Uninstalling
 
 ```bash
-helm delete go-agent-remediator -n your-namespace
-``` 
+helm uninstall remediator -n your-namespace
+```
+
+Note: This removes the deployment and CRDs but preserves secrets.

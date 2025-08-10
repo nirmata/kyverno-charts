@@ -1,8 +1,15 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "go-agent-remediator.name" -}}
+{{- define "go-agent-remediator.chartName" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Resource name (always remediator-agent)
+*/}}
+{{- define "go-agent-remediator.name" -}}
+remediator-agent
 {{- end }}
 
 {{/*
@@ -46,16 +53,18 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "go-agent-remediator.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "go-agent-remediator.name" . }}
+app.kubernetes.io/name: remediator-agent
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+
 
 {{/*
 Create the name of the service account to use
 */}}
 {{- define "go-agent-remediator.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "go-agent-remediator.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "go-agent-remediator.name" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

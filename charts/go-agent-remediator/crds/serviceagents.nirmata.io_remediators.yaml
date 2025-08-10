@@ -156,7 +156,6 @@ spec:
                     type: array
                 required:
                 - actions
-                - filters
                 - llmConfigRef
                 - triggers
                 type: object

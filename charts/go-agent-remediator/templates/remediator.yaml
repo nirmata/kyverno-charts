@@ -1,0 +1,48 @@
+{{- if .Values.remediator.enabled }}
+apiVersion: serviceagents.nirmata.io/v1alpha1
+kind: Remediator
+metadata:
+  name: {{ .Values.remediator.name | default (include "go-agent-remediator.name" .) }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-agent-remediator.labels" . | nindent 4 }}
+spec:
+  environment:
+    localCluster: {{ .Values.remediator.environment.localCluster }}
+    argoCD:
+      hub: {{ .Values.remediator.environment.argoCD.hub }}
+  target:
+    clusterNames:
+      {{- toYaml .Values.remediator.target.clusterNames | nindent 6 }}
+    {{- if .Values.remediator.target.clusterServerUrls }}
+    clusterServerUrls:
+      {{- toYaml .Values.remediator.target.clusterServerUrls | nindent 6 }}
+    {{- end }}
+    {{- with .Values.remediator.target.argoAppSelector }}
+    argoAppSelector:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  remediation:
+    triggers:
+      - schedule:
+          crontab: {{ .Values.remediator.remediation.schedule | quote }}
+    {{- if .Values.remediator.remediation.matchSeverity }}
+    filters:
+      policySelector:
+        matchSeverity:
+          {{- toYaml .Values.remediator.remediation.matchSeverity | nindent 10 }}
+    {{- end }}
+    llmConfigRef:
+      name: {{ include "go-agent-remediator.name" . }}-llm
+      namespace: {{ .Release.Namespace }}
+    actions:
+      {{- range .Values.remediator.remediation.actions }}
+      - type: {{ .type }}
+        {{- if or (eq .type "CreateGithubPR") (eq .type "DryRun") }}
+        toolRef:
+          name: {{ .toolRefName | default $.Values.tool.name | default (printf "%s-github" (include "go-agent-remediator.name" $)) }}
+          namespace: {{ $.Release.Namespace }}
+        {{- end }}
+      {{- end }}
+{{- end }}
+

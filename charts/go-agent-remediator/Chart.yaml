@@ -1,12 +1,12 @@
 apiVersion: v2
-name: go-agent-remediator
-description: A Helm chart for the Remediator Service Agent
+name: remediator-agent
+description: A Helm chart for the Remediator Agent
 type: application
-version: 0.0.1
-appVersion: "v0.0.1"
+version: 0.1.0
+appVersion: "v0.1.0"
 keywords:
   - kubernetes
-  - operator
+  - serviceagents
   - argocd
   - remediation
 maintainers:

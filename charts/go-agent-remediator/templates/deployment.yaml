@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "go-agent-remediator.fullname" . }}
+  name: {{ include "go-agent-remediator.name" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "go-agent-remediator.labels" . | nindent 4 }}
@@ -28,19 +28,17 @@ spec:
         {{- toYaml .Values.securityContext | nindent 8 }}
       containers:
         - name: manager
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            - --metrics-bind-address=:{{ .Values.operator.metricsPort }}
-            {{- if .Values.operator.leaderElection }}
+            - --metrics-bind-address=:8443
             - --leader-elect
-            {{- end }}
-            - --health-probe-bind-address=:{{ .Values.operator.healthProbePort }}
+            - --health-probe-bind-address=:8081
           ports:
-            - containerPort: {{ .Values.operator.metricsPort }}
+            - containerPort: 8443
               name: metrics
               protocol: TCP
-            - containerPort: {{ .Values.operator.healthProbePort }}
+            - containerPort: 8081
               name: health
               protocol: TCP
           livenessProbe:
@@ -57,17 +55,6 @@ spec:
             periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          env:
-            - name: LOCAL_CLUSTER
-              value: {{ .Values.operator.environment.localCluster | quote }}
-            - name: ARGOCD_HUB
-              value: {{ .Values.operator.environment.argoCD.hub | quote }}
-            - name: REMEDIATION_PROVIDER_TYPE
-              value: {{ .Values.operator.remediation.provider.providerType }}
-            {{- if .Values.operator.remediation.provider.bedrockModel }}
-            - name: BEDROCK_MODEL
-              value: {{ .Values.operator.remediation.provider.bedrockModel }}
-            {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
