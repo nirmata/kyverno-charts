@@ -1,6 +1,6 @@
 # Go Agent Remediator Helm Chart
 
-This Helm chart deploys the Go Agent Remediator in a Kubernetes cluster. The remediator agent works with ArgoCD hub clusters to monitor applications, detect policy violations, and create automated remediation pull requests using AI models.
+This Helm chart deploys Remediator Service agent in a Kubernetes cluster.
 
 ## What Gets Deployed
 
@@ -19,12 +19,13 @@ This chart creates:
 kubectl create secret generic aws-bedrock-credentials \
   --from-literal=aws_access_key_id=YOUR_ACCESS_KEY \
   --from-literal=aws_secret_access_key=YOUR_SECRET_KEY \
-  --namespace your-namespace
+  --from-literal=aws_session_token=YOUR_SECRET_SESSION_TOKEN \
+  --namespace nirmata
 
 # GitHub token  
 kubectl create secret generic github-token \
   --from-literal=token=YOUR_GITHUB_TOKEN \
-  --namespace your-namespace
+  --namespace nirmata
 ```
 
 2. **Install the chart:**
@@ -32,11 +33,10 @@ kubectl create secret generic github-token \
 helm install remediator ./charts/go-agent-remediator \
   --namespace your-namespace \
   --create-namespace \
-  --set llm.model="anthropic.claude-3-sonnet-20240229-v1:0" \
+  --set llm.model="arn:aws:bedrock:us-west-2:844333597536:application-inference-profile/mo5h0avls5pv" \
   --set llm.region="us-west-2" \
   --set llm.secretName="aws-bedrock-credentials" \
-  --set tool.secretName="github-token" \
-  --set remediator.target.clusterNames="{cluster-1,cluster-2}"
+  --set tool.secretName="github-token"
 ```
 
 ## Configuration
@@ -59,10 +59,9 @@ Configure your AI model provider:
 llm:
   enabled: true
   provider: bedrock                           # Currently supports "bedrock"
-  model: "anthropic.claude-3-sonnet-20240229-v1:0"
+  model: "arn:aws:bedrock:us-west-2:844333597536:application-inference-profile/mo5h0avls5pv"
   region: "us-west-2"
-  secretName: "aws-bedrock-credentials"       # Secret with AWS credentials
-  secretKey: "aws_access_key_id"              # Optional, key in secret
+  secretName: "aws-bedrock-credentials"       # Secret with AWS credentials              # Optional, key in secret
 ```
 
 | Parameter | Description | Default |
@@ -84,7 +83,7 @@ tool:
   name: github-tool                           # ToolConfig name
   type: github                                # Tool type
   secretName: "github-token"                  # Secret with GitHub token
-  secretKey: "token"                          # Key in secret (optional)
+  secretKey: "token"                          # Key in secret (optional, default will be set to token)
   defaults:
     prBranchPrefix: remediation-
     prTitleTemplate: "[Auto-Remediation] Fix policy violations"
@@ -121,34 +120,11 @@ remediator:
       #   matchLabels:
       #     team: platform
   remediation:
-    schedule: "0 9 * * 1"                     # Cron schedule (Mon 9am)
+    schedule: "0 */6 * * *"                   # Cron schedule (every 6 hours)
     matchSeverity: ["high", "critical"]       # OPTIONAL: Policy severity filter
     actions:
       - type: CreateGithubPR                  # Action type
         toolRefName: github-tool              # Reference to ToolConfig
-```
-
-### Policy Filtering
-
-Policy filters are **optional**. If not specified, the remediator will process all policy violations without severity filtering:
-
-```yaml
-remediation:
-  schedule: "0 9 * * 1"
-  # matchSeverity omitted - processes all violations
-  actions:
-    - type: CreateGithubPR
-      toolRefName: github-tool
-```
-
-To filter by severity levels:
-```yaml
-remediation:
-  schedule: "0 9 * * 1"
-  matchSeverity: ["high", "critical"]  # Only process high/critical violations
-  actions:
-    - type: CreateGithubPR
-      toolRefName: github-tool
 ```
 
 ### Application Selection
@@ -252,10 +228,9 @@ remediator:
 
 ## Prerequisites
 
-1. **ArgoCD Hub Cluster**: Must be deployed in an ArgoCD hub cluster
-2. **Policy Engine**: Kyverno or similar must be generating PolicyReports
-3. **Secrets**: AWS Bedrock credentials and GitHub token
-4. **RBAC**: Chart creates required ClusterRole permissions
+1. **ArgoCD Hub Cluster**: Must be deployed in an ArgoCD hub cluster (Plans to support other environments.)
+2. **Secrets**: AWS Bedrock credentials and GitHub token
+3. **RBAC**: Chart creates required ClusterRole permissions
 
 ## Troubleshooting
 
@@ -275,18 +250,6 @@ remediator:
    - Verify GitHub token permissions
    - Check repository access
    - Ensure token has PR creation rights
-
-### Debugging
-
-Check the controller logs:
-```bash
-kubectl logs -n your-namespace deployment/remediator-go-agent-remediator -f
-```
-
-Check resource status:
-```bash
-kubectl get remediator,llmconfig,toolconfig -n your-namespace
-```
 
 ## Uninstalling
 

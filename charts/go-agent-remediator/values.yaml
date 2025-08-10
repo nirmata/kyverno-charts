@@ -71,7 +71,7 @@ remediator:
     argoAppSelector:
       allApps: true
   remediation:
-    schedule: "0 9 * * 1"
+    schedule: "0 */6 * * *"
     actions:
       - type: CreateGithubPR
         toolRefName: github-tool
