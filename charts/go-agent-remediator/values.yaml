@@ -13,6 +13,7 @@ serviceAccount:
   annotations: {}
   name: ""
 
+
 resources:
   limits:
     memory: 512Mi
@@ -33,7 +34,6 @@ llm:
   secretName: ""
   # TODO: this is not required, but we need to set it to something. Make the key optional in the secretRef.
   secretKey: "aws_access_key_id"
-
 
 # ToolConfig for GitHub (used by CreateGithubPR)
 tool:
