@@ -75,23 +75,3 @@ remediator:
     actions:
       - type: CreateGithubPR
         toolRefName: github-tool
-
-# Tool configurations
-toolConfigs: []
-# - name: github-tool
-#   type: github
-#   org: your-org
-#   credentials:
-#     secretRef:
-#       name: github-secret
-#       key: token
-#   defaults:
-#     repoUrl: ""
-#     baseBranch: main
-#     targetPath: ""
-#     prBranchPrefix: fix/
-#     commitAuthor:
-#       name: Bot
-#       email: bot@example.com
-#     prTitleTemplate: "fix: {{.Policy}} violation in {{.Resource}}"
-#     commitMessageTemplate: "fix: Remediate {{.Policy}} violation in {{.Resource}}" 
