@@ -1,0 +1,77 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/nirmata/go-agent-remediator
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podSecurityContext: {}
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65532
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# LLM provider configuration for creating an LLMConfig CR
+llm:
+  enabled: true
+  provider: bedrock
+  model: ""
+  region: ""
+  secretName: ""
+
+
+# ToolConfig for GitHub (used by CreateGithubPR)
+tool:
+  enabled: true
+  name: github-tool
+  type: github
+  secretName: "github-token"
+  # optional; defaults to "token" if empty
+  secretKey: "token"
+  defaults:
+    prBranchPrefix: remediation-
+    prTitleTemplate: "[Auto-Remediation] Fix policy violations"
+    commitMessageTemplate: "Auto-fix: Remediate policy violations"
+
+# Remediator CR
+remediator:
+  enabled: true
+  name: remediator-agent
+  environment:
+    localCluster: false
+    argoCD:
+      hub: true
+  target:
+    clusterNames: []
+    clusterServerUrls: []
+    argoAppSelector:
+      allApps: true
+  remediation:
+    schedule: "0 */6 * * *"
+    actions:
+      - type: CreateGithubPR
+        toolRefName: github-tool
