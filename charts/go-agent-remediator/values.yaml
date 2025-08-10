@@ -13,17 +13,6 @@ serviceAccount:
   annotations: {}
   name: ""
 
-podAnnotations: {}
-podSecurityContext: {}
-
-securityContext:
-  capabilities:
-    drop:
-      - ALL
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 65532
-
 resources:
   limits:
     memory: 512Mi
@@ -42,6 +31,8 @@ llm:
   model: ""
   region: ""
   secretName: ""
+  # TODO: this is not required, but we need to set it to something. Make the key optional in the secretRef.
+  secretKey: "aws_access_key_id"
 
 
 # ToolConfig for GitHub (used by CreateGithubPR)
