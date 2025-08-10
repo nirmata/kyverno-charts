@@ -21630,6 +21630,25 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/pod-security-policies-0.1.0/pod-security-policies-0.1.0.tgz
     version: 0.1.0
+  remediator-agent:
+  - apiVersion: v2
+    appVersion: v0.1.0-rc1
+    created: "2025-08-10T19:37:02.061835105Z"
+    description: A Helm chart for the Remediator Agent
+    digest: b62d2894c00c753c4bfeffdcdebc466f66b69323a8b5d6324ba8b37c1d55089b
+    keywords:
+    - kubernetes
+    - serviceagents
+    - argocd
+    - remediation
+    maintainers:
+    - email: support@nirmata.com
+      name: Nirmata
+    name: remediator-agent
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/remediator-agent-0.1.0-rc1/remediator-agent-0.1.0-rc1.tgz
+    version: 0.1.0-rc1
   venafi-adapter:
   - apiVersion: v1
     appVersion: v0.1.0
@@ -21852,4 +21871,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-08-07T11:26:25.824015616Z"
+generated: "2025-08-10T19:37:02.062930439Z"
