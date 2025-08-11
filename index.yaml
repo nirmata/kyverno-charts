@@ -2579,6 +2579,75 @@ entries:
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: v1.14.3-n4k.nirmata.4
+    created: "2025-08-11T07:56:48.446136934Z"
+    dependencies:
+    - condition: grafana.enabled
+      name: grafana
+      repository: ""
+      version: 3.4.3
+    - condition: reports-server.install
+      name: reports-server
+      repository: https://nirmata.github.io/reports-server
+      version: 0.2.3
+    - condition: crds.install
+      name: crds
+      repository: ""
+      version: 3.4.3
+    description: Kubernetes Native Policy Management
+    digest: 3d1dd8cf4d094159af8086b1bef61a5a837a4df005ad8f44ee571103b010a9f1
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy
+    - validating webhook
+    - admission controller
+    - mutation
+    - mutate
+    - validate
+    - generate
+    - supply chain
+    - security
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://kyverno.io/
+    name: kyverno
+    sources:
+    - https://github.com/nirmata/enterprise-kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.4.5-rc2/kyverno-3.4.5-rc2.tgz
+    version: 3.4.5-rc2
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: Added support for ValidatingPolicies and ImageValidatingPolicies CRDs
+        - kind: added
+          description: Added CRD watcher feature for improved performance
+        - kind: added
+          description: Added Horizontal Pod Autoscaler support for admission controller
+        - kind: added
+          description: Added controller runtime metrics configuration
+        - kind: added
+          description: Added configurable RBAC role aggregation
+        - kind: added
+          description: Added DNS configuration support
+        - kind: added
+          description: Added resource limits for cleanup hooks
+        - kind: changed
+          description: Updated to Kubernetes 1.25+ minimum requirement
+        - kind: changed
+          description: Enhanced RBAC permissions for new CRD types
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: v1.14.3-n4k.nirmata.4
     created: "2025-08-07T11:19:33.833780772Z"
     dependencies:
     - condition: grafana.enabled
@@ -21950,4 +22019,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-08-11T07:55:45.183060377Z"
+generated: "2025-08-11T07:56:48.447628809Z"
