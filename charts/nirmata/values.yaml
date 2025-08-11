@@ -116,7 +116,7 @@ crds:
       policyreports: true
 
   reportsServer:
-    enabled: true
+    enabled: false
 
   # -- Additional CRDs annotations
   annotations: {}
@@ -2158,7 +2158,7 @@ reportsController:
 
 reports-server:
 
-  install: true
+  install: false
 
   # -- Internal settings used with `helm template` to generate install manifest
   # @ignored
