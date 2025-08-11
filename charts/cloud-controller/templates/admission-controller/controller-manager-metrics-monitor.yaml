@@ -1,4 +1,3 @@
-{{- if .Values.admissionController.enabled -}}
 {{- if .Values.admissionController.metricsService.createServiceMonitor }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -16,5 +15,4 @@ spec:
   selector:
     matchLabels:
       control-plane: controller-manager
-{{- end }}
 {{- end }}

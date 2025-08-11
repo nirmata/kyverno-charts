@@ -1,4 +1,3 @@
-{{- if .Values.admissionController.enabled -}}
 {{- if .Values.admissionController.metricsService.createServiceMonitor }}
 apiVersion: v1
 kind: Service
@@ -15,5 +14,4 @@ spec:
   {{- include "cloud-control.admission-controller.matchLabels" . | nindent 4 }}
   ports:
 	{{- .Values.admissionController.metricsService.ports | toYaml | nindent 2 }}
-{{- end }}
 {{- end }}
