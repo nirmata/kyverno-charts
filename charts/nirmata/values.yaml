@@ -2158,7 +2158,7 @@ reportsController:
 
 reports-server:
 
-  install: true
+  install: false
 
   # -- Internal settings used with `helm template` to generate install manifest
   # @ignored
