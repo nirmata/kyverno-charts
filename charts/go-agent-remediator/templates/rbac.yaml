@@ -1,0 +1,98 @@
+# TODO: Already pruned many of the unnecessary permissions, 
+# but still need to check if we need to remove any more permissions
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "go-agent-remediator.name" . }}-role
+  labels:
+    app.kubernetes.io/name: {{ include "go-agent-remediator.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+rules:
+- apiGroups:
+  - serviceagents.nirmata.io
+  resources:
+  - remediators
+  - remediators/status
+  - remediators/finalizers
+  - llmconfigs
+  - toolconfigs
+  - toolconfigs/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - applications
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - wgpolicyk8s.io
+  resources:
+  - policyreports
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - kyverno.io
+  resources:
+  - policies
+  - clusterpolicies
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "go-agent-remediator.name" . }}-rolebinding
+  labels:
+    app.kubernetes.io/name: {{ include "go-agent-remediator.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "go-agent-remediator.name" . }}-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "go-agent-remediator.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }} 

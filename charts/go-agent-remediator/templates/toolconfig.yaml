@@ -1,0 +1,20 @@
+{{- if .Values.tool.enabled }}
+apiVersion: serviceagents.nirmata.io/v1alpha1
+kind: ToolConfig
+metadata:
+  name: {{ .Values.tool.name | default (printf "%s-github" (include "go-agent-remediator.name" .)) }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-agent-remediator.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.tool.type | quote }}
+  credentials:
+    secretRef:
+      name: {{ .Values.tool.secretName | quote }}
+      key: {{ default "token" .Values.tool.secretKey | quote }}
+  defaults:
+    prBranchPrefix: {{ .Values.tool.defaults.prBranchPrefix | quote }}
+    prTitleTemplate: {{ .Values.tool.defaults.prTitleTemplate | quote }}
+    commitMessageTemplate: {{ .Values.tool.defaults.commitMessageTemplate | quote }}
+{{- end }}
+

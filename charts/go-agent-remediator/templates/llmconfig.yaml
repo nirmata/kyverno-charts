@@ -1,0 +1,24 @@
+{{- if .Values.llm.enabled }}
+apiVersion: serviceagents.nirmata.io/v1alpha1
+kind: LLMConfig
+metadata:
+  name: {{ include "go-agent-remediator.name" . }}-llm
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-agent-remediator.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.llm.provider | quote }}
+  {{- if eq .Values.llm.provider "bedrock" }}
+  bedrock:
+    model: {{ .Values.llm.model | quote }}
+    region: {{ .Values.llm.region | quote }}
+    {{- if .Values.llm.secretName }}
+    secretRef:
+      name: {{ .Values.llm.secretName | quote }}
+      {{- if .Values.llm.secretKey }}
+      key: {{ .Values.llm.secretKey | quote }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
