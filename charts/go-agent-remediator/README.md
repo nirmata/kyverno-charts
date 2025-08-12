@@ -13,7 +13,12 @@ This chart creates:
 
 ## Quick Start
 
-1. **Create required secrets first:**
+1. Create `nirmata` namespace
+```bash
+kubectl create namespace nirmata
+```
+
+2. **Create required secrets first:**
 ```bash
 # AWS Bedrock credentials
 kubectl create secret generic aws-bedrock-credentials \
@@ -28,9 +33,14 @@ kubectl create secret generic github-token \
   --namespace nirmata
 ```
 
-2. **Install the chart:**
+3. **Install the chart:**
 ```bash
-helm install remediator ./charts/go-agent-remediator \
+
+helm repo add nirmata https://nirmata.github.io/kyverno-charts
+
+helm repo update nirmata
+
+helm install remediator nirmata/remediator-agent --devel \
   --namespace your-namespace \
   --create-namespace \
   --set llm.model="arn:aws:bedrock:us-west-2:844333597536:application-inference-profile/mo5h0avls5pv" \
