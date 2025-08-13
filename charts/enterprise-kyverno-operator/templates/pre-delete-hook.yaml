@@ -8,6 +8,9 @@ metadata:
     "helm.sh/hook": pre-delete
     "helm.sh/hook-weight": "3"
     "helm.sh/hook-delete-policy": hook-succeeded
+  {{- if .Values.globalAnnotations }}
+    {{- toYaml .Values.globalAnnotations| nindent 4 }}
+  {{- end }}
   labels:
     app: {{ template "enterprise-kyverno.name" . }}-operator
 {{ include "enterprise-kyverno.labels" . | indent 4 }}
@@ -30,29 +33,21 @@ spec:
         {{- end }}
       containers:
         - name: kubectl
-          image: {{ .Values.predeletehookimage | default "ghcr.io/nirmata/kubectl:1.24" }}
+          image: {{ .Values.predeletehookimage | default "ghcr.io/nirmata/kubectl:1.29.1" }}
           imagePullPolicy: IfNotPresent
           command:
-          - /bin/sh
+          - sh
           - -c
           - >
-              for i in {{ include "enterprise-kyverno.policysetsStr" . }}; 
-              do 
-                kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete PolicySet $i;
-              done;
-              {{- if .Values.awsAdapter.createCR }}
-              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoadapters aws-adapter-config;
-              {{- end }}
-              {{- if .Values.imageScanAdapter.createCR }}
-              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoadapters image-scan-adapter-config;
-              {{- end }}
-              {{- if .Values.cisAdapter.createCR }}
-              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoadapters cis-adapter-config;
-              {{- end }}
+              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete policyset --all;
               {{- if .Values.kyverno.createCR }}
-              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoes kyverno;
+              kubectl -n {{ include "enterprise-kyverno.namespace" . }} patch kyvernoconfigs kyverno -p '{"metadata":{"finalizers":[]}}' --type=merge;
+
+              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoconfigs kyverno;
+              
               sleep 10;
               {{- end }}
+              echo "OVER!"
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           resources:

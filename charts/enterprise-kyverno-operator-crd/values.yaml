@@ -28,7 +28,6 @@ image:
     username:
     password:
 
-
 rbac:
   create: true
   operatorHasAdminPerms: false
@@ -42,13 +41,6 @@ rbac:
     name: ""
 
 enableWebhook: true
-secureOperator: true
-kyvernoDeployment: kyverno-admission-controller
-kyvernoNamespace: kyverno
-enablePolicyset: false
-
-preventPolicyTamper: true
-
 # Whether certificate management is done by "cert-manager", "operator", "other"
 certManager: operator
 
@@ -90,54 +82,17 @@ kyverno:
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
         extraResources:
-        - apiGroups:
-          - '*'
-          resources:
-          - '*'
-          verbs:
-          - get
-          - list
-          - watch
   templating:
     enabled: false
-    image: ghcr.io/nirmata/kubectl:1.33.2
+    image: ghcr.io/nirmata/kubectl:1.29.1
     version: ~
   customNamespaces: false
   webhooksCleanup:
     enable: false
     enabled: false
   crds:
-    migration:
-      # -- Enable CRDs migration using helm post upgrade hook
-      enabled: true
-      image:
-        # -- (string) Image registry
-        registry: ghcr.io
-        # -- (string) Image repository
-        repository: nirmata/kyverno-cli
-  #   groups:
-  #     kyverno:
-  #       admissionreports: true
-  #       backgroundscanreports: true
-  #       cleanuppolicies: true
-  #       clusteradmissionreports: true
-  #       clusterbackgroundscanreports: true
-  #       clustercleanuppolicies: true
-  #       clusterpolicies: true
-  #       globalcontextentries: true
-  #       policies: true
-  #       policyexceptions: true
-  #       updaterequests: true
-  #   # -- Install CRDs in group `reports.kyverno.io`
-  #     reports:
-  #       clusterephemeralreports: true
-  #       ephemeralreports: true
-
-  #     # -- Install CRDs in group `wgpolicyk8s.io`
-  #     wgpolicyk8s:
-  #       clusterpolicyreports: true
-  #       policyreports: true
-  #   install: true
+    install: true
+    annotations: {}
   cleanupController:
     # -- Enable cleanup controller.
     enabled: true
@@ -170,14 +125,6 @@ kyverno:
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
         extraResources:
-        - apiGroups:
-          - '*'
-          resources:
-          - '*'
-          verbs:
-          - get
-          - list
-          - watch
   backgroundController:
     # -- Enable background controller.
     enabled: true
@@ -194,48 +141,6 @@ kyverno:
         # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
         # @default -- See [values.yaml](values.yaml)
         extraResources:
-        - apiGroups:
-          - '*'
-          resources:
-          - '*'
-          verbs:
-          - get
-          - list
-          - watch
-        - apiGroups:
-          - networking.k8s.io
-          resources:
-          - ingresses
-          - ingressclasses
-          - networkpolicies
-          verbs:
-          - create
-          - update
-          - patch
-          - delete
-        - apiGroups:
-          - rbac.authorization.k8s.io
-          resources:
-          - rolebindings
-          - roles
-          verbs:
-          - create
-          - update
-          - patch
-          - delete
-        - apiGroups:
-          - ''
-          resources:
-          - configmaps
-          - secrets
-          - resourcequotas
-          - limitranges
-          verbs:
-          - create
-          - update
-          - patch
-          - delete
-
   kyverno:
     customLabels: {}
   nameOverride: "kyverno"
@@ -248,7 +153,7 @@ kyverno:
     # -- Image repository
     repository: ghcr.io
     # -- Image tag
-    tag: v1.12.6-n4k.nirmata.2
+    tag: v1.11.4-n4k.nirmata.3
 
   # -- Override default exclude namespaces (default kyverno, kube-system, nirmata, nirmata-system )
   excludedNamespacesForWebhook: []
@@ -259,19 +164,12 @@ kyverno:
       generateValidatingAdmissionPolicy:
         # -- Enables the feature
         enabled: false
-      omitEvents:
-        # -- Events which should not be emitted (possible values `PolicyViolation`, `PolicyApplied`, `PolicyError`, and `PolicySkipped`)
-        eventTypes:
-          # - PolicyApplied
-          # - PolicySkipped
-          # - PolicyViolation
-          # - PolicyError
     policyReportsCleanup:
       enabled: false
       image:
         registry: ~
         repository: ghcr.io/nirmata/kubectl
-        tag: '1.31.1'
+        tag: '1.29.1'
         pullPolicy: ~
       podSecurityContext: {}
       securityContext:
@@ -283,28 +181,27 @@ kyverno:
         readOnlyRootFilesystem: true
         capabilities:
           drop:
-          - ALL
+            - ALL
         seccompProfile:
           type: RuntimeDefault
     apiVersionOverride:
       podDisruptionBudget: "policy/v1"
     licenseManager:
-      imageTag: 0.1.17
+      imageTag: v0.1.8
     webhooksCleanup:
       enabled: false
-      image: ghcr.io/nirmata/kubectl:1.31.1
+      image: ghcr.io/nirmata/kubectl:1.29.1
     cleanupJobs:
       admissionReports:
         image:
-          tag: '1.31.1'
+          tag: '1.29.0'
       clusterAdmissionReports:
         image:
-          tag: '1.31.1'
+          tag: '1.29.0'
 
 policies:
   chartRepoUsername:
-  policySets: "[]"
-
+  policySets:
 
 awsAdapter:
   createCR: false
@@ -323,7 +220,6 @@ awsAdapter:
   eksCluster:
     name:
     region:
-
 
 imageScanAdapter:
   createCR: false
@@ -381,8 +277,6 @@ securityContext:
 
 # -- Configmap storing custom CA certificate if any
 customCAConfigMap:
-# -- CA certificate data to be stored in a ConfigMap and mounted to the deployment
-customCACert: ""
 # -- Path containing ssl certs within the container. Used only if customCAConfigMap is used
 systemCertPath: /etc/ssl/certs
 
@@ -397,10 +291,10 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-  - host: chart-example.local
-    paths:
-    - path: /
-      pathType: ImplementationSpecific
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -432,115 +326,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-# CRDs configuration
-crds:
-
-  # -- Whether to have Helm install the Kyverno CRDs, if the CRDs are not installed by Helm, they must be added before policies can be created
-  install: true
-
-  groups:
-
-    # -- Install CRDs in group `kyverno.io`
-    kyverno:
-      admissionreports: true
-      backgroundscanreports: true
-      cleanuppolicies: true
-      clusteradmissionreports: true
-      clusterbackgroundscanreports: true
-      clustercleanuppolicies: true
-      clusterpolicies: true
-      globalcontextentries: true
-      policies: true
-      policyexceptions: true
-      updaterequests: true
-
-    # -- Install CRDs in group `reports.kyverno.io`
-    reports:
-      clusterephemeralreports: true
-      ephemeralreports: true
-
-    # -- Install CRDs in group `wgpolicyk8s.io`
-    wgpolicyk8s:
-      clusterpolicyreports: true
-      policyreports: true
-
-  # -- Additional CRDs annotations
-  annotations: {}
-    # argocd.argoproj.io/sync-options: Replace=true
-    # strategy.spinnaker.io/replace: 'true'
-
-  # -- Additional CRDs labels
-  customLabels: {}
-
-  migration:
-
-    # -- Enable CRDs migration using helm post upgrade hook
-    enabled: true
-
-    # -- Resources to migrate
-    resources:
-    - admissionreports.kyverno.io
-    - backgroundscanreports.kyverno.io
-    - cleanuppolicies.kyverno.io
-    - clusteradmissionreports.kyverno.io
-    - clusterbackgroundscanreports.kyverno.io
-    - clustercleanuppolicies.kyverno.io
-    - clusterpolicies.kyverno.io
-    - globalcontextentries.kyverno.io
-    - policies.kyverno.io
-    - policyexceptions.kyverno.io
-    - updaterequests.kyverno.io
-
-    image:
-      # -- (string) Image registry
-      registry: ghcr.io
-      # -- (string) Image repository
-      repository: nirmata/kyverno-cli
-      # -- (string) Image tag
-      # Defaults to appVersion in Chart.yaml if omitted
-      tag: ~
-      # -- (string) Image pull policy
-      pullPolicy: IfNotPresent
-
-    # -- Image pull secrets
-    imagePullSecrets: []
-    # - name: secretName
-
-    # -- Security context for the pod
-    podSecurityContext: {}
-
-    # -- Node labels for pod assignment
-    nodeSelector: {}
-
-    # -- List of node taints to tolerate
-    tolerations: []
-
-    # -- Pod anti affinity constraints.
-    podAntiAffinity: {}
-
-    # -- Pod affinity constraints.
-    podAffinity: {}
-
-    # -- Pod labels.
-    podLabels: {}
-
-    # -- Pod annotations.
-    podAnnotations: {}
-
-    # -- Node affinity constraints.
-    nodeAffinity: {}
-
-    # -- Security context for the hook containers
-    securityContext:
-      runAsUser: 65534
-      runAsGroup: 65534
-      runAsNonRoot: true
-      privileged: false
-      allowPrivilegeEscalation: false
-      readOnlyRootFilesystem: true
-      capabilities:
-        drop:
-        - ALL
-      seccompProfile:
-        type: RuntimeDefault

@@ -1,6 +1,0 @@
-{{- if and (eq .Values.kyverno.rbac.create true) (contains "v1.8" .Values.kyverno.image.tag) }}
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: {{ include "kyverno.namespace" . }}
-{{- end }}

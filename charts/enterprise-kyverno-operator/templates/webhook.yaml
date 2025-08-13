@@ -7,6 +7,9 @@ metadata:
     cert-manager.io/inject-ca-from: {{ template "enterprise-kyverno.namespace" . }}/kyverno-operator-serving-cert
   {{- end}}
   labels:
+    {{- if .Values.globalLabels }}
+    {{- toYaml .Values.globalLabels| nindent 4 }}
+    {{- end }}
     app.kubernetes.io/component: webhook
     app.kubernetes.io/created-by: kyverno-operator
     app.kubernetes.io/instance: validating-webhook-configuration
@@ -14,6 +17,10 @@ metadata:
     app.kubernetes.io/name: validatingwebhookconfiguration
     app.kubernetes.io/part-of: kyverno-operator
   name: kyverno-operator-validating-webhook-configuration
+ {{- if .Values.globalAnnotations }}
+  annotations: 
+    {{- toYaml .Values.globalAnnotations| nindent 4 }}
+  {{- end }}
 webhooks:
 - admissionReviewVersions:
   - v1
@@ -50,7 +57,7 @@ webhooks:
     service:
       name: {{ include "enterprise-kyverno.fullname" . }}
       namespace: {{ template "enterprise-kyverno.namespace" . }}
-      path: /validate-security-nirmata-io-v1alpha1-kyverno
+      path: /validate-security-nirmata-io-v1alpha1-kyvernoconfig
   failurePolicy: Fail
   name: vkyverno.kb.io
   rules:
@@ -62,6 +69,6 @@ webhooks:
     - CREATE
     - UPDATE
     resources:
-    - kyvernoes
+    - kyvernoconfigs
   sideEffects: None
 {{- end }}
