@@ -1,27 +1,33 @@
-# Helm Chart for Enterprise Kyverno
-Enterprise Kyverno is a Kubernetes Operator to manage lifecycle of Kyverno, Adapters and Nirmata supported policies. 
+# Helm Chart for Nirmata Kyverno Operator
+Nirmata Kyverno Opertor is a Kubernetes Operator to manage lifecycle of Kyverno, Adapters and Nirmata supported policies. 
 
 ## Prerequisites
+
+As a prerequisite, user needs to install [kyverno-operator-crd](../enterprise-kyverno-operator-crd/) to install operator.
+
 ### Get license key
-You need a license key to run Enterprise Kyverno. If you are using Nirmata Enterprise for Kyverno, it is available in the UI. Else contact `support@nirmata.com`.
+You need a license key to run Enterprise Kyverno. If you are using `Enterprise for Kyverno`, or `Nirmata Policy Manager`, it is available in the UI. Else contact `support@nirmata.com`.
 
 ### (Optional) If a custom CA is used, create a configmap corresponding to the same with key custom-ca.pem. E.g.
 Create the namespace
 ```bash
-kubectl create namespace enterprise-kyverno-operator
+kubectl create namespace nirmata-system
 ```
 Create configmap in the namespace
 ```bash
-kubectl -n enterprise-kyverno-operator create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
+kubectl -n nirmata-system create configmap <e.g. ca-store-cm> --from-file=custom-ca.pem=<cert file e.g. some-cert.pem>
 ```
 
 ## Getting Started
+
+***Kyverno v1.10.x has breaking changes. If you are upgrading from v1.9 or earlier versions, please see [Upgrading to Kyverno 1.10.x from earlier Kyverno versions](#upgrading-from-earlier-versions) before proceeding further***
+
 Add the chart repository and install the chart
 ```bash
 helm repo add nirmata https://nirmata.github.io/kyverno-charts
 helm repo update nirmata
 
-helm install enterprise-kyverno-operator nirmata/enterprise-kyverno-operator -n enterprise-kyverno-operator --create-namespace --set licenseKey=<licenseKey>[,apiKey=<api key>]
+helm install nirmata-kyverno-operator nirmata/nirmata-kyverno-operator -n nirmata-system --create-namespace --set licenseKey=<licenseKey>[,apiKey=<api key>] [--version v0.3.0-rc.. if using release candidate]
 ```
 Helm Chart parameters for further fine-tuning the above helm install are described in the [Helm Chart Values](#helm-chart-values) section below.
 
@@ -32,29 +38,84 @@ Additional parameters corresponding to custom CA or HTTP proxies, NO_PROXY shoul
 
 View various Resources created
 ```bash
-kubectl -n enterprise-kyverno-operator get kyvernoes.security.nirmata.io #(CR that defines kyverno settings)
-kubectl -n enterprise-kyverno-operator get policysets.security.nirmata.io #(CRs corresponding to default policysets installed)
+kubectl -n nirmata-system get kyvernoconfigs.security.nirmata.io #(CR that defines kyverno settings)
+kubectl -n nirmata-system get policysets.security.nirmata.io #(CRs corresponding to default policysets installed)
 
 kubectl -n kyverno get po #(should show Kyverno pods getting ready)
 kubectl get cpol #(should show policies installed by initial policysets)
 ```
 
-If you need to modify Kyverno configuration, change CR directly or via Helm Upgrade
-```bash
-kubectl -n enterprise-kyverno-operator edit kyvernoes.security.nirmata.io kyverno (and set replicas to 3)
+If you need to modify Kyverno configuration, change CR directly or via Helm Upgrade. (Note: If upgrading from earlier versions to 1.10.x, please read [Upgrading to Kyverno 1.10.x from earlier Kyverno versions](#upgrading-from-earlier-versions) first)
 
-helm upgrade enterprise-kyverno-operator nirmata/enterprise-kyverno-operator -n enterprise-kyverno-operator --create-namespace --set licenseKey=<licenseKey> --set kyverno.replicas=3
+```bash
+kubectl -n nirmata-system edit kyvernoconfigs.security.nirmata.io kyverno (and set replicas to 3)
+
+helm upgrade nirmata-kyverno-operator nirmata/nirmata-kyverno-operator -n nirmata-system --create-namespace --set licenseKey=<licenseKey> --set kyverno.replicas=3
 ```
 
 Removing a Policy Set CR removes policies contained in it
 ```bash
-kubectl -n enterprise-kyverno-operator delete policysets best-practices
+kubectl -n nirmata-system delete policysets best-practices
 ```
 
-To remove Enterprise Kyverno and components
+To remove Nirmata Kyverno Operator and components
 ```bash
-helm uninstall -n enterprise-kyverno-operator enterprise-kyverno-operator
+helm uninstall -n nirmata-system nirmata-kyverno-operator
 ```
+
+## Upgrading from earlier versions
+There are many breaking changes in Kyverno 1.10. So we recommend doing a clean installation. Please refer to the [Kyverno 1.10 release notes](https://github.com/kyverno/kyverno/releases/tag/v1.10.0) to understand these breaking changes. Follow the below steps to, take a backup of key resources in Kyverno v1.9 or earlier, do a clean install of Kverno 1.10.x, and restore backed up Kyverno policies after migrating them over to v1.10.
+
+NOTE: In the kubectl commands below, replace namespace `nirmata-system` with appropriate namespace used your setup.
+
+### Take backups
+1. Save custom values with which you had installed kyverno operator. E.g.
+```bash
+helm get values -n nirmata-system kyverno-operator > oldValues.yaml
+```
+You might need to remove a couple of helm output messages from the old values yaml file saved above. These values will be leveraged later when we install 1.10. 
+
+2. Take a backup of existing policies. This is more important if you have installed policies in addition to the Nirmata policies installed by default. E.g.
+`kubectl get cpol pol1 pol2 pol3 ... -o yaml > mypolBkp.yaml` or `kubectl get cpol -o yaml > allPolBkp.yaml`
+
+3. Take a backup of existing Kyvernoes and PolicySet CRs. It is needed if these CRs have been changed manually outside of the helm install/upgrade commands. E.g.
+`kubectl -n nirmata-system get kyvernoes kyverno -o yaml > kyvernoCRBkp.yaml` and `kubectl -n nirmata-system get policysets -o yaml > policySetCRBkp.yaml`
+
+4. Take a backup of policy reports for reference. They will be regenerated anyways. E.g. 
+`kubectl get polr -A -o yaml > bkpPolr.yaml`
+
+### Uninstall existing version
+1. Uninstall operator (which will uninstall kyverno and policies) as described at the end of the [Getting Started](#getting-started) section.
+2. Uninstall Kyverno CRDs installed by earlier operator
+```bash
+kubectl delete crd clusterpolicyreports.wgpolicyk8s.io policyreports.wgpolicyk8s.io
+```
+
+### Modify 'kyverno.helm' section in operator values yaml
+In case there was any customization done to the `kyverno.helm` section of Kyverno Operator values.yaml file, some values might need to migrated as per the `New Chart Values` section of the [Kyverno 1.10 migration guide](https://github.com/kyverno/kyverno/blob/release-1.10/charts/kyverno/README.md#migrating-from-v2-to-v3). This is because the chart values for the Kyverno 1.10 helm chart have changed significantly.
+
+
+### Install Kyverno 1.10 using the Operator
+
+Pull the latest nirmata charts repo and install kyverno operator 1.10. Also verify installation. This part is same as the standard clean install described in the [Getting Started](#getting-started) section. The old values.yaml file saved earlier, modified if needed, should also be provided. E.g.
+```bash
+helm install kyverno-operator nirmata/enterprise-kyverno-operator -n nirmata-system --create-namespace [--version v0.3.2-rc1 or equivalent version if using RC] --set licenseManger.licenseKey=xxxx --set licenseManager.apiKey=xxxx> -f oldValuesWithHelmModified.yaml
+```
+
+### Modify 'spec' sections in kyverno CR if changed manually
+In case there was any direct change done to the kyvernoes CR outside helm, then those changes needed to applied manually again using `kubectl edit` or equivalent. Mainly, changes to the `spec.helm.values` section of Kyvernoes CR. Within these also, some parameters might need to migrated as per the `New Chart Values` section of the [Kyverno 1.10 migration guide](https://github.com/kyverno/kyverno/blob/release-1.10/charts/kyverno/README.md#migrating-from-v2-to-v3).
+
+### Create/Delete Modify PolicySet CRs if changed manually
+Similar to the `spec` section of the kyverno CR described above, if manual addition/deletion or changes to PolicySet CRs had been done outside of helm commands, those need to be applied again using values in the PolicySet backup yamls. For instance, parameters such as helm chart repo or username/passwords, policy validationfailureaction settings saved in the policyset backups need to be reapplied in the new policyset resource definitions.
+
+### Reinstall migrated custom policies
+Modify the other custom policies created (backed up earlier) if needed, such that they follow the guidelines described in [breaking changes in Kyverno 1.10](https://github.com/kyverno/kyverno/releases/tag/v1.10.0), in case of breaking changes.
+
+Apply them to the cluster. E.g.
+```bash
+kubectl apply -f mypolBkpUpgraded.yaml
+```
+Verify that those policies/policysets show up as ready and are working as expected. The 1.10 compatible versions of Nirmata supplied policysets are already as per those guidelines, so there is no need to change them. 
 
 ## Configure Adapters
 Adapters such as AWS, CIS, Image Scan and others can be configured by setting appropriate flags corresponding to that adapter. In general, we need to provide 2 flags
@@ -123,7 +184,6 @@ syncPolicy:
 | nameOverride | string | `nil` | Override the name of the chart |
 | fullnameOverride | string | `nil` | Override the expanded name of the chart |
 | enableWebhook | bool | `true` | Enable operator webhooks for enhanced error checks and user info in audit log |
-| enablePreDeleteHook | bool | `true` | Enable operator pre-delete hook for cleaning up Kyverno and policysets installed |
 | certManager | string | `operator` | Webhook cert management mechanism. Valid values are "operator", "cert-manager", "other". |
 | licenseKey | string | `nil`| License key (required) |
 | apiKey | string | `nil` | License server API key |
@@ -149,7 +209,7 @@ syncPolicy:
 | kyverno.generatecontrollerExtraResources | list | `[]` | Additional resources to be added to kyverno controller RBAC permissions |
 | kyverno.image.repository | string | `"ghcr.io/nirmata/kyverno"` | Kyverno Image repository |
 | kyverno.image.pullPolicy | string | `"IfNotPresent"` | Kyverno Image pull policy |
-| kyverno.image.tag | string | `v1.9.5-n4k.nirmata.4` | Image tag (defaults to chart app version) |
+| kyverno.image.tag | string | `v1.10.4-n4k.nirmata.1` | Image tag (defaults to chart app version) |
 | kyverno.enablePolicyExceptions| bool | `true` | Enable policyexceptions feature in Kyverno 1.9+ |
 | kyverno.excludedNamespacesForWebhook | list | `[]` | Namespaces to exclude from Kyverno webhook, in addition to defaults kyverno, kube-system, nirmata, nirmata-system |
 | kyverno.excludedNamespacesOverride | bool | `false` | Override exclusion of default namespaces in excludedNamespacesForWebhook parameter above|

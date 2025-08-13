@@ -3,16 +3,34 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ template "enterprise-kyverno.fullname" . }}
+  labels:
+    {{- if .Values.globalLabels }}
+    {{- toYaml .Values.globalLabels | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.globalAnnotations }}
+    {{- toYaml .Values.globalAnnotations | nindent 4 }}
+    {{- end }}
 rules:
+- apiGroups: 
+  - "apiextensions.k8s.io"
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - watch
+  - list
+  - get
+  - create
+  - update
+  - patch
+  - delete
 - apiGroups:
   - "security.nirmata.io"
   resources:
-  - kyvernoes
-  - kyvernoes/status
+  - kyvernoconfigs
+  - kyvernoconfigs/status
   - policysets
   - policysets/status
-  - kyvernoadapters
-  - kyvernoadapters/status
   verbs:
   - watch
   - list
@@ -23,9 +41,8 @@ rules:
 - apiGroups:
   - security.nirmata.io
   resources:
-  - kyvernoes/finalizers
+  - kyvernoconfigs/finalizers
   - policysets/finalizers
-  - kyvernoadapters/finalizers
   verbs:
   - update
 - apiGroups:
@@ -85,6 +102,9 @@ rules:
   - events
   verbs:
   - create
+  - get
+  - list
+  - watch
 - apiGroups:
   - ""
   resources:
@@ -105,15 +125,54 @@ rules:
   - patch
   - delete
 - apiGroups:
-  - security.nirmata.io
+  - rbac.authorization.k8s.io
   resources:
-  - awsadapterconfigs
+  - clusterroles
+  - clusterrolebindings
+  - roles
+  - rolebindings
   verbs:
   - get
   - list
   - watch
-  - create
-  - update
-  - patch
-  - delete
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - networkpolicies
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
 {{- end }}

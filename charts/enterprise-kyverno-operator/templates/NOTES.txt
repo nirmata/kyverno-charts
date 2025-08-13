@@ -1,22 +1,24 @@
 Chart version: {{ .Chart.Version }}
-Kyverno version: {{ required "Kyverno image tag is required" .Values.kyverno.image.tag }}
 
 Thank you for installing {{ .Chart.Name }}! Your release is named {{ .Release.Name }}.
 
-{{- if not .Values.licenseKey }}
+{{- if .Values.enablePolicyset }}
+{{- $policyCRD := lookup "apiextensions.k8s.io/v1" "CustomResourceDefinition" "" "policies.kyverno.io" }}
+{{- $clusterPolicyCRD := lookup "apiextensions.k8s.io/v1" "CustomResourceDefinition" "" "clusterpolicies.kyverno.io" }}
+{{- if or (not $policyCRD) (not $clusterPolicyCRD) }}
+********************************************************************************
+⚠️  WARNING: Required Kyverno CRDs are missing
+--------------------------------------------------------------------------------
+The policyset controller requires the following Kyverno CRDs to function. 
+Without these, you will see error logs in the controller with every reconciliation:
 
-⚠️  WARNING: You have installed the free trial of Enterprise Kyverno. Usage of only up to 3 nodes is allowed in this version. Please contact Nirmata support <support@nirmata.com> for further assistance.
+- Policy (`policies.kyverno.io`)
+- ClusterPolicy (`clusterpolicies.kyverno.io`)
+
+❗ These CRDs are not currently installed in the cluster.
+   Please install Kyverno or ensure its CRDs are present before using this chart.
 {{- end }}
-
-{{- if not .Values.kyverno.replicaCount }}
-
-⚠️  WARNING: Setting replicas count below 3 means Kyverno is not running in high availability mode.
-{{- else if lt (int .Values.kyverno.replicaCount) 3 }}
-
-⚠️  WARNING: Setting replicas count below 3 means Kyverno is not running in high availability mode.
 {{- end }}
-
-💡 Note: There is a trade-off when deciding which approach to take regarding Namespace exclusions. Please see the documentation at https://kyverno.io/docs/installation/#security-vs-operability to understand the risks.
 
 {{- if semverCompare "<1.21.0" .Capabilities.KubeVersion.Version }}
 
