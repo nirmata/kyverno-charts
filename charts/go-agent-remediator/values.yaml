@@ -28,9 +28,14 @@ affinity: {}
 # LLM provider configuration for creating an LLMConfig CR
 llm:
   enabled: true
-  provider: bedrock
+  provider: bedrock  # Options: bedrock, azure-openai
+  # For Bedrock
   model: ""
   region: ""
+  # For Azure OpenAI
+  endpoint: ""
+  deploymentName: ""
+  # Secret configuration (for both providers)
   secretName: ""
   # TODO: this is not required, but we need to set it to something. Make the key optional in the secretRef.
   secretKey: "aws_access_key_id"
