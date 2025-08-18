@@ -19,6 +19,13 @@ spec:
       key: {{ .Values.llm.secretKey | quote }}
       {{- end }}
     {{- end }}
+  {{- else if eq .Values.llm.provider "azure-openai" }}
+  azureOpenAI:
+    endpoint: {{ .Values.llm.endpoint | quote }}
+    deploymentName: {{ .Values.llm.deploymentName | quote }}
+    secretRef:
+      name: {{ .Values.llm.secretName | quote }}
+      key: {{ .Values.llm.secretKey | default "api-key" | quote }}
   {{- end }}
 {{- end }}
 
