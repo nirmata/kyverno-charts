@@ -6,9 +6,9 @@ This Helm chart deploys Remediator Service agent in a Kubernetes cluster.
 
 Before installing the Remediator Agent, ensure you have the following prerequisites:
 
-- **Argo CD Hub-and-Spoke Setup**: If you're using EKS, refer to the [Argo CD Hub-and-Spoke Setup Guide](./argocd-hub-spoke.md) for proper configuration.
-- **Helm**: Helm 3.x installed and configured
-- **kubectl**: kubectl configured to access your target cluster
+- A Kubernetes cluster with [Argo CD](https://argo-cd.readthedocs.io/en/stable/getting_started/)
+- [Helm](https://helm.sh/docs/intro/install/)
+- [kubectl](https://kubernetes.io/docs/reference/kubectl/)
 
 ## Setup
 
@@ -57,7 +57,7 @@ aws iam put-role-policy \
           "bedrock:InvokeModel",
           "bedrock:InvokeModelWithResponseStream"
         ],
-        "Resource": "arn:aws:bedrock:us-west-2:844333597536:application-inference-profile/cpl55iltpz6n"
+        "Resource": "arn:aws:bedrock:<AWS_REGION>:<AWS_ACCOUNT_ID>:application-inference-profile/<BEDROCK_INFERENCE_PROFILE>"
       }
     ]
   }'
@@ -81,9 +81,9 @@ aws eks list-pod-identity-associations \
 #### Using AWS Credentials Secret
 ```bash
 kubectl create secret generic aws-bedrock-credentials \
-  --from-literal=aws_access_key_id=YOUR_ACCESS_KEY \
-  --from-literal=aws_secret_access_key=YOUR_SECRET_KEY \
-  --from-literal=aws_session_token=YOUR_SECRET_SESSION_TOKEN \
+  --from-literal=aws_access_key_id=AWS_ACCESS_KEY \
+  --from-literal=aws_secret_access_key=AWS_SECRET_KEY \
+  --from-literal=aws_session_token=AWS_SECRET_SESSION_TOKEN \
   --namespace nirmata
 ```
 
