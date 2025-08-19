@@ -6,9 +6,9 @@ This Helm chart deploys Remediator Service agent in a Kubernetes cluster.
 
 Before installing the Remediator Agent, ensure you have the following prerequisites:
 
-- **Argo CD Hub-and-Spoke Setup**: If you're using EKS, refer to the [Argo CD Hub-and-Spoke Setup Guide](./argocd-hub-spoke.md) for proper configuration.
-- **Helm**: Helm 3.x installed and configured
-- **kubectl**: kubectl configured to access your target cluster
+- A Kubernetes cluster with [Argo CD](https://argo-cd.readthedocs.io/en/stable/getting_started/)
+- [Helm](https://helm.sh/docs/intro/install/)
+- [kubectl](https://kubernetes.io/docs/reference/kubectl/)
 
 ## Setup
 
