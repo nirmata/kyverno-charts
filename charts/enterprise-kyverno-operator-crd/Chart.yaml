@@ -1,0 +1,18 @@
+apiVersion: v2
+name: nirmata-kyverno-operator-crd
+description: Helm Chart for Enterprise Kyverno Operator
+type: application
+version: 0.8.1-rc1
+appVersion: v0.3.3
+
+icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+keywords:
+  - kubernetes
+  - nirmata
+  - enterprise kyverno operator
+  - kyverno operator
+home: https://kyverno.io/
+maintainers:
+  - name: Nirmata
+    url: https://nirmata.com/
+kubeVersion: ">=1.20.0-0"

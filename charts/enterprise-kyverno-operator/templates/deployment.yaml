@@ -4,6 +4,13 @@ metadata:
   name: {{ include "enterprise-kyverno.fullname" . }}
   labels:
     {{- include "enterprise-kyverno.labels" . | nindent 4 }}
+    {{- if .Values.globalLabels }}
+    {{- toYaml .Values.globalLabels| nindent 4 }}
+    {{- end }}
+  {{- if .Values.globalAnnotations }}
+  annotations: 
+    {{- toYaml .Values.globalAnnotations| nindent 4 }}
+  {{- end }}
   namespace: {{ template "enterprise-kyverno.namespace" . }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
@@ -14,17 +21,21 @@ spec:
       {{- include "enterprise-kyverno.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+        {{- with .Values.globalAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       labels:
         {{- include "enterprise-kyverno.selectorLabels" . | nindent 8 }}
+        {{- if .Values.globalLabels }}
+        {{- toYaml .Values.globalLabels| nindent 8 }}
+        {{- end }}
     spec:
-      {{- if .Values.image.pullSecrets.create }}
       imagePullSecrets: 
       - name: {{ .Values.image.pullSecrets.name }}
-      {{- end }}
       serviceAccountName: {{ include "enterprise-kyverno.rbac.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
@@ -38,6 +49,9 @@ spec:
             - name: webhook-server
               containerPort: 9443
               protocol: TCP
+            - name: metrics
+              containerPort: 8080
+              protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
@@ -49,12 +63,19 @@ spec:
             value: /var/local
           - name: HELM_CACHE_HOME
             value: /var/local/helmcache
+          {{- if or .Values.customCAConfigMap .Values.customCACert }}
+          - name: SYSTEM_CERT_PATH
+            value: "{{ .Values.systemCertPath | default "/etc/ssl/certs" }}/custom-ca.pem"
+          {{- end}}
           {{- with .Values.envVars }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
           args:
             - --profile={{- .Values.profile | default "prod" }}
             - --enable-webhook={{- .Values.enableWebhook | default false}}
+            - --enable-policyset={{- .Values.enablePolicyset | default false}}
+            - --kyverno-deployment={{- .Values.kyvernoDeployment | default "kyverno-admission-controller"}}
+            - --kyverno-namespace={{- .Values.kyvernoNamespace | default "kyverno"}}            
             - --install-rbac={{- .Values.rbac.operatorHasAdminPerms | default false }}
             - --manage-certs={{- include "enterprise-kyverno.managecerts" . }}
             - --prevent-policy-tamper={{- include "enterprise-kyverno.preventPolicyTamper" . }}
@@ -68,9 +89,9 @@ spec:
             name: cert
             readOnly: true
           {{- end }}
-          {{- if .Values.customCAConfigMap }}
+          {{- if or .Values.customCAConfigMap .Values.customCACert }}
           - name: custom-ca-store
-            mountPath: {{ .Values.systemCertPath }}/custom-ca.pem
+            mountPath: {{ .Values.systemCertPath | default "/etc/ssl/certs" }}/custom-ca.pem
             subPath: custom-ca.pem
           {{- end}}
           readinessProbe:
@@ -114,4 +135,8 @@ spec:
       - name: custom-ca-store
         configMap:
           name: {{ .Values.customCAConfigMap }}
+      {{- else if .Values.customCACert }}
+      - name: custom-ca-store
+        configMap:
+          name: {{ include "enterprise-kyverno.fullname" . }}-custom-ca
       {{- end}}

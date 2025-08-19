@@ -1,0 +1,19 @@
+{{- if .Values.customCACert }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "enterprise-kyverno.fullname" . }}-custom-ca
+  namespace: {{ template "enterprise-kyverno.namespace" . }}
+  labels:
+    {{- include "enterprise-kyverno.labels" . | nindent 4 }}
+    {{- if .Values.globalLabels }}
+    {{- toYaml .Values.globalLabels| nindent 4 }}
+    {{- end }}
+  {{- if .Values.globalAnnotations }}
+  annotations: 
+    {{- toYaml .Values.globalAnnotations| nindent 4 }}
+  {{- end }}
+data:
+  custom-ca.pem: |-
+{{ .Values.customCACert | indent 4 }}
+{{- end }} 
