@@ -1,7 +1,7 @@
 apiVersion: v2
 name: reports-server
 type: application
-version: 0.2.5
+version: 0.2.6
 appVersion: v0.2.3
 keywords:
 - kubernetes
@@ -11,6 +11,6 @@ sources:
 - https://github.com/nirmata/reports-server
 maintainers:
 - name: Nirmata
-  url: https://nirmata.com/
-  email: support@nirmata.com
+  url: https://kyverno.io/
+  email: cncf-kyverno-maintainers@lists.cncf.io
 kubeVersion: ">=1.16.0-0"
