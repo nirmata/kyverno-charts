@@ -19,10 +19,10 @@ spec:
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .spec.namespace
+    - jsonPath: .status.namespace
       name: Namespace
       type: string
-    - jsonPath: .spec.version
+    - jsonPath: .status.version
       name: Version
       type: string
     name: v1alpha1
