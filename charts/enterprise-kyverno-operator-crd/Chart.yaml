@@ -2,7 +2,7 @@ apiVersion: v2
 name: nirmata-kyverno-operator-crd
 description: Helm Chart for Enterprise Kyverno Operator
 type: application
-version: 0.8.1-rc1
+version: 0.8.1
 appVersion: v0.3.3
 
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
