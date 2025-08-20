@@ -17424,6 +17424,19 @@ entries:
   nirmata-kube-controller:
   - apiVersion: v2
     appVersion: v3.10.14
+    created: "2025-08-20T11:09:13.267988249Z"
+    description: A Helm chart for Kubernetes
+    digest: 257ed2ea4e042da4028d76eb2f9e8a0db228e77a4fcbfa2e6dc906e112483bff
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: nirmata-kube-controller
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-kube-controller-0.3.8-rc3/nirmata-kube-controller-0.3.8-rc3.tgz
+    version: 0.3.8-rc3
+  - apiVersion: v2
+    appVersion: v3.10.14
     created: "2025-08-14T15:20:11.793918073Z"
     description: A Helm chart for Kubernetes
     digest: 556443a491a09e1e0b5a28197c3563c9f65ef56c79f205cc07bd311701509595
@@ -22364,6 +22377,26 @@ entries:
     version: 0.1.0-rc1
   reports-server:
   - apiVersion: v2
+    appVersion: v0.2.3
+    created: "2025-08-20T11:09:13.47068893Z"
+    digest: 9cdb455f92d342bd1c08d06c040cc71592331269c2856318c74af951bb6df3d2
+    keywords:
+    - kubernetes
+    - policy reports storage
+    - postgresql
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - email: support@nirmata.com
+      name: Nirmata
+      url: https://nirmata.com/
+    name: reports-server
+    sources:
+    - https://github.com/nirmata/reports-server
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/reports-server-0.2.5/reports-server-0.2.5.tgz
+    version: 0.2.5
+  - apiVersion: v2
     appVersion: v0.2.2
     created: "2025-08-19T06:27:31.427904105Z"
     digest: 39a8ef19e799a76c680941b1c13ce9f2afef2cce8cdba369f1d7ca7cab4b7cc8
@@ -22605,4 +22638,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-08-20T05:45:04.078064771Z"
+generated: "2025-08-20T11:09:13.47179402Z"
