@@ -56,9 +56,9 @@ dependencies:
     version: 3.4.3
     condition: grafana.enabled
   - name: reports-server
-    version: 0.2.3
+    version: 0.2.6
     condition: reports-server.install
-    repository: https://nirmata.github.io/reports-server
+    repository: https://nirmata.github.io/kyverno-charts
   - name: crds
     version: 3.4.3
     condition: crds.install
