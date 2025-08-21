@@ -80,11 +80,19 @@ rbac:
       admin: true
       view: true
 
+# Use openreports.io as the API group for reporting
+openreports:
+  enabled: false
+
 # CRDs configuration
 crds:
 
   # -- Whether to have Helm install the Kyverno CRDs, if the CRDs are not installed by Helm, they must be added before policies can be created
   install: true
+
+  reportsServer:
+      # -- Kyverno reports-server is used in your cluster
+    enabled: false
 
   groups:
 
@@ -97,13 +105,15 @@ crds:
       policies: true
       policyexceptions: true
       updaterequests: true
-      validatingpolicies: true
 
     # -- Install CRDs in group `policies.kyverno.io`
     policies:
       validatingpolicies: true
       policyexceptions: true
       imagevalidatingpolicies: true
+      mutatingpolicies: true
+      generatingpolicies: true
+      deletingpolicies: true
 
     # -- Install CRDs in group `reports.kyverno.io`
     reports:
@@ -114,9 +124,6 @@ crds:
     wgpolicyk8s:
       clusterpolicyreports: true
       policyreports: true
-
-  reportsServer:
-    enabled: false
 
   # -- Additional CRDs annotations
   annotations: {}
@@ -205,6 +212,10 @@ crds:
         cpu: 10m
         memory: 64Mi
 
+    serviceAccount:
+      # -- Toggle automounting of the ServiceAccount
+      automountServiceAccountToken: true
+
 # Configuration
 config:
 
@@ -253,16 +264,16 @@ config:
     - '[*/*,kube-public,*]'
     - '[*/*,kube-node-lease,*]'
     - '[Node,*,*]'
-    - '[Node/*,*,*]'
+    - '[Node/?*,*,*]'
     - '[APIService,*,*]'
-    - '[APIService/*,*,*]'
+    - '[APIService/?*,*,*]'
     - '[TokenReview,*,*]'
     - '[SubjectAccessReview,*,*]'
     - '[SelfSubjectAccessReview,*,*]'
     - '[Binding,*,*]'
     - '[Pod/binding,*,*]'
     - '[ReplicaSet,*,*]'
-    - '[ReplicaSet/*,*,*]'
+    - '[ReplicaSet/?*,*,*]'
     - '[EphemeralReport,*,*]'
     - '[ClusterEphemeralReport,*,*]'
     # exclude resources from the chart
@@ -283,13 +294,13 @@ config:
     - '[ClusterRoleBinding,*,{{ template "kyverno.cleanup-controller.roleName" . }}]'
     - '[ClusterRoleBinding,*,{{ template "kyverno.reports-controller.roleName" . }}]'
     - '[ServiceAccount,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.serviceAccountName" . }}]'
-    - '[ServiceAccount/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.serviceAccountName" . }}]'
+    - '[ServiceAccount/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.serviceAccountName" . }}]'
     - '[ServiceAccount,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.serviceAccountName" . }}]'
-    - '[ServiceAccount/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.serviceAccountName" . }}]'
+    - '[ServiceAccount/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.serviceAccountName" . }}]'
     - '[ServiceAccount,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.serviceAccountName" . }}]'
-    - '[ServiceAccount/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.serviceAccountName" . }}]'
+    - '[ServiceAccount/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.serviceAccountName" . }}]'
     - '[ServiceAccount,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.serviceAccountName" . }}]'
-    - '[ServiceAccount/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.serviceAccountName" . }}]'
+    - '[ServiceAccount/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.serviceAccountName" . }}]'
     - '[Role,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.roleName" . }}]'
     - '[Role,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.roleName" . }}]'
     - '[Role,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.roleName" . }}]'
@@ -301,51 +312,51 @@ config:
     - '[ConfigMap,{{ include "kyverno.namespace" . }},{{ template "kyverno.config.configMapName" . }}]'
     - '[ConfigMap,{{ include "kyverno.namespace" . }},{{ template "kyverno.config.metricsConfigMapName" . }}]'
     - '[Deployment,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}]'
-    - '[Deployment/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}]'
+    - '[Deployment/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}]'
     - '[Deployment,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}]'
-    - '[Deployment/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}]'
+    - '[Deployment/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}]'
     - '[Deployment,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
-    - '[Deployment/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
+    - '[Deployment/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
     - '[Deployment,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}]'
-    - '[Deployment/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}]'
+    - '[Deployment/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}]'
     - '[Pod,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}-*]'
-    - '[Pod/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}-*]'
+    - '[Pod/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}-*]'
     - '[Pod,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}-*]'
-    - '[Pod/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}-*]'
+    - '[Pod/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}-*]'
     - '[Pod,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}-*]'
-    - '[Pod/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}-*]'
+    - '[Pod/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}-*]'
     - '[Pod,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}-*]'
-    - '[Pod/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}-*]'
+    - '[Pod/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}-*]'
     - '[Job,{{ include "kyverno.namespace" . }},{{ template "kyverno.fullname" . }}-hook-pre-delete]'
-    - '[Job/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.fullname" . }}-hook-pre-delete]'
+    - '[Job/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.fullname" . }}-hook-pre-delete]'
     - '[NetworkPolicy,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}]'
-    - '[NetworkPolicy/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}]'
+    - '[NetworkPolicy/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}]'
     - '[NetworkPolicy,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}]'
-    - '[NetworkPolicy/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}]'
+    - '[NetworkPolicy/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}]'
     - '[NetworkPolicy,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
-    - '[NetworkPolicy/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
+    - '[NetworkPolicy/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
     - '[NetworkPolicy,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}]'
-    - '[NetworkPolicy/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}]'
+    - '[NetworkPolicy/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}]'
     - '[PodDisruptionBudget,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}]'
-    - '[PodDisruptionBudget/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}]'
+    - '[PodDisruptionBudget/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.name" . }}]'
     - '[PodDisruptionBudget,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}]'
-    - '[PodDisruptionBudget/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}]'
+    - '[PodDisruptionBudget/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}]'
     - '[PodDisruptionBudget,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
-    - '[PodDisruptionBudget/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
+    - '[PodDisruptionBudget/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
     - '[PodDisruptionBudget,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}]'
-    - '[PodDisruptionBudget/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}]'
+    - '[PodDisruptionBudget/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}]'
     - '[Service,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.serviceName" . }}]'
-    - '[Service/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.serviceName" . }}]'
+    - '[Service/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.serviceName" . }}]'
     - '[Service,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.serviceName" . }}-metrics]'
-    - '[Service/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.serviceName" . }}-metrics]'
+    - '[Service/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.admission-controller.serviceName" . }}-metrics]'
     - '[Service,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}-metrics]'
-    - '[Service/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}-metrics]'
+    - '[Service/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.background-controller.name" . }}-metrics]'
     - '[Service,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
-    - '[Service/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
+    - '[Service/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}]'
     - '[Service,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}-metrics]'
-    - '[Service/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}-metrics]'
+    - '[Service/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.cleanup-controller.name" . }}-metrics]'
     - '[Service,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}-metrics]'
-    - '[Service/*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}-metrics]'
+    - '[Service/?*,{{ include "kyverno.namespace" . }},{{ template "kyverno.reports-controller.name" . }}-metrics]'
     - '[ServiceMonitor,{{ if .Values.admissionController.serviceMonitor.namespace }}{{ .Values.admissionController.serviceMonitor.namespace }}{{ else }}{{ template "kyverno.namespace" . }}{{ end }},{{ template "kyverno.admission-controller.name" . }}]'
     - '[ServiceMonitor,{{ if .Values.admissionController.serviceMonitor.namespace }}{{ .Values.admissionController.serviceMonitor.namespace }}{{ else }}{{ template "kyverno.namespace" . }}{{ end }},{{ template "kyverno.background-controller.name" . }}]'
     - '[ServiceMonitor,{{ if .Values.admissionController.serviceMonitor.namespace }}{{ .Values.admissionController.serviceMonitor.namespace }}{{ else }}{{ template "kyverno.namespace" . }}{{ end }},{{ template "kyverno.cleanup-controller.name" . }}]'
@@ -367,10 +378,10 @@ config:
         values:
           - kube-system
     # Exclude objects
-    # - objectSelector:
-    #     matchExpressions:
-    #     - key: webhooks.kyverno.io/exclude
-    #       operator: DoesNotExist
+    # objectSelector:
+    #   matchExpressions:
+    #   - key: webhooks.kyverno.io/exclude
+    #     operator: DoesNotExist
 
   # -- Defines annotations to set on webhook configurations.
   webhookAnnotations:
@@ -518,8 +529,18 @@ test:
     seccompProfile:
       type: RuntimeDefault
 
+  # -- Toggle automounting of the ServiceAccount
+  automountServiceAccountToken: true
+
+  # -- Node labels for pod assignment
+  nodeSelector: {}
+
+  # -- List of node taints to tolerate
+  tolerations: []
+
 # -- Additional labels
 customLabels: {}
+
 
 webhooksCleanup:
   # -- Create a helm pre-delete hook to cleanup webhooks.
@@ -591,6 +612,10 @@ webhooksCleanup:
     requests:
       cpu: 10m
       memory: 64Mi
+
+  serviceAccount:
+    # -- Toggle automounting of the ServiceAccount
+    automountServiceAccountToken: true
 
 policyReportsCleanup:
   # -- Create a helm post-upgrade hook to cleanup the old policy reports.
@@ -700,6 +725,9 @@ features:
     enabled: true
   validatingAdmissionPolicyReports:
     # -- Enables the feature
+    enabled: true
+  mutatingAdmissionPolicyReports:
+    # -- Enables the feature
     enabled: false
   reporting:
     # -- Enables the feature
@@ -729,7 +757,7 @@ features:
     enabled: true
   controllerRuntimeMetrics:
     # -- Bind address for controller-runtime metrics (use "0" to disable it)
-    bindAddress: :8080
+    bindAddress: ":8080"
   deferredLoading:
     # -- Enables the feature
     enabled: true
@@ -740,6 +768,9 @@ features:
     # -- Enables the feature
     enabled: false
   generateValidatingAdmissionPolicy:
+    # -- Enables the feature
+    enabled: true
+  generateMutatingAdmissionPolicy:
     # -- Enables the feature
     enabled: false
   dumpPatches:
@@ -794,7 +825,6 @@ features:
 
 # Admission controller configuration
 admissionController:
-
   autoscaling:
     # -- Enable horizontal pod autoscaling
     enabled: false
@@ -834,6 +864,9 @@ admissionController:
       # -- Annotations for the ServiceAccount
       annotations: {}
         # example.com/annotation: value
+
+      # -- Toggle automounting of the ServiceAccount
+      automountServiceAccountToken: true
 
     coreClusterRole:
       # -- Extra resource permissions to add in the core cluster role.
@@ -1022,6 +1055,9 @@ admissionController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
+    # -- Unhealty pod eviction policy to be used.
+    # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
+    unhealthyPodEvictionPolicy:
 
   # -- A writable volume to use for the TUF root initialization.
   tufRootMountPath: /.sigstore
@@ -1160,6 +1196,9 @@ admissionController:
     nodePort:
     # -- Service annotations.
     annotations: {}
+    # -- (string) Service traffic distribution policy.
+    # Set to `PreferClose` to route traffic to nearby endpoints, reducing latency and cross-zone costs.
+    trafficDistribution: ~
 
   metricsService:
     # -- Create service.
@@ -1174,6 +1213,9 @@ admissionController:
     nodePort:
     # -- Service annotations.
     annotations: {}
+    # -- (string) Service traffic distribution policy.
+    # Set to `PreferClose` to route traffic to nearby endpoints, reducing latency and cross-zone costs.
+    trafficDistribution: ~
 
   networkPolicy:
     # -- When true, use a NetworkPolicy to allow ingress to the webhook
@@ -1185,6 +1227,8 @@ admissionController:
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
     enabled: false
+    # -- Additional annotations
+    additionalAnnotations: {}
     # -- Additional labels
     additionalLabels: {}
     # -- (string) Override namespace
@@ -1261,6 +1305,9 @@ backgroundController:
       # -- Annotations for the ServiceAccount
       annotations: {}
         # example.com/annotation: value
+
+      # -- Toggle automounting of the ServiceAccount
+      automountServiceAccountToken: true
 
     coreClusterRole:
       # -- Extra resource permissions to add in the core cluster role.
@@ -1371,6 +1418,13 @@ backgroundController:
   # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy.
   dnsPolicy: ClusterFirst
 
+  # -- `dnsConfig` allows to specify DNS configuration for the pod.
+  # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config.
+  dnsConfig: {}
+    # options:
+    #   - name: ndots
+    #     value: "2"
+
   # -- Extra arguments passed to the container on the command line
   extraArgs: {}
 
@@ -1449,6 +1503,9 @@ backgroundController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
+    # -- Unhealty pod eviction policy to be used.
+    # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
+    unhealthyPodEvictionPolicy:
 
   caCertificates:
     # -- CA certificates to use with Kyverno deployments
@@ -1475,6 +1532,9 @@ backgroundController:
     nodePort:
     # -- Service annotations.
     annotations: {}
+    # -- (string) Service traffic distribution policy.
+    # Set to `PreferClose` to route traffic to nearby endpoints, reducing latency and cross-zone costs.
+    trafficDistribution: ~
 
   networkPolicy:
 
@@ -1488,6 +1548,8 @@ backgroundController:
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
     enabled: false
+    # -- Additional annotations
+    additionalAnnotations: {}
     # -- Additional labels
     additionalLabels: {}
     # -- (string) Override namespace
@@ -1563,6 +1625,9 @@ cleanupController:
       # -- Annotations for the ServiceAccount
       annotations: {}
         # example.com/annotation: value
+
+      # -- Toggle automounting of the ServiceAccount
+      automountServiceAccountToken: true
 
     clusterRole:
       # -- Extra resource permissions to add in the cluster role
@@ -1646,6 +1711,13 @@ cleanupController:
   # In case of `hostNetwork: true`, usually, the `dnsPolicy` is suitable to be `ClusterFirstWithHostNet`.
   # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy.
   dnsPolicy: ClusterFirst
+
+  # -- `dnsConfig` allows to specify DNS configuration for the pod.
+  # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config.
+  dnsConfig: {}
+    # options:
+    #   - name: ndots
+    #     value: "2"
 
   # -- Extra arguments passed to the container on the command line
   extraArgs: {}
@@ -1768,6 +1840,9 @@ cleanupController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
+    # -- Unhealty pod eviction policy to be used.
+    # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
+    unhealthyPodEvictionPolicy:
 
   service:
     # -- Service port.
@@ -1779,6 +1854,9 @@ cleanupController:
     nodePort:
     # -- Service annotations.
     annotations: {}
+    # -- (string) Service traffic distribution policy.
+    # Set to `PreferClose` to route traffic to nearby endpoints, reducing latency and cross-zone costs.
+    trafficDistribution: ~
 
   metricsService:
     # -- Create service.
@@ -1793,6 +1871,9 @@ cleanupController:
     nodePort:
     # -- Service annotations.
     annotations: {}
+    # -- (string) Service traffic distribution policy.
+    # Set to `PreferClose` to route traffic to nearby endpoints, reducing latency and cross-zone costs.
+    trafficDistribution: ~
 
   networkPolicy:
 
@@ -1806,6 +1887,8 @@ cleanupController:
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
     enabled: false
+    # -- Additional annotations
+    additionalAnnotations: {}
     # -- Additional labels
     additionalLabels: {}
     # -- (string) Override namespace
@@ -1882,6 +1965,9 @@ reportsController:
       # -- Annotations for the ServiceAccount
       annotations: {}
         # example.com/annotation: value
+
+      # -- Toggle automounting of the ServiceAccount
+      automountServiceAccountToken: true
 
     coreClusterRole:
       # -- Extra resource permissions to add in the core cluster role.
@@ -1973,6 +2059,13 @@ reportsController:
   # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy.
   dnsPolicy: ClusterFirst
 
+  # -- `dnsConfig` allows to specify DNS configuration for the pod.
+  # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config.
+  dnsConfig: {}
+    # options:
+    #   - name: ndots
+    #     value: "2"
+
   # -- Extra arguments passed to the container on the command line
   extraArgs: {}
 
@@ -2051,6 +2144,9 @@ reportsController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
+    # -- Unhealty pod eviction policy to be used.
+    # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
+    unhealthyPodEvictionPolicy:
 
   # -- A writable volume to use for the TUF root initialization.
   tufRootMountPath: /.sigstore
@@ -2085,6 +2181,9 @@ reportsController:
     nodePort: ~
     # -- Service annotations.
     annotations: {}
+    # -- (string) Service traffic distribution policy.
+    # Set to `PreferClose` to route traffic to nearby endpoints, reducing latency and cross-zone costs.
+    trafficDistribution: ~
 
   networkPolicy:
 
@@ -2098,6 +2197,8 @@ reportsController:
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
     enabled: false
+    # -- Additional annotations
+    additionalAnnotations: {}
     # -- Additional labels
     additionalLabels: {}
     # -- (string) Override namespace
@@ -2153,7 +2254,7 @@ reportsController:
     # Only used if `type` is `NodePort`.
     nodePort:
 
-   # -- Enable sanity check for reports CRDs
+  # -- Enable sanity check for reports CRDs
   sanityChecks: true
 
 reports-server:

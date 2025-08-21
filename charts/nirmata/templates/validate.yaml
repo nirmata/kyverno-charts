@@ -17,6 +17,13 @@
 {{- fail "CRD clusterephemeralreports disabled while reportsController enabled" }}
 {{- end }}
 
+{{- if and (eq .Values.backgroundController.enabled true) (eq .Values.backgroundController.sanityChecks true) (eq .Values.crds.groups.reports.ephemeralreports false) (eq .Values.crds.reportsServer.enabled false) }}
+{{- fail "CRD ephemeralreports disabled while reportsController enabled" }}
+{{- end }}
+{{- if and (eq .Values.backgroundController.enabled true) (eq .Values.backgroundController.sanityChecks true) (eq .Values.crds.groups.reports.clusterephemeralreports false) (eq .Values.crds.reportsServer.enabled false) }}
+{{- fail "CRD clusterephemeralreports disabled while reportsController enabled" }}
+{{- end }}
+
 {{- if hasKey .Values "mode" -}}
   {{- fail "mode is not supported anymore, please remove it from your release and use admissionController.replicas instead." -}}
 {{- end -}}
