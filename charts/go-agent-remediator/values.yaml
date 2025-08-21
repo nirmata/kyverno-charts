@@ -45,9 +45,25 @@ tool:
   enabled: true
   name: github-tool
   type: github
-  secretName: "github-token"
-  # optional; defaults to "token" if empty
-  secretKey: "token"
+  
+  # Authentication method configuration
+  # Choose between "pat" (Personal Access Token) or "app" (GitHub App)
+  credentials:
+    method: app  # Options: "pat" or "app" (recommended: "app" for better security)
+    
+    app:
+      appId: ""  # Set this to your GitHub App ID
+      # installationId: ""  # Optional: set if you want to specify installation ID
+      privateKeySecret:
+        name: "github-app-private-key"
+        key: "private-key.pem"
+    
+    # PAT configuration (used when method: pat)
+    pat:
+      secret:
+        name: "github-pat-token"
+        key: "token"
+  
   defaults:
     prBranchPrefix: remediation-
     prTitleTemplate: "[Auto-Remediation] Fix policy violations"
