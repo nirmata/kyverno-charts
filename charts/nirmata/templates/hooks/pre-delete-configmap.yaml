@@ -89,8 +89,8 @@ spec:
       {{- end }}
       containers:
         - name: kubectl
-          image: {{ (include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.webhooksCleanup.image "defaultTag" (default .Chart.AppVersion .Values.webhooksCleanup.image.tag))) | quote }}
-          imagePullPolicy: {{ .Values.webhooksCleanup.image.pullPolicy }}
+          image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.global.kubectlImage "defaultTag" .Values.global.kubectlImage.tag) | quote }}
+          imagePullPolicy: {{ .Values.global.kubectlImage.pullPolicy }}
           command:
             - /bin/bash
             - '-c'
