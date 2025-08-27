@@ -86,6 +86,10 @@ crds:
   # -- Whether to have Helm install the Kyverno CRDs, if the CRDs are not installed by Helm, they must be added before policies can be created
   install: true
 
+  reportsServer:
+      # -- Kyverno reports-server is used in your cluster
+    enabled: false
+
   groups:
 
     # -- Install CRDs in group `kyverno.io`
@@ -114,9 +118,6 @@ crds:
     wgpolicyk8s:
       clusterpolicyreports: true
       policyreports: true
-
-  reportsServer:
-    enabled: false
 
   # -- Additional CRDs annotations
   annotations: {}
@@ -367,10 +368,10 @@ config:
         values:
           - kube-system
     # Exclude objects
-    # - objectSelector:
-    #     matchExpressions:
-    #     - key: webhooks.kyverno.io/exclude
-    #       operator: DoesNotExist
+    # objectSelector:
+    #   matchExpressions:
+    #   - key: webhooks.kyverno.io/exclude
+    #     operator: DoesNotExist
 
   # -- Defines annotations to set on webhook configurations.
   webhookAnnotations:
@@ -729,7 +730,7 @@ features:
     enabled: true
   controllerRuntimeMetrics:
     # -- Bind address for controller-runtime metrics (use "0" to disable it)
-    bindAddress: :8080
+    bindAddress: ":8080"
   deferredLoading:
     # -- Enables the feature
     enabled: true
@@ -794,7 +795,6 @@ features:
 
 # Admission controller configuration
 admissionController:
-
   autoscaling:
     # -- Enable horizontal pod autoscaling
     enabled: false
@@ -1371,6 +1371,13 @@ backgroundController:
   # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy.
   dnsPolicy: ClusterFirst
 
+  # -- `dnsConfig` allows to specify DNS configuration for the pod.
+  # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config.
+  dnsConfig: {}
+    # options:
+    #   - name: ndots
+    #     value: "2"
+
   # -- Extra arguments passed to the container on the command line
   extraArgs: {}
 
@@ -1646,6 +1653,13 @@ cleanupController:
   # In case of `hostNetwork: true`, usually, the `dnsPolicy` is suitable to be `ClusterFirstWithHostNet`.
   # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy.
   dnsPolicy: ClusterFirst
+
+  # -- `dnsConfig` allows to specify DNS configuration for the pod.
+  # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config.
+  dnsConfig: {}
+    # options:
+    #   - name: ndots
+    #     value: "2"
 
   # -- Extra arguments passed to the container on the command line
   extraArgs: {}
@@ -1973,6 +1987,13 @@ reportsController:
   # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy.
   dnsPolicy: ClusterFirst
 
+  # -- `dnsConfig` allows to specify DNS configuration for the pod.
+  # For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config.
+  dnsConfig: {}
+    # options:
+    #   - name: ndots
+    #     value: "2"
+
   # -- Extra arguments passed to the container on the command line
   extraArgs: {}
 
@@ -2153,7 +2174,7 @@ reportsController:
     # Only used if `type` is `NodePort`.
     nodePort:
 
-   # -- Enable sanity check for reports CRDs
+  # -- Enable sanity check for reports CRDs
   sanityChecks: true
 
 reports-server:
