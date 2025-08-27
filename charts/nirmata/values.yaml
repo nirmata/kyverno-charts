@@ -15,7 +15,16 @@ global:
   # When set, it will override any values set under `imagePullSecrets` under different components across the chart.
   imagePullSecrets: []
 
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.33.2"
+  # -- Kubectl image configuration
+  kubectlImage:
+    # -- (string) Image registry
+    registry: reg.nirmata.io
+    # -- (string) Image repository
+    repository: nirmata/kubectl
+    # -- (string) Image tag
+    tag: "1.33.2"
+    # -- (string) Image pull policy
+    pullPolicy: IfNotPresent
 
   # -- Resync period for informers
   resyncPeriod: 15m
@@ -550,18 +559,6 @@ webhooksCleanup:
     # -- Allow webhooks controller to delete webhooks using finalizers
     enabled: false
 
-  image:
-    # -- (string) Image registry
-    registry: ~
-    # -- Image repository
-    repository: reg.nirmata.io/nirmata/kubectl
-    # -- Image tag
-    # Defaults to `latest` if omitted
-    tag: '1.32.1'
-    # -- (string) Image pull policy
-    # Defaults to image.pullPolicy if omitted
-    pullPolicy: ~
-
   # -- Image pull secrets
   imagePullSecrets: []
 
@@ -620,18 +617,6 @@ webhooksCleanup:
 policyReportsCleanup:
   # -- Create a helm post-upgrade hook to cleanup the old policy reports.
   enabled: true
-
-  image:
-    # -- (string) Image registry
-    registry: reg.nirmata.io
-    # -- Image repository
-    repository: nirmata/kubectl
-    # -- Image tag
-    # Defaults to `latest` if omitted
-    tag: '1.31.1'
-    # -- (string) Image pull policy
-    # Defaults to image.pullPolicy if omitted
-    pullPolicy: ~
 
   # -- Image pull secrets
   imagePullSecrets: []
@@ -2575,17 +2560,6 @@ reports-server:
 
 
   jobConfigurations:
-    image:
-      # -- (string) Image registry
-      registry: ghcr.io
-      # -- Image repository
-      repository: nirmata/kubectl
-      # -- Image tag
-      # Defaults to `latest` if omitted
-      tag: '1.30.2'
-      # -- (string) Image pull policy
-      # Defaults to image.pullPolicy if omitted
-      pullPolicy: ~
 
     # -- Image pull secrets
     imagePullSecrets: []

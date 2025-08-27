@@ -151,8 +151,8 @@ spec:
           {{- end }}
         {{- if eq (include "kyverno.installReportsServer" .) "true" }}
         - name: wait-for-reports-server
-          image: {{ .Values.global.kubectlImage }}
-          imagePullPolicy: IfNotPresent
+          image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.global.kubectlImage "defaultTag" .Values.global.kubectlImage.tag) | quote }}
+          imagePullPolicy: {{ .Values.global.kubectlImage.pullPolicy }}
           command:
             - /bin/sh
             - -c
