@@ -96,7 +96,7 @@ helm repo add nirmata https://nirmata.github.io/kyverno-charts
 
 helm repo update nirmata
 
-helm install remediator nirmata/remediator-agent --devel \
+helm install remediator ./charts/remediator-agent --devel \
   --namespace nirmata \
   --create-namespace \
   --set llm.model="BEDROCK_INFERENCE_PROFILE" \

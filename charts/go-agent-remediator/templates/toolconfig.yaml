@@ -9,9 +9,32 @@ metadata:
 spec:
   type: {{ .Values.tool.type | quote }}
   credentials:
-    secretRef:
-      name: {{ .Values.tool.secretName | quote }}
-      key: {{ default "token" .Values.tool.secretKey | quote }}
+    method: {{ .Values.tool.credentials.method | quote }}
+    {{- if eq .Values.tool.credentials.method "app" }}
+    {{- if .Values.tool.credentials.app }}
+    app:
+      appId: {{ .Values.tool.credentials.app.appId }}
+      {{- if .Values.tool.credentials.app.installationId }}
+      installationId: {{ .Values.tool.credentials.app.installationId }}
+      {{- end }}
+      privateKeySecretRef:
+        name: {{ .Values.tool.credentials.app.privateKeySecret.name | quote }}
+        key: {{ .Values.tool.credentials.app.privateKeySecret.key | quote }}
+    {{- else }}
+    {{- fail "tool.credentials.app must be configured when method is 'app'" }}
+    {{- end }}
+    {{- else if eq .Values.tool.credentials.method "pat" }}
+    {{- if .Values.tool.credentials.pat }}
+    pat:
+      secretRef:
+        name: {{ .Values.tool.credentials.pat.secret.name | quote }}
+        key: {{ .Values.tool.credentials.pat.secret.key | quote }}
+    {{- else }}
+    {{- fail "tool.credentials.pat must be configured when method is 'pat'" }}
+    {{- end }}
+    {{- else }}
+    {{- fail "tool.credentials.method must be either 'pat' or 'app'" }}
+    {{- end }}
   defaults:
     prBranchPrefix: {{ .Values.tool.defaults.prBranchPrefix | quote }}
     prTitleTemplate: {{ .Values.tool.defaults.prTitleTemplate | quote }}
