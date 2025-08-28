@@ -794,7 +794,17 @@ features:
 
 # Admission controller configuration
 admissionController:
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.33.2" 
+  kubectl:
+    image:
+      # -- (string) Image registry
+      registry: ~
+      defaultRegistry: reg.nirmata.io
+      # -- (string) Image repository
+      repository: nirmata/kubectl
+      # -- (string) Image tag
+      tag: "1.33.2"
+      # -- (string) Image pull policy
+      pullPolicy: IfNotPresent
 
   autoscaling:
     # -- Enable horizontal pod autoscaling
@@ -1238,7 +1248,17 @@ admissionController:
 
 # Background controller configuration
 backgroundController:
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.33.2" 
+  kubectl:
+    image:
+      # -- (string) Image registry
+      registry: ~
+      defaultRegistry: reg.nirmata.io
+      # -- (string) Image repository
+      repository: nirmata/kubectl
+      # -- (string) Image tag
+      tag: "1.33.2"
+      # -- (string) Image pull policy
+      pullPolicy: IfNotPresent
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
@@ -1873,7 +1893,17 @@ cleanupController:
 
 # Reports controller configuration
 reportsController:
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.33.2" 
+  kubectl:
+    image:
+      # -- (string) Image registry
+      registry: ~
+      defaultRegistry: reg.nirmata.io
+      # -- (string) Image repository
+      repository: nirmata/kubectl
+      # -- (string) Image tag
+      tag: "1.33.2"
+      # -- (string) Image pull policy
+      pullPolicy: IfNotPresent
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
