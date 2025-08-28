@@ -15,7 +15,6 @@ global:
   # When set, it will override any values set under `imagePullSecrets` under different components across the chart.
   imagePullSecrets: []
 
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.33.2"
 
   # -- Resync period for informers
   resyncPeriod: 15m
@@ -795,6 +794,18 @@ features:
 
 # Admission controller configuration
 admissionController:
+  kubectl:
+    image:
+      # -- (string) Image registry
+      registry: ~
+      defaultRegistry: reg.nirmata.io
+      # -- (string) Image repository
+      repository: nirmata/kubectl
+      # -- (string) Image tag
+      tag: "1.33.2"
+      # -- (string) Image pull policy
+      pullPolicy: IfNotPresent
+
   autoscaling:
     # -- Enable horizontal pod autoscaling
     enabled: false
@@ -1237,7 +1248,17 @@ admissionController:
 
 # Background controller configuration
 backgroundController:
-
+  kubectl:
+    image:
+      # -- (string) Image registry
+      registry: ~
+      defaultRegistry: reg.nirmata.io
+      # -- (string) Image repository
+      repository: nirmata/kubectl
+      # -- (string) Image tag
+      tag: "1.33.2"
+      # -- (string) Image pull policy
+      pullPolicy: IfNotPresent
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
@@ -1872,7 +1893,17 @@ cleanupController:
 
 # Reports controller configuration
 reportsController:
-
+  kubectl:
+    image:
+      # -- (string) Image registry
+      registry: ~
+      defaultRegistry: reg.nirmata.io
+      # -- (string) Image repository
+      repository: nirmata/kubectl
+      # -- (string) Image tag
+      tag: "1.33.2"
+      # -- (string) Image pull policy
+      pullPolicy: IfNotPresent
   # -- Overrides features defined at the root level
   featuresOverride: {}
 
