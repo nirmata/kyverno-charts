@@ -1,0 +1,46 @@
+# Chart testing configuration
+
+target-branch: main
+
+# Chart directories to test
+chart-dirs:
+  - charts/
+
+# Chart repositories to add
+chart-repos:
+  - nirmata=https://nirmata.github.io/kyverno-charts
+
+# Validate chart schema
+validate-schema: true
+
+# Validate YAML
+validate-yaml: true
+
+# Check for chart version increment
+check-version-increment: true
+
+# Lint charts
+lint: true
+
+# Install charts
+install: false
+
+# Test charts
+test: false
+
+# Package charts
+package: false
+
+# Subchart testing
+subchart-testing: true
+
+# Build dependencies
+build-deps: true
+
+# Update dependencies
+update-deps: true
+
+# Debug mode
+debug: true
+
+chart-yaml-schema-version: v2
