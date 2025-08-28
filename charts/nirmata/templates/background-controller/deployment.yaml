@@ -86,7 +86,7 @@ spec:
       {{- if eq (include "kyverno.installReportsServer" .) "true" }}
       initContainers:
         - name: wait-for-reports-server
-          image: {{ .Values.global.kubectlImage }}
+          image: {{ .Values.backgroundController.kubectlImage }}
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
