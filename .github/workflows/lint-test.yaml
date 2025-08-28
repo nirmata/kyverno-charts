@@ -24,7 +24,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Determine target branch for comparison
+        id: target-branch
+        run: |
+          if [[ "${{ github.ref }}" == refs/heads/release-* ]]; then
+            echo "target-branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "target-branch=main" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Show target branch
+        run: |
+          echo "Using target-branch: ${{ steps.target-branch.outputs.target-branch }}"
+
       - name: Lint Charts
         uses: ./.github/actions/chart-lint
         with:
-          target-branch: main
+          target-branch: ${{ steps.target-branch.outputs.target-branch }}
