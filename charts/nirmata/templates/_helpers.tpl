@@ -46,6 +46,9 @@ false
 {{- with .configMapCaching -}}
   {{- $flags = append $flags (print "--enableConfigMapCaching=" .enabled) -}}
 {{- end -}}
+{{- with .controllerRuntimeMetrics -}}
+  {{- $flags = append $flags (print "--controllerRuntimeMetricsAddress=" .bindAddress) -}}
+{{- end -}}
 {{- with .deferredLoading -}}
   {{- $flags = append $flags (print "--enableDeferredLoading=" .enabled) -}}
 {{- end -}}
@@ -124,5 +127,24 @@ false
 {{- end -}}
 {{- with $flags -}}
   {{- toYaml . -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Helper function to sort imagePullSecrets by name to ensure consistent ordering */}}
+{{- define "kyverno.sortedImagePullSecrets" -}}
+{{- if . -}}
+{{- $secrets := list -}}
+{{- range . -}}
+{{- $secrets = append $secrets .name -}}
+{{- end -}}
+{{- $sortedSecrets := list -}}
+{{- if $secrets -}}
+{{- $sortedSecrets = sortAlpha $secrets -}}
+{{- end -}}
+{{- $sortedRefs := list -}}
+{{- range $sortedSecrets -}}
+{{- $sortedRefs = append $sortedRefs (dict "name" .) -}}
+{{- end -}}
+{{- toYaml $sortedRefs -}}
 {{- end -}}
 {{- end -}}

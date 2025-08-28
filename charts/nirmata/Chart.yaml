@@ -1,23 +1,23 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 3.4.8
+version: 3.4.9-rc1
 appVersion: v1.14.3-n4k.nirmata.4
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
-- kubernetes
-- nirmata
-- policy agent
-- policy
-- validating webhook
-- admission controller
-- mutation
-- mutate
-- validate
-- generate
-- supply chain
-- security
+  - kubernetes
+  - nirmata
+  - policy agent
+  - policy
+  - validating webhook
+  - admission controller
+  - mutation
+  - mutate
+  - validate
+  - generate
+  - supply chain
+  - security
 home: https://kyverno.io/
 sources:
 - https://github.com/nirmata/enterprise-kyverno
@@ -33,24 +33,10 @@ annotations:
       url: https://kyverno.io/docs
   # valid kinds are: added, changed, deprecated, removed, fixed and security
   artifacthub.io/changes: |
-    - kind: added
-      description: Added support for ValidatingPolicies and ImageValidatingPolicies CRDs
-    - kind: added
-      description: Added CRD watcher feature for improved performance
-    - kind: added
-      description: Added Horizontal Pod Autoscaler support for admission controller
-    - kind: added
-      description: Added controller runtime metrics configuration
-    - kind: added
-      description: Added configurable RBAC role aggregation
-    - kind: added
-      description: Added DNS configuration support
-    - kind: added
-      description: Added resource limits for cleanup hooks
-    - kind: changed
-      description: Updated to Kubernetes 1.25+ minimum requirement
-    - kind: changed
-      description: Enhanced RBAC permissions for new CRD types
+    - kind: fixed
+      description: Ensure spec.template.metadata isn't null
+    - kind: removed
+      description: Remove the `delete` permission for policyexceptions in the admission controller
 dependencies:
 - name: grafana
   version: 3.4.3
