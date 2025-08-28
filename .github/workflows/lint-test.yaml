@@ -1,46 +1,43 @@
 name: Lint and Test Charts
 
-on: pull_request
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'release-*'
+  push:
+    branches-ignore:
+      - main
+      - 'release-*'
+    tags:
+      - 'v*'
 
 jobs:
-  lint-test:
+  lint:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Set up Helm
-      uses: azure/setup-helm@v1
-      with:
-        version: v3.7.2
+      - name: Determine target branch for comparison
+        id: target-branch
+        run: |
+          if [[ "${{ github.ref }}" == refs/heads/release-* ]]; then
+            echo "target-branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "target-branch=main" >> $GITHUB_OUTPUT
+          fi
 
-    - uses: actions/setup-python@v5
-      with:
-        python-version: 3.8
+      - name: Show target branch
+        run: |
+          echo "Using target-branch: ${{ steps.target-branch.outputs.target-branch }}"
 
-    - name: Add Helm repository
-      run: |
-        helm repo add nirmata https://nirmata.github.io/reports-server
-        helm repo update
-
-    - name: Set up chart-testing
-      uses: helm/chart-testing-action@v2.2.0
-
-    - name: Run chart-testing (list-changed)
-      id: list-changed
-      run: |
-        changed=$(ct list-changed --target-branch ${{ github.event.pull_request.base.ref }})
-        if [[ -n "$changed" ]]; then
-          echo "::set-output name=changed::true"
-        fi
-
-    - name: Run chart-testing (lint)
-      run: ct lint --target-branch ${{ github.event.pull_request.base.ref }}
-    # - name: Create kind cluster
-    #   uses: helm/kind-action@v1.2.0
-    #   if: steps.list-changed.outputs.changed == 'true'
-
-    # - name: Run chart-testing (install)
-    #   run: ct install --target-branch main
+      - name: Lint Charts
+        uses: ./.github/actions/chart-lint
+        with:
+          target-branch: ${{ steps.target-branch.outputs.target-branch }}
