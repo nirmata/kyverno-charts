@@ -531,7 +531,8 @@ webhooksCleanup:
 
   image:
     # -- (string) Image registry
-    registry: reg.nirmata.io
+    registry: ~
+    defaultRegistry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/kubectl
     # -- Image tag
@@ -598,7 +599,8 @@ policyReportsCleanup:
 
   image:
     # -- (string) Image registry
-    registry: reg.nirmata.io
+    registry: ~
+    defaultRegistry: reg.nirmata.io
     # -- Image repository
     repository: nirmata/kubectl
     # -- Image tag
@@ -2528,7 +2530,8 @@ reports-server:
   jobConfigurations:
     image:
       # -- (string) Image registry
-      registry: reg.nirmata.io
+      registry: ~
+      defaultRegistry: reg.nirmata.io
       # -- Image repository
       repository: nirmata/kubectl
       # -- Image tag
