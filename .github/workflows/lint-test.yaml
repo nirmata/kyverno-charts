@@ -8,12 +8,6 @@ on:
     branches:
       - main
       - 'release-*'
-  push:
-    branches-ignore:
-      - main
-      - 'release-*'
-    tags:
-      - 'v*'
 
 jobs:
   lint:
@@ -27,21 +21,7 @@ jobs:
       - name: Determine target branch for comparison
         id: target-branch
         run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            TARGET_BRANCH="${{ github.base_ref }}"
-          else
-            TARGET_BRANCH="${{ github.ref_name }}"
-          fi
-
-          if [[ "$TARGET_BRANCH" == release-* ]]; then
-            echo "target-branch=$TARGET_BRANCH" >> $GITHUB_OUTPUT
-          else
-            echo "target-branch=main" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Show target branch
-        run: |
-          echo "Using target-branch: ${{ steps.target-branch.outputs.target-branch }}"
+          echo "target-branch=${{ github.base_ref }}" >> $GITHUB_OUTPUT
 
       - name: Lint Charts
         uses: ./.github/actions/chart-lint
