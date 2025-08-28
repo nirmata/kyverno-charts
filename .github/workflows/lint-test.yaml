@@ -27,8 +27,14 @@ jobs:
       - name: Determine target branch for comparison
         id: target-branch
         run: |
-          if [[ "${{ github.ref }}" == refs/heads/release-* ]]; then
-            echo "target-branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            TARGET_BRANCH="${{ github.base_ref }}"
+          else
+            TARGET_BRANCH="${{ github.ref_name }}"
+          fi
+
+          if [[ "$TARGET_BRANCH" == release-* ]]; then
+            echo "target-branch=$TARGET_BRANCH" >> $GITHUB_OUTPUT
           else
             echo "target-branch=main" >> $GITHUB_OUTPUT
           fi
