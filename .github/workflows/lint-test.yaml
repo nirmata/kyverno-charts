@@ -8,12 +8,6 @@ on:
     branches:
       - main
       - 'release-*'
-  push:
-    branches-ignore:
-      - main
-      - 'release-*'
-    tags:
-      - 'v*'
 
 jobs:
   lint:
@@ -24,7 +18,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Determine target branch for comparison
+        id: target-branch
+        run: |
+          echo "target-branch=${{ github.base_ref }}" >> $GITHUB_OUTPUT
+
       - name: Lint Charts
         uses: ./.github/actions/chart-lint
         with:
-          target-branch: main
+          target-branch: ${{ steps.target-branch.outputs.target-branch }}
