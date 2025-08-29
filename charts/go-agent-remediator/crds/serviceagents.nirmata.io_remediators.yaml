@@ -56,10 +56,40 @@ spec:
                     description: LocalCluster indicates if this is a local cluster
                       deployment
                     type: boolean
+                  localClusterConfig:
+                    description: |-
+                      LocalClusterConfig defines local cluster specific configuration
+                      Required when LocalCluster is true
+                    properties:
+                      repoNamespaceMappingRef:
+                        description: |-
+                          RepoNamespaceMappingRef defines a reference to a ConfigMap containing
+                          mapping between git repositories and target namespaces
+                        properties:
+                          key:
+                            default: mapping
+                            description: Key is the key within the ConfigMap containing
+                              the mapping data
+                            type: string
+                          name:
+                            description: Name is the name of the ConfigMap
+                            type: string
+                          namespace:
+                            description: Namespace is the namespace of the ConfigMap
+                            type: string
+                        required:
+                        - name
+                        type: object
+                    required:
+                    - repoNamespaceMappingRef
+                    type: object
                 required:
                 - argoCD
                 - localCluster
                 type: object
+                x-kubernetes-validations:
+                - message: localClusterConfig is required when localCluster is true
+                  rule: '!self.localCluster || has(self.localClusterConfig)'
               remediation:
                 description: Remediation defines the remediation configuration
                 properties:
@@ -160,7 +190,9 @@ spec:
                 - triggers
                 type: object
               target:
-                description: Target defines the target configuration for remediation
+                description: |-
+                  Target defines the target configuration for remediation
+                  Optional when LocalCluster is true (will use current cluster)
                 properties:
                   argoAppSelector:
                     description: |-
@@ -227,7 +259,9 @@ spec:
                         type: array
                     type: object
                   clusterNames:
-                    description: ClusterNames is a list of cluster names to remediate
+                    description: |-
+                      ClusterNames is a list of cluster names to remediate
+                      Optional when LocalCluster is true (will use current cluster)
                     items:
                       type: string
                     type: array
@@ -237,14 +271,16 @@ spec:
                     items:
                       type: string
                     type: array
-                required:
-                - clusterNames
                 type: object
             required:
             - environment
             - remediation
-            - target
             type: object
+            x-kubernetes-validations:
+            - message: target is required when localCluster is false
+              rule: self.environment.localCluster || has(self.target)
+            - message: target is required when argoCD.hub is true
+              rule: '!self.environment.argoCD.hub || has(self.target)'
           status:
             description: RemediatorStatus defines the observed state of Remediator.
             type: object
