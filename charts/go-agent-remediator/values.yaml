@@ -21,6 +21,13 @@ resources:
     cpu: 100m
     memory: 128Mi
 
+# Logging configuration
+logging:
+  # Set verbosity level (0=info, 1=audit+info, 2=debug+audit+info)
+  verbosity: 0
+  # Enable audit logging (if true, overrides verbosity=0 to ensure audit logs are visible)
+  enableAudit: false
+
 nodeSelector: {}
 tolerations: []
 affinity: {}
