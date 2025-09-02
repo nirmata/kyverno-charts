@@ -1,0 +1,163 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "llm": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["bedrock", "azure-openai", "nirmataAI"]
+        },
+        "bedrock": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "model": { "type": "string" },
+            "region": { "type": "string" },
+            "secretRef": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "name": { "type": "string" },
+                "key": { "type": "string" }
+              }
+            }
+          }
+        },
+        "azureOpenAI": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "endpoint": { "type": "string" },
+            "deploymentName": { "type": "string" },
+            "secretRef": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "name": { "type": "string" },
+                "key": { "type": "string" }
+              }
+            }
+          }
+        },
+        "nirmataAI": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "endpoint": { "type": "string" },
+            "model": { "type": "string" }
+          }
+        }
+      }
+    },
+    "nirmata": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "apiToken": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apiTokenSecret": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apiTokenSecretNamespace": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "llm": {
+            "type": "object",
+            "properties": {
+              "provider": { "const": "bedrock" }
+            },
+            "required": ["provider"]
+          }
+        },
+        "required": ["llm"]
+      },
+      "then": {
+        "properties": {
+          "llm": {
+            "required": ["bedrock"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "llm": {
+            "type": "object",
+            "properties": {
+              "provider": { "const": "azure-openai" }
+            },
+            "required": ["provider"]
+          }
+        },
+        "required": ["llm"]
+      },
+      "then": {
+        "properties": {
+          "llm": {
+            "required": ["azureOpenAI"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "llm": {
+            "type": "object",
+            "properties": {
+              "provider": { "const": "nirmataAI" }
+            },
+            "required": ["provider"]
+          }
+        },
+        "required": ["llm"]
+      },
+      "then": {
+        "properties": {
+          "llm": {
+            "required": ["nirmataAI"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "llm": {
+            "type": "object",
+            "properties": {
+              "provider": { "const": "nirmataAI" }
+            },
+            "required": ["provider"]
+          }
+        },
+        "required": ["llm"]
+      },
+      "then": {
+        "anyOf": [
+          { "required": ["nirmata"], "properties": { "nirmata": { "required": ["apiToken"] } } },
+          { "required": ["nirmata"], "properties": { "nirmata": { "required": ["apiTokenSecret"] } } }
+        ]
+      },
+      "errorMessage": "When llm.provider is 'nirmataAI', either nirmata.apiToken or nirmata.apiTokenSecret must be set."
+    }
+  ]
+}
+
+

@@ -283,6 +283,76 @@ spec:
               rule: '!self.environment.argoCD.hub || has(self.target)'
           status:
             description: RemediatorStatus defines the observed state of Remediator.
+            properties:
+              lastRunSummary:
+                description: LastRunSummary contains details about the most recent
+                  remediation run
+                properties:
+                  actionsExecuted:
+                    description: ActionsExecuted is the number of actions that were
+                      executed
+                    format: int32
+                    type: integer
+                  endTime:
+                    description: EndTime is when the remediation run completed
+                    format: date-time
+                    type: string
+                  errors:
+                    description: Errors contains any errors encountered during the
+                      run
+                    items:
+                      type: string
+                    type: array
+                  message:
+                    description: Message provides details about the run outcome
+                    type: string
+                  remediationPlans:
+                    description: RemediationPlans is the number of remediation plans
+                      generated
+                    format: int32
+                    type: integer
+                  startTime:
+                    description: StartTime is when the remediation run started
+                    format: date-time
+                    type: string
+                  status:
+                    description: Status indicates whether the last run succeeded or
+                      failed
+                    type: string
+                  targetsProcessed:
+                    description: TargetsProcessed is the number of targets that were
+                      processed
+                    format: int32
+                    type: integer
+                  violationsFound:
+                    description: ViolationsFound is the total number of violations
+                      discovered
+                    format: int32
+                    type: integer
+                type: object
+              lastScheduleTime:
+                description: LastScheduleTime is the last time a remediation was scheduled
+                  to run
+                format: date-time
+                type: string
+              lastSuccessfulTime:
+                description: LastSuccessfulTime is the last time a remediation run
+                  completed successfully
+                format: date-time
+                type: string
+              message:
+                description: Message provides human readable details about the current
+                  state
+                type: string
+              nextScheduledTime:
+                description: NextScheduledTime is when the next remediation run is
+                  scheduled
+                format: date-time
+                type: string
+              phase:
+                description: Phase represents the current operational phase of the
+                  remediator
+                type: string
             type: object
         type: object
     served: true

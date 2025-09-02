@@ -10,22 +10,30 @@ spec:
   type: {{ .Values.llm.provider | quote }}
   {{- if eq .Values.llm.provider "bedrock" }}
   bedrock:
-    model: {{ .Values.llm.model | quote }}
-    region: {{ .Values.llm.region | quote }}
-    {{- if .Values.llm.secretName }}
+    model: {{ .Values.llm.bedrock.model | quote }}
+    region: {{ .Values.llm.bedrock.region | quote }}
+    {{- if .Values.llm.bedrock.secretRef.name }}
     secretRef:
-      name: {{ .Values.llm.secretName | quote }}
-      {{- if .Values.llm.secretKey }}
-      key: {{ .Values.llm.secretKey | quote }}
+      name: {{ .Values.llm.bedrock.secretRef.name | quote }}
+      {{- if .Values.llm.bedrock.secretRef.key }}
+      key: {{ .Values.llm.bedrock.secretRef.key | quote }}
       {{- end }}
     {{- end }}
   {{- else if eq .Values.llm.provider "azure-openai" }}
   azureOpenAI:
-    endpoint: {{ .Values.llm.endpoint | quote }}
-    deploymentName: {{ .Values.llm.deploymentName | quote }}
+    endpoint: {{ .Values.llm.azureOpenAI.endpoint | quote }}
+    deploymentName: {{ .Values.llm.azureOpenAI.deploymentName | quote }}
     secretRef:
-      name: {{ .Values.llm.secretName | quote }}
-      key: {{ .Values.llm.secretKey | default "api-key" | quote }}
+      name: {{ .Values.llm.azureOpenAI.secretRef.name | quote }}
+      key: {{ .Values.llm.azureOpenAI.secretRef.key | default "api-key" | quote }}
+  {{- else if eq .Values.llm.provider "nirmataAI" }}
+  nirmataAI:
+    endpoint: {{ .Values.llm.nirmataAI.endpoint | default "https://nirmata.io" | quote }}
+    model: {{ .Values.llm.nirmataAI.model | quote }}
+    apiKeySecretRef:
+      name: {{ .Values.nirmata.apiTokenSecret | default "nirmata-api-token" | quote }}
+      namespace: {{ .Values.nirmata.apiTokenSecretNamespace | default "nirmata" }}
+      key: "api-token"
   {{- end }}
 {{- end }}
 

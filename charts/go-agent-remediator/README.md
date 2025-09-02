@@ -114,8 +114,19 @@ helm install remediator nirmata/remediator-agent --devel \
 | `replicaCount` | Number of controller replicas | `1` |
 | `image.repository` | Container image repository | `ghcr.io/nirmata/go-agent-remediator` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
+| `logging.verbosity` | Log verbosity level (0=info, 1=audit+info, 2=debug+audit+info) | `0` |
+| `logging.enableAudit` | Enable audit logging (equivalent to verbosity >= 1) | `false` |
 
 *Note: Image tag is automatically set to `Chart.yaml` appVersion*
+
+### Audit Logging
+
+To enable audit logging for compliance and troubleshooting:
+
+```bash
+# Enable audit logging only
+helm install remediator charts/go-agent-remediator \
+  --set logging.enableAudit=true
 
 ## Uninstalling
 
