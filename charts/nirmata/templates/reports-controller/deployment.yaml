@@ -91,7 +91,7 @@ spec:
           image: {{ .Values.global.kubectlImage }}
           imagePullPolicy: IfNotPresent
           command:
-            - /bin/sh
+            - sh
             - -c
             - |
               echo "Waiting for reports-server pod to be running..."

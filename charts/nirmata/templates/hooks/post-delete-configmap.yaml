@@ -94,7 +94,7 @@ spec:
           image: {{ (include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.webhooksCleanup.image "defaultTag" (default .Chart.AppVersion .Values.webhooksCleanup.image.tag))) | quote }}
           imagePullPolicy: {{ .Values.webhooksCleanup.image.pullPolicy }}
           command:
-            - /bin/bash
+            - sh
             - '-c'
             - |-
               set -euo pipefail
