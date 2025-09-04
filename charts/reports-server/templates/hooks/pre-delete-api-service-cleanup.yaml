@@ -41,7 +41,7 @@ spec:
           image: "{{ .Values.jobConfigurations.image.registry }}/{{ .Values.jobConfigurations.image.repository }}:{{ .Values.jobConfigurations.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.jobConfigurations.image.pullPolicy }}
           command:
-            - /usr/bin/sh
+            - sh
             - '-c'
             - |-
               set -euo pipefail
