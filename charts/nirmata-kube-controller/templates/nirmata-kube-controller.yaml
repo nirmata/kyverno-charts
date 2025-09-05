@@ -107,6 +107,14 @@ rules:
   - get
   - list
   - watch
+- apiGroups: ["nirmata.io"]
+  resources:
+  - clusterconfigs
+  - clusterconfigs/status
+  verbs:
+  - get
+  - list
+  - watch
 - apiGroups: ["security.nirmata.io"]
   resources:
   - imagekeys
@@ -224,6 +232,7 @@ data:
     clusterpolicies.v1.kyverno.io
     policyexceptions.v2alpha1.kyverno.io
     policyexceptions.v2.kyverno.io
+    clusterconfigs.v1alpha1.nirmata.io
     policysets.v1alpha1.security.nirmata.io
     kyvernoconfigs.v1alpha1.security.nirmata.io
   IgnoreEvents: Normal.PolicyPlaceHolder.*
