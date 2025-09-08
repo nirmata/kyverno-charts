@@ -58,6 +58,9 @@ spec:
                       name:
                         description: Name is the name of the secret
                         type: string
+                      namespace:
+                        description: Namespace is the namespace of the secret
+                        type: string
                     required:
                     - key
                     - name
@@ -94,6 +97,9 @@ spec:
                       name:
                         description: Name is the name of the secret
                         type: string
+                      namespace:
+                        description: Namespace is the namespace of the secret
+                        type: string
                     required:
                     - key
                     - name
@@ -102,8 +108,40 @@ spec:
                 - model
                 - region
                 type: object
+              nirmataAI:
+                description: Nirmata defines configuration for Nirmata provider
+                properties:
+                  apiKeySecretRef:
+                    description: ApiKeySecretRef defines the reference to a secret
+                      containing Nirmata API key
+                    properties:
+                      key:
+                        description: Key is the key within the secret
+                        type: string
+                      name:
+                        description: Name is the name of the secret
+                        type: string
+                      namespace:
+                        description: Namespace is the namespace of the secret
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  endpoint:
+                    description: NirmataEndpoint defines the Nirmata endpoint URL
+                    type: string
+                  model:
+                    description: Model defines the Nirmata model to use
+                    type: string
+                required:
+                - apiKeySecretRef
+                - endpoint
+                - model
+                type: object
               type:
-                description: Type defines the type of provider (e.g., "bedrock", "azure-openai")
+                description: Type defines the type of provider (e.g., "bedrock", "azure-openai",
+                  "nirmata")
                 type: string
             required:
             - type
