@@ -69,6 +69,9 @@ spec:
                           name:
                             description: Name is the name of the secret
                             type: string
+                          namespace:
+                            description: Namespace is the namespace of the secret
+                            type: string
                         required:
                         - key
                         - name
@@ -98,6 +101,9 @@ spec:
                             type: string
                           name:
                             description: Name is the name of the secret
+                            type: string
+                          namespace:
+                            description: Namespace is the namespace of the secret
                             type: string
                         required:
                         - key
@@ -142,7 +148,6 @@ spec:
                 type: string
             required:
             - credentials
-            - defaults
             - type
             type: object
           status:

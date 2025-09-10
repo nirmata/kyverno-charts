@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/nirmata/go-agent-remediator
+  repository: reg.nirmata.io/nirmata/go-agent-remediator
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -21,6 +21,13 @@ resources:
     cpu: 100m
     memory: 128Mi
 
+# Logging configuration
+logging:
+  # Set verbosity level (0=info, 1=audit+info, 2=debug+audit+info)
+  verbosity: 0
+  # Enable audit logging (if true, overrides verbosity=0 to ensure audit logs are visible)
+  enableAudit: false
+
 nodeSelector: {}
 tolerations: []
 affinity: {}
@@ -28,21 +35,36 @@ affinity: {}
 # LLM provider configuration for creating an LLMConfig CR
 llm:
   enabled: true
-  provider: bedrock  # Options: bedrock, azure-openai
-  # For Bedrock
-  model: ""
-  region: ""
-  # For Azure OpenAI
-  endpoint: ""
-  deploymentName: ""
-  # Secret configuration (for both providers)
-  secretName: ""
-  # TODO: this is not required, but we need to set it to something. Make the key optional in the secretRef.
-  secretKey: "aws_access_key_id"
+  provider: nirmataAI  # Options: bedrock, azure-openai, nirmataAI
+  bedrock:
+    model: ""
+    region: ""
+    secretRef:
+      name: ""
+      # Optional for some auth methods
+      key: "aws_access_key_id"
+  azureOpenAI:
+    endpoint: ""
+    deploymentName: ""
+    secretRef:
+      name: ""
+      # Defaults to standard header key
+      key: "api-key"
+  nirmataAI:
+    endpoint: "https://nirmata.io"
+    model: ""
 
-# ToolConfig for GitHub (used by CreateGithubPR)
+nirmata:
+  # Name of secret containing Nirmata API token
+  # Create manually: kubectl create secret generic nirmata-api-token --from-literal=api-token=YOUR_TOKEN -n nirmata
+  apiTokenSecret: "nirmata-api-token"
+
+  # Namespace of secret containing Nirmata API token
+  apiTokenSecretNamespace: "nirmata"
+
+# ToolConfig for GitHub (used by CreatePR)
 tool:
-  enabled: true
+  enabled: false
   name: github-tool
   type: github
 
@@ -71,7 +93,7 @@ tool:
 
 # Remediator CR
 remediator:
-  enabled: true
+  enabled: false
   name: remediator-agent
   environment:
     localCluster: false
@@ -85,5 +107,5 @@ remediator:
   remediation:
     schedule: "0 */6 * * *"
     actions:
-      - type: CreateGithubPR
+      - type: CreatePR
         toolRefName: github-tool
