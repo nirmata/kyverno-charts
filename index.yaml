@@ -23250,6 +23250,24 @@ entries:
     version: 0.1.0
   remediator-agent:
   - apiVersion: v2
+    appVersion: v0.2.0-rc7
+    created: "2025-09-10T11:04:29.988860106Z"
+    description: A Helm chart for the Remediator Agent
+    digest: fa7a9164b93ea60528d7b263cee8b57b258abad31b889b77d24e9d63c8ed93ad
+    keywords:
+    - kubernetes
+    - serviceagents
+    - argocd
+    - remediation
+    maintainers:
+    - email: support@nirmata.com
+      name: Nirmata
+    name: remediator-agent
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/remediator-agent-0.2.0-rc6/remediator-agent-0.2.0-rc6.tgz
+    version: 0.2.0-rc6
+  - apiVersion: v2
     appVersion: v0.2.0-rc6
     created: "2025-08-29T07:14:54.110686462Z"
     description: A Helm chart for the Remediator Agent
@@ -23660,4 +23678,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-09-05T07:33:16.31269794Z"
+generated: "2025-09-10T11:04:29.98998932Z"
