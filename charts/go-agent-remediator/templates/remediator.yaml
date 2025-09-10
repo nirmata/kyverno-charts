@@ -38,7 +38,7 @@ spec:
     actions:
       {{- range .Values.remediator.remediation.actions }}
       - type: {{ .type }}
-        {{- if or (eq .type "CreateGithubPR") (eq .type "DryRun") }}
+        {{- if or (eq .type "CreatePR") (eq .type "DryRun") }}
         toolRef:
           name: {{ .toolRefName | default $.Values.tool.name | default (printf "%s-github" (include "go-agent-remediator.name" $)) }}
           namespace: {{ $.Release.Namespace }}

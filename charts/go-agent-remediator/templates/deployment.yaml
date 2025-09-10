@@ -40,6 +40,9 @@ spec:
             - --metrics-bind-address=:8443
             - --leader-elect
             - --health-probe-bind-address=:8081
+            {{- if or .Values.logging.enableAudit (gt (.Values.logging.verbosity | int) 0) }}
+            - -v={{ max (.Values.logging.verbosity | int) (ternary 1 0 .Values.logging.enableAudit) }}
+            {{- end }}
           ports:
             - containerPort: 8443
               name: metrics
