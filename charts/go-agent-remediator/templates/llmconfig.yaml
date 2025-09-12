@@ -28,7 +28,7 @@ spec:
       key: {{ .Values.llm.azureOpenAI.secretRef.key | default "api-key" | quote }}
   {{- else if eq .Values.llm.provider "nirmataAI" }}
   nirmataAI:
-    endpoint: {{ .Values.llm.nirmataAI.endpoint | default "https://nirmata.io" | quote }}
+    endpoint: {{ .Values.nirmata.endpoint | default "https://nirmata.io" | quote }}
     model: {{ .Values.llm.nirmataAI.model | quote }}
     apiKeySecretRef:
       name: {{ .Values.nirmata.apiTokenSecret | default "nirmata-api-token" | quote }}

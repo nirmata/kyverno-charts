@@ -43,6 +43,13 @@ spec:
             {{- if or .Values.logging.enableAudit (gt (.Values.logging.verbosity | int) 0) }}
             - -v={{ max (.Values.logging.verbosity | int) (ternary 1 0 .Values.logging.enableAudit) }}
             {{- end }}
+            - --api-token-secret={{ .Values.nirmata.apiTokenSecret }}
+            {{- if .Values.nirmata.apiTokenSecretNamespace }}
+            - --api-token-secret-namespace={{ .Values.nirmata.apiTokenSecretNamespace }}
+            {{- end }}
+            {{- if .Values.nirmata.endpoint }}
+            - --url={{ .Values.nirmata.endpoint }}
+            {{- end }}
           ports:
             - containerPort: 8443
               name: metrics

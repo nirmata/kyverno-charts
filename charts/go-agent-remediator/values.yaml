@@ -51,10 +51,10 @@ llm:
       # Defaults to standard header key
       key: "api-key"
   nirmataAI:
-    endpoint: "https://nirmata.io"
     model: ""
 
 nirmata:
+  endpoint: "https://nirmata.io"
   # Name of secret containing Nirmata API token
   # Create manually: kubectl create secret generic nirmata-api-token --from-literal=api-token=YOUR_TOKEN -n nirmata
   apiTokenSecret: "nirmata-api-token"
