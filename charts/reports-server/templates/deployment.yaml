@@ -50,6 +50,9 @@ spec:
             - --dbsslkey={{ .Values.config.db.sslkey }}
             - --dbsslcert={{ .Values.config.db.sslcert }}
             {{- end }}
+            - --servicename={{ include "reports-server.fullname" . }}
+            - --servicens={{ $.Release.Namespace }}
+            - --storeopenreports={{ .Values.apiServicesManagement.installApiServices.installOpenreportsService }}
             - --cert-dir=/tmp
             - --secure-port=4443
             {{- if .Values.metrics.enabled }}
