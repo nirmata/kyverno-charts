@@ -1,0 +1,30 @@
+🎉 Successfully installed {{ .Chart.Name }} chart version {{ .Chart.Version }}!
+   App version: {{ .Chart.AppVersion }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Remediator Agent has been deployed in namespace: {{ .Release.Namespace }}
+
+🔍 Check the status of your deployment:
+   kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "remediator-agent.name" . }}
+   kubectl get remediator -n {{ .Release.Namespace }}
+
+📋 View the logs:
+   kubectl logs -n {{ .Release.Namespace }} deployment/{{ include "remediator-agent.fullname" . }}
+
+🚀 Next Steps:
+   1. Configure LLMConfig for your AI provider
+   2. Set up ToolConfig for Git provider authentication  
+   3. Create and configure your Remediator resource
+   4. See the documentation for detailed configuration instructions
+
+📚 Documentation & Resources:
+   • Remediator Agent Documentation: https://docs.nirmata.io/docs/agents/service-agents/remediator/
+
+💡 Pro Tips:
+   • Use 'helm get values {{ .Release.Name }} -n {{ .Release.Namespace }}' to see your configuration
+   • Enable audit logging with logging.enableAudit=true for detailed activity tracking
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Happy remediating! 🛠️✨

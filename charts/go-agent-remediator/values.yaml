@@ -34,8 +34,8 @@ affinity: {}
 
 # LLM provider configuration for creating an LLMConfig CR
 llm:
-  enabled: true
-  provider: nirmataAI  # Options: bedrock, azure-openai, nirmataAI
+  enabled: false
+  provider: ""  # Options: bedrock, azure-openai
   bedrock:
     model: ""
     region: ""
@@ -51,10 +51,10 @@ llm:
       # Defaults to standard header key
       key: "api-key"
   nirmataAI:
-    endpoint: "https://nirmata.io"
     model: ""
 
 nirmata:
+  endpoint: "https://nirmata.io"
   # Name of secret containing Nirmata API token
   # Create manually: kubectl create secret generic nirmata-api-token --from-literal=api-token=YOUR_TOKEN -n nirmata
   apiTokenSecret: "nirmata-api-token"
