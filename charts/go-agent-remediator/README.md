@@ -17,14 +17,6 @@ Create `nirmata` namespace
 kubectl create namespace nirmata
 ```
 
-### Authentication
-Create a secret for GitHub token (required for CreatePR action): 
-```bash
-kubectl create secret generic github-token \
-  --from-literal=token=YOUR_GITHUB_TOKEN \
-  --namespace nirmata
-```
-
 #### Using Pod Identity Agent (Recommended for EKS)
 Create an IAM role with a trust policy for the Pod Identity Agent.
 ```bash
@@ -89,7 +81,7 @@ kubectl create secret generic aws-bedrock-credentials \
 
 ## Installation
 
-**Note**: Skip the `--set llm.secretName="aws-bedrock-credentials"` argument in the command below if you are using the Pod Identity Agent.
+**Note**: Skip the `--set llm.secretRef.name="aws-bedrock-credentials"` argument in the command below if you are using the Pod Identity Agent.
 
 ```bash
 helm repo add nirmata https://nirmata.github.io/kyverno-charts
@@ -99,10 +91,10 @@ helm repo update nirmata
 helm install remediator nirmata/remediator-agent --devel \
   --namespace nirmata \
   --create-namespace \
-  --set llm.model="BEDROCK_INFERENCE_PROFILE" \
-  --set llm.region="AWS_REGION" \
-  --set llm.secretName="aws-bedrock-credentials" \
-  --set tool.secretName="github-token"
+  --set llm.provider="bedrock" \
+  --set llm.bedrock.model="BEDROCK_INFERENCE_PROFILE" \
+  --set llm.bedrock.region="AWS_REGION" \
+  --set llm.secretRef.name="aws-bedrock-credentials"
 ```
 
 ## Configuration
