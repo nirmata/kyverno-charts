@@ -1,4 +1,0 @@
-apiVersion: v2
-name: crds
-version: 3.5.2
-description: Kyverno Custom Resource Definitions
