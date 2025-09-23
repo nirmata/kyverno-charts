@@ -13,7 +13,7 @@ spec:
     model: {{ .Values.llm.bedrock.model | quote }}
     region: {{ .Values.llm.bedrock.region | quote }}
     {{- if .Values.llm.bedrock.secretRef.name }}
-    secretRef:
+    credentialsSecretRef:
       name: {{ .Values.llm.bedrock.secretRef.name | quote }}
       {{- if .Values.llm.bedrock.secretRef.key }}
       key: {{ .Values.llm.bedrock.secretRef.key | quote }}
@@ -23,7 +23,7 @@ spec:
   azureOpenAI:
     endpoint: {{ .Values.llm.azureOpenAI.endpoint | quote }}
     deploymentName: {{ .Values.llm.azureOpenAI.deploymentName | quote }}
-    secretRef:
+    apiKeySecretRef:
       name: {{ .Values.llm.azureOpenAI.secretRef.name | quote }}
       key: {{ .Values.llm.azureOpenAI.secretRef.key | default "api-key" | quote }}
   {{- else if eq .Values.llm.provider "nirmataAI" }}
