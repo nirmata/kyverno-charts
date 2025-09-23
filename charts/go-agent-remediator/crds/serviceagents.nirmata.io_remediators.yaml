@@ -43,53 +43,15 @@ spec:
                 description: Environment defines the environment configuration for
                   the remediator
                 properties:
-                  argoCD:
-                    description: ArgoCD defines ArgoCD specific configuration
-                    properties:
-                      hub:
-                        description: Hub indicates if this is an ArgoCD hub cluster
-                        type: boolean
-                    required:
-                    - hub
-                    type: object
-                  localCluster:
-                    description: LocalCluster indicates if this is a local cluster
-                      deployment
-                    type: boolean
-                  localClusterConfig:
-                    description: |-
-                      LocalClusterConfig defines local cluster specific configuration
-                      Required when LocalCluster is true
-                    properties:
-                      repoNamespaceMappingRef:
-                        description: |-
-                          RepoNamespaceMappingRef defines a reference to a ConfigMap containing
-                          mapping between git repositories and target namespaces
-                        properties:
-                          key:
-                            default: mapping
-                            description: Key is the key within the ConfigMap containing
-                              the mapping data
-                            type: string
-                          name:
-                            description: Name is the name of the ConfigMap
-                            type: string
-                          namespace:
-                            description: Namespace is the namespace of the ConfigMap
-                            type: string
-                        required:
-                        - name
-                        type: object
-                    required:
-                    - repoNamespaceMappingRef
-                    type: object
+                  type:
+                    description: Type determines the environment type
+                    enum:
+                    - localCluster
+                    - argoHub
+                    type: string
                 required:
-                - argoCD
-                - localCluster
+                - type
                 type: object
-                x-kubernetes-validations:
-                - message: localClusterConfig is required when localCluster is true
-                  rule: '!self.localCluster || has(self.localClusterConfig)'
               remediation:
                 description: Remediation defines the remediation configuration
                 properties:
@@ -146,6 +108,28 @@ spec:
                     required:
                     - policySelector
                     type: object
+                  gitCredentials:
+                    description: GitCredentials defines a reference to a ToolConfig
+                      resource for git credentials
+                    properties:
+                      apiVersion:
+                        default: serviceagents.nirmata.io/v1alpha1
+                        description: APIVersion is the API version of the referenced
+                          object
+                        type: string
+                      kind:
+                        default: ToolConfig
+                        description: Kind is the kind of the referenced object
+                        type: string
+                      name:
+                        description: Name is the name of the tool configuration
+                        type: string
+                      namespace:
+                        description: Namespace is the namespace of the tool configuration
+                        type: string
+                    required:
+                    - name
+                    type: object
                   llmConfigRef:
                     description: LLMConfigRef defines a reference to a LLMConfig resource
                     properties:
@@ -194,93 +178,131 @@ spec:
                   Target defines the target configuration for remediation
                   Optional when LocalCluster is true (will use current cluster)
                 properties:
-                  argoAppSelector:
-                    description: |-
-                      ArgoAppSelector defines how to select Argo applications for remediation
-                      If not specified, no applications will be selected
+                  argoHubTarget:
+                    description: ArgoHubTarget holds cluster-based targeting configuration
                     properties:
-                      allApps:
+                      argoAppSelector:
                         description: |-
-                          AllApps indicates whether to select all applications (wildcard behavior)
-                          When true, other selector fields are ignored
-                        type: boolean
-                      labelSelector:
-                        description: LabelSelector is used to select applications
-                          based on their labels
+                          ArgoAppSelector defines how to select Argo applications for remediation
+                          If not specified, no applications will be selected
                         properties:
-                          matchExpressions:
-                            description: matchExpressions is a list of label selector
-                              requirements. The requirements are ANDed.
-                            items:
-                              description: |-
-                                A label selector requirement is a selector that contains values, a key, and an operator that
-                                relates the key and values.
-                              properties:
-                                key:
-                                  description: key is the label key that the selector
-                                    applies to.
-                                  type: string
-                                operator:
-                                  description: |-
-                                    operator represents a key's relationship to a set of values.
-                                    Valid operators are In, NotIn, Exists and DoesNotExist.
-                                  type: string
-                                values:
-                                  description: |-
-                                    values is an array of string values. If the operator is In or NotIn,
-                                    the values array must be non-empty. If the operator is Exists or DoesNotExist,
-                                    the values array must be empty. This array is replaced during a strategic
-                                    merge patch.
-                                  items:
-                                    type: string
-                                  type: array
-                                  x-kubernetes-list-type: atomic
-                              required:
-                              - key
-                              - operator
-                              type: object
-                            type: array
-                            x-kubernetes-list-type: atomic
-                          matchLabels:
-                            additionalProperties:
-                              type: string
+                          allApps:
                             description: |-
-                              matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
-                              map is equivalent to an element of matchExpressions, whose key field is "key", the
-                              operator is "In", and the values array contains only "value". The requirements are ANDed.
+                              AllApps indicates whether to select all applications (wildcard behavior)
+                              When true, other selector fields are ignored
+                            type: boolean
+                          labelSelector:
+                            description: LabelSelector is used to select applications
+                              based on their labels
+                            properties:
+                              matchExpressions:
+                                description: matchExpressions is a list of label selector
+                                  requirements. The requirements are ANDed.
+                                items:
+                                  description: |-
+                                    A label selector requirement is a selector that contains values, a key, and an operator that
+                                    relates the key and values.
+                                  properties:
+                                    key:
+                                      description: key is the label key that the selector
+                                        applies to.
+                                      type: string
+                                    operator:
+                                      description: |-
+                                        operator represents a key's relationship to a set of values.
+                                        Valid operators are In, NotIn, Exists and DoesNotExist.
+                                      type: string
+                                    values:
+                                      description: |-
+                                        values is an array of string values. If the operator is In or NotIn,
+                                        the values array must be non-empty. If the operator is Exists or DoesNotExist,
+                                        the values array must be empty. This array is replaced during a strategic
+                                        merge patch.
+                                      items:
+                                        type: string
+                                      type: array
+                                      x-kubernetes-list-type: atomic
+                                  required:
+                                  - key
+                                  - operator
+                                  type: object
+                                type: array
+                                x-kubernetes-list-type: atomic
+                              matchLabels:
+                                additionalProperties:
+                                  type: string
+                                description: |-
+                                  matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+                                  map is equivalent to an element of matchExpressions, whose key field is "key", the
+                                  operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                type: object
                             type: object
+                            x-kubernetes-map-type: atomic
+                          names:
+                            description: Names is a list of specific Argo application
+                              names to select
+                            items:
+                              type: string
+                            type: array
                         type: object
-                        x-kubernetes-map-type: atomic
-                      names:
-                        description: Names is a list of specific Argo application
-                          names to select
+                      clusterNames:
+                        description: |-
+                          ClusterNames is a list of cluster names to remediate
+                          Optional when LocalCluster is true (will use current cluster)
+                        items:
+                          type: string
+                        type: array
+                      clusterServerUrls:
+                        description: ClusterServerUrls is a list of cluster server
+                          URLs (optional)
                         items:
                           type: string
                         type: array
                     type: object
-                  clusterNames:
-                    description: |-
-                      ClusterNames is a list of cluster names to remediate
-                      Optional when LocalCluster is true (will use current cluster)
-                    items:
-                      type: string
-                    type: array
-                  clusterServerUrls:
-                    description: ClusterServerUrls is a list of cluster server URLs
-                      (optional)
-                    items:
-                      type: string
-                    type: array
+                  localClusterTarget:
+                    description: LocalClusterTarget holds local cluster-based targeting
+                      configuration
+                    properties:
+                      repoNamespaceMappingRef:
+                        description: |-
+                          RepoNamespaceMappingRef defines a reference to a ConfigMap containing
+                          mapping between git repositories and target namespaces
+                        properties:
+                          key:
+                            default: mapping
+                            description: Key is the key within the ConfigMap containing
+                              the mapping data
+                            type: string
+                          name:
+                            description: Name is the name of the ConfigMap
+                            type: string
+                          namespace:
+                            description: Namespace is the namespace of the ConfigMap
+                            type: string
+                        required:
+                        - name
+                        type: object
+                    required:
+                    - repoNamespaceMappingRef
+                    type: object
+                  vcsTarget:
+                    description: VCSTarget holds VCS-based targeting configuration
+                    type: object
                 type: object
+                x-kubernetes-validations:
+                - message: exactly one of localClusterTarget or argoHubTarget must
+                    be set
+                  rule: (has(self.localClusterTarget) && !has(self.argoHubTarget))
+                    || (!has(self.localClusterTarget) && has(self.argoHubTarget))
             required:
             - environment
             - remediation
             type: object
             x-kubernetes-validations:
-            - message: target is required when localCluster is false
-              rule: self.environment.localCluster || has(self.target)
-            - message: target is required when argoCD.hub is true
-              rule: '!self.environment.argoCD.hub || has(self.target)'
+            - message: target is required when environment type is not localCluster
+              rule: self.environment.type == 'localCluster' || has(self.target)
+            - message: target is required when environment type is argoHub
+              rule: 'self.environment.type == ''argoHub'' ? has(self.target) : true'
           status:
             description: RemediatorStatus defines the observed state of Remediator.
             properties:
