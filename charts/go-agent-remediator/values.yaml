@@ -64,7 +64,7 @@ nirmata:
 
 # ToolConfig for GitHub (used by CreatePR)
 tool:
-  enabled: false
+  enabled: true
   name: github-tool
   type: github
 
@@ -96,14 +96,18 @@ remediator:
   enabled: false
   name: remediator-agent
   environment:
-    localCluster: false
-    argoCD:
-      hub: true
+    type: argoHub  # Options: localCluster, argoHub
   target:
-    clusterNames: []
-    clusterServerUrls: []
-    argoAppSelector:
-      allApps: true
+    argoHubTarget:
+      clusterNames: []
+      clusterServerUrls: []
+      argoAppSelector:
+        allApps: true
+    # localClusterTarget:
+    #   repoNamespaceMappingRef:
+    #     name: repo-namespace-mapping
+    #     namespace: nirmata
+    #     key: mapping
   remediation:
     schedule: "0 */6 * * *"
     actions:
