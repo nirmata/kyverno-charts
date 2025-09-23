@@ -49,6 +49,9 @@ spec:
               clusterName:
                 description: ClusterName is the kubernetes cluster name.
                 type: string
+              region:
+                description: Region is the region of the kubernetes cluster.
+                type: string
               scanInterval:
                 default: 1h
                 description: |-
@@ -60,7 +63,18 @@ spec:
             required:
             - clusterEndpoint
             - clusterName
+            - region
+            type: object
+          status:
+            description: Status contains the current state of the ClusterConfig
+            properties:
+              lastUpdated:
+                description: LastUpdated is the last time this ClusterConfig was synced
+                format: date-time
+                type: string
             type: object
         type: object
     served: true
     storage: true
+    subresources:
+      status: {}
