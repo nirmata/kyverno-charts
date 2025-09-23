@@ -92,9 +92,9 @@ spec:
                       PAT-based authentication using Personal Access Token
                       Required when method == "pat"
                     properties:
-                      secretRef:
-                        description: SecretRef points to a Secret key containing the
-                          PAT string
+                      tokenSecretRef:
+                        description: TokenSecretRef points to a Secret key containing
+                          the PAT token
                         properties:
                           key:
                             description: Key is the key within the secret
@@ -110,7 +110,7 @@ spec:
                         - name
                         type: object
                     required:
-                    - secretRef
+                    - tokenSecretRef
                     type: object
                 required:
                 - method
@@ -124,21 +124,26 @@ spec:
                 description: Defaults defines the default values for PRs/commits the
                   agent will create
                 properties:
-                  commitMessageTemplate:
-                    description: CommitMessageTemplate is the template for commit
-                      messages
-                    type: string
-                  prBranchPrefix:
-                    description: PRBranchPrefix is the prefix for pull request branches
-                    type: string
-                  prTitleTemplate:
-                    description: PRTitleTemplate is the template for pull request
-                      titles
-                    type: string
-                required:
-                - commitMessageTemplate
-                - prBranchPrefix
-                - prTitleTemplate
+                  git:
+                    description: Git defines git-related defaults
+                    properties:
+                      pullRequests:
+                        description: PullRequests defines pull request related defaults
+                        properties:
+                          branchPrefix:
+                            description: BranchPrefix is the prefix for pull request
+                              branches
+                            type: string
+                          commitMessageTemplate:
+                            description: CommitMessageTemplate is the template for
+                              commit messages
+                            type: string
+                          titleTemplate:
+                            description: TitleTemplate is the template for pull request
+                              titles
+                            type: string
+                        type: object
+                    type: object
                 type: object
               type:
                 description: Type defines the tool/provider type
