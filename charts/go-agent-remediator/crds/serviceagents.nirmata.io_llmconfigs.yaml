@@ -42,15 +42,9 @@ spec:
               azureOpenAI:
                 description: AzureOpenAI defines configuration for Azure OpenAI provider
                 properties:
-                  deploymentName:
-                    description: DeploymentName defines the name of the deployment
-                    type: string
-                  endpoint:
-                    description: Endpoint defines the Azure OpenAI endpoint URL
-                    type: string
-                  secretRef:
-                    description: SecretRef defines the reference to a secret containing
-                      Azure OpenAI credentials
+                  apiKeySecretRef:
+                    description: ApiKeySecretRef defines the reference to a secret
+                      containing Azure OpenAI API key
                     properties:
                       key:
                         description: Key is the key within the secret
@@ -65,14 +59,37 @@ spec:
                     - key
                     - name
                     type: object
+                  deploymentName:
+                    description: DeploymentName defines the name of the deployment
+                    type: string
+                  endpoint:
+                    description: Endpoint defines the Azure OpenAI endpoint URL
+                    type: string
                 required:
+                - apiKeySecretRef
                 - deploymentName
                 - endpoint
-                - secretRef
                 type: object
               bedrock:
                 description: Bedrock defines configuration for Amazon Bedrock provider
                 properties:
+                  credentialsSecretRef:
+                    description: CredentialsSecretRef defines the reference to a secret
+                      containing AWS credentials
+                    properties:
+                      key:
+                        description: Key is the key within the secret
+                        type: string
+                      name:
+                        description: Name is the name of the secret
+                        type: string
+                      namespace:
+                        description: Namespace is the namespace of the secret
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
                   externalId:
                     description: ExternalId defines the external ID for role assumption
                     type: string
@@ -87,23 +104,6 @@ spec:
                     description: RoleArn defines the ARN of the IAM role to assume
                       for accessing Bedrock
                     type: string
-                  secretRef:
-                    description: SecretRef defines the reference to a secret containing
-                      AWS credentials
-                    properties:
-                      key:
-                        description: Key is the key within the secret
-                        type: string
-                      name:
-                        description: Name is the name of the secret
-                        type: string
-                      namespace:
-                        description: Namespace is the namespace of the secret
-                        type: string
-                    required:
-                    - key
-                    - name
-                    type: object
                 required:
                 - model
                 - region
