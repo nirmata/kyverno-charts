@@ -12,26 +12,26 @@ spec:
   {{- if .Values.remediator.target }}
   target:
     {{- if eq .Values.remediator.environment.type "localCluster" }}
-    localClusterTarget:
+    localCluster:
       repoNamespaceMappingRef:
-        name: {{ .Values.remediator.target.localClusterTarget.repoNamespaceMappingRef.name | default "repo-namespace-mapping" }}
-        namespace: {{ .Values.remediator.target.localClusterTarget.repoNamespaceMappingRef.namespace | default .Release.Namespace }}
-        {{- if .Values.remediator.target.localClusterTarget.repoNamespaceMappingRef.key }}
-        key: {{ .Values.remediator.target.localClusterTarget.repoNamespaceMappingRef.key }}
+        name: {{ .Values.remediator.target.localCluster.repoNamespaceMappingRef.name | default "repo-namespace-mapping" }}
+        namespace: {{ .Values.remediator.target.localCluster.repoNamespaceMappingRef.namespace | default .Release.Namespace }}
+        {{- if .Values.remediator.target.localCluster.repoNamespaceMappingRef.key }}
+        key: {{ .Values.remediator.target.localCluster.repoNamespaceMappingRef.key }}
         {{- end }}
     {{- else if eq .Values.remediator.environment.type "argoHub" }}
-    argoHubTarget:
-      {{- if .Values.remediator.target.argoHubTarget }}
-      {{- if .Values.remediator.target.argoHubTarget.clusterNames }}
+    argoHub:
+      {{- if .Values.remediator.target.argoHub }}
+      {{- if .Values.remediator.target.argoHub.clusterNames }}
       clusterNames:
-        {{- toYaml .Values.remediator.target.argoHubTarget.clusterNames | nindent 8 }}
+        {{- toYaml .Values.remediator.target.argoHub.clusterNames | nindent 8 }}
       {{- end }}
-      {{- if .Values.remediator.target.argoHubTarget.clusterServerUrls }}
+      {{- if .Values.remediator.target.argoHub.clusterServerUrls }}
       clusterServerUrls:
-        {{- toYaml .Values.remediator.target.argoHubTarget.clusterServerUrls | nindent 8 }}
+        {{- toYaml .Values.remediator.target.argoHub.clusterServerUrls | nindent 8 }}
       {{- end }}
-      {{- with .Values.remediator.target.argoHubTarget.argoAppSelector }}
-      argoAppSelector:
+      {{- with .Values.remediator.target.argoHub.appSelector }}
+      appSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- end }}
