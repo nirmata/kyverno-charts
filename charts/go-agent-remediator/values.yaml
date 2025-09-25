@@ -100,12 +100,12 @@ remediator:
   environment:
     type: argoHub  # Options: localCluster, argoHub
   target:
-    argoHubTarget:
+    argoHub:
       clusterNames: []
       clusterServerUrls: []
-      argoAppSelector:
+      appSelector:
         allApps: true
-    # localClusterTarget:
+    # localCluster:
     #   repoNamespaceMappingRef:
     #     name: repo-namespace-mapping
     #     namespace: nirmata

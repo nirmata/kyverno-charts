@@ -178,10 +178,10 @@ spec:
                   Target defines the target configuration for remediation
                   Optional when LocalCluster is true (will use current cluster)
                 properties:
-                  argoHubTarget:
+                  argoHub:
                     description: ArgoHubTarget holds cluster-based targeting configuration
                     properties:
-                      argoAppSelector:
+                      appSelector:
                         description: |-
                           ArgoAppSelector defines how to select Argo applications for remediation
                           If not specified, no applications will be selected
@@ -259,7 +259,7 @@ spec:
                           type: string
                         type: array
                     type: object
-                  localClusterTarget:
+                  localCluster:
                     description: LocalClusterTarget holds local cluster-based targeting
                       configuration
                     properties:
@@ -285,15 +285,14 @@ spec:
                     required:
                     - repoNamespaceMappingRef
                     type: object
-                  vcsTarget:
+                  vcs:
                     description: VCSTarget holds VCS-based targeting configuration
                     type: object
                 type: object
                 x-kubernetes-validations:
-                - message: exactly one of localClusterTarget or argoHubTarget must
-                    be set
-                  rule: (has(self.localClusterTarget) && !has(self.argoHubTarget))
-                    || (!has(self.localClusterTarget) && has(self.argoHubTarget))
+                - message: exactly one of localCluster or argoHub must be set
+                  rule: (has(self.localCluster) && !has(self.argoHub)) || (!has(self.localCluster)
+                    && has(self.argoHub))
             required:
             - environment
             - remediation
