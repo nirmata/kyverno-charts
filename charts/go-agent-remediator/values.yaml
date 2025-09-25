@@ -90,26 +90,39 @@ tool:
     git:
       pullRequests:
         branchPrefix: remediation-
-        titleTemplate: "[Auto-Remediation] Fix policy violations"
-        commitMessageTemplate: "Auto-fix: Remediate policy violations"
+        titleTemplate: "[Auto-Remediation] Fix policy violations in %s"
+        commitMessageTemplate: "Auto-fix: Remediate policy violations in %s\n\n%s"
 
 # Remediator CR
 remediator:
   enabled: false
   name: remediator-agent
   environment:
-    type: argoHub  # Options: localCluster, argoHub
+    type: argoHub  # Options: localCluster, argoHub (vcsTarget can be used with any environment type)
   target:
-    argoHubTarget:
+    argoHub:
       clusterNames: []
       clusterServerUrls: []
-      argoAppSelector:
+      appSelector:
         allApps: true
-    # localClusterTarget:
+    # localCluster:
     #   repoNamespaceMappingRef:
     #     name: repo-namespace-mapping
     #     namespace: nirmata
     #     key: mapping
+    # vcs:
+    #   policies:
+    #     - name: pss-restricted
+    #       repo: https://github.com/nirmata/kyverno-policies
+    #       path: pod-security/restricted
+    #       ref: main
+    #   resources:
+    #     - name: nginx-deployment
+    #       repo: https://github.com/nirmata/demo-remediator
+    #       path: apps/nginx
+    #       ref: main
+    #       policyRefs:
+    #         - pss-restricted
   remediation:
     schedule: "0 */6 * * *"
     actions:

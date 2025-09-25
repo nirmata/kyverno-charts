@@ -178,10 +178,10 @@ spec:
                   Target defines the target configuration for remediation
                   Optional when LocalCluster is true (will use current cluster)
                 properties:
-                  argoHubTarget:
+                  argoHub:
                     description: ArgoHubTarget holds cluster-based targeting configuration
                     properties:
-                      argoAppSelector:
+                      appSelector:
                         description: |-
                           ArgoAppSelector defines how to select Argo applications for remediation
                           If not specified, no applications will be selected
@@ -259,7 +259,7 @@ spec:
                           type: string
                         type: array
                     type: object
-                  localClusterTarget:
+                  localCluster:
                     description: LocalClusterTarget holds local cluster-based targeting
                       configuration
                     properties:
@@ -285,15 +285,84 @@ spec:
                     required:
                     - repoNamespaceMappingRef
                     type: object
-                  vcsTarget:
+                  vcs:
                     description: VCSTarget holds VCS-based targeting configuration
+                    properties:
+                      policies:
+                        description: PolicyRepos defines the list of policies with
+                          their git repositories
+                        items:
+                          description: PolicyRepo defines a policy with its git repository
+                            location
+                          properties:
+                            name:
+                              description: Name is the name of the policy
+                              type: string
+                            path:
+                              description: Path is the path to the policy within the
+                                repository
+                              type: string
+                            ref:
+                              description: Ref is the git reference (branch, tag,
+                                or commit) to use
+                              type: string
+                            repo:
+                              description: RepoURL is the repository URL containing
+                                the policy
+                              type: string
+                          required:
+                          - name
+                          - path
+                          - ref
+                          - repo
+                          type: object
+                        type: array
+                      resources:
+                        description: ResourceRepos defines the list of resources with
+                          their git repositories and associated policies
+                        items:
+                          description: ResourceRepo defines a resource with its git
+                            repository location and associated policies
+                          properties:
+                            name:
+                              description: Name is the name of the resource
+                              type: string
+                            path:
+                              description: Path is the path to the resource within
+                                the repository
+                              type: string
+                            policyRefs:
+                              description: |-
+                                PolicyRefs is a list of policy names that should be applied to this resource
+                                These policy names correspond to the policies defined in the VCSTarget.PolicyRepos list
+                              items:
+                                type: string
+                              type: array
+                            ref:
+                              description: Ref is the git reference (branch, tag,
+                                or commit) to use
+                              type: string
+                            repo:
+                              description: RepoURL is the repository URL containing
+                                the resource
+                              type: string
+                          required:
+                          - name
+                          - path
+                          - policyRefs
+                          - ref
+                          - repo
+                          type: object
+                        type: array
+                    required:
+                    - policies
+                    - resources
                     type: object
                 type: object
                 x-kubernetes-validations:
-                - message: exactly one of localClusterTarget or argoHubTarget must
-                    be set
-                  rule: (has(self.localClusterTarget) && !has(self.argoHubTarget))
-                    || (!has(self.localClusterTarget) && has(self.argoHubTarget))
+                - message: exactly one of localCluster or argoHub must be set
+                  rule: (has(self.localCluster) && !has(self.argoHub)) || (!has(self.localCluster)
+                    && has(self.argoHub))
             required:
             - environment
             - remediation
