@@ -2530,13 +2530,13 @@ reports-server:
   jobConfigurations:
     image:
       # -- (string) Image registry
-      registry: ~
+      registry: reg.nirmata.io
       defaultRegistry: reg.nirmata.io
       # -- Image repository
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.33.2'
+      tag: '1.34.0'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
