@@ -1,0 +1,68 @@
+apiVersion: v2
+type: application
+name: kyverno
+version: 3.5.6-rc1
+appVersion: v1.15.2-n4k.nirmata.2
+icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+description: Kubernetes Native Policy Management
+keywords:
+  - kubernetes
+  - nirmata
+  - policy agent
+  - policy
+  - validating webhook
+  - admission controller
+  - mutation
+  - mutate
+  - validate
+  - generate
+  - supply chain
+  - security
+home: https://kyverno.io/
+sources:
+- https://github.com/nirmata/enterprise-kyverno
+maintainers:
+- name: Nirmata
+  url: https://nirmata.com/
+kubeVersion: ">=1.25.0-0"
+annotations:
+  artifacthub.io/operator: "false"
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://kyverno.io/docs
+  # valid kinds are: added, changed, deprecated, removed, fixed and security
+  artifacthub.io/changes: |
+    - kind: added
+      description: Added support for ValidatingPolicies and ImageValidatingPolicies CRDs
+    - kind: added
+      description: Added CRD watcher feature for improved performance
+    - kind: added
+      description: Added Horizontal Pod Autoscaler support for admission controller
+    - kind: added
+      description: Added controller runtime metrics configuration
+    - kind: added
+      description: Added configurable RBAC role aggregation
+    - kind: added
+      description: Added DNS configuration support
+    - kind: added
+      description: Added resource limits for cleanup hooks
+    - kind: changed
+      description: Updated to Kubernetes 1.25+ minimum requirement
+    - kind: changed
+      description: Enhanced RBAC permissions for new CRD types
+dependencies:
+  - name: grafana
+    version: 3.5.2
+    condition: grafana.enabled
+  - name: reports-server
+    version: 0.2.7
+    condition: reports-server.install
+    repository: https://nirmata.github.io/kyverno-charts
+  - name: crds
+    version: 3.5.2
+    condition: crds.install
+  - name: openreports
+    version: "0.1.0"
+    repository: "https://openreports.github.io/reports-api"
+    condition: openreports.installCrds
