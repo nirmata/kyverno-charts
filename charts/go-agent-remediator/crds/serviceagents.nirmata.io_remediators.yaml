@@ -386,6 +386,31 @@ spec:
           status:
             description: RemediatorStatus defines the observed state of Remediator.
             properties:
+              conditions:
+                description: Conditions track the workflow steps of the remediator
+                items:
+                  description: RemediatorCondition defines a condition for the remediator
+                  properties:
+                    collectorId:
+                      type: string
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    status:
+                      description: ConditionStatus represents the status of a condition
+                      type: string
+                    type:
+                      description: ConditionType represents the type of condition
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - status
+                  - type
+                  type: object
+                type: array
               lastRunSummary:
                 description: LastRunSummary contains details about the most recent
                   remediation run
