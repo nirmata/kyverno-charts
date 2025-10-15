@@ -79,32 +79,6 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
-{{/* Get the namespace name. */}}
-{{- define "kyverno-aws-adapter.namespace" -}}
-{{- if .Values.awsAdapter.namespace -}}
-    {{- .Values.awsAdapter.namespace -}}
-{{- else -}}
-    {{- "kyverno-aws-adapter" -}}
-{{- end -}}
-{{- end -}}
-
-{{/* Get the namespace name. */}}
-{{- define "image-scan-adapter.namespace" -}}
-{{- if .Values.imageScanAdapter.namespace -}}
-    {{- .Values.imageScanAdapter.namespace -}}
-{{- else -}}
-    {{- "image-scan-adapter" -}}
-{{- end -}}
-{{- end -}}
-
-{{/* Get the namespace name. */}}
-{{- define "kube-bench.namespace" -}}
-{{- if .Values.cisAdapter.namespace -}}
-    {{- .Values.cisAdapter.namespace -}}
-{{- else -}}
-    {{- "cis-adapter" -}}
-{{- end -}}
-{{- end -}}
 
 {{/*
 Create secret to access container registry
@@ -121,15 +95,6 @@ Create secret to access container registry
 {{- end -}}
 {{- end -}}
 
-{{- define "enterprise-kyverno.kyvernoReplicas" -}}
-{{- if eq .Values.profile "dev" -}}
-    {{- default 1 .Values.kyverno.replicaCount -}}
-{{- else if eq .Values.profile "prod" -}}
-    {{- default 3 .Values.kyverno.replicaCount -}}
-{{- else -}}
-    {{- default 1 .Values.kyverno.replicaCount -}}
-{{- end -}}
-{{- end -}}
 
 {{- define "enterprise-kyverno.preventPolicyTamper" -}}
 {{- $polTamperStr := lower (toString .Values.preventPolicyTamper) }}
@@ -164,13 +129,3 @@ Create secret to access container registry
 {{- range (include "enterprise-kyverno.enabledPolicysets" . | split ",") }}{{(print . " ") }} {{- end }}
 {{- end -}}
 
-{{- define "kyverno.excludedNamespaces" -}}
-{{- $defaultNamespaces := list "kube-system" "nirmata" "nirmata-system" -}}
-{{- $excludedNamespaces := .Values.kyverno.excludedNamespacesForWebhook }}
-{{- if .Values.kyverno.excludedNamespacesOverride }}
-    {{- $excludedNamespaces = .Values.kyverno.excludedNamespacesForWebhook -}}
-{{- else -}}
-    {{- $excludedNamespaces = concat $defaultNamespaces .Values.kyverno.excludedNamespacesForWebhook -}}
-{{- end -}}
-{{ toJson $excludedNamespaces }}
-{{- end }}
