@@ -1,0 +1,152 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.18.0
+  name: remediationrecords.serviceagents.nirmata.io
+spec:
+  group: serviceagents.nirmata.io
+  names:
+    kind: RemediationRecord
+    listKind: RemediationRecordList
+    plural: remediationrecords
+    shortNames:
+    - rr
+    singular: remediationrecord
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.collectorId
+      name: Collector
+      type: string
+    - jsonPath: .status.totalResources
+      name: Resources
+      type: integer
+    - jsonPath: .status.lastUpdateTime
+      name: Last Update
+      type: date
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: |-
+          RemediationRecord is the Schema for the remediationrecords API.
+          It tracks the remediation state for resources processed by a specific collector instance.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: RemediationRecordSpec defines the desired state of RemediationRecord.
+            properties:
+              collectorId:
+                description: CollectorID identifies the collector instance this record
+                  tracks
+                type: string
+              remediatorRef:
+                description: RemediatorRef references the parent Remediator name
+                type: string
+            required:
+            - collectorId
+            type: object
+          status:
+            description: RemediationRecordStatus defines the observed state of RemediationRecord.
+            properties:
+              lastUpdateTime:
+                description: LastUpdateTime is when this record was last updated
+                format: date-time
+                type: string
+              resourceStates:
+                additionalProperties:
+                  description: ResourceRemediationState tracks the remediation state
+                    of a single resource.
+                  properties:
+                    actionMetadata:
+                      description: ActionMetadata contains metadata about the remediation
+                        action taken
+                      properties:
+                        actionType:
+                          description: ActionType is the type of action taken (e.g.,
+                            "CreatePR", "CreateIssue")
+                          type: string
+                        issueNumber:
+                          description: IssueNumber is the issue number if an issue
+                            was created
+                          type: integer
+                        issueUrl:
+                          description: IssueURL is the URL of the created issue
+                          type: string
+                        prNumber:
+                          description: PRNumber is the pull request number if a PR
+                            was created
+                          type: integer
+                        prUrl:
+                          description: PRURL is the URL of the created pull request
+                          type: string
+                      type: object
+                    lastActionTime:
+                      description: LastActionTime is when the last remediation action
+                        was taken
+                      format: date-time
+                      type: string
+                    resourceHash:
+                      description: ResourceHash is the SHA256 hash of the resource
+                        content
+                      type: string
+                    violations:
+                      description: Violations is the list of policy violations detected
+                      items:
+                        description: ViolationFingerprint uniquely identifies a policy
+                          violation.
+                        properties:
+                          message:
+                            description: Message is the violation message
+                            type: string
+                          policy:
+                            description: Policy is the name of the violated policy
+                            type: string
+                          rule:
+                            description: Rule is the specific rule within the policy
+                              that was violated
+                            type: string
+                        required:
+                        - message
+                        - policy
+                        - rule
+                        type: object
+                      type: array
+                  required:
+                  - resourceHash
+                  - violations
+                  type: object
+                description: |-
+                  ResourceStates maps resource keys to their remediation state
+                  Key format: "namespace/kind/name" or "kind/name" for cluster-scoped resources
+                type: object
+              totalResources:
+                description: TotalResources is the total number of resources tracked
+                format: int32
+                type: integer
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
