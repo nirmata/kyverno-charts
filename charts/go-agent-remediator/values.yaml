@@ -90,7 +90,7 @@ tool:
     git:
       pullRequests:
         branchPrefix: remediation-
-        titleTemplate: "[Auto-Remediation] Fix policy violations in %s"
+        titleTemplate: "remediator: Fix policy violations in %s"
         commitMessageTemplate: "Auto-fix: Remediate policy violations in %s\n\n%s"
 
 # Remediator CR
