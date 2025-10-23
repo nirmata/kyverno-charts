@@ -86,17 +86,9 @@ spec:
                           description: ActionType is the type of action taken (e.g.,
                             "CreatePR", "CreateIssue")
                           type: string
-                        issueNumber:
-                          description: IssueNumber is the issue number if an issue
-                            was created
-                          type: integer
                         issueUrl:
                           description: IssueURL is the URL of the created issue
                           type: string
-                        prNumber:
-                          description: PRNumber is the pull request number if a PR
-                            was created
-                          type: integer
                         prUrl:
                           description: PRURL is the URL of the created pull request
                           type: string
