@@ -17,6 +17,8 @@ rules:
   - remediators/status
   - remediators/finalizers
   - llmconfigs
+  - remediationrecords
+  - remediationrecords/status
   - toolconfigs
   - toolconfigs/status
   verbs:
