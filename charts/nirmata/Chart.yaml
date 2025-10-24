@@ -50,6 +50,7 @@ dependencies:
 - name: reports-server
   version: 0.2.8-rc1
   condition: reports-server.install
+  repository: https://nirmata.github.io/kyverno-charts
 - name: crds
   version: 3.3.6
   condition: crds.install
