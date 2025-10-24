@@ -2109,7 +2109,7 @@ reports-server:
     # -- Image registry
     registry: reg.nirmata.io
     # -- Image repository
-    repository: nirmata/reports-server
+    repository: nirmata/kyverno-charts
     # -- Image pull policy
     pullPolicy: IfNotPresent
     # -- Image tag (will default to app version if not set)
