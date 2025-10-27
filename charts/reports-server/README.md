@@ -1,6 +1,6 @@
 # reports-server
 
-![Version: 0.2.8-rc1](https://img.shields.io/badge/Version-0.2.8--rc1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.4-rc5](https://img.shields.io/badge/AppVersion-v0.2.4--rc5-informational?style=flat-square)
+![Version: 0.2.8-rc2](https://img.shields.io/badge/Version-0.2.8--rc2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.4-rc6](https://img.shields.io/badge/AppVersion-v0.2.4--rc6-informational?style=flat-square)
 
 TODO
 
@@ -73,6 +73,7 @@ helm install reports-server --namespace reports-server --create-namespace report
 | config.etcd.endpoints | string | `nil` |  |
 | config.etcd.insecure | bool | `true` |  |
 | config.etcd.storage | string | `"2Gi"` |  |
+| config.etcd.storageClassName | string | `""` | Storage class name for etcd PVC - Leave empty to use the default storage class - Set to a specific storage class name (e.g., "fast", "standard", "aws-ebs") |
 | config.etcd.quotaBackendBytes | int | `1932735283` |  |
 | config.etcd.autoCompaction.enabled | bool | `true` | Enable auto-compaction for etcd |
 | config.etcd.autoCompaction.mode | string | `"periodic"` | Auto-compaction mode (periodic or revision) |
