@@ -27,13 +27,6 @@ rules:
     verbs:
       - get
   - apiGroups:
-      - apiregistration.k8s.io
-    resources:
-      - apiservices
-    verbs:
-      - get
-      - list
-  - apiGroups:
       - kyverno.io
     resources:
       - policies
@@ -85,7 +78,6 @@ rules:
     resources:
       - namespaces
       - configmaps
-      - pods
     verbs:
       - get
       - list
