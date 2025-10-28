@@ -2299,6 +2299,11 @@ reports-server:
       # This value defines the size of the persistent volume claim (PVC) for etcd.
       storage: 2Gi
 
+      # -- Storage class name for etcd PVC
+      # - Leave empty to use the default storage class
+      # - Set to a specific storage class name (e.g., "fast", "standard", "aws-ebs")
+      storageClassName: ""
+
     # Quota for etcd's internal database (BoltDB) **in bytes**
     # - What it limits: the logical size of the etcd DB file, *not* the PVC.
     # - Format: plain integer bytes (no Ki/Mi/Gi suffix).
@@ -2405,7 +2410,7 @@ reports-server:
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.30.2'
+      tag: '1.34.0'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
