@@ -178,5 +178,8 @@ spec:
       resources:
         requests:
           storage: {{ .Values.config.etcd.storage | default "1Gi" }}
+{{- if .Values.config.etcd.storageClassName }}
+      storageClassName: {{ .Values.config.etcd.storageClassName }}
+{{- end }}
 {{- end }}
 
