@@ -138,6 +138,23 @@ spec:
                             description: CommitMessageTemplate is the template for
                               commit messages
                             type: string
+                          customLabels:
+                            description: |-
+                              CustomLabels are static labels added as-is to pull requests
+                              These labels are added in addition to the default system labels
+                            items:
+                              type: string
+                            type: array
+                          systemLabels:
+                            description: |-
+                              SystemLabels are dynamic labels with values computed at runtime
+                              Supported values: branch, clusterName, appName, namespace
+                              System labels follow the format "key:value" (e.g., "cluster:prod-cluster")
+                              Labels are only applied if data is available in the remediation context
+                            items:
+                              type: string
+                            maxItems: 20
+                            type: array
                           titleTemplate:
                             description: TitleTemplate is the template for pull request
                               titles
