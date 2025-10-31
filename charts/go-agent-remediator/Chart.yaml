@@ -12,4 +12,7 @@ keywords:
 maintainers:
   - name: "Nirmata"
     email: "support@nirmata.com"
-dependencies: []
+dependencies:
+  - name: crds
+    version: 0.1.0
+    condition: crds.install
