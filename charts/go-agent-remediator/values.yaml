@@ -1,3 +1,8 @@
+# CRD Chart Configuration
+# Set to false to skip CRD installation (useful if managing CRDs separately)
+crds:
+  install: true
+
 replicaCount: 1
 
 image:
