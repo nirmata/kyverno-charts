@@ -1,11 +1,11 @@
-# -- Internal settings used with `helm template` to generate install manifest
-# @ignored
-templating:
-  enabled: false
-  debug: false
-  version: ~
-
 global:
+
+  # -- Internal settings used with `helm template` to generate install manifest
+  # @ignored
+  templating:
+    enabled: false
+    debug: false
+    version: ~
 
   image:
     # -- (string) Global value that allows to set a single image registry across all deployments.
@@ -14,8 +14,6 @@ global:
   # -- (list) Global list of Image pull secrets
   # When set, it will override any values set under `imagePullSecrets` under different components across the chart.
   imagePullSecrets: []
-
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.34.0"
 
   # -- Resync period for informers
   resyncPeriod: 15m
@@ -59,9 +57,6 @@ fullnameOverride: ~
 
 # -- (string) Override the namespace the chart deploys to
 namespaceOverride: ~
-
-# -- (bool) Deploy FIPS compliant images of all the components of n4k
-fipsEnabled: false
 
 upgrade:
   # -- Upgrading from v2 to v3 is not allowed by default, set this to true once changes have been reviewed.
@@ -114,9 +109,12 @@ crds:
       validatingpolicies: true
       policyexceptions: true
       imagevalidatingpolicies: true
+      namespacedimagevalidatingpolicies: true
       mutatingpolicies: true
       generatingpolicies: true
       deletingpolicies: true
+      namespaceddeletingpolicies: true
+      namespacedvalidatingpolicies: true
 
     # -- Install CRDs in group `reports.kyverno.io`
     reports:
@@ -150,6 +148,15 @@ crds:
       - policies.kyverno.io
       - policyexceptions.kyverno.io
       - updaterequests.kyverno.io
+      - deletingpolicies.policies.kyverno.io
+      - generatingpolicies.policies.kyverno.io
+      - imagevalidatingpolicies.policies.kyverno.io
+      - namespacedimagevalidatingpolicies.policies.kyverno.io
+      - mutatingpolicies.policies.kyverno.io
+      - namespaceddeletingpolicies.policies.kyverno.io
+      - namespacedvalidatingpolicies.policies.kyverno.io
+      - policyexceptions.policies.kyverno.io
+      - validatingpolicies.policies.kyverno.io
 
     image:
       # -- (string) Image registry
@@ -391,14 +398,6 @@ config:
     # Example to disable admission enforcer on AKS:
     'admissions.enforcer/disabled': 'true'
 
-  # -- Disable generation and management of webhooks by kyverno
-  disableAutoWebhookGeneration:
-    enable: false
-    webhooks:
-      # Example to disable
-      # - kyverno-policy-validating-webhook-cfg
-      # - kyverno-exception-validating-webhook-cfg
-
   # -- Defines labels to set on webhook configurations.
   webhookLabels: {}
     # Example to adopt webhook resources in ArgoCD:
@@ -459,6 +458,18 @@ metricsConfig:
     kyverno_policy_execution_duration_seconds:
       # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
       disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
+    kyverno_validating_policy_execution_duration_seconds:
+      # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
+      disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
+    kyverno_image_validating_policy_execution_duration_seconds:
+      # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
+      disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
+    kyverno_mutating_policy_execution_duration_seconds:
+      # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
+      disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
+    kyverno_generating_policy_execution_duration_seconds:
+      # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
+      disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
     kyverno_admission_review_duration_seconds:
       # enabled: false
       disabledLabelDimensions: ["resource_namespace"]
@@ -494,12 +505,12 @@ test:
 
   image:
     # -- (string) Image registry
-    registry: ~
+    registry: curlimages
     # -- Image repository
-    repository: busybox
+    repository: curl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.35'
+    tag: '8.10.1'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -538,6 +549,9 @@ test:
   # -- Node labels for pod assignment
   nodeSelector: {}
 
+   # -- Additional Pod annotations
+  podAnnotations: {}
+
   # -- List of node taints to tolerate
   tolerations: []
 
@@ -560,7 +574,7 @@ webhooksCleanup:
     repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.34.0'
+    tag: '1.33.2'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -619,8 +633,6 @@ webhooksCleanup:
   serviceAccount:
     # -- Toggle automounting of the ServiceAccount
     automountServiceAccountToken: true
-
-## policyReportsCleanup removed: post-upgrade clean reports hook no longer supported
 
 grafana:
   # -- Enable grafana dashboard creation.
@@ -992,7 +1004,7 @@ admissionController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
-    # -- Unhealty pod eviction policy to be used.
+    # -- Unhealthy pod eviction policy to be used.
     # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
     unhealthyPodEvictionPolicy:
 
@@ -1283,7 +1295,17 @@ backgroundController:
             - update
             - patch
             - delete
-
+        - apiGroups:
+            - resource.k8s.io
+          resources:
+            - resourceclaims
+            - resourceclaimtemplates
+          verbs:
+            - create
+            - delete
+            - update
+            - patch
+            - deletecollection
     clusterRole:
       # -- Extra resource permissions to add in the cluster role
       extraResources: []
@@ -1440,7 +1462,7 @@ backgroundController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
-    # -- Unhealty pod eviction policy to be used.
+    # -- Unhealthy pod eviction policy to be used.
     # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
     unhealthyPodEvictionPolicy:
 
@@ -1639,10 +1661,6 @@ cleanupController:
   # in case you are using hostNetwork: true, you might want to change the port the cleanupController is listening to
   server:
     port: 9443
-  # -- cleanupController webhook server port
-  # in case you are using hostNetwork: true, you might want to change the port the webhookServer is listening to
-  webhookServer:
-    port: 9443
 
   # -- `dnsPolicy` determines the manner in which DNS resolution happens in the cluster.
   # In case of `hostNetwork: true`, usually, the `dnsPolicy` is suitable to be `ClusterFirstWithHostNet`.
@@ -1777,7 +1795,7 @@ cleanupController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
-    # -- Unhealty pod eviction policy to be used.
+    # -- Unhealthy pod eviction policy to be used.
     # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
     unhealthyPodEvictionPolicy:
 
@@ -2081,7 +2099,7 @@ reportsController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
-    # -- Unhealty pod eviction policy to be used.
+    # -- Unhealthy pod eviction policy to be used.
     # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
     unhealthyPodEvictionPolicy:
 
@@ -2413,6 +2431,11 @@ reports-server:
       # This value defines the size of the persistent volume claim (PVC) for etcd.
       storage: 2Gi
 
+      # -- Storage class name for etcd PVC
+      # - Leave empty to use the default storage class
+      # - Set to a specific storage class name (e.g., "fast", "standard", "aws-ebs")
+      storageClassName: ""
+
     # Quota for etcd's internal database (BoltDB) **in bytes**
     # - What it limits: the logical size of the etcd DB file, *not* the PVC.
     # - Format: plain integer bytes (no Ki/Mi/Gi suffix).
@@ -2505,6 +2528,8 @@ reports-server:
 
       # -- Store ephemeral reports in reports-server
       installEphemeralReportsService: true
+      # -- Store open reports in reports-server
+      installOpenreportsService: true
 
     migrateReportsServer:
       # -- Create api services only when reports-server is ready and migration is guaranteed

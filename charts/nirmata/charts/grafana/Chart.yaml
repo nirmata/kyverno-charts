@@ -1,4 +1,3 @@
 apiVersion: v2
 name: grafana
-version: 3.5.2
-description: Grafana dashboards for Kyverno
+version: 3.6.0
