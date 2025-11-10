@@ -7,22 +7,26 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "kyverno.chartVersion" -}}
-{{- if .Values.templating.enabled -}}
-  {{- required "templating.version is required when templating.enabled is true" .Values.templating.version | replace "+" "_" -}}
-{{- else -}}
-  {{- .Chart.Version | replace "+" "_" -}}
-{{- end -}}
-{{- end -}}
-
+{{/* Determine if reports-server subchart is being installed */}}
 {{- define "kyverno.installReportsServer" -}}
-{{- if (index .Values "reports-server").install -}}
+{{- if (hasKey .Values "reports-server") -}}
+  {{- if (index .Values "reports-server").install -}}
 true
+  {{- else -}}
+false
+  {{- end -}}
 {{- else -}}
 false
 {{- end -}}
 {{- end -}}
 
+{{- define "kyverno.chartVersion" -}}
+{{- if .Values.global.templating.enabled -}}
+  {{- required "templating.version is required when templating.enabled is true" .Values.global.templating.version | replace "+" "_" -}}
+{{- else -}}
+  {{- .Chart.Version | replace "+" "_" -}}
+{{- end -}}
+{{- end -}}
 
 {{- define "kyverno.features.flags" -}}
 {{- $flags := list -}}
