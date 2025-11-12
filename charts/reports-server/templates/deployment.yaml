@@ -59,6 +59,8 @@ spec:
             - --authorization-always-allow-paths=/metrics
             {{- end }}
           env:
+            - name: REPORTS_SERVER_VERSION
+              value: {{ .Values.serverVersion | quote }}
             - name: GOMEMLIMIT
               valueFrom:
                 resourceFieldRef:

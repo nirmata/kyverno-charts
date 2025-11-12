@@ -55,6 +55,11 @@ commonLabels: {}
 podSecurityContext:
   fsGroup: 2000
 
+# -- Server version to use (v1 or v2). Defaults to v1 for backward compatibility.
+# v1: Stable implementation (default)
+# v2: Optimized implementation with improved performance
+serverVersion: v1
+
 # -- Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env.
 podEnv: {}
 
