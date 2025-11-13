@@ -34,8 +34,10 @@ spec:
         {{- toYaml .Values.globalLabels| nindent 8 }}
         {{- end }}
     spec:
+      {{- if .Values.image.pullSecrets.create }}
       imagePullSecrets: 
       - name: {{ .Values.image.pullSecrets.name }}
+      {{- end }}
       serviceAccountName: {{ include "enterprise-kyverno.rbac.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
@@ -94,18 +96,14 @@ spec:
             mountPath: {{ .Values.systemCertPath | default "/etc/ssl/certs" }}/custom-ca.pem
             subPath: custom-ca.pem
           {{- end}}
-          readinessProbe:
-            httpGet:
-              path: /readyz
-              port: 8081
-            initialDelaySeconds: 2
-            periodSeconds: 5
+          {{- with .Values.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 8081
-            initialDelaySeconds: 15
-            periodSeconds: 20
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
