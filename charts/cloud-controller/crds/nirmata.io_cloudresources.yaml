@@ -4,21 +4,20 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.17.0
-  name: clusterconfigs.nirmata.io
+  name: cloudresources.nirmata.io
 spec:
   group: nirmata.io
   names:
-    kind: ClusterConfig
-    listKind: ClusterConfigList
-    plural: clusterconfigs
-    singular: clusterconfig
+    kind: CloudResource
+    listKind: CloudResourceList
+    plural: cloudresources
+    singular: cloudresource
   scope: Cluster
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: ClusterConfig is the configuration for an kubernetes cluster
-          in cloud.
+        description: CloudResource is a generic resource in cloud.
         properties:
           apiVersion:
             description: |-
@@ -38,19 +37,28 @@ spec:
           metadata:
             type: object
           spec:
-            description: AWS account configuration spec.
+            description: Cloud resource configuration spec.
             properties:
               cloudProvider:
                 description: CloudProvider is the cloud service provider.
                 type: string
-              clusterEndpoint:
-                description: ClusterEndpoint is the kubernetes cluster identifier.
-                type: string
-              clusterName:
-                description: ClusterName is the kubernetes cluster name.
-                type: string
               region:
-                description: Region is the region of the kubernetes cluster.
+                description: Region is the region of the resource.
+                type: string
+              resourceArn:
+                description: ResourceArn is the ARN of the resource.
+                type: string
+              resourceData:
+                description: |-
+                  ResourceData is the data fetched and populated in the resource.
+                  Mark as schemaless and preserve unknown fields so arbitrary service payloads (ecs/lambda/etc.) are accepted.
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              resourceName:
+                description: ResourceName is the name of the resource.
+                type: string
+              resourceType:
+                description: ResourceType is the type of the resource.
                 type: string
               scanInterval:
                 default: 1h
@@ -61,15 +69,22 @@ spec:
                 format: duration
                 type: string
             required:
-            - clusterEndpoint
-            - clusterName
+            - cloudProvider
             - region
+            - resourceArn
+            - resourceName
+            - resourceType
             type: object
           status:
-            description: Status contains the current state of the ClusterConfig
+            description: Status contains the current state of the CloudResource
             properties:
+              discoveryStatus:
+                description: DiscoveryStatus is the status of the discovery of the
+                  cloud resource.
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
               lastUpdated:
-                description: LastUpdated is the last time this ClusterConfig was synced
+                description: LastUpdated is the last time this CloudResource was synced
                 format: date-time
                 type: string
             type: object
