@@ -1,6 +1,6 @@
 {{- if .Values.reportsController.enabled -}}
 {{- include "kyverno.validateOpenReports" . -}}
-{{- if not .Values.global.templating.debug -}}
+{{- if not .Values.templating.debug -}}
 {{- $automountSAToken := .Values.reportsController.rbac.serviceAccount.automountServiceAccountToken }}
 apiVersion: apps/v1
 kind: Deployment
@@ -89,35 +89,38 @@ spec:
       {{- if eq (include "kyverno.installReportsServer" .) "true" }}
       initContainers:
         - name: wait-for-reports-server
-          image: {{ (include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.webhooksCleanup.image "defaultTag" (default .Chart.AppVersion .Values.webhooksCleanup.image.tag))) | quote }}
-          imagePullPolicy: {{ .Values.webhooksCleanup.image.pullPolicy }}
+          image: {{ .Values.global.kubectlImage }}
+          imagePullPolicy: IfNotPresent
           command:
-            - /bin/sh
+            - sh
             - -c
             - |
               echo "Waiting for reports-server pod to be running..."
               while true; do
+                # Check for pod with app.kubernetes.io/name=reports-server label
                 if kubectl get pods -n {{ template "kyverno.namespace" . }} -l app.kubernetes.io/name=reports-server --no-headers 2>/dev/null | grep -q "Running"; then
                   echo "Reports-server pod is running!"
                   break
                 else
                   echo "Reports-server pod not running yet, waiting 10 seconds..."
                   sleep 10
-                fi
+                fi 
               done
-
+              
               echo "Waiting for reports-server APIServices to be available..."
               while true; do
+                # Check specific APIServices that use kyverno-reports-server
                 all_available=true
                 for apiservice in "v1.reports.kyverno.io" "v1alpha2.wgpolicyk8s.io"; do
                   if kubectl get apiservice "$apiservice" >/dev/null 2>&1; then
                     status=$(kubectl get apiservice "$apiservice" -o jsonpath='{.status.conditions[?(@.type=="Available")].status}' 2>/dev/null || echo "False")
-                    if [ "$status" != "True" ]; then
+                    if [[ "$status" != "True" ]]; then
                       echo "APIService $apiservice is not available"
                       all_available=false
                     fi
                   fi
                 done
+                
                 if $all_available; then
                   echo "All reports-server APIServices are available!"
                   break
@@ -128,9 +131,9 @@ spec:
               done
               echo "Reports-server is ready, proceeding with reports-controller startup..."
           securityContext:
-            runAsNonRoot: true
             runAsUser: 1000
             runAsGroup: 3000
+            runAsNonRoot: true
           resources:
             requests:
               cpu: 100m
@@ -141,7 +144,7 @@ spec:
       {{- end }}
       containers:
         - name: controller
-          image: {{ include "kyverno.reports-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.reportsController.image "defaultTag" .Chart.AppVersion) | quote }}
+          image: {{ include "kyverno.reports-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.reportsController.image "defaultTag" .Chart.AppVersion "fipsEnabled" .Values.fipsEnabled) | quote }}
           imagePullPolicy: {{ .Values.reportsController.image.pullPolicy }}
           ports:
           - containerPort: {{ .Values.reportsController.server.port }}
