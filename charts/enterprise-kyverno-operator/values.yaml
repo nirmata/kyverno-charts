@@ -231,25 +231,3 @@ crds:
         - ALL
       seccompProfile:
         type: RuntimeDefault
-
-# -- Liveness probe.
-# The block is directly forwarded into the deployment, so you can use whatever livenessProbe configuration you want.
-# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
-# @default -- See [values.yaml](values.yaml)
-livenessProbe:
-  httpGet:
-    path: /healthz
-    port: 8081
-  initialDelaySeconds: 15
-  periodSeconds: 20
-
-# -- Readiness Probe.
-# The block is directly forwarded into the deployment, so you can use whatever readinessProbe configuration you want.
-# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
-# @default -- See [values.yaml](values.yaml)
-readinessProbe:
-  httpGet:
-    path: /readyz
-    port: 8081
-  initialDelaySeconds: 7
-  periodSeconds: 5
