@@ -101,6 +101,21 @@ spec:
                       - type
                       type: object
                     type: array
+                  eventPolling:
+                    description: EventPolling defines configuration for polling Git
+                      PR events
+                    properties:
+                      enabled:
+                        default: true
+                        description: Enabled determines whether event polling is enabled
+                        type: boolean
+                      intervalMinutes:
+                        default: 5
+                        description: IntervalMinutes defines the polling interval
+                          in minutes
+                        minimum: 1
+                        type: integer
+                    type: object
                   filters:
                     description: Filters defines what should be filtered for remediation
                     properties:

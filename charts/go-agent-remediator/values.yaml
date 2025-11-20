@@ -182,6 +182,9 @@ remediator:
     #         - pss-restricted
   remediation:
     schedule: "0 */6 * * *"
+    eventPolling:
+      enabled: true
+      # intervalMinutes: 5  # Optional: polling interval in minutes (default: 5)
     actions:
       - type: CreatePR
         toolRefName: github-tool

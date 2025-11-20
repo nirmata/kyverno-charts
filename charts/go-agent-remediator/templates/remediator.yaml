@@ -80,6 +80,11 @@ spec:
     gitCredentials:
       name: {{ .Values.tool.name | default (printf "%s-github" (include "go-agent-remediator.name" .)) }}
       namespace: {{ .Release.Namespace }}
+    eventPolling:
+      enabled: {{ if .Values.remediator.remediation.eventPolling }}{{ .Values.remediator.remediation.eventPolling.enabled | default true }}{{ else }}true{{ end }}
+      {{- if and .Values.remediator.remediation.eventPolling .Values.remediator.remediation.eventPolling.intervalMinutes }}
+      intervalMinutes: {{ .Values.remediator.remediation.eventPolling.intervalMinutes }}
+      {{- end }}
     actions:
       {{- range .Values.remediator.remediation.actions }}
       - type: {{ .type }}
