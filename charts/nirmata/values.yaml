@@ -15,6 +15,8 @@ global:
   # When set, it will override any values set under `imagePullSecrets` under different components across the chart.
   imagePullSecrets: []
 
+  kubectlImage: "ghcr.io/nirmata/kubectl:1.34.0"
+
   # -- Resync period for informers
   resyncPeriod: 15m
 
@@ -57,6 +59,9 @@ fullnameOverride: ~
 
 # -- (string) Override the namespace the chart deploys to
 namespaceOverride: ~
+
+# -- (bool) Deploy FIPS compliant images of all the components of n4k
+fipsEnabled: false
 
 upgrade:
   # -- Upgrading from v2 to v3 is not allowed by default, set this to true once changes have been reviewed.
@@ -398,6 +403,14 @@ config:
     # Example to disable admission enforcer on AKS:
     'admissions.enforcer/disabled': 'true'
 
+  # -- Disable generation and management of webhooks by kyverno
+  disableAutoWebhookGeneration:
+    enable: false
+    webhooks:
+      # Example to disable
+      # - kyverno-policy-validating-webhook-cfg
+      # - kyverno-exception-validating-webhook-cfg
+
   # -- Defines labels to set on webhook configurations.
   webhookLabels: {}
     # Example to adopt webhook resources in ArgoCD:
@@ -505,12 +518,12 @@ test:
 
   image:
     # -- (string) Image registry
-    registry: curlimages
+    registry: ~
     # -- Image repository
-    repository: curl
+    repository: busybox
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '8.10.1'
+    tag: '1.35'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -574,7 +587,7 @@ webhooksCleanup:
     repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.33.2'
+    tag: '1.34.0'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -633,6 +646,8 @@ webhooksCleanup:
   serviceAccount:
     # -- Toggle automounting of the ServiceAccount
     automountServiceAccountToken: true
+
+## policyReportsCleanup removed: post-upgrade clean reports hook no longer supported
 
 grafana:
   # -- Enable grafana dashboard creation.
@@ -1295,17 +1310,7 @@ backgroundController:
             - update
             - patch
             - delete
-        - apiGroups:
-            - resource.k8s.io
-          resources:
-            - resourceclaims
-            - resourceclaimtemplates
-          verbs:
-            - create
-            - delete
-            - update
-            - patch
-            - deletecollection
+
     clusterRole:
       # -- Extra resource permissions to add in the cluster role
       extraResources: []
@@ -1660,6 +1665,10 @@ cleanupController:
   # -- cleanupController server port
   # in case you are using hostNetwork: true, you might want to change the port the cleanupController is listening to
   server:
+    port: 9443
+  # -- cleanupController webhook server port
+  # in case you are using hostNetwork: true, you might want to change the port the webhookServer is listening to
+  webhookServer:
     port: 9443
 
   # -- `dnsPolicy` determines the manner in which DNS resolution happens in the cluster.
