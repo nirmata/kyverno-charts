@@ -1,8 +1,8 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 3.6.0
-appVersion: v1.16.0-n4k.nirmata.4
+version: 3.6.1-rc.1
+appVersion: v1.16.1-n4k.nirmata.2
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
@@ -20,10 +20,10 @@ keywords:
   - security
 home: https://kyverno.io/
 sources:
-  - https://github.com/kyverno/kyverno
+- https://github.com/nirmata/enterprise-kyverno
 maintainers:
-  - name: Nirmata
-    url: https://kyverno.io/
+- name: Nirmata
+  url: https://nirmata.com/
 kubeVersion: ">=1.25.0-0"
 annotations:
   artifacthub.io/operator: "false"
@@ -43,13 +43,13 @@ annotations:
       description: Enable the flag `--validatingAdmissionPolicyReports` by default in the reports controller.
 dependencies:
   - name: grafana
-    version: 3.6.0
+    version: 3.6.1-rc.1
     condition: grafana.enabled
   - name: crds
-    version: 3.6.0
+    version: 3.6.1-rc.1
     condition: crds.install
   - name: reports-server
-    version: "0.2.8-rc3"
+    version: 0.2.9
     repository: "https://nirmata.github.io/kyverno-charts"
     condition: reports-server.install
   - name: openreports
