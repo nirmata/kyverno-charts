@@ -2146,6 +2146,11 @@ reports-server:
   podSecurityContext:
     fsGroup: 2000
 
+  # -- Server version to use (v1 or v2). Defaults to v1 for backward compatibility.
+  # v1: Stable implementation (default)
+  # v2: Optimized implementation with improved performance
+  serverVersion: v1
+
   # -- Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env.
   podEnv: {}
 
@@ -2401,6 +2406,8 @@ reports-server:
 
       # -- Store ephemeral reports in reports-server
       installEphemeralReportsService: true
+      # -- Store open reports in reports-server
+      installOpenreportsService: false
 
     migrateReportsServer:
       # -- Create api services only when reports-server is ready and migration is guaranteed
