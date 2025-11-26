@@ -14,6 +14,6 @@ on:
 
 jobs:
   run-tests:
-    uses: nirmata/n4k-automation/.github/workflows/n4k-all-events.yaml@main
+    uses: nirmata/n4k-automation/.github/workflows/n4k-all-events.yaml@b29803f48df16b2708fbb675c54129f0602e721c
     with:
       n4k_chart_version: "3.3.38"
