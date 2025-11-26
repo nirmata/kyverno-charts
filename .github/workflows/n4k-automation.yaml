@@ -26,5 +26,5 @@ jobs:
                 -H "Authorization: token ${{ secrets.TEST_TOKEN }}" \
                 -H "Accept: application/vnd.github+json" \
                 https://api.github.com/repos/nirmata/n4k-automation/dispatches \
-                -d '{"event_type":"run-n4k","client_payload":{"n4k_chart_version":"3.3.38"}}'
+                -d '{"event_type":"run-n4k-all-events","client_payload":{"n4k_chart_version":"3.3.38"}}'
 
