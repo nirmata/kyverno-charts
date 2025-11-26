@@ -1,0 +1,19 @@
+name: Run N4K Tests in N4K Automation Repository
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release-*
+  push:
+    paths:
+      - 'charts/nirmata/Chart.yaml'
+    branches:
+      - main
+      - release-*
+
+jobs:
+  run-tests:
+    uses: nirmata/n4k-automation/.github/workflows/n4k-all-events.yaml@main
+    with:
+      n4k_chart_version: "3.3.38"
