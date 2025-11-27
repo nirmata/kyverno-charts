@@ -5666,6 +5666,67 @@ entries:
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: v1.13.6-n4k.nirmata.13
+    created: "2025-11-27T14:15:27.424413665Z"
+    dependencies:
+    - condition: grafana.enabled
+      name: grafana
+      repository: ""
+      version: 3.3.6
+    - condition: reports-server.install
+      name: reports-server
+      repository: https://nirmata.github.io/kyverno-charts
+      version: 0.2.10
+    - condition: crds.install
+      name: crds
+      repository: ""
+      version: 3.3.6
+    description: Kubernetes Native Policy Management
+    digest: 2200268014c4552c74a0aab0d34fc3c5039711ca05d76916562f207f454ac297
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy
+    - validating webhook
+    - admission controller
+    - mutation
+    - mutate
+    - validate
+    - generate
+    - supply chain
+    - security
+    kubeVersion: '>=1.22.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://kyverno.io/
+    name: kyverno
+    sources:
+    - https://github.com/nirmata/enterprise-kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.3.39-rc2/kyverno-3.3.39-rc2.tgz
+    version: 3.3.39-rc2
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: Add a key to preserve configmap settings during upgrade
+        - kind: added
+          description: Make admission reports breaker threshold configurable
+        - kind: added
+          description: ImagePullSecrets made globally configurable
+        - kind: removed
+          description: Deprecated configuration `features.reports.chunkSize` was removed
+        - kind: added
+          description: ImagePullSecrets made configurable for tests
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: v1.13.6-n4k.nirmata.13
     created: "2025-11-27T09:09:32.454006994Z"
     dependencies:
     - condition: grafana.enabled
@@ -25909,4 +25970,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2025-11-27T09:09:32.463003702Z"
+generated: "2025-11-27T14:15:27.42587007Z"
