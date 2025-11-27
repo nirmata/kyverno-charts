@@ -43,24 +43,15 @@ jobs:
             const owner = "nirmata";
             const repo = "n4k-automation";
 
-            // Determine chart version
-            let version = core.getInput("n4k_chart_version");
+            // Determine chart version (must be provided explicitly by caller)
+            const version = core.getInput("n4k_chart_version");
 
-            if (version) {
-              console.log("Using provided version:", version);
-            } else {
-              // Fallback: try to extract from tag if present (mainly for manual runs)
-              const tag = process.env.GITHUB_REF_NAME;   // e.g., kyverno-3.3.38 or kyverno-3.3.38-rc4
-              console.log("GitHub tag detected:", tag);
-
-              if (!tag || !tag.startsWith("kyverno-")) {
-                console.log("No valid kyverno-* tag and no version input; skipping workflow.");
-                return;
-              }
-
-              version = tag.replace(/^kyverno-/, "");
-              console.log("Extracted version from tag:", version);
+            if (!version) {
+              console.log("No n4k_chart_version input provided; skipping workflow.");
+              return;
             }
+
+            console.log("Using provided chart version:", version);
 
             // Trigger all workflows
             for (const wf of data.workflows) {

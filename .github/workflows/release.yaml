@@ -1,53 +1,61 @@
 name: Release Charts
 
 permissions:
-  contents: read
+  contents: write
+  actions: write
 
 on:
   push:
     branches:
-    - main
-    - release-*
+      - main
+      - release-*
 
 jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
       kyverno-version: ${{ steps.kyverno-version.outputs.version }}
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Configure Git
-      run: |
-        git config user.name "$GITHUB_ACTOR"
-        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-    - name: Install Helm
-      uses: azure/setup-helm@v1
-      with:
-        version: v3.7.1
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.7.1
 
-    - name: Add Helm Repositories
-      run: |
-        helm repo add nirmata https://nirmata.github.io/reports-server
-        helm repo update
+      - name: Get kyverno chart version
+        id: kyverno-version
+        run: |
+          chart_name=$(grep '^name:' charts/nirmata/Chart.yaml | awk '{print $2}')
+          echo "Detected chart name: $chart_name"
 
-    - name: Get kyverno chart version
-      id: kyverno-version
-      run: |
-        version=$(grep '^version:' charts/nirmata/Chart.yaml | awk '{print $2}')
-        echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [ "$chart_name" != "kyverno" ]; then
+            echo "Chart is not kyverno. Skipping N4K tests."
+            echo "version=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
-    - name: Run chart-releaser
-      uses: helm/chart-releaser-action@v1.3.0
-      env:
-        CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          version=$(grep '^version:' charts/nirmata/Chart.yaml | awk '{print $2}')
+          echo "Detected kyverno chart version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Release Helm Charts
+        uses: helm/chart-releaser-action@v1.6.0
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   n4k-tests:
     needs: release
+    if: ${{ needs.release.outputs.kyverno-version != '' }}
     uses: ./.github/workflows/n4k-automation.yaml
     with:
       n4k_chart_version: ${{ needs.release.outputs.kyverno-version }}
