@@ -1,0 +1,8 @@
+{
+    "workflows": [
+      "n4k-all-events.yaml",
+      "n4k-conformance.yaml",
+      "n4k-fips-conformance.yaml"
+    ]
+}
+  

@@ -16,15 +16,33 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Run N4K Tests
-        run: |
-            curl -X POST \
-                -H "Authorization: token ${{ secrets.TEST_TOKEN }}" \
-                -H "Accept: application/vnd.github+json" \
-                https://api.github.com/repos/nirmata/n4k-automation/dispatches \
-                -d '{"event_type":"run-n4k-all-events","client_payload":{"n4k_chart_version":"3.3.38"}}'
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Trigger all tests
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.TEST_TOKEN }}
+        script: |
+          const fs = require("fs");
+          const data = JSON.parse(fs.readFileSync(".github/config/n4k-tests.json", "utf8"));
+
+          const owner = "nirmata";
+          const repo = "n4k-automation";
+
+          for (const wf of data.workflows) {
+            console.log("Triggering workflow:", wf);
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner,
+              repo,
+              workflow_id: wf,
+              ref: "main",
+              inputs: {
+                n4k_chart_version: "3.3.38"
+              }
+            });
+          }
+        
 
