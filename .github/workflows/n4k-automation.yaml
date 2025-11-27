@@ -1,0 +1,58 @@
+name: Run N4K Tests in N4K Automation Repository
+
+on:
+  push:
+    tags:
+      - "kyverno-*"
+  workflow_dispatch:
+    inputs:
+      n4k_chart_version:
+        description: "N4K Chart Version"
+        required: true
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Trigger all tests
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.TEST_TOKEN }}
+          script: |
+            const fs = require("fs");
+
+            // Load list of workflows
+            const data = JSON.parse(fs.readFileSync(".github/config/n4k-tests.json", "utf8"));
+
+            const owner = "nirmata";
+            const repo = "n4k-automation";
+
+            // Extract the version from the tag name
+            // github.ref_name gives: "kyverno-3.3.38" or "kyverno-3.3.38-rc4"
+            const tag = process.env.GITHUB_REF_NAME;
+            const version = tag.replace(/^kyverno-/, "");
+            if (inputs && inputs.n4k_chart_version) {
+              version = inputs.n4k_chart_version;
+            }
+            console.log("Detected chart version:", version);
+
+            // Trigger each workflow with the extracted version
+            for (const wf of data.workflows) {
+              console.log("Triggering workflow:", wf);
+
+              await github.rest.actions.createWorkflowDispatch({
+                owner,
+                repo,
+                workflow_id: wf,
+                ref: "main",
+                inputs: {
+                  n4k_chart_version: version
+                }
+              });
+            }
