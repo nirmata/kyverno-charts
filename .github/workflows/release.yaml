@@ -1,5 +1,8 @@
 name: Release Charts
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
@@ -9,6 +12,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      kyverno-version: ${{ steps.kyverno-version.outputs.version }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -30,7 +35,20 @@ jobs:
         helm repo add nirmata https://nirmata.github.io/reports-server
         helm repo update
 
+    - name: Get kyverno chart version
+      id: kyverno-version
+      run: |
+        version=$(grep '^version:' charts/nirmata/Chart.yaml | awk '{print $2}')
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+
     - name: Run chart-releaser
       uses: helm/chart-releaser-action@v1.3.0
       env:
         CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+  n4k-tests:
+    needs: release
+    uses: ./.github/workflows/n4k-automation.yaml
+    with:
+      n4k_chart_version: ${{ needs.release.outputs.kyverno-version }}
+    secrets: inherit
