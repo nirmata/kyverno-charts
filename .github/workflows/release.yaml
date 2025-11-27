@@ -37,14 +37,18 @@ jobs:
           helm repo add nirmata https://nirmata.github.io/reports-server
           helm repo update
 
-      - name: Get kyverno chart version
+      - name: Get kyverno chart version (only if kyverno chart changed)
         id: kyverno-version
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
         run: |
-          chart_name=$(grep '^name:' charts/nirmata/Chart.yaml | awk '{print $2}')
-          echo "Detected chart name: $chart_name"
+          echo "Computing changed files between $BEFORE_SHA and $AFTER_SHA..."
+          changed_files=$(git diff --name-only "$BEFORE_SHA" "$AFTER_SHA" || true)
+          echo "$changed_files"
 
-          if [ "$chart_name" != "kyverno" ]; then
-            echo "Chart is not kyverno. Skipping N4K tests."
+          if ! echo "$changed_files" | grep -q '^charts/nirmata/Chart.yaml$'; then
+            echo "charts/nirmata/Chart.yaml not changed in this push; skipping N4K tests."
             echo "version=" >> "$GITHUB_OUTPUT"
             exit 0
           fi
