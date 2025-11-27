@@ -32,6 +32,11 @@ jobs:
         with:
           version: v3.7.1
 
+      - name: Add Helm Repositories
+        run: |
+          helm repo add nirmata https://nirmata.github.io/reports-server
+          helm repo update
+
       - name: Get kyverno chart version
         id: kyverno-version
         run: |
