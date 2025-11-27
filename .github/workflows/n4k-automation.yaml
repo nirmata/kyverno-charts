@@ -22,12 +22,14 @@ jobs:
         fetch-depth: 0
     - name: Trigger all tests
       uses: actions/github-script@v6
+      env:
+        N4K_CHART_VERSION: ${{ inputs.n4k_chart_version }}
       with:
         github-token: ${{ secrets.TEST_TOKEN }}
         script: |
           const fs = require("fs");
           const data = JSON.parse(fs.readFileSync(".github/config/n4k-tests.json", "utf8"));
-          const version = core.getInput("n4k_chart_version");
+          const version = process.env.N4K_CHART_VERSION;
           if (!version) {
             console.log("No n4k_chart_version input provided; skipping workflow.");
             return;
