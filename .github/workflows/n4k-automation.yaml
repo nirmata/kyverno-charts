@@ -1,17 +1,18 @@
 name: Run N4K Tests in N4K Automation Repository
 
+# Required for createWorkflowDispatch
 permissions:
   contents: read
+  actions: write
 
 on:
-  push:
-    tags:
-      - "kyverno-*"
+  release:
+    types: [published]       # Trigger on published releases
   workflow_dispatch:
     inputs:
       n4k_chart_version:
-        description: "N4K Chart Version"
-        required: true
+        description: "N4K Chart Version Override"
+        required: false
 
 jobs:
   run-tests:
@@ -30,22 +31,34 @@ jobs:
           script: |
             const fs = require("fs");
 
-            // Load list of workflows
+            // Load workflow list file
             const data = JSON.parse(fs.readFileSync(".github/config/n4k-tests.json", "utf8"));
 
             const owner = "nirmata";
             const repo = "n4k-automation";
 
-            // Extract the version from the tag name
-            // github.ref_name gives: "kyverno-3.3.38" or "kyverno-3.3.38-rc4"
-            const tag = process.env.GITHUB_REF_NAME;
-            const version = tag.replace(/^kyverno-/, "");
+            // Determine chart version
+            let version = null;
+
+            // Check if manual input is provided
             if (inputs && inputs.n4k_chart_version) {
               version = inputs.n4k_chart_version;
-            }
-            console.log("Detected chart version:", version);
+              console.log("Using manually provided version:", version);
+            } else {
+              // Extract from release tag
+              const tag = process.env.GITHUB_REF_NAME;   // e.g., kyverno-3.3.38 or kyverno-3.3.38-rc4
+              console.log("GitHub tag detected:", tag);
 
-            // Trigger each workflow with the extracted version
+              if (!tag.startsWith("kyverno-")) {
+                console.log("Not a kyverno release; skipping workflow.");
+                return;
+              }
+
+              version = tag.replace(/^kyverno-/, "");
+              console.log("Extracted version:", version);
+            }
+
+            // Trigger all workflows
             for (const wf of data.workflows) {
               console.log("Triggering workflow:", wf);
 
@@ -59,3 +72,5 @@ jobs:
                 }
               });
             }
+
+            console.log("All workflows triggered successfully.");
