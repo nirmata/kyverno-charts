@@ -31,10 +31,11 @@ jobs:
 
       - name: Trigger all tests
         uses: actions/github-script@v6
+        env:
+            N4K_CHART_VERSION: ${{ inputs.n4k_chart_version }}
         with:
           github-token: ${{ secrets.TEST_TOKEN }}
           script: |
-            const core = require("@actions/core");
             const fs = require("fs");
 
             // Load workflow list file
@@ -44,7 +45,7 @@ jobs:
             const repo = "n4k-automation";
 
             // Determine chart version (must be provided explicitly by caller)
-            const version = core.getInput("n4k_chart_version");
+            const version = process.env.N4K_CHART_VERSION;
 
             if (!version) {
               console.log("No n4k_chart_version input provided; skipping workflow.");
