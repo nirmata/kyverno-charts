@@ -5,12 +5,12 @@ on:
     branches:
       - main
       - release-*
-  push:
-    paths:
-      - 'charts/nirmata/Chart.yaml'
-    branches:
-      - main
-      - release-*
+  workflow_call:
+    inputs:
+      n4k_chart_version:
+        type: string
+        required: true
+        default: "3.3.38"
 
 jobs:
   run-tests:
@@ -27,6 +27,11 @@ jobs:
         script: |
           const fs = require("fs");
           const data = JSON.parse(fs.readFileSync(".github/config/n4k-tests.json", "utf8"));
+          const version = core.getInput("n4k_chart_version");
+          if (!version) {
+            console.log("No n4k_chart_version input provided; skipping workflow.");
+            return;
+          }
 
           const owner = "nirmata";
           const repo = "n4k-automation";
@@ -40,7 +45,7 @@ jobs:
               workflow_id: wf,
               ref: "main",
               inputs: {
-                n4k_chart_version: "3.3.38"
+                n4k_chart_version: version
               }
             });
           }
