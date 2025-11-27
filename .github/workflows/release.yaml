@@ -1,36 +1,71 @@
 name: Release Charts
 
+permissions:
+  contents: write
+  actions: write
+
 on:
   push:
     branches:
-    - main
-    - release-*
+      - main
+      - release-*
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      kyverno-version: ${{ steps.kyverno-version.outputs.version }}
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Configure Git
-      run: |
-        git config user.name "$GITHUB_ACTOR"
-        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-    - name: Install Helm
-      uses: azure/setup-helm@v1
-      with:
-        version: v3.7.1
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.7.1
 
-    - name: Add Helm Repositories
-      run: |
-        helm repo add nirmata https://nirmata.github.io/reports-server
-        helm repo update
+      - name: Add Helm Repositories
+        run: |
+          helm repo add nirmata https://nirmata.github.io/reports-server
+          helm repo update
 
-    - name: Run chart-releaser
-      uses: helm/chart-releaser-action@v1.3.0
-      env:
-        CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Get kyverno chart version (only if kyverno chart changed)
+        id: kyverno-version
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+        run: |
+          echo "Computing changed files between $BEFORE_SHA and $AFTER_SHA..."
+          changed_files=$(git diff --name-only "$BEFORE_SHA" "$AFTER_SHA" || true)
+          echo "$changed_files"
+
+          if ! echo "$changed_files" | grep -q '^charts/nirmata/Chart.yaml$'; then
+            echo "charts/nirmata/Chart.yaml not changed in this push; skipping N4K tests."
+            echo "version=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          version=$(grep '^version:' charts/nirmata/Chart.yaml | awk '{print $2}')
+          echo "Detected kyverno chart version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Release Helm Charts
+        uses: helm/chart-releaser-action@v1.6.0
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+  n4k-tests:
+    needs: release
+    if: ${{ needs.release.outputs.kyverno-version != '' }}
+    uses: ./.github/workflows/n4k-automation.yaml
+    with:
+      n4k_chart_version: ${{ needs.release.outputs.kyverno-version }}
+    secrets: inherit

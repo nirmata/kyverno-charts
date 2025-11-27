@@ -1,13 +1,18 @@
 name: Run N4K Tests in N4K Automation Repository
 
-# Required for createWorkflowDispatch
 permissions:
   contents: read
   actions: write
 
 on:
-  release:
-    types: [published]       # Trigger on published releases
+  # Called from other workflows (e.g., release.yaml)
+  workflow_call:
+    inputs:
+      n4k_chart_version:
+        required: true
+        type: string
+
+  # Allow manual triggering with an explicit chart version override
   workflow_dispatch:
     inputs:
       n4k_chart_version:
@@ -29,6 +34,7 @@ jobs:
         with:
           github-token: ${{ secrets.TEST_TOKEN }}
           script: |
+            const core = require("@actions/core");
             const fs = require("fs");
 
             // Load workflow list file
@@ -37,26 +43,15 @@ jobs:
             const owner = "nirmata";
             const repo = "n4k-automation";
 
-            // Determine chart version
-            let version = null;
+            // Determine chart version (must be provided explicitly by caller)
+            const version = core.getInput("n4k_chart_version");
 
-            // Check if manual input is provided
-            if (inputs && inputs.n4k_chart_version) {
-              version = inputs.n4k_chart_version;
-              console.log("Using manually provided version:", version);
-            } else {
-              // Extract from release tag
-              const tag = process.env.GITHUB_REF_NAME;   // e.g., kyverno-3.3.38 or kyverno-3.3.38-rc4
-              console.log("GitHub tag detected:", tag);
-
-              if (!tag.startsWith("kyverno-")) {
-                console.log("Not a kyverno release; skipping workflow.");
-                return;
-              }
-
-              version = tag.replace(/^kyverno-/, "");
-              console.log("Extracted version:", version);
+            if (!version) {
+              console.log("No n4k_chart_version input provided; skipping workflow.");
+              return;
             }
+
+            console.log("Using provided chart version:", version);
 
             // Trigger all workflows
             for (const wf of data.workflows) {
