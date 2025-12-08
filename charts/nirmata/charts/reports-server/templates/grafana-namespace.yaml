@@ -1,0 +1,10 @@
+{{- if and .Values.grafana.createNamespace .Values.grafana.namespace }}
+{{- if ne .Values.grafana.namespace .Release.Namespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.grafana.namespace }}
+  labels:
+    {{- include "reports-server.labels" . | nindent 4 }}
+{{- end }}
+{{- end }}

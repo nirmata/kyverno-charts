@@ -52,8 +52,9 @@ spec:
 {{- if .Values.config.etcd.tolerations }}
       tolerations: {{ toYaml .Values.config.etcd.tolerations | nindent 8 }}
 {{- end }}
-{{- if .Values.config.etcd.imagePullSecrets }}
-      imagePullSecrets: {{ toYaml .Values.config.etcd.imagePullSecrets | nindent 8 }}
+{{- with .Values.config.etcd.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
 {{- end }}
       affinity:
         podAntiAffinity:

@@ -9,8 +9,14 @@ grafana:
   # -- Namespace where Grafana is installed
   # This is where dashboard and datasource ConfigMaps will be created
   # so Grafana sidecar can discover them
-  # IMPORTANT: Set this to your Grafana namespace (e.g., "monitoring")
-  namespace: "monitoring"
+  # If empty, defaults to the release namespace
+  # Set this to your Grafana namespace (e.g., "monitoring") if different from release namespace
+  namespace: ""
+
+  # -- Create the grafana namespace if it doesn't exist
+  # Only needed when grafana.namespace is set to a different namespace than the release namespace
+  # WARNING: Ensure you have permission to create namespaces
+  createNamespace: false
 
   dashboards:
     # -- Enable Grafana dashboard installation
