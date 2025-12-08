@@ -2095,6 +2095,10 @@ reports-server:
     enabled: false
   fipsEnabled: false
 
+  # -- Server version to use (v1 or v2). Defaults to v1 for backward compatibility.
+  # v1: Stable implementation (default)
+  # v2: Optimized implementation with improved performance and leader election
+  serverVersion: v1
 
   # cloudnative-pg:
   #   crds:
