@@ -2150,11 +2150,6 @@ reports-server:
   podSecurityContext:
     fsGroup: 2000
 
-  # -- Server version to use (v1 or v2). Defaults to v1 for backward compatibility.
-  # v1: Stable implementation (default)
-  # v2: Optimized implementation with improved performance
-  serverVersion: v1
-
   # -- Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env.
   podEnv: {}
 
@@ -2400,6 +2395,24 @@ reports-server:
       sslrds:
         secretName: ""
         mountPath: "/etc/ssl/rds"
+
+      # -- Connection pool configuration
+      connectionPool:
+        # -- Maximum number of open connections to the database
+        # Higher values allow more concurrent queries but consume more resources
+        maxOpenConns: 25
+
+        # -- Maximum number of idle connections in the pool
+        # Should be less than or equal to maxOpenConns
+        maxIdleConns: 5
+
+        # -- Maximum amount of time a connection may be reused
+        # Format: duration string (e.g., "5m", "1h")
+        connMaxLifetime: "5m"
+
+        # -- Maximum amount of time a connection may be idle before being closed
+        # Format: duration string (e.g., "2m", "30s")
+        connMaxIdleTime: "2m"
 
   apiServicesManagement:
     # -- Install api services in manifest
