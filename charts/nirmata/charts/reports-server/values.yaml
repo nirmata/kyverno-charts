@@ -4,6 +4,29 @@ templating:
   enabled: false
 fipsEnabled: false
 
+# -- Grafana dashboard configuration
+grafana:
+  dashboards:
+    # -- Enable Grafana dashboard installation
+    # When enabled, creates a ConfigMap with the reports-server dashboard
+    # that Grafana can auto-discover via sidecar
+    enabled: false
+    
+    # -- Namespace where Grafana is installed (for dashboard ConfigMap)
+    # If empty, uses the release namespace
+    namespace: ""
+    
+    # -- Labels to add to the dashboard ConfigMap for Grafana sidecar discovery
+    # The default label "grafana_dashboard: '1'" is used by kube-prometheus-stack
+    labels:
+      grafana_dashboard: "1"
+    
+    # -- Annotations to add to the dashboard ConfigMap
+    annotations: {}
+    
+    # -- Folder in Grafana where the dashboard will be placed
+    folder: "Reports Server"
+
 
 # cloudnative-pg:
 #   crds:
@@ -394,3 +417,176 @@ jobConfigurations:
         - ALL
     seccompProfile:
       type: RuntimeDefault
+
+# -- Loki configuration (log aggregation)
+# Loki is used to collect and query logs from reports-server pods
+loki:
+  # -- Enable Loki deployment
+  enabled: false
+  
+  # -- Loki deployment mode (single binary for simplicity)
+  deploymentMode: SingleBinary
+  
+  loki:
+    # -- Authentication disabled for internal use
+    auth_enabled: false
+    
+    # -- Common config for single binary mode
+    commonConfig:
+      replication_factor: 1
+    
+    # -- Schema config
+    schemaConfig:
+      configs:
+        - from: "2024-01-01"
+          store: tsdb
+          object_store: filesystem
+          schema: v13
+          index:
+            prefix: loki_index_
+            period: 24h
+    
+    # -- Storage config (filesystem for simplicity)
+    storage:
+      type: filesystem
+    
+    # -- Limits config
+    limits_config:
+      retention_period: 168h  # 7 days
+      allow_structured_metadata: true
+      volume_enabled: true
+  
+  # -- Single binary configuration
+  singleBinary:
+    replicas: 1
+    resources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    persistence:
+      enabled: true
+      size: 10Gi
+  
+  # -- Disable other components for single binary mode
+  read:
+    replicas: 0
+  write:
+    replicas: 0
+  backend:
+    replicas: 0
+  
+  # -- Gateway configuration
+  gateway:
+    enabled: false
+  
+  # -- Chunk cache (disabled for simplicity)
+  chunksCache:
+    enabled: false
+  
+  # -- Results cache (disabled for simplicity)
+  resultsCache:
+    enabled: false
+  
+  # -- Test disabled
+  test:
+    enabled: false
+  
+  # -- Lokicanary disabled
+  lokiCanary:
+    enabled: false
+
+# -- Promtail configuration (log collector)
+# Promtail collects logs from Kubernetes pods and sends them to Loki
+promtail:
+  # -- Enable Promtail deployment
+  enabled: false
+  
+  config:
+    # -- Loki server URL (uses the Loki service from this chart)
+    clients:
+      - url: http://{{ .Release.Name }}-loki:3100/loki/api/v1/push
+    
+    # -- Scrape configs for Kubernetes pods
+    snippets:
+      pipelineStages:
+        - cri: {}
+      scrapeConfigs: |
+        - job_name: kubernetes-pods
+          pipeline_stages:
+            {{- toYaml .Values.config.snippets.pipelineStages | nindent 4 }}
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - source_labels:
+                - __meta_kubernetes_pod_controller_name
+              regex: ([0-9a-z-.]+?)(-[0-9a-f]{8,10})?
+              action: replace
+              target_label: __tmp_controller_name
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_name
+                - __meta_kubernetes_pod_label_app
+                - __tmp_controller_name
+                - __meta_kubernetes_pod_name
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: app
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+                - __meta_kubernetes_pod_label_release
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: instance
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_component
+                - __meta_kubernetes_pod_label_component
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: component
+            - action: replace
+              source_labels:
+              - __meta_kubernetes_pod_node_name
+              target_label: node_name
+            - action: replace
+              source_labels:
+              - __meta_kubernetes_namespace
+              target_label: namespace
+            - action: replace
+              replacement: $1
+              separator: /
+              source_labels:
+              - namespace
+              - app
+              target_label: job
+            - action: replace
+              source_labels:
+              - __meta_kubernetes_pod_name
+              target_label: pod
+            - action: replace
+              source_labels:
+              - __meta_kubernetes_pod_container_name
+              target_label: container
+            - action: replace
+              replacement: /var/log/pods/*$1/*.log
+              separator: /
+              source_labels:
+              - __meta_kubernetes_pod_uid
+              - __meta_kubernetes_pod_container_name
+              target_label: __path__
+            - action: replace
+              regex: true/(.*)
+              replacement: /var/log/pods/*$1/*.log
+              separator: /
+              source_labels:
+              - __meta_kubernetes_pod_annotationpresent_kubernetes_io_config_hash
+              - __meta_kubernetes_pod_annotation_kubernetes_io_config_hash
+              - __meta_kubernetes_pod_container_name
+              target_label: __path__
+  
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi

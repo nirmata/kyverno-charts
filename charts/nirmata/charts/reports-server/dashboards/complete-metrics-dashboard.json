@@ -1,0 +1,1522 @@
+{
+  "dashboard": {
+    "title": "Reports Server - Complete Metrics Dashboard",
+    "uid": "reports-server-complete",
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "30s",
+    "editable": true,
+    "graphTooltip": 1,
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "tags": ["reports-server", "kyverno", "metrics"],
+    "templating": {
+      "list": [
+        {
+          "name": "namespace",
+          "type": "query",
+          "label": "Namespace",
+          "query": "label_values(reports_server_api_requests_total, namespace)",
+          "refresh": 1,
+          "includeAll": true,
+          "multi": true
+        },
+        {
+          "name": "pod",
+          "type": "query",
+          "label": "Pod",
+          "query": "label_values(up{job=~\".*reports-server.*\"}, pod)",
+          "refresh": 1,
+          "includeAll": true,
+          "multi": true
+        },
+        {
+          "name": "resource_type",
+          "type": "query",
+          "label": "Resource Type",
+          "query": "label_values(reports_server_storage_operations_total, resource_type)",
+          "refresh": 1,
+          "includeAll": true,
+          "multi": true
+        }
+      ]
+    },
+    "panels": [
+      {
+        "type": "row",
+        "collapsed": false,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+        "id": 1,
+        "title": "Overview & Server Health"
+      },
+      {
+        "type": "stat",
+        "title": "Server Uptime",
+        "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+        "id": 2,
+        "targets": [
+          {
+            "expr": "reports_server_server_uptime_seconds",
+            "legendFormat": "Uptime"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value",
+          "orientation": "auto",
+          "textMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": null, "color": "green" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "type": "stat",
+        "title": "Health Check Status",
+        "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+        "id": 3,
+        "targets": [
+          {
+            "expr": "reports_server_server_health_check_status",
+            "legendFormat": "{{check_name}}"
+          }
+        ],
+        "options": {
+          "graphMode": "none",
+          "colorMode": "value",
+          "textMode": "value_and_name"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              { "type": "value", "value": 1, "text": "Healthy", "color": "green" },
+              { "type": "value", "value": 0, "text": "Unhealthy", "color": "red" }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": 0, "color": "red" },
+                { "value": 1, "color": "green" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "type": "stat",
+        "title": "API Groups Installed",
+        "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+        "id": 4,
+        "targets": [
+          {
+            "expr": "reports_server_server_api_groups_installed"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "palette-classic" }
+          }
+        }
+      },
+      {
+        "type": "stat",
+        "title": "Leader Election Status",
+        "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+        "id": 5,
+        "targets": [
+          {
+            "expr": "reports_server_leader_is_leader{pod=~\"$pod\"}",
+            "legendFormat": "{{pod_name}}"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "textMode": "value_and_name"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              { "type": "value", "value": 1, "text": "Leader", "color": "green" },
+              { "type": "value", "value": 0, "text": "Follower", "color": "blue" }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": 0, "color": "blue" },
+                { "value": 1, "color": "green" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "type": "stat",
+        "title": "Total Reports Stored",
+        "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+        "id": 6,
+        "targets": [
+          {
+            "expr": "sum(reports_server_storage_reports_total{resource_type=~\"$resource_type\"})",
+            "legendFormat": "Total"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "palette-classic" }
+          }
+        }
+      },
+      {
+        "type": "stat",
+        "title": "Goroutines",
+        "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+        "id": 7,
+        "targets": [
+          {
+            "expr": "reports_server_runtime_goroutines_total"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": null, "color": "green" },
+                { "value": 1000, "color": "yellow" },
+                { "value": 5000, "color": "red" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "type": "row",
+        "collapsed": true,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+        "id": 100,
+        "title": "API Metrics",
+        "panels": [
+          {
+            "type": "graph",
+            "title": "API Request Rate (by resource and verb)",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+            "id": 101,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_api_requests_total{resource=~\"$resource_type\"}[5m])) by (resource, verb)",
+                "legendFormat": "{{resource}}/{{verb}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "reqps", "label": "Requests/sec" },
+              { "format": "short" }
+            ],
+            "legend": { "show": true, "alignAsTable": true, "rightSide": false, "values": true, "current": true, "avg": true }
+          },
+          {
+            "type": "graph",
+            "title": "API Request Duration (p50, p95, p99)",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+            "id": 102,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.50, sum(rate(reports_server_api_request_duration_seconds_bucket{resource=~\"$resource_type\"}[5m])) by (le, resource, verb))",
+                "legendFormat": "p50 - {{resource}}/{{verb}}"
+              },
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_api_request_duration_seconds_bucket{resource=~\"$resource_type\"}[5m])) by (le, resource, verb))",
+                "legendFormat": "p95 - {{resource}}/{{verb}}"
+              },
+              {
+                "expr": "histogram_quantile(0.99, sum(rate(reports_server_api_request_duration_seconds_bucket{resource=~\"$resource_type\"}[5m])) by (le, resource, verb))",
+                "legendFormat": "p99 - {{resource}}/{{verb}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "s", "label": "Duration" },
+              { "format": "short" }
+            ],
+            "legend": { "show": true, "alignAsTable": true, "rightSide": false }
+          },
+          {
+            "type": "graph",
+            "title": "API Requests In-Flight",
+            "gridPos": { "h": 8, "w": 8, "x": 0, "y": 14 },
+            "id": 103,
+            "targets": [
+              {
+                "expr": "reports_server_api_requests_inflight{resource=~\"$resource_type\"}",
+                "legendFormat": "{{resource}}/{{verb}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Requests" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Active Watchers",
+            "gridPos": { "h": 8, "w": 8, "x": 8, "y": 14 },
+            "id": 104,
+            "targets": [
+              {
+                "expr": "reports_server_api_watchers_active{resource=~\"$resource_type\"}",
+                "legendFormat": "{{resource}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Watchers" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Validation Errors",
+            "gridPos": { "h": 8, "w": 8, "x": 16, "y": 14 },
+            "id": 105,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_api_validation_errors_total{resource=~\"$resource_type\"}[5m])) by (resource, operation)",
+                "legendFormat": "{{resource}}/{{operation}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Errors/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Request/Response Payload Sizes",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 22 },
+            "id": 106,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_api_request_size_bytes_bucket{resource=~\"$resource_type\"}[5m])) by (le, resource, verb))",
+                "legendFormat": "Request p95 - {{resource}}/{{verb}}"
+              },
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_api_response_size_bytes_bucket{resource=~\"$resource_type\"}[5m])) by (le, resource, verb))",
+                "legendFormat": "Response p95 - {{resource}}/{{verb}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "bytes", "label": "Size" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Pagination Metrics",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 22 },
+            "id": 107,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_api_pagination_requests_total{resource=~\"$resource_type\"}[5m])) by (resource, has_more)",
+                "legendFormat": "{{resource}} - has_more={{has_more}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "reqps", "label": "Requests/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Queue Depth & Wait Time",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 30 },
+            "id": 108,
+            "targets": [
+              {
+                "expr": "reports_server_api_request_queue_depth{resource=~\"$resource_type\"}",
+                "legendFormat": "Queue Depth - {{resource}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Depth" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Dropped Requests",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 30 },
+            "id": 109,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_api_dropped_requests_total{resource=~\"$resource_type\"}[5m])) by (resource, reason)",
+                "legendFormat": "{{resource}} - {{reason}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "reqps", "label": "Dropped/sec" },
+              { "format": "short" }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "collapsed": true,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+        "id": 200,
+        "title": "Storage Metrics",
+        "panels": [
+          {
+            "type": "graph",
+            "title": "Storage Operations Rate",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 7 },
+            "id": 201,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_storage_operations_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type, operation, status)",
+                "legendFormat": "{{resource_type}}/{{operation}} - {{status}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Operations/sec" },
+              { "format": "short" }
+            ],
+            "legend": { "show": true, "alignAsTable": true, "rightSide": false }
+          },
+          {
+            "type": "graph",
+            "title": "Storage Operation Duration (p50, p95, p99)",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 7 },
+            "id": 202,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.50, sum(rate(reports_server_storage_operation_duration_seconds_bucket{resource_type=~\"$resource_type\"}[5m])) by (le, resource_type, operation))",
+                "legendFormat": "p50 - {{resource_type}}/{{operation}}"
+              },
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_storage_operation_duration_seconds_bucket{resource_type=~\"$resource_type\"}[5m])) by (le, resource_type, operation))",
+                "legendFormat": "p95 - {{resource_type}}/{{operation}}"
+              },
+              {
+                "expr": "histogram_quantile(0.99, sum(rate(reports_server_storage_operation_duration_seconds_bucket{resource_type=~\"$resource_type\"}[5m])) by (le, resource_type, operation))",
+                "legendFormat": "p99 - {{resource_type}}/{{operation}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "s", "label": "Duration" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Reports Stored by Type",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 },
+            "id": 203,
+            "targets": [
+              {
+                "expr": "reports_server_storage_reports_total{resource_type=~\"$resource_type\"}",
+                "legendFormat": "{{resource_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Count" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Reports Created/Updated/Deleted Rate",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 },
+            "id": 204,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_storage_reports_created_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type)",
+                "legendFormat": "Created - {{resource_type}}"
+              },
+              {
+                "expr": "sum(rate(reports_server_storage_reports_updated_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type)",
+                "legendFormat": "Updated - {{resource_type}}"
+              },
+              {
+                "expr": "sum(rate(reports_server_storage_reports_deleted_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type)",
+                "legendFormat": "Deleted - {{resource_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Operations/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Cache Hit Rate",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 23 },
+            "id": 205,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_storage_cache_requests_total{resource_type=~\"$resource_type\", result=\"hit\"}[5m])) by (resource_type) / sum(rate(reports_server_storage_cache_requests_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type)",
+                "legendFormat": "{{resource_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "percentunit", "label": "Hit Rate", "min": 0, "max": 1 },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Filter Efficiency",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 23 },
+            "id": 206,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_storage_filter_efficiency_ratio_bucket{resource_type=~\"$resource_type\"}[5m])) by (le, resource_type))",
+                "legendFormat": "p95 - {{resource_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "percentunit", "label": "Efficiency", "min": 0, "max": 1 },
+              { "format": "short" }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "collapsed": true,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 7 },
+        "id": 300,
+        "title": "Database & Connection Pool Metrics",
+        "panels": [
+          {
+            "type": "graph",
+            "title": "Database Query Rate",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+            "id": 301,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_pool_queries_total[5m])) by (database, operation, table, status)",
+                "legendFormat": "{{operation}}/{{table}} - {{status}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Queries/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Database Query Duration (p50/p95/p99)",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+            "id": 302,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.50, sum(rate(reports_server_pool_query_duration_seconds_bucket[5m])) by (le, operation, table))",
+                "legendFormat": "p50 - {{operation}}/{{table}}"
+              },
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_pool_query_duration_seconds_bucket[5m])) by (le, operation, table))",
+                "legendFormat": "p95 - {{operation}}/{{table}}"
+              },
+              {
+                "expr": "histogram_quantile(0.99, sum(rate(reports_server_pool_query_duration_seconds_bucket[5m])) by (le, operation, table))",
+                "legendFormat": "p99 - {{operation}}/{{table}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "s", "label": "Duration" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Connection Pool - Open/In-Use/Idle Connections",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+            "id": 303,
+            "targets": [
+              {
+                "expr": "reports_server_pool_open_connections",
+                "legendFormat": "Open - {{database}}/{{role}}"
+              },
+              {
+                "expr": "reports_server_pool_in_use_connections",
+                "legendFormat": "In Use - {{database}}/{{role}}"
+              },
+              {
+                "expr": "reports_server_pool_idle_connections",
+                "legendFormat": "Idle - {{database}}/{{role}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Connections" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Connection Pool Utilization",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+            "id": 304,
+            "targets": [
+              {
+                "expr": "reports_server_pool_utilization_ratio",
+                "legendFormat": "{{database}}/{{role}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "percentunit", "label": "Utilization", "min": 0, "max": 1 },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Connection Wait Time",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+            "id": 305,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_pool_wait_duration_seconds_bucket[5m])) by (le, database, role))",
+                "legendFormat": "p95 - {{database}}/{{role}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "s", "label": "Wait Time" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Query Duration by Operation",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+            "id": 306,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_pool_query_duration_seconds_bucket[5m])) by (le, database, operation, table))",
+                "legendFormat": "p95 - {{operation}}/{{table}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "s", "label": "Duration" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Transaction Metrics",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+            "id": 307,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_pool_transactions_total[5m])) by (database)",
+                "legendFormat": "Total - {{database}}"
+              },
+              {
+                "expr": "sum(rate(reports_server_pool_transaction_commits_total[5m])) by (database)",
+                "legendFormat": "Commits - {{database}}"
+              },
+              {
+                "expr": "sum(rate(reports_server_pool_transaction_rollbacks_total[5m])) by (database)",
+                "legendFormat": "Rollbacks - {{database}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Transactions/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Query Error Rate",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+            "id": 308,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_pool_query_errors_total[5m])) by (database, operation, error_type)",
+                "legendFormat": "{{operation}} - {{error_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Errors/sec" },
+              { "format": "short" }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "collapsed": true,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 8 },
+        "id": 400,
+        "title": "Watch Metrics",
+        "panels": [
+          {
+            "type": "graph",
+            "title": "Active Watch Connections",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 9 },
+            "id": 401,
+            "targets": [
+              {
+                "expr": "reports_server_watch_connections_active{resource=~\"$resource_type\"}",
+                "legendFormat": "{{resource}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Connections" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Watch Events Rate",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 9 },
+            "id": 402,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_watch_events_total{resource=~\"$resource_type\"}[5m])) by (resource, event_type)",
+                "legendFormat": "{{resource}}/{{event_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Events/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Watch Events Sent vs Dropped",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 17 },
+            "id": 403,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_watch_events_sent{resource=~\"$resource_type\"}[5m])) by (resource)",
+                "legendFormat": "Sent - {{resource}}"
+              },
+              {
+                "expr": "sum(rate(reports_server_watch_events_dropped{resource=~\"$resource_type\"}[5m])) by (resource, reason)",
+                "legendFormat": "Dropped - {{resource}}/{{reason}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Events/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Watch Connection Duration",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 17 },
+            "id": 404,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_watch_connection_duration_seconds_bucket{resource=~\"$resource_type\"}[5m])) by (le, resource))",
+                "legendFormat": "p95 - {{resource}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "s", "label": "Duration" },
+              { "format": "short" }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "collapsed": true,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
+        "id": 500,
+        "title": "Runtime Metrics (Go Memory, GC, CPU)",
+        "panels": [
+          {
+            "type": "graph",
+            "title": "Memory Usage (Heap)",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 10 },
+            "id": 501,
+            "targets": [
+              {
+                "expr": "reports_server_runtime_heap_alloc_bytes",
+                "legendFormat": "Heap Alloc"
+              },
+              {
+                "expr": "reports_server_runtime_heap_sys_bytes",
+                "legendFormat": "Heap Sys"
+              },
+              {
+                "expr": "reports_server_runtime_heap_inuse_bytes",
+                "legendFormat": "Heap InUse"
+              },
+              {
+                "expr": "reports_server_runtime_heap_idle_bytes",
+                "legendFormat": "Heap Idle"
+              }
+            ],
+            "yaxes": [
+              { "format": "bytes", "label": "Memory" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Goroutines",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 10 },
+            "id": 502,
+            "targets": [
+              {
+                "expr": "reports_server_runtime_goroutines_total",
+                "legendFormat": "Goroutines"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Count" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "GC Pause Duration",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 },
+            "id": 503,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.50, sum(rate(reports_server_runtime_gc_pause_seconds_bucket[5m])) by (le))",
+                "legendFormat": "p50"
+              },
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_runtime_gc_pause_seconds_bucket[5m])) by (le))",
+                "legendFormat": "p95"
+              },
+              {
+                "expr": "histogram_quantile(0.99, sum(rate(reports_server_runtime_gc_pause_seconds_bucket[5m])) by (le))",
+                "legendFormat": "p99"
+              }
+            ],
+            "yaxes": [
+              { "format": "s", "label": "Pause Duration" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "GC CPU Fraction",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 },
+            "id": 504,
+            "targets": [
+              {
+                "expr": "reports_server_runtime_gc_cpu_fraction",
+                "legendFormat": "GC CPU Fraction"
+              }
+            ],
+            "yaxes": [
+              { "format": "percentunit", "label": "CPU Fraction", "min": 0 },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "GC Cycles Rate",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 26 },
+            "id": 505,
+            "targets": [
+              {
+                "expr": "rate(reports_server_runtime_gc_cycles_total[5m])",
+                "legendFormat": "GC Cycles/sec"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Cycles/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Memory Allocation Rate",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 26 },
+            "id": 506,
+            "targets": [
+              {
+                "expr": "rate(reports_server_runtime_total_alloc_bytes_total[5m])",
+                "legendFormat": "Alloc Rate"
+              },
+              {
+                "expr": "rate(reports_server_runtime_mallocs_total[5m])",
+                "legendFormat": "Malloc Rate"
+              },
+              {
+                "expr": "rate(reports_server_runtime_frees_total[5m])",
+                "legendFormat": "Free Rate"
+              }
+            ],
+            "yaxes": [
+              { "format": "Bps", "label": "Rate" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "stat",
+            "title": "GOMAXPROCS",
+            "gridPos": { "h": 4, "w": 6, "x": 0, "y": 34 },
+            "id": 507,
+            "targets": [
+              {
+                "expr": "reports_server_runtime_gomaxprocs"
+              }
+            ],
+            "options": {
+              "colorMode": "value",
+              "graphMode": "none"
+            }
+          },
+          {
+            "type": "stat",
+            "title": "Num CPUs",
+            "gridPos": { "h": 4, "w": 6, "x": 6, "y": 34 },
+            "id": 508,
+            "targets": [
+              {
+                "expr": "reports_server_runtime_num_cpu"
+              }
+            ],
+            "options": {
+              "colorMode": "value",
+              "graphMode": "none"
+            }
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "collapsed": true,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 10 },
+        "id": 600,
+        "title": "Migration Metrics",
+        "panels": [
+          {
+            "type": "stat",
+            "title": "Migration Status",
+            "gridPos": { "h": 4, "w": 6, "x": 0, "y": 11 },
+            "id": 601,
+            "targets": [
+              {
+                "expr": "reports_server_migration_status"
+              }
+            ],
+            "options": {
+              "colorMode": "value",
+              "graphMode": "none"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "mappings": [
+                  { "type": "value", "value": 0, "text": "Not Started", "color": "blue" },
+                  { "type": "value", "value": 1, "text": "Running", "color": "yellow" },
+                  { "type": "value", "value": 2, "text": "Completed", "color": "green" },
+                  { "type": "value", "value": 3, "text": "Failed", "color": "red" }
+                ]
+              }
+            }
+          },
+          {
+            "type": "graph",
+            "title": "Migration Progress by Resource Type",
+            "gridPos": { "h": 8, "w": 18, "x": 6, "y": 11 },
+            "id": 602,
+            "targets": [
+              {
+                "expr": "reports_server_migration_progress_ratio{resource_type=~\"$resource_type\"}",
+                "legendFormat": "{{resource_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "percentunit", "label": "Progress", "min": 0, "max": 1 },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Items Processed Rate",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 },
+            "id": 603,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_migration_items_processed_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type)",
+                "legendFormat": "Processed - {{resource_type}}"
+              },
+              {
+                "expr": "sum(rate(reports_server_migration_items_skipped_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type, reason)",
+                "legendFormat": "Skipped - {{resource_type}}/{{reason}}"
+              },
+              {
+                "expr": "sum(rate(reports_server_migration_items_failed_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type, error_type)",
+                "legendFormat": "Failed - {{resource_type}}/{{error_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Items/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Migration Phase Duration",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 },
+            "id": 604,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_migration_phase_duration_seconds_bucket[5m])) by (le, phase, status))",
+                "legendFormat": "p95 - {{phase}}/{{status}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "s", "label": "Duration" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Batch Processing Metrics",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 23 },
+            "id": 605,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_migration_batch_size_bucket{resource_type=~\"$resource_type\"}[5m])) by (le, resource_type))",
+                "legendFormat": "Batch Size p95 - {{resource_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Items" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "K8s API List/Watch Metrics",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 23 },
+            "id": 606,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_migration_k8s_list_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type, status)",
+                "legendFormat": "List - {{resource_type}}/{{status}}"
+              },
+              {
+                "expr": "sum(rate(reports_server_migration_k8s_watch_events_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type, event_type)",
+                "legendFormat": "Watch - {{resource_type}}/{{event_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Operations/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Sync Workers Active/Idle",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 31 },
+            "id": 607,
+            "targets": [
+              {
+                "expr": "reports_server_migration_sync_workers_active{resource_type=~\"$resource_type\"}",
+                "legendFormat": "Active - {{resource_type}}"
+              },
+              {
+                "expr": "reports_server_migration_sync_workers_idle{resource_type=~\"$resource_type\"}",
+                "legendFormat": "Idle - {{resource_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Workers" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Migration Error Rate",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 31 },
+            "id": 608,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_migration_errors_by_type_total[5m])) by (error_type)",
+                "legendFormat": "{{error_type}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Errors/sec" },
+              { "format": "short" }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "collapsed": true,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 11 },
+        "id": 700,
+        "title": "Leader Election Metrics",
+        "panels": [
+          {
+            "type": "stat",
+            "title": "Current Leader",
+            "gridPos": { "h": 4, "w": 8, "x": 0, "y": 12 },
+            "id": 701,
+            "targets": [
+              {
+                "expr": "reports_server_leader_identity",
+                "legendFormat": "{{leader_identity}}"
+              }
+            ],
+            "options": {
+              "colorMode": "value",
+              "graphMode": "none",
+              "textMode": "name"
+            }
+          },
+          {
+            "type": "stat",
+            "title": "Leadership Changes",
+            "gridPos": { "h": 4, "w": 8, "x": 8, "y": 12 },
+            "id": 702,
+            "targets": [
+              {
+                "expr": "reports_server_leader_changes_total"
+              }
+            ],
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area"
+            }
+          },
+          {
+            "type": "graph",
+            "title": "Leadership Held Duration",
+            "gridPos": { "h": 8, "w": 8, "x": 16, "y": 12 },
+            "id": 703,
+            "targets": [
+              {
+                "expr": "reports_server_leader_held_duration_seconds{pod_name=~\"$pod\"}",
+                "legendFormat": "{{pod_name}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "s", "label": "Duration" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Lease Renewal Success/Failures",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+            "id": 704,
+            "targets": [
+              {
+                "expr": "rate(reports_server_leader_renew_successes_total[5m])",
+                "legendFormat": "Successes"
+              },
+              {
+                "expr": "sum(rate(reports_server_leader_renew_failures_total[5m])) by (reason)",
+                "legendFormat": "Failures - {{reason}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Operations/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Lease Renewal Duration",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+            "id": 705,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_leader_renew_duration_seconds_bucket[5m])) by (le, status))",
+                "legendFormat": "p95 - {{status}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "s", "label": "Duration" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Heartbeat Metrics",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+            "id": 706,
+            "targets": [
+              {
+                "expr": "rate(reports_server_leader_heartbeat_successes_total[5m])",
+                "legendFormat": "Successes"
+              },
+              {
+                "expr": "sum(rate(reports_server_leader_heartbeat_failures_total[5m])) by (reason)",
+                "legendFormat": "Failures - {{reason}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Heartbeats/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Election Participants",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+            "id": 707,
+            "targets": [
+              {
+                "expr": "reports_server_leader_election_participants",
+                "legendFormat": "Participants"
+              },
+              {
+                "expr": "reports_server_leader_competing_pods",
+                "legendFormat": "Competing Pods"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Count" },
+              { "format": "short" }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "collapsed": true,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 12 },
+        "id": 800,
+        "title": "Serialization & Concurrency Metrics",
+        "panels": [
+          {
+            "type": "graph",
+            "title": "Marshal/Unmarshal Operations Rate",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 13 },
+            "id": 801,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_codec_marshal_total[5m])) by (resource_type, format, status)",
+                "legendFormat": "Marshal - {{resource_type}}/{{format}}/{{status}}"
+              },
+              {
+                "expr": "sum(rate(reports_server_codec_unmarshal_total[5m])) by (resource_type, format, status)",
+                "legendFormat": "Unmarshal - {{resource_type}}/{{format}}/{{status}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Operations/sec" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Serialization Duration",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 13 },
+            "id": 802,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_codec_marshal_duration_seconds_bucket[5m])) by (le, resource_type, format))",
+                "legendFormat": "Marshal p95 - {{resource_type}}/{{format}}"
+              },
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(reports_server_codec_unmarshal_duration_seconds_bucket[5m])) by (le, resource_type, format))",
+                "legendFormat": "Unmarshal p95 - {{resource_type}}/{{format}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "s", "label": "Duration" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Goroutines by Component",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 21 },
+            "id": 803,
+            "targets": [
+              {
+                "expr": "reports_server_concurrency_goroutines_by_component",
+                "legendFormat": "{{component}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Goroutines" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Queue Depth by Queue",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 21 },
+            "id": 804,
+            "targets": [
+              {
+                "expr": "reports_server_concurrency_queue_depth",
+                "legendFormat": "{{queue_name}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Depth" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Worker Pool Active/Idle Workers",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 29 },
+            "id": 805,
+            "targets": [
+              {
+                "expr": "reports_server_concurrency_workers_active",
+                "legendFormat": "Active - {{pool_name}}"
+              },
+              {
+                "expr": "reports_server_concurrency_workers_idle",
+                "legendFormat": "Idle - {{pool_name}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Workers" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Lock Contention",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 29 },
+            "id": 806,
+            "targets": [
+              {
+                "expr": "sum(rate(reports_server_concurrency_lock_contentions_total[5m])) by (lock_name)",
+                "legendFormat": "{{lock_name}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "ops", "label": "Contentions/sec" },
+              { "format": "short" }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "collapsed": true,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 13 },
+        "id": 900,
+        "title": "Policy Result Metrics (Detailed Per-Result)",
+        "panels": [
+          {
+            "type": "graph",
+            "title": "Policy Report Results by Status",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 },
+            "id": 901,
+            "targets": [
+              {
+                "expr": "sum(policy_report_result) by (status)",
+                "legendFormat": "{{status}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Count" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Policy Report Results by Severity",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 },
+            "id": 902,
+            "targets": [
+              {
+                "expr": "sum(policy_report_result) by (severity)",
+                "legendFormat": "{{severity}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Count" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Policy Report Results by Policy",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 22 },
+            "id": 903,
+            "targets": [
+              {
+                "expr": "sum(policy_report_result) by (policy)",
+                "legendFormat": "{{policy}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Count" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Cluster Policy Report Results by Status",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 22 },
+            "id": 904,
+            "targets": [
+              {
+                "expr": "sum(cluster_policy_report_result) by (status)",
+                "legendFormat": "{{status}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Count" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Results by Resource Kind",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 30 },
+            "id": 905,
+            "targets": [
+              {
+                "expr": "sum(policy_report_result) by (kind)",
+                "legendFormat": "Namespaced - {{kind}}"
+              },
+              {
+                "expr": "sum(cluster_policy_report_result) by (kind)",
+                "legendFormat": "Cluster - {{kind}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Count" },
+              { "format": "short" }
+            ]
+          },
+          {
+            "type": "graph",
+            "title": "Results by Category",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 30 },
+            "id": 906,
+            "targets": [
+              {
+                "expr": "sum(policy_report_result) by (category)",
+                "legendFormat": "{{category}}"
+              }
+            ],
+            "yaxes": [
+              { "format": "short", "label": "Count" },
+              { "format": "short" }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "collapsed": false,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+        "id": 1000,
+        "title": "Logs - All Reports Server Replicas"
+      },
+      {
+        "type": "logs",
+        "title": "Reports Server Logs (All Pods)",
+        "datasource": { "type": "loki", "uid": "loki" },
+        "gridPos": { "h": 12, "w": 24, "x": 0, "y": 15 },
+        "id": 1001,
+        "targets": [
+          {
+            "datasource": { "type": "loki", "uid": "loki" },
+            "expr": "{namespace=\"kyverno\", container=\"reports-server\"}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "showCommonLabels": false,
+          "wrapLogMessage": true,
+          "prettifyLogMessage": false,
+          "enableLogDetails": true,
+          "dedupStrategy": "none",
+          "sortOrder": "Descending"
+        }
+      },
+      {
+        "type": "logs",
+        "title": "Error Logs Only",
+        "datasource": { "type": "loki", "uid": "loki" },
+        "gridPos": { "h": 10, "w": 24, "x": 0, "y": 27 },
+        "id": 1002,
+        "targets": [
+          {
+            "datasource": { "type": "loki", "uid": "loki" },
+            "expr": "{namespace=\"kyverno\", container=\"reports-server\"} |~ \"(?i)(error|fatal|panic|exception)\"",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "showCommonLabels": false,
+          "wrapLogMessage": true,
+          "prettifyLogMessage": false,
+          "enableLogDetails": true,
+          "dedupStrategy": "none",
+          "sortOrder": "Descending"
+        }
+      },
+      {
+        "type": "logs",
+        "title": "Warning Logs Only",
+        "datasource": { "type": "loki", "uid": "loki" },
+        "gridPos": { "h": 10, "w": 24, "x": 0, "y": 37 },
+        "id": 1003,
+        "targets": [
+          {
+            "datasource": { "type": "loki", "uid": "loki" },
+            "expr": "{namespace=\"kyverno\", container=\"reports-server\"} |~ \"(?i)(warn|warning)\"",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "showCommonLabels": false,
+          "wrapLogMessage": true,
+          "prettifyLogMessage": false,
+          "enableLogDetails": true,
+          "dedupStrategy": "none",
+          "sortOrder": "Descending"
+        }
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "name": "Deployments",
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "iconColor": "green",
+          "tags": ["deployment"]
+        }
+      ]
+    }
+  }
+}
+
