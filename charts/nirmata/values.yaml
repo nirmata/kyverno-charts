@@ -2605,7 +2605,7 @@ reports-server:
         scrapeConfigs: |
           - job_name: kubernetes-pods
             pipeline_stages:
-              {{- toYaml .Values.config.snippets.pipelineStages | nindent 4 }}
+              - cri: {}
             kubernetes_sd_configs:
               - role: pod
             relabel_configs:

@@ -4,28 +4,36 @@ templating:
   enabled: false
 fipsEnabled: false
 
-# -- Grafana dashboard configuration
+# -- Grafana configuration
 grafana:
+  # -- Namespace where Grafana is installed
+  # This is where dashboard and datasource ConfigMaps will be created
+  # so Grafana sidecar can discover them
+  # IMPORTANT: Set this to your Grafana namespace (e.g., "monitoring")
+  namespace: "monitoring"
+
   dashboards:
     # -- Enable Grafana dashboard installation
     # When enabled, creates a ConfigMap with the reports-server dashboard
     # that Grafana can auto-discover via sidecar
     enabled: false
-    
-    # -- Namespace where Grafana is installed (for dashboard ConfigMap)
-    # If empty, uses the release namespace
-    namespace: ""
-    
+
     # -- Labels to add to the dashboard ConfigMap for Grafana sidecar discovery
     # The default label "grafana_dashboard: '1'" is used by kube-prometheus-stack
     labels:
       grafana_dashboard: "1"
-    
+
     # -- Annotations to add to the dashboard ConfigMap
     annotations: {}
-    
-    # -- Folder in Grafana where the dashboard will be placed
-    folder: "Reports Server"
+
+  datasources:
+    # -- Enable Loki datasource ConfigMap creation
+    # Creates a ConfigMap that Grafana sidecar will use to add Loki as a datasource
+    enabled: false
+
+    # -- Labels for datasource ConfigMap discovery
+    labels:
+      grafana_datasource: "1"
 
 
 # cloudnative-pg:
@@ -423,18 +431,18 @@ jobConfigurations:
 loki:
   # -- Enable Loki deployment
   enabled: false
-  
+
   # -- Loki deployment mode (single binary for simplicity)
   deploymentMode: SingleBinary
-  
+
   loki:
     # -- Authentication disabled for internal use
     auth_enabled: false
-    
+
     # -- Common config for single binary mode
     commonConfig:
       replication_factor: 1
-    
+
     # -- Schema config
     schemaConfig:
       configs:
@@ -445,17 +453,17 @@ loki:
           index:
             prefix: loki_index_
             period: 24h
-    
+
     # -- Storage config (filesystem for simplicity)
     storage:
       type: filesystem
-    
+
     # -- Limits config
     limits_config:
       retention_period: 168h  # 7 days
       allow_structured_metadata: true
       volume_enabled: true
-  
+
   # -- Single binary configuration
   singleBinary:
     replicas: 1
@@ -468,7 +476,7 @@ loki:
     persistence:
       enabled: true
       size: 10Gi
-  
+
   # -- Disable other components for single binary mode
   read:
     replicas: 0
@@ -476,23 +484,23 @@ loki:
     replicas: 0
   backend:
     replicas: 0
-  
+
   # -- Gateway configuration
   gateway:
     enabled: false
-  
+
   # -- Chunk cache (disabled for simplicity)
   chunksCache:
     enabled: false
-  
+
   # -- Results cache (disabled for simplicity)
   resultsCache:
     enabled: false
-  
+
   # -- Test disabled
   test:
     enabled: false
-  
+
   # -- Lokicanary disabled
   lokiCanary:
     enabled: false
@@ -502,12 +510,12 @@ loki:
 promtail:
   # -- Enable Promtail deployment
   enabled: false
-  
+
   config:
     # -- Loki server URL (uses the Loki service from this chart)
     clients:
       - url: http://{{ .Release.Name }}-loki:3100/loki/api/v1/push
-    
+
     # -- Scrape configs for Kubernetes pods
     snippets:
       pipelineStages:
@@ -583,7 +591,7 @@ promtail:
               - __meta_kubernetes_pod_annotation_kubernetes_io_config_hash
               - __meta_kubernetes_pod_container_name
               target_label: __path__
-  
+
   resources:
     limits:
       memory: 128Mi
