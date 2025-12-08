@@ -38,6 +38,15 @@ jobs:
           helm repo add nirmata https://nirmata.github.io/reports-server
           helm repo update
 
+      - name: Build chart dependencies
+        run: |
+          for chart in charts/*/; do
+            if [ -f "$chart/Chart.yaml" ]; then
+              echo "Building dependencies for $chart"
+              helm dependency build "$chart" || true
+            fi
+          done
+
       - name: Get kyverno chart version (only if kyverno chart changed)
         id: kyverno-version
         env:
