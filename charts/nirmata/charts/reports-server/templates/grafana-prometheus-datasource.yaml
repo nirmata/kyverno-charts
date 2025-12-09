@@ -1,0 +1,26 @@
+{{- if .Values.grafana.datasources.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "reports-server.fullname" . }}-prometheus-datasource
+  namespace: {{ .Values.grafana.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "reports-server.labels" . | nindent 4 }}
+    {{- with .Values.grafana.datasources.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+data:
+  prometheus-datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        uid: prometheus
+        access: proxy
+        url: {{ .Values.grafana.datasources.prometheus.url | default "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090" }}
+        isDefault: false
+        editable: true
+        jsonData:
+          timeInterval: "30s"
+          httpMethod: POST
+{{- end }}

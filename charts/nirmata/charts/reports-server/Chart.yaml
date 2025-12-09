@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: v0.2.9-rc8
+appVersion: v0.2.9-rc9
 dependencies:
 - condition: loki.enabled
   name: loki
@@ -22,4 +22,4 @@ name: reports-server
 sources:
 - https://github.com/nirmata/reports-server
 type: application
-version: 0.2.12-rc8
+version: 0.2.12-rc9

@@ -33,13 +33,19 @@ grafana:
     annotations: {}
 
   datasources:
-    # -- Enable Loki datasource ConfigMap creation
-    # Creates a ConfigMap that Grafana sidecar will use to add Loki as a datasource
+    # -- Enable datasource ConfigMap creation
+    # Creates ConfigMaps that Grafana sidecar will use to add Prometheus and Loki as datasources
     enabled: false
 
     # -- Labels for datasource ConfigMap discovery
     labels:
       grafana_datasource: "1"
+
+    # -- Prometheus datasource configuration
+    prometheus:
+      # -- Prometheus server URL
+      # Default assumes kube-prometheus-stack is installed in 'monitoring' namespace
+      url: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
 
 
 # cloudnative-pg:

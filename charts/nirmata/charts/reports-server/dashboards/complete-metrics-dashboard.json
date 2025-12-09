@@ -2650,7 +2650,7 @@
           "id": 403,
           "targets": [
             {
-              "expr": "sum(rate(reports_server_watch_events_sent{resource=~\"$resource_type\"}[5m])) by (resource)",
+              "expr": "sum(rate(reports_server_watch_events_sent_total{resource=~\"$resource_type\"}[5m])) by (resource)",
               "legendFormat": "Sent - {{resource}}",
               "datasource": {
                 "type": "prometheus",
@@ -2658,7 +2658,7 @@
               }
             },
             {
-              "expr": "sum(rate(reports_server_watch_events_dropped{resource=~\"$resource_type\"}[5m])) by (resource, reason)",
+              "expr": "sum(rate(reports_server_watch_events_dropped_total{resource=~\"$resource_type\"}[5m])) by (resource, reason)",
               "legendFormat": "Dropped - {{resource}}/{{reason}}",
               "datasource": {
                 "type": "prometheus",
@@ -2790,6 +2790,306 @@
                 "max"
               ]
             }
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Watch Prefix Events (Historical Replay)",
+          "description": "Number of historical events sent when watch starts with resourceVersion (V1-style replay)",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 25
+          },
+          "id": 405,
+          "targets": [
+            {
+              "expr": "sum(rate(reports_server_watch_prefix_events_total{resource=~\"$resource_type\"}[5m])) by (resource)",
+              "legendFormat": "{{resource}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never",
+                "lineWidth": 2,
+                "fillOpacity": 20,
+                "gradientMode": "opacity",
+                "spanNulls": true,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Events/sec",
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisPlacement": "auto",
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            },
+            "legend": {
+              "showLegend": true,
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "sum"
+              ]
+            }
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Watch Errors by Type",
+          "description": "Watch errors categorized by error type",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 25
+          },
+          "id": 406,
+          "targets": [
+            {
+              "expr": "sum(rate(reports_server_watch_errors_total{resource=~\"$resource_type\"}[5m])) by (resource, error_type)",
+              "legendFormat": "{{resource}}/{{error_type}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never",
+                "lineWidth": 2,
+                "fillOpacity": 20,
+                "gradientMode": "opacity",
+                "spanNulls": true,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Errors/sec",
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisPlacement": "auto",
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            },
+            "legend": {
+              "showLegend": true,
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "sum"
+              ]
+            }
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Watch Connections Closed by Reason",
+          "description": "Watches closed categorized by reason (client_stopped, channel_closed, etc.)",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 33
+          },
+          "id": 407,
+          "targets": [
+            {
+              "expr": "sum(rate(reports_server_watch_closed_total{resource=~\"$resource_type\"}[5m])) by (resource, reason)",
+              "legendFormat": "{{resource}}/{{reason}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never",
+                "lineWidth": 2,
+                "fillOpacity": 20,
+                "gradientMode": "opacity",
+                "spanNulls": true,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Closed/sec",
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisPlacement": "auto",
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            },
+            "legend": {
+              "showLegend": true,
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "sum"
+              ]
+            }
+          }
+        },
+        {
+          "type": "stat",
+          "title": "Total Watch Connections",
+          "description": "Total number of watch connections established since server start",
+          "gridPos": {
+            "h": 4,
+            "w": 6,
+            "x": 12,
+            "y": 33
+          },
+          "id": 408,
+          "targets": [
+            {
+              "expr": "sum(reports_server_watch_connections_total) by (resource)",
+              "legendFormat": "{{resource}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "options": {
+            "graphMode": "area",
+            "colorMode": "value",
+            "orientation": "auto",
+            "textMode": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            }
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "type": "stat",
+          "title": "Total Events Sent",
+          "description": "Total watch events successfully delivered to clients",
+          "gridPos": {
+            "h": 4,
+            "w": 6,
+            "x": 18,
+            "y": 33
+          },
+          "id": 409,
+          "targets": [
+            {
+              "expr": "sum(reports_server_watch_events_sent_total) by (resource)",
+              "legendFormat": "{{resource}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "options": {
+            "graphMode": "area",
+            "colorMode": "value",
+            "orientation": "auto",
+            "textMode": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            }
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": []
           }
         }
       ]
