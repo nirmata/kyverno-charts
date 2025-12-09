@@ -5787,6 +5787,383 @@
         "dedupStrategy": "none",
         "sortOrder": "Descending"
       }
+    },
+    {
+      "type": "row",
+      "title": "📊 Versioning Metrics",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 47
+      },
+      "id": 1100,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "stat",
+      "title": "Current Sequence Value",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 48
+      },
+      "id": 1101,
+      "targets": [
+        {
+          "expr": "reports_server_versioning_sequence_value",
+          "legendFormat": "Sequence Value",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Version Requests (Total)",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 48
+      },
+      "id": 1102,
+      "targets": [
+        {
+          "expr": "sum(reports_server_versioning_requests_total)",
+          "legendFormat": "Total Requests",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Cache Hit Rate",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 48
+      },
+      "id": 1103,
+      "targets": [
+        {
+          "expr": "sum(reports_server_versioning_cache_hits_total) / (sum(reports_server_versioning_cache_hits_total) + sum(reports_server_versioning_cache_misses_total)) * 100",
+          "legendFormat": "Hit Rate %",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 50 },
+              { "color": "green", "value": 80 }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Versioning Errors",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 48
+      },
+      "id": 1104,
+      "targets": [
+        {
+          "expr": "sum(reports_server_versioning_errors_total)",
+          "legendFormat": "Errors",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "red", "value": 10 }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Version Requests Rate",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 52
+      },
+      "id": 1105,
+      "targets": [
+        {
+          "expr": "sum(rate(reports_server_versioning_requests_total[5m])) by (operation)",
+          "legendFormat": "{{operation}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "showPoints": "never",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity"
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Version Request Latency (P95)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 52
+      },
+      "id": 1106,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(reports_server_versioning_latency_seconds_bucket[5m])) by (le, operation))",
+          "legendFormat": "P95 - {{operation}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(reports_server_versioning_latency_seconds_bucket[5m])) by (le, operation))",
+          "legendFormat": "P99 - {{operation}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "showPoints": "never",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "gradientMode": "opacity"
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Cache Hits vs Misses",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 60
+      },
+      "id": 1107,
+      "targets": [
+        {
+          "expr": "sum(rate(reports_server_versioning_cache_hits_total[5m]))",
+          "legendFormat": "Cache Hits",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        },
+        {
+          "expr": "sum(rate(reports_server_versioning_cache_misses_total[5m]))",
+          "legendFormat": "Cache Misses",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "showPoints": "never",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Cache Hits" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" }}]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Cache Misses" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" }}]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Versioning Errors & Fallbacks",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 60
+      },
+      "id": 1108,
+      "targets": [
+        {
+          "expr": "sum(rate(reports_server_versioning_errors_total[5m])) by (error_type)",
+          "legendFormat": "Error: {{error_type}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        },
+        {
+          "expr": "sum(rate(reports_server_versioning_fallbacks_total[5m]))",
+          "legendFormat": "Timestamp Fallbacks",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "showPoints": "never",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": "Error.*" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" }}]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Timestamp Fallbacks" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" }}]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      }
     }
   ],
   "annotations": {
