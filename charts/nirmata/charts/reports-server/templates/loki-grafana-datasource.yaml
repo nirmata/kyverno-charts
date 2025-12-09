@@ -1,0 +1,26 @@
+{{- if and .Values.loki.enabled .Values.grafana.datasources.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "reports-server.fullname" . }}-loki-datasource
+  namespace: {{ .Values.grafana.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "reports-server.labels" . | nindent 4 }}
+    {{- with .Values.grafana.datasources.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+data:
+  loki-datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Loki
+        type: loki
+        uid: loki
+        access: proxy
+        url: http://{{ .Release.Name }}-loki.{{ .Release.Namespace }}.svc.cluster.local:3100
+        isDefault: false
+        editable: true
+        jsonData:
+          maxLines: 1000
+          timeout: 60
+{{- end }}

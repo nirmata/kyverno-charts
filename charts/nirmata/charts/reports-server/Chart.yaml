@@ -1,0 +1,25 @@
+apiVersion: v2
+appVersion: v0.2.9-rc10
+dependencies:
+- condition: loki.enabled
+  name: loki
+  repository: https://grafana.github.io/helm-charts
+  version: 6.46.0
+- condition: promtail.enabled
+  name: promtail
+  repository: https://grafana.github.io/helm-charts
+  version: 6.17.1
+keywords:
+- kubernetes
+- policy reports storage
+- postgresql
+kubeVersion: '>=1.16.0-0'
+maintainers:
+- email: support@nirmata.com
+  name: Nirmata
+  url: https://nirmata.com/
+name: reports-server
+sources:
+- https://github.com/nirmata/reports-server
+type: application
+version: 0.2.12-rc10
