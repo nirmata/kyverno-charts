@@ -35,7 +35,7 @@
         "name": "pod",
         "type": "query",
         "label": "Pod",
-        "query": "label_values(up{job=~\".*reports-server.*\"}, pod)",
+        "query": "label_values(reports_server_leader_is_leader, pod_name)",
         "refresh": 1,
         "includeAll": true,
         "multi": true,
@@ -216,7 +216,7 @@
       "id": 5,
       "targets": [
         {
-          "expr": "reports_server_leader_is_leader{pod=~\"$pod\"}",
+          "expr": "reports_server_leader_is_leader{pod_name=~\"$pod\"}",
           "legendFormat": "{{pod_name}}",
           "datasource": {
             "type": "prometheus",
@@ -1045,17 +1045,331 @@
         "x": 0,
         "y": 6
       },
-      "id": 200,
-      "title": "Storage Metrics",
+      "id": 150,
+      "title": "CRUD Operations by Resource Type (EphemeralReport, PolicyReport, etc.)",
       "panels": [
         {
           "type": "timeseries",
-          "title": "Storage Operations Rate",
+          "title": "EphemeralReport Operations Rate (Create/Get/Update/Delete)",
+          "description": "CRUD operations rate for EphemeralReport resources. Shows create, get, list, update, delete operations with their status (success/error/not_found).",
           "gridPos": {
             "h": 8,
             "w": 12,
             "x": 0,
             "y": 7
+          },
+          "id": 151,
+          "targets": [
+            {
+              "expr": "sum(rate(reports_server_storage_operations_total{resource_type=\"EphemeralReport\"}[5m])) by (operation, status)",
+              "legendFormat": "{{operation}} - {{status}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never",
+                "lineWidth": 2,
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "tooltip": { "mode": "multi", "sort": "desc" },
+            "legend": { "showLegend": true, "displayMode": "table", "placement": "bottom", "calcs": ["mean", "lastNotNull", "max"] }
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "PolicyReport Operations Rate (Create/Get/Update/Delete)",
+          "description": "CRUD operations rate for PolicyReport resources. Shows create, get, list, update, delete operations with their status (success/error/not_found).",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 7
+          },
+          "id": 152,
+          "targets": [
+            {
+              "expr": "sum(rate(reports_server_storage_operations_total{resource_type=\"PolicyReport\"}[5m])) by (operation, status)",
+              "legendFormat": "{{operation}} - {{status}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never",
+                "lineWidth": 2,
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "tooltip": { "mode": "multi", "sort": "desc" },
+            "legend": { "showLegend": true, "displayMode": "table", "placement": "bottom", "calcs": ["mean", "lastNotNull", "max"] }
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "ClusterPolicyReport Operations Rate (Create/Get/Update/Delete)",
+          "description": "CRUD operations rate for ClusterPolicyReport resources. Shows create, get, list, update, delete operations with their status (success/error/not_found).",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 15
+          },
+          "id": 153,
+          "targets": [
+            {
+              "expr": "sum(rate(reports_server_storage_operations_total{resource_type=\"ClusterPolicyReport\"}[5m])) by (operation, status)",
+              "legendFormat": "{{operation}} - {{status}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never",
+                "lineWidth": 2,
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "tooltip": { "mode": "multi", "sort": "desc" },
+            "legend": { "showLegend": true, "displayMode": "table", "placement": "bottom", "calcs": ["mean", "lastNotNull", "max"] }
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "ClusterEphemeralReport Operations Rate (Create/Get/Update/Delete)",
+          "description": "CRUD operations rate for ClusterEphemeralReport resources. Shows create, get, list, update, delete operations with their status (success/error/not_found).",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 15
+          },
+          "id": 154,
+          "targets": [
+            {
+              "expr": "sum(rate(reports_server_storage_operations_total{resource_type=\"ClusterEphemeralReport\"}[5m])) by (operation, status)",
+              "legendFormat": "{{operation}} - {{status}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never",
+                "lineWidth": 2,
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "tooltip": { "mode": "multi", "sort": "desc" },
+            "legend": { "showLegend": true, "displayMode": "table", "placement": "bottom", "calcs": ["mean", "lastNotNull", "max"] }
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Operation Duration by Resource Type (p95)",
+          "description": "95th percentile latency for storage operations by resource type and operation (create/get/update/delete/list).",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 23
+          },
+          "id": 155,
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, sum(rate(reports_server_storage_operation_duration_seconds_bucket{resource_type=~\"$resource_type\"}[5m])) by (le, resource_type, operation))",
+              "legendFormat": "{{resource_type}}/{{operation}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never",
+                "lineWidth": 2,
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "tooltip": { "mode": "multi", "sort": "desc" },
+            "legend": { "showLegend": true, "displayMode": "table", "placement": "bottom", "calcs": ["mean", "lastNotNull", "max"] }
+          }
+        },
+        {
+          "type": "stat",
+          "title": "Total Reports by Type",
+          "description": "Current count of reports stored in the database by resource type.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 23
+          },
+          "id": 156,
+          "targets": [
+            {
+              "expr": "reports_server_storage_reports_total",
+              "legendFormat": "{{resource_type}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "textMode": "value_and_name"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" }
+            }
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Reports Created/Updated/Deleted Rate",
+          "description": "Rate of report creation, updates, and deletions by resource type.",
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 31
+          },
+          "id": 157,
+          "targets": [
+            {
+              "expr": "sum(rate(reports_server_storage_reports_created_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type)",
+              "legendFormat": "Created - {{resource_type}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            },
+            {
+              "expr": "sum(rate(reports_server_storage_reports_updated_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type)",
+              "legendFormat": "Updated - {{resource_type}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            },
+            {
+              "expr": "sum(rate(reports_server_storage_reports_deleted_total{resource_type=~\"$resource_type\"}[5m])) by (resource_type)",
+              "legendFormat": "Deleted - {{resource_type}}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never",
+                "lineWidth": 2,
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "tooltip": { "mode": "multi", "sort": "desc" },
+            "legend": { "showLegend": true, "displayMode": "table", "placement": "bottom", "calcs": ["mean", "lastNotNull", "max"] }
+          }
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 200,
+      "title": "Storage Metrics (Aggregate)",
+      "panels": [
+        {
+          "type": "timeseries",
+          "title": "Storage Operations Rate (All Types)",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 8
           },
           "id": 201,
           "targets": [
@@ -4586,16 +4900,32 @@
         "y": 13
       },
       "id": 900,
-      "title": "Policy Result Metrics (Detailed Per-Result)",
+      "title": "Policy Result Metrics (Detailed Per-Result) - V1 Storage Only",
       "panels": [
+        {
+          "type": "text",
+          "title": "About Policy Result Metrics",
+          "gridPos": {
+            "h": 4,
+            "w": 24,
+            "x": 0,
+            "y": 14
+          },
+          "id": 900,
+          "options": {
+            "mode": "markdown",
+            "content": "## Policy Result Metrics\n\n**These metrics show individual policy results with detailed labels.**\n\n- `policy_report_result` - Namespaced PolicyReport results (and EphemeralReport results)\n- `cluster_policy_report_result` - Cluster-scoped PolicyReport results (and ClusterEphemeralReport results)\n\n**Labels available:**\n- `namespace` - Report namespace (for namespaced reports)\n- `policy` - Policy name that generated the result\n- `rule` - Rule name within the policy\n- `status` - Result status: `pass`, `fail`, `warn`, `error`, `skip`\n- `severity` - Severity level: `critical`, `high`, `medium`, `low`, `info`\n- `category` - Policy category\n- `kind` - Resource kind being evaluated\n- `name` - Resource name being evaluated\n\n**Note:** These metrics are populated when reports are created/updated in storage. If you see no data, ensure:\n1. Reports are being created in the system\n2. The storage backend is configured correctly\n3. Check reports-server logs for any errors"
+          }
+        },
         {
           "type": "timeseries",
           "title": "Policy Report Results by Status",
+          "description": "Breakdown of policy report results by their status (pass, fail, warn, error, skip). Shows how many resources are compliant vs non-compliant.",
           "gridPos": {
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 14
+            "y": 18
           },
           "id": 901,
           "targets": [
@@ -4664,11 +4994,12 @@
         {
           "type": "timeseries",
           "title": "Policy Report Results by Severity",
+          "description": "Breakdown of policy report results by severity level (critical, high, medium, low, info). Helps prioritize remediation efforts.",
           "gridPos": {
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 14
+            "y": 18
           },
           "id": 902,
           "targets": [
@@ -4737,11 +5068,12 @@
         {
           "type": "timeseries",
           "title": "Policy Report Results by Policy",
+          "description": "Results grouped by policy name. Shows which policies are generating the most results and helps identify policies that may need attention.",
           "gridPos": {
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 22
+            "y": 26
           },
           "id": 903,
           "targets": [
@@ -4810,11 +5142,12 @@
         {
           "type": "timeseries",
           "title": "Cluster Policy Report Results by Status",
+          "description": "Cluster-scoped policy report results by status. Shows compliance status for cluster-wide resources like Nodes, Namespaces, etc.",
           "gridPos": {
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 22
+            "y": 26
           },
           "id": 904,
           "targets": [
@@ -4883,11 +5216,12 @@
         {
           "type": "timeseries",
           "title": "Results by Resource Kind",
+          "description": "Policy results grouped by the Kubernetes resource kind (Pod, Deployment, Service, etc.). Shows which resource types have the most policy violations.",
           "gridPos": {
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 30
+            "y": 34
           },
           "id": 905,
           "targets": [
@@ -4964,11 +5298,12 @@
         {
           "type": "timeseries",
           "title": "Results by Category",
+          "description": "Policy results grouped by category (e.g., Pod Security Standards, Best Practices, Security). Shows which policy categories have the most findings.",
           "gridPos": {
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 30
+            "y": 34
           },
           "id": 906,
           "targets": [

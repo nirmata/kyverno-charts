@@ -2190,6 +2190,36 @@ reports-server:
     seccompProfile:
       type: RuntimeDefault
 
+  # -- Graceful shutdown configuration
+  # These settings ensure that during rolling updates or pod termination,
+  # watch streams are not abruptly terminated with HTTP/2 GOAWAY frames.
+  # The shutdown sequence is:
+  # 1. Pod receives SIGTERM
+  # 2. preStop hook runs (if enabled) - gives time for endpoint removal
+  # 3. shutdown-delay-duration waits - additional time for load balancer updates
+  # 4. Server drains connections and sends GOAWAY
+  # 5. Pod terminates
+
+  # -- Termination grace period in seconds
+  # Should be greater than: preStopSleepSeconds + shutdownDelayDuration + buffer
+  # Default: 30 (allows 5s preStop + 10s delay + 15s buffer for connection drain)
+  terminationGracePeriodSeconds: 30
+
+  # -- Shutdown delay duration before starting graceful shutdown
+  # After receiving SIGTERM, the server will wait this duration before
+  # closing connections. This allows Kubernetes to update Service endpoints
+  # so clients can reconnect to other pods before GOAWAY is sent.
+  # Format: duration string (e.g., "10s", "15s", "30s")
+  shutdownDelayDuration: "10s"
+
+  # -- Lifecycle hooks configuration
+  lifecycle:
+    # -- Enable lifecycle hooks (preStop)
+    enabled: true
+    # -- Seconds to sleep in preStop hook before SIGTERM is processed
+    # This gives time for the pod to be removed from Service endpoints
+    preStopSleepSeconds: 5
+
   # -- Liveness probe
   livenessProbe:
     initialDelaySeconds: 20
