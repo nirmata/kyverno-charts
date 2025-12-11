@@ -113,13 +113,39 @@ llm:
     model: ""
 
 nirmata:
+  # Nirmata endpoint URL - used to set the --url command-line flag
   endpoint: "https://nirmata.io"
-  # Name of secret containing Nirmata API token
-  # Create manually: kubectl create secret generic nirmata-api-token --from-literal=api-token=YOUR_TOKEN -n nirmata
-  apiTokenSecret: "nirmata-api-token"
 
-  # Namespace of secret containing Nirmata API token
-  apiTokenSecretNamespace: "nirmata"
+  # Authentication method selection
+  # Options: "serviceAccountToken" or "apiToken"
+  # This determines which authentication method will be used
+  nirmataAuth: "serviceAccountToken"
+
+  # Service Account Token configuration
+  # Used when nirmataAuth is set to "serviceAccountToken"
+  # Name of secret containing Nirmata service account token - used to set the --service-account-token-secret command-line flag
+  # Create manually: kubectl create secret generic nirmata-service-account-token --from-literal=service-account-token=YOUR_TOKEN -n nirmata
+  serviceAccountTokenSecret: "nirmata-service-account-token"
+
+  # Namespace of secret containing Nirmata service account token - used to set the --service-account-token-secret-namespace command-line flag
+  serviceAccountTokenSecretNamespace: "nirmata"
+
+  # Key within the secret containing Nirmata service account token - used to set the --service-account-token-secret-key command-line flag
+  # Defaults to "service-account-token"
+  serviceAccountTokenSecretKey: "service-account-token"
+
+  # API Token configuration
+  # Used when nirmataAuth is set to "apiToken"
+  # Name of secret containing Nirmata API token - used to set the --api-token-secret command-line flag
+  # Create manually: kubectl create secret generic nirmata-api-token --from-literal=api-token=YOUR_API_TOKEN -n nirmata
+  apiTokenSecret: ""
+
+  # Namespace of secret containing Nirmata API token - used to set the --api-token-secret-namespace command-line flag
+  apiTokenSecretNamespace: ""
+
+  # Key within the secret containing Nirmata API token - used to set the --api-token-secret-key command-line flag
+  # Defaults to "api-token"
+  apiTokenSecretKey: "api-token"
 
 # ToolConfig for GitHub (used by CreatePR)
 tool:

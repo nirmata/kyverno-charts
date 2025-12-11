@@ -57,15 +57,18 @@
       "additionalProperties": true,
       "properties": {
         "endpoint": { "type": "string" },
-        "apiTokenSecret": {
+        "nirmataAuth": { 
           "type": "string",
-          "minLength": 1
+          "enum": ["serviceAccountToken", "apiToken"]
         },
-        "apiTokenSecretNamespace": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
+        "serviceAccountTokenSecret": { "type": "string" },
+        "serviceAccountTokenSecretNamespace": { "type": "string" },
+        "serviceAccountTokenSecretKey": { "type": "string" },
+        "apiTokenSecret": { "type": "string" },
+        "apiTokenSecretNamespace": { "type": "string" },
+        "apiTokenSecretKey": { "type": "string" }
+      },
+      "required": ["nirmataAuth"]
     }
   },
   "allOf": [
@@ -146,14 +149,82 @@
         "required": ["llm"]
       },
       "then": {
-        "required": ["nirmata"], 
         "properties": { 
           "nirmata": { 
-            "required": ["apiTokenSecret"] 
+            "description": "Nirmata configuration for command-line flags. These values are used to set flags (--service-account-token-secret or --api-token-secret, --url) and are not part of LLMConfig. The nirmataAuth field determines which credential type to use."
           } 
         }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "nirmata": {
+            "type": "object",
+            "properties": {
+              "nirmataAuth": { "const": "serviceAccountToken" }
+            },
+            "required": ["nirmataAuth"]
+          }
+        },
+        "required": ["nirmata"]
       },
-      "errorMessage": "When llm.provider is 'nirmataAI', nirmata.apiTokenSecret must be set."
+      "then": {
+        "properties": {
+          "nirmata": {
+            "required": ["serviceAccountTokenSecret", "serviceAccountTokenSecretNamespace", "serviceAccountTokenSecretKey"],
+            "properties": {
+              "serviceAccountTokenSecret": { 
+                "type": "string",
+                "minLength": 1 
+              },
+              "serviceAccountTokenSecretNamespace": { 
+                "type": "string",
+                "minLength": 1 
+              },
+              "serviceAccountTokenSecretKey": { 
+                "type": "string",
+                "minLength": 1 
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "nirmata": {
+            "type": "object",
+            "properties": {
+              "nirmataAuth": { "const": "apiToken" }
+            },
+            "required": ["nirmataAuth"]
+          }
+        },
+        "required": ["nirmata"]
+      },
+      "then": {
+        "properties": {
+          "nirmata": {
+            "required": ["apiTokenSecret", "apiTokenSecretNamespace"],
+            "properties": {
+              "apiTokenSecret": { 
+                "type": "string",
+                "minLength": 1 
+              },
+              "apiTokenSecretNamespace": { 
+                "type": "string",
+                "minLength": 1 
+              },
+              "apiTokenSecretKey": { 
+                "type": "string",
+                "minLength": 1 
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
