@@ -57,15 +57,41 @@
       "additionalProperties": true,
       "properties": {
         "endpoint": { "type": "string" },
-        "apiTokenSecret": {
-          "type": "string",
-          "minLength": 1
+        "serviceAccountTokenSecret": { "type": "string" },
+        "serviceAccountTokenSecretNamespace": { "type": "string" },
+        "serviceAccountTokenSecretKey": { "type": "string" },
+        "apiTokenSecret": { "type": "string" },
+        "apiTokenSecretNamespace": { "type": "string" },
+        "apiTokenSecretKey": { "type": "string" }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "serviceAccountTokenSecret": { 
+              "type": "string",
+              "minLength": 1 
+            },
+            "apiTokenSecret": {
+              "type": "string",
+              "maxLength": 0
+            }
+          },
+          "required": ["serviceAccountTokenSecret"]
         },
-        "apiTokenSecretNamespace": {
-          "type": "string",
-          "minLength": 1
+        {
+          "properties": {
+            "apiTokenSecret": { 
+              "type": "string",
+              "minLength": 1 
+            },
+            "serviceAccountTokenSecret": {
+              "type": "string",
+              "maxLength": 0
+            }
+          },
+          "required": ["apiTokenSecret"]
         }
-      }
+      ]
     }
   },
   "allOf": [
@@ -146,14 +172,12 @@
         "required": ["llm"]
       },
       "then": {
-        "required": ["nirmata"], 
         "properties": { 
           "nirmata": { 
-            "required": ["apiTokenSecret"] 
+            "description": "Nirmata configuration for command-line flags. These values are used to set flags (--service-account-token-secret or --api-token-secret, --url) and are not part of LLMConfig. Exactly one credential type (serviceAccountTokenSecret or apiTokenSecret) must be configured."
           } 
         }
-      },
-      "errorMessage": "When llm.provider is 'nirmataAI', nirmata.apiTokenSecret must be set."
+      }
     }
   ]
 }
