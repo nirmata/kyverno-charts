@@ -43,9 +43,26 @@ spec:
             {{- if or .Values.logging.enableAudit (gt (.Values.logging.verbosity | int) 0) }}
             - -v={{ max (.Values.logging.verbosity | int) (ternary 1 0 .Values.logging.enableAudit) }}
             {{- end }}
+            {{- if .Values.nirmata.serviceAccountTokenSecret }}
+            {{- /* Service account token takes precedence */ -}}
+            - --service-account-token-secret={{ .Values.nirmata.serviceAccountTokenSecret }}
+            {{- if .Values.nirmata.serviceAccountTokenSecretNamespace }}
+            - --service-account-token-secret-namespace={{ .Values.nirmata.serviceAccountTokenSecretNamespace }}
+            {{- end }}
+            {{- if .Values.nirmata.serviceAccountTokenSecretKey }}
+            - --service-account-token-secret-key={{ .Values.nirmata.serviceAccountTokenSecretKey }}
+            {{- end }}
+            {{- else if .Values.nirmata.apiTokenSecret }}
+            {{- /* Use API token if service account token is not configured */ -}}
             - --api-token-secret={{ .Values.nirmata.apiTokenSecret }}
             {{- if .Values.nirmata.apiTokenSecretNamespace }}
             - --api-token-secret-namespace={{ .Values.nirmata.apiTokenSecretNamespace }}
+            {{- end }}
+            {{- if .Values.nirmata.apiTokenSecretKey }}
+            - --api-token-secret-key={{ .Values.nirmata.apiTokenSecretKey }}
+            {{- end }}
+            {{- else }}
+            {{- fail "Either nirmata.serviceAccountTokenSecret or nirmata.apiTokenSecret must be configured" }}
             {{- end }}
             {{- if .Values.nirmata.endpoint }}
             - --url={{ .Values.nirmata.endpoint }}

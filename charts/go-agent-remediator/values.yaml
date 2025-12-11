@@ -113,13 +113,33 @@ llm:
     model: ""
 
 nirmata:
+  # Nirmata endpoint URL - used to set the --url command-line flag
   endpoint: "https://nirmata.io"
-  # Name of secret containing Nirmata API token
-  # Create manually: kubectl create secret generic nirmata-api-token --from-literal=api-token=YOUR_TOKEN -n nirmata
-  apiTokenSecret: "nirmata-api-token"
 
-  # Namespace of secret containing Nirmata API token
-  apiTokenSecretNamespace: "nirmata"
+  # Service Account Token configuration
+  # Name of secret containing Nirmata service account token - used to set the --service-account-token-secret command-line flag
+  # Create manually: kubectl create secret generic nirmata-service-account-token --from-literal=service-account-token=YOUR_TOKEN -n nirmata
+  serviceAccountTokenSecret: ""
+
+  # Namespace of secret containing Nirmata service account token - used to set the --service-account-token-secret-namespace command-line flag
+  serviceAccountTokenSecretNamespace: ""
+
+  # Key within the secret containing Nirmata service account token - used to set the --service-account-token-secret-key command-line flag
+  # Defaults to "service-account-token"
+  serviceAccountTokenSecretKey: ""
+
+  # API Token configuration (alternative to service account token)
+  # Only one of serviceAccountToken or apiToken should be configured
+  # If both are present, serviceAccountToken takes precedence
+  # Name of secret containing Nirmata API token - used to set the --api-token-secret command-line flag
+  # Create manually: kubectl create secret generic nirmata-api-token --from-literal=api-token=YOUR_API_TOKEN -n nirmata
+  apiTokenSecret: ""
+
+  # Namespace of secret containing Nirmata API token - used to set the --api-token-secret-namespace command-line flag
+  apiTokenSecretNamespace: ""
+
+  # Key within the secret containing Nirmata API token - used to set the --api-token-secret-key command-line flag
+  apiTokenSecretKey: ""
 
 # ToolConfig for GitHub (used by CreatePR)
 tool:
