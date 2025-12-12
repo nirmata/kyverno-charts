@@ -385,9 +385,25 @@ data:
             static_configs:
             - targets: [kyverno-svc-metrics.kyverno.svc.cluster.local:8000]
             metric_relabel_configs:
+            # Filter to keep only relevant Kyverno metrics
+            # Updated for Kyverno v1.16+ which adds new CEL policy metrics
             - source_labels: [__name__]
-              regex: (kyverno_http_requests_duration_seconds_bucket.*|kyverno_policy_execution_duration_seconds_bucket.*|kyverno_client_queries_total.*|kyverno_admission_review_duration_seconds.*|kyverno_policy_execution_duration_seconds.*|kyverno_policy_results_total|kyverno_policy_rule_info_total|kyverno_admission_requests_total|kyverno_controller_reconcile_total|kyverno_controller_requeue_total|kyverno_controller_drop_total)
+              regex: (kyverno_http_requests_duration_seconds_bucket.*|kyverno_policy_execution_duration_seconds_bucket.*|kyverno_client_queries_total.*|kyverno_admission_review_duration_seconds.*|kyverno_policy_execution_duration_seconds.*|kyverno_validating_policy_execution_duration_seconds.*|kyverno_image_validating_policy_execution_duration_seconds.*|kyverno_mutating_policy_execution_duration_seconds.*|kyverno_generating_policy_execution_duration_seconds.*|kyverno_policy_results_total|kyverno_policy_rule_info_total|kyverno_admission_requests_total|kyverno_controller_reconcile_total|kyverno_controller_requeue_total|kyverno_controller_drop_total)
               action: keep
+            # Rename execution_cause to rule_execution_cause for backwards compatibility with Kyverno v1.16+
+            # (v1.16 renamed rule_execution_cause to execution_cause)
+            - source_labels: [execution_cause]
+              target_label: rule_execution_cause
+              regex: (.+)
+              replacement: $1
+              action: replace
+            # Drop the original execution_cause label after copying to maintain consistent label set
+            - action: labeldrop
+              regex: execution_cause
+            # Drop OpenTelemetry scope labels added in Kyverno v1.16+ to maintain backwards compatibility
+            - action: labeldrop
+              regex: otel_scope_.*
+            # Note: dry_run label exists in both v1.15 and v1.16, keeping it for DB compatibility
           - job_name: kubelet
             scrape_interval: 5m
             honor_timestamps: false
