@@ -44,17 +44,22 @@ spec:
             {{- if or .Values.logging.enableAudit (gt (.Values.logging.verbosity | int) 0) }}
             - -v={{ max (.Values.logging.verbosity | int) (ternary 1 0 .Values.logging.enableAudit) }}
             {{- end }}
-            {{- if eq .Values.nirmata.nirmataAuth "serviceAccountToken" }}
-            - --service-account-token-secret={{ .Values.nirmata.serviceAccountTokenSecret }}
-            - --service-account-token-secret-namespace={{ .Values.nirmata.serviceAccountTokenSecretNamespace }}
-            - --service-account-token-secret-key={{ .Values.nirmata.serviceAccountTokenSecretKey }}
-            {{- else if eq .Values.nirmata.nirmataAuth "apiToken" }}
-            - --api-token-secret={{ .Values.nirmata.apiTokenSecret }}
-            - --api-token-secret-namespace={{ .Values.nirmata.apiTokenSecretNamespace }}
-            - --api-token-secret-key={{ .Values.nirmata.apiTokenSecretKey }}
-            {{- end }}
             {{- if .Values.nirmata.endpoint }}
             - --url={{ .Values.nirmata.endpoint }}
+            {{- end }}
+          env:
+            {{- if eq .Values.nirmata.auth "serviceAccountToken" }}
+            - name: SERVICE_ACCOUNT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.nirmata.serviceAccountTokenSecret }}
+                  key: {{ .Values.nirmata.serviceAccountTokenSecretKey }}
+            {{- else if eq .Values.nirmata.auth "apiToken" }}
+            - name: API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.nirmata.apiTokenSecret }}
+                  key: {{ .Values.nirmata.apiTokenSecretKey }}
             {{- end }}
           ports:
             - containerPort: 8443
