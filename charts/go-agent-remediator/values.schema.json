@@ -57,18 +57,16 @@
       "additionalProperties": true,
       "properties": {
         "endpoint": { "type": "string" },
-        "nirmataAuth": { 
+        "auth": { 
           "type": "string",
           "enum": ["serviceAccountToken", "apiToken"]
         },
         "serviceAccountTokenSecret": { "type": "string" },
-        "serviceAccountTokenSecretNamespace": { "type": "string" },
         "serviceAccountTokenSecretKey": { "type": "string" },
         "apiTokenSecret": { "type": "string" },
-        "apiTokenSecretNamespace": { "type": "string" },
         "apiTokenSecretKey": { "type": "string" }
       },
-      "required": ["nirmataAuth"]
+      "required": ["auth"]
     }
   },
   "allOf": [
@@ -151,7 +149,7 @@
       "then": {
         "properties": { 
           "nirmata": { 
-            "description": "Nirmata configuration for command-line flags. These values are used to set flags (--service-account-token-secret or --api-token-secret, --url) and are not part of LLMConfig. The nirmataAuth field determines which credential type to use."
+            "description": "Nirmata configuration for command-line flags. These values are used to set flags (--service-account-token-secret or --api-token-secret, --url) and are not part of LLMConfig. The auth field determines which credential type to use."
           } 
         }
       }
@@ -162,9 +160,9 @@
           "nirmata": {
             "type": "object",
             "properties": {
-              "nirmataAuth": { "const": "serviceAccountToken" }
+              "auth": { "const": "serviceAccountToken" }
             },
-            "required": ["nirmataAuth"]
+            "required": ["auth"]
           }
         },
         "required": ["nirmata"]
@@ -172,13 +170,9 @@
       "then": {
         "properties": {
           "nirmata": {
-            "required": ["serviceAccountTokenSecret", "serviceAccountTokenSecretNamespace", "serviceAccountTokenSecretKey"],
+            "required": ["serviceAccountTokenSecret", "serviceAccountTokenSecretKey"],
             "properties": {
               "serviceAccountTokenSecret": { 
-                "type": "string",
-                "minLength": 1 
-              },
-              "serviceAccountTokenSecretNamespace": { 
                 "type": "string",
                 "minLength": 1 
               },
@@ -197,9 +191,9 @@
           "nirmata": {
             "type": "object",
             "properties": {
-              "nirmataAuth": { "const": "apiToken" }
+              "auth": { "const": "apiToken" }
             },
-            "required": ["nirmataAuth"]
+            "required": ["auth"]
           }
         },
         "required": ["nirmata"]
@@ -207,13 +201,9 @@
       "then": {
         "properties": {
           "nirmata": {
-            "required": ["apiTokenSecret", "apiTokenSecretNamespace"],
+            "required": ["apiTokenSecret", "apiTokenSecretKey"],
             "properties": {
               "apiTokenSecret": { 
-                "type": "string",
-                "minLength": 1 
-              },
-              "apiTokenSecretNamespace": { 
                 "type": "string",
                 "minLength": 1 
               },
