@@ -544,7 +544,6 @@ test:
 # -- Additional labels
 customLabels: {}
 
-
 webhooksCleanup:
   # -- Create a helm pre-delete hook to cleanup webhooks.
   enabled: true
@@ -2104,7 +2103,6 @@ reportsController:
     #   path: /etc/pki/tls/ca-certificates.crt
     #   type: File
 
-
   metricsService:
     # -- Create service.
     create: true
@@ -2204,11 +2202,9 @@ reports-server:
     enabled: false
   fipsEnabled: false
 
-
   # cloudnative-pg:
   #   crds:
   #     create: false
-
 
   # -- Name override
   nameOverride: ""
@@ -2398,7 +2394,6 @@ reports-server:
     #       periodSeconds: 15
     #     selectPolicy: Max
 
-
   # -- Using a PDB is highly recommended for highly available deployments. Defaults to enabled. The default configuration doesn't prevent disruption when using a single replica
   pdb:
     # -- Enable PodDisruptionBudget
@@ -2544,7 +2539,6 @@ reports-server:
     migrateReportsServer:
       # -- Create api services only when reports-server is ready and migration is guaranteed
       enabled: false
-
 
   jobConfigurations:
     image:
