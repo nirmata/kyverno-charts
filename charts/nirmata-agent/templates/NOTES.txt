@@ -1,0 +1,53 @@
+🎉 Successfully installed {{ .Chart.Name }} chart version {{ .Chart.Version }}!
+   App version: {{ .Chart.AppVersion }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Nirmata Agent has been deployed in namespace: {{ .Release.Namespace }}
+
+🔍 Check the status of your deployment:
+   kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "go-nirmata-agent.name" . }}
+{{- if .Values.remediator.enabled }}
+   kubectl get remediator -n {{ .Release.Namespace }}
+{{- end }}
+{{- if .Values.agent.enabled }}
+   kubectl get agent -n {{ .Release.Namespace }}
+{{- end }}
+
+📋 View the logs:
+   kubectl logs -n {{ .Release.Namespace }} deployment/{{ include "go-nirmata-agent.fullname" . }}
+
+🚀 Next Steps:
+{{- if .Values.llm.enabled }}
+   ✓ LLMConfig created: {{ include "go-nirmata-agent.name" . }}-llm
+{{- else }}
+   1. Configure LLMConfig for your AI provider
+{{- end }}
+{{- if .Values.tool.enabled }}
+   ✓ ToolConfig created: {{ .Values.tool.name | default (printf "%s-github" (include "go-nirmata-agent.name" .)) }}
+{{- else }}
+   2. Set up ToolConfig for Git provider authentication
+{{- end }}
+{{- if .Values.remediator.enabled }}
+   ✓ Remediator created: {{ .Values.remediator.name | default (include "go-nirmata-agent.name" .) }}
+{{- else }}
+   3. Create and configure your Remediator resource (set remediator.enabled=true)
+{{- end }}
+{{- if .Values.agent.enabled }}
+   ✓ Agent created: {{ .Values.agent.name | default (printf "%s-agent" (include "go-nirmata-agent.name" .)) }}
+      Prompt: {{ .Values.agent.prompt | trunc 60 }}...
+      Schedule: {{ (index .Values.agent.triggers 0).schedule.crontab }}
+{{- else }}
+   4. Create and configure your Agent resource (set agent.enabled=true)
+{{- end }}
+
+📚 Documentation & Resources:
+   • Remediator Agent Documentation: https://docs.nirmata.io/docs/agents/service-agents/remediator/
+
+💡 Pro Tips:
+   • Use 'helm get values {{ .Release.Name }} -n {{ .Release.Namespace }}' to see your configuration
+   • Enable audit logging with logging.enableAudit=true for detailed activity tracking
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Happy remediating! 🛠️✨

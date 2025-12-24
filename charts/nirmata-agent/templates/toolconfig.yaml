@@ -1,0 +1,61 @@
+{{- if .Values.tool.enabled }}
+apiVersion: serviceagents.nirmata.io/v1alpha1
+kind: ToolConfig
+metadata:
+  name: {{ .Values.tool.name | default (printf "%s-github" (include "go-nirmata-agent.name" .)) }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-nirmata-agent.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "5"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  type: {{ .Values.tool.type | quote }}
+  credentials:
+    method: {{ .Values.tool.credentials.method | quote }}
+    {{- if eq .Values.tool.credentials.method "app" }}
+    {{- if .Values.tool.credentials.app }}
+    app:
+      appId: {{ .Values.tool.credentials.app.appId }}
+      {{- if .Values.tool.credentials.app.installationId }}
+      installationId: {{ .Values.tool.credentials.app.installationId }}
+      {{- end }}
+      privateKeySecretRef:
+        name: {{ .Values.tool.credentials.app.privateKeySecret.name | quote }}
+        key: {{ .Values.tool.credentials.app.privateKeySecret.key | quote }}
+    {{- else }}
+    {{- fail "tool.credentials.app must be configured when method is 'app'" }}
+    {{- end }}
+    {{- else if eq .Values.tool.credentials.method "pat" }}
+    {{- if .Values.tool.credentials.pat }}
+    pat:
+      tokenSecretRef:
+        name: {{ .Values.tool.credentials.pat.secret.name | quote }}
+        key: {{ .Values.tool.credentials.pat.secret.key | quote }}
+    {{- else }}
+    {{- fail "tool.credentials.pat must be configured when method is 'pat'" }}
+    {{- end }}
+    {{- else if eq .Values.tool.credentials.method "nirmata-app" }}
+    # Nirmata GitHub App requires no additional configuration
+    {{- else }}
+    {{- fail "tool.credentials.method must be either 'pat', 'app', or 'nirmata-app'" }}
+    {{- end }}
+  defaults:
+    {{- if .Values.tool.defaults.git }}
+    git:
+      {{- if .Values.tool.defaults.git.pullRequests }}
+      pullRequests:
+        {{- if .Values.tool.defaults.git.pullRequests.branchPrefix }}
+        branchPrefix: {{ .Values.tool.defaults.git.pullRequests.branchPrefix | quote }}
+        {{- end }}
+        {{- if .Values.tool.defaults.git.pullRequests.titleTemplate }}
+        titleTemplate: {{ .Values.tool.defaults.git.pullRequests.titleTemplate | quote }}
+        {{- end }}
+        {{- if .Values.tool.defaults.git.pullRequests.commitMessageTemplate }}
+        commitMessageTemplate: {{ .Values.tool.defaults.git.pullRequests.commitMessageTemplate | quote }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+{{- end }}
+

@@ -1,0 +1,222 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "llm": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["bedrock", "azure-openai", "nirmataAI"]
+        },
+        "bedrock": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "model": { "type": "string" },
+            "region": { "type": "string" },
+            "secretRef": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "name": { "type": "string" },
+                "key": { "type": "string" }
+              }
+            }
+          }
+        },
+        "azureOpenAI": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "endpoint": { "type": "string" },
+            "deploymentName": { "type": "string" },
+            "secretRef": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "name": { "type": "string" },
+                "key": { "type": "string" }
+              }
+            }
+          }
+        },
+        "nirmataAI": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "model": { "type": "string" }
+          }
+        }
+      }
+    },
+    "nirmata": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "endpoint": { "type": "string" },
+        "auth": { 
+          "type": "string",
+          "enum": ["serviceAccountToken", "apiToken"]
+        },
+        "serviceAccountTokenSecret": { "type": "string" },
+        "serviceAccountTokenSecretKey": { "type": "string" },
+        "apiTokenSecret": { "type": "string" },
+        "apiTokenSecretKey": { "type": "string" }
+      },
+      "required": ["auth"]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "llm": {
+            "type": "object",
+            "properties": {
+              "provider": { "const": "bedrock" }
+            },
+            "required": ["provider"]
+          }
+        },
+        "required": ["llm"]
+      },
+      "then": {
+        "properties": {
+          "llm": {
+            "required": ["bedrock"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "llm": {
+            "type": "object",
+            "properties": {
+              "provider": { "const": "azure-openai" }
+            },
+            "required": ["provider"]
+          }
+        },
+        "required": ["llm"]
+      },
+      "then": {
+        "properties": {
+          "llm": {
+            "required": ["azureOpenAI"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "llm": {
+            "type": "object",
+            "properties": {
+              "provider": { "const": "nirmataAI" }
+            },
+            "required": ["provider"]
+          }
+        },
+        "required": ["llm"]
+      },
+      "then": {
+        "properties": {
+          "llm": {
+            "required": ["nirmataAI"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "llm": {
+            "type": "object",
+            "properties": {
+              "provider": { "const": "nirmataAI" }
+            },
+            "required": ["provider"]
+          }
+        },
+        "required": ["llm"]
+      },
+      "then": {
+        "properties": { 
+          "nirmata": { 
+            "description": "Nirmata configuration for command-line flags. These values are used to set flags (--service-account-token-secret or --api-token-secret, --url) and are not part of LLMConfig. The auth field determines which credential type to use."
+          } 
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "nirmata": {
+            "type": "object",
+            "properties": {
+              "auth": { "const": "serviceAccountToken" }
+            },
+            "required": ["auth"]
+          }
+        },
+        "required": ["nirmata"]
+      },
+      "then": {
+        "properties": {
+          "nirmata": {
+            "required": ["serviceAccountTokenSecret", "serviceAccountTokenSecretKey"],
+            "properties": {
+              "serviceAccountTokenSecret": { 
+                "type": "string",
+                "minLength": 1 
+              },
+              "serviceAccountTokenSecretKey": { 
+                "type": "string",
+                "minLength": 1 
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "nirmata": {
+            "type": "object",
+            "properties": {
+              "auth": { "const": "apiToken" }
+            },
+            "required": ["auth"]
+          }
+        },
+        "required": ["nirmata"]
+      },
+      "then": {
+        "properties": {
+          "nirmata": {
+            "required": ["apiTokenSecret", "apiTokenSecretKey"],
+            "properties": {
+              "apiTokenSecret": { 
+                "type": "string",
+                "minLength": 1 
+              },
+              "apiTokenSecretKey": { 
+                "type": "string",
+                "minLength": 1 
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+
+

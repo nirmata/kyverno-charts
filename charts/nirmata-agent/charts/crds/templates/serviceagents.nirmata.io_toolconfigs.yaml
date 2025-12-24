@@ -1,0 +1,184 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.18.0
+  name: toolconfigs.serviceagents.nirmata.io
+spec:
+  group: serviceagents.nirmata.io
+  names:
+    kind: ToolConfig
+    listKind: ToolConfigList
+    plural: toolconfigs
+    singular: toolconfig
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: ToolConfig is the Schema for the toolconfigs API.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ToolConfigSpec defines the desired state of ToolConfig.
+            properties:
+              credentials:
+                description: |-
+                  Credentials defines how the agent authenticates to the provider
+                  exactly one authentication method must be specified
+                properties:
+                  app:
+                    description: |-
+                      GitHub App authentication using App ID and private key
+                      Required when method == "app"
+                    properties:
+                      appId:
+                        description: AppID is the GitHub App ID
+                        format: int64
+                        type: integer
+                      installationId:
+                        description: |-
+                          InstallationID is the Installation ID for the target organization/repositories
+                          If not specified, the controller will auto-discover the installation
+                        format: int64
+                        type: integer
+                      privateKeySecretRef:
+                        description: PrivateKeySecretRef defines the reference to
+                          a secret containing the private key
+                        properties:
+                          key:
+                            description: Key is the key within the secret
+                            type: string
+                          name:
+                            description: Name is the name of the secret
+                            type: string
+                          namespace:
+                            description: Namespace is the namespace of the secret
+                            type: string
+                        required:
+                        - key
+                        - name
+                        type: object
+                    required:
+                    - appId
+                    - privateKeySecretRef
+                    type: object
+                  method:
+                    description: Method selects which authentication payload below
+                      is used
+                    enum:
+                    - pat
+                    - app
+                    - nirmata-app
+                    type: string
+                  pat:
+                    description: |-
+                      PAT-based authentication using Personal Access Token
+                      Required when method == "pat"
+                    properties:
+                      tokenSecretRef:
+                        description: TokenSecretRef points to a Secret key containing
+                          the PAT token
+                        properties:
+                          key:
+                            description: Key is the key within the secret
+                            type: string
+                          name:
+                            description: Name is the name of the secret
+                            type: string
+                          namespace:
+                            description: Namespace is the namespace of the secret
+                            type: string
+                        required:
+                        - key
+                        - name
+                        type: object
+                    required:
+                    - tokenSecretRef
+                    type: object
+                required:
+                - method
+                type: object
+                x-kubernetes-validations:
+                - message: exactly one authentication method must be specified based
+                    on the method field
+                  rule: (self.method == 'pat' && has(self.pat) && !has(self.app))
+                    || (self.method == 'app' && has(self.app) && !has(self.pat)) ||
+                    (self.method == 'nirmata-app' && !has(self.pat) && !has(self.app))
+              defaults:
+                description: Defaults defines the default values for PRs/commits the
+                  agent will create
+                properties:
+                  git:
+                    description: Git defines git-related defaults
+                    properties:
+                      pullRequests:
+                        description: PullRequests defines pull request related defaults
+                        properties:
+                          branchPrefix:
+                            description: BranchPrefix is the prefix for pull request
+                              branches
+                            type: string
+                          commitMessageTemplate:
+                            description: CommitMessageTemplate is the template for
+                              commit messages
+                            type: string
+                          customLabels:
+                            description: |-
+                              CustomLabels are static labels added as-is to pull requests
+                              These labels are added in addition to the default system labels
+                            items:
+                              type: string
+                            type: array
+                          systemLabels:
+                            description: |-
+                              SystemLabels are dynamic labels with values computed at runtime
+                              Supported values: branch, clusterName, appName, namespace
+                              System labels follow the format "key:value" (e.g., "cluster:prod-cluster")
+                              Labels are only applied if data is available in the remediation context
+                            items:
+                              type: string
+                            maxItems: 20
+                            type: array
+                          titleTemplate:
+                            description: TitleTemplate is the template for pull request
+                              titles
+                            type: string
+                        type: object
+                    type: object
+                type: object
+              type:
+                description: Type defines the tool/provider type
+                enum:
+                - github
+                - gitlab
+                type: string
+            required:
+            - credentials
+            - type
+            type: object
+          status:
+            description: ToolConfigStatus defines the observed state of ToolConfig.
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
