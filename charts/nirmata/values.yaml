@@ -2593,4 +2593,3 @@ reports-server:
           - ALL
       seccompProfile:
         type: RuntimeDefault
-
