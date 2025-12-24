@@ -1,0 +1,356 @@
+# CRD Chart Configuration
+# Set to false to skip CRD installation (useful if managing CRDs separately)
+crds:
+  install: true
+
+replicaCount: 1
+
+image:
+  repository: reg.nirmata.io/nirmata/go-nirmata-agent
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+jobConfigurations:
+  image:
+    # -- (string) Image registry
+    registry: ghcr.io
+    # -- Image repository
+    repository: nirmata/kubectl
+    # -- Image tag
+    # Defaults to `latest` if omitted
+    tag: '1.34.0'
+    # -- (string) Image pull policy
+    # Defaults to image.pullPolicy if omitted
+    pullPolicy: IfNotPresent
+
+  # -- Image pull secrets
+  imagePullSecrets: []
+
+  # -- Security context for the pod
+  podSecurityContext: {}
+
+  # -- Node labels for pod assignment
+  nodeSelector: {}
+
+  # -- List of node taints to tolerate
+  tolerations: []
+
+  # -- Pod anti affinity constraints.
+  podAntiAffinity: {}
+
+  # -- Pod affinity constraints.
+  podAffinity: {}
+
+  # -- Pod labels.
+  podLabels: {}
+
+  # -- Pod annotations.
+  podAnnotations: {}
+
+  # -- Node affinity constraints.
+  nodeAffinity: {}
+
+  # -- Security context for the hook containers
+  securityContext:
+    runAsUser: 65534
+    runAsGroup: 65534
+    runAsNonRoot: true
+    privileged: false
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Logging configuration
+logging:
+  # Set verbosity level (0=info, 1=audit+info, 2=debug+audit+info)
+  verbosity: 0
+  # Enable audit logging (if true, overrides verbosity=0 to ensure audit logs are visible)
+  enableAudit: false
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# LLM provider configuration for creating an LLMConfig CR
+llm:
+  enabled: true
+  provider: "nirmataAI"  # Options: bedrock, azure-openai
+  bedrock:
+    model: ""
+    region: ""
+    secretRef:
+      name: ""
+      # Optional for some auth methods
+      key: "aws_access_key_id"
+  azureOpenAI:
+    endpoint: ""
+    deploymentName: ""
+    secretRef:
+      name: ""
+      # Defaults to standard header key
+      key: "api-key"
+  nirmataAI:
+    model: ""
+
+nirmata:
+  # Nirmata endpoint URL - used to set the --url command-line flag
+  endpoint: "https://nirmata.io"
+
+  # Authentication method selection
+  # Options: "serviceAccountToken" or "apiToken"
+  # This determines which authentication method will be used
+  auth: "serviceAccountToken"
+
+  # Service Account Token configuration
+  # Used when auth is set to "serviceAccountToken"
+  # The secret must be in the same namespace as the deployment
+  # Create manually: kubectl create secret generic nirmata-service-account-token --from-literal=service-account-token=YOUR_TOKEN -n <namespace>
+  serviceAccountTokenSecret: "nirmata-service-account-token"
+
+  # Key within the secret containing Nirmata service account token
+  # Defaults to "service-account-token"
+  serviceAccountTokenSecretKey: "service-account-token"
+
+  # API Token configuration
+  # Used when auth is set to "apiToken"
+  # The secret must be in the same namespace as the deployment
+  # Create manually: kubectl create secret generic nirmata-api-token --from-literal=api-token=YOUR_API_TOKEN -n <namespace>
+  apiTokenSecret: ""
+
+  # Key within the secret containing Nirmata API token
+  # Defaults to "api-token"
+  apiTokenSecretKey: "api-token"
+
+# ToolConfig for GitHub (used by CreatePR)
+tool:
+  enabled: true
+  name: github-tool
+  type: github
+
+  # Authentication method configuration
+  # Choose between:
+  #   - "nirmata-app" (default & recommended): Uses Nirmata-managed GitHub App with existing credentials
+  #   - "app": Custom GitHub App authentication with private key
+  #   - "pat": Personal Access Token (simplest for testing)
+  credentials:
+    method: nirmata-app  # Options: "nirmata-app" (default), "app", or "pat"
+
+    # Nirmata GitHub App is the default - no additional configuration needed!
+    # Uses SERVICE_ACCOUNT_TOKEN or API_TOKEN already configured for LLM access
+
+    # Custom GitHub App configuration (uncomment and use when method: app)
+    # app:
+    #   appId: ""  # Set this to your GitHub App ID
+    #   # installationId: ""  # Optional: set if you want to specify installation ID
+    #   privateKeySecret:
+    #     name: "github-app-private-key"
+    #     key: "private-key.pem"
+
+    # PAT configuration (uncomment and use when method: pat)
+    # pat:
+    #   secret:
+    #     name: "github-token"
+    #     key: "token"
+
+  defaults:
+    git:
+      pullRequests:
+        branchPrefix: remediation-
+
+# Remediator CR
+remediator:
+  enabled: false
+  name: remediator-agent
+  environment:
+    type: argoHub  # Options: localCluster, argoHub (vcsTarget can be used with any environment type)
+  target:
+    argoHub:
+      clusterNames: []
+      clusterServerUrls: []
+      appSelector:
+        allApps: true
+    # localCluster:
+    #   repoNamespaceMappingRef:
+    #     name: repo-namespace-mapping
+    #     namespace: nirmata
+    #     key: mapping
+    # vcs:
+    #   policies:
+    #     - name: pss-restricted
+    #       repo: https://github.com/nirmata/kyverno-policies
+    #       path: pod-security/restricted
+    #       ref: main
+    #   resources:
+    #     - name: nginx-deployment
+    #       repo: https://github.com/nirmata/demo-remediator
+    #       path: apps/nginx
+    #       ref: main
+    #       policyRefs:
+    #         - pss-restricted
+  remediation:
+    schedule: "0 */6 * * *"
+    eventPolling:
+      enabled: true
+      # intervalMinutes: 5  # Optional: polling interval in minutes (default: 5)
+    actions:
+      - type: CreatePR
+        toolRefName: github-tool
+
+# Agent Configuration
+# Deploy a custom Agent resource for autonomous operations
+agent:
+  # Enable/disable Agent deployment
+  enabled: false
+  
+  # Agent name (defaults to <release-name>-agent)
+  name: ""
+  
+  # Custom instruction that defines the agent's behavior and task
+  # This is the primary directive that tells the agent what to accomplish
+  # Example: "Scan my cluster every 6 hours for policy violations and send a summary email"
+  prompt: ""
+  
+  # List of additional tool names available to the agent
+  # Optional tools that require NCH credentials:
+  #   - email: Send email notifications
+  #   - send_slack_message: Send messages to Slack
+  #   - list_slack_channels: List available Slack channels
+  # Example:
+  # tools:
+  #   - email
+  #   - send_slack_message
+  tools: []
+  
+  # Environment configuration
+  environment:
+    # Type of environment
+    # Options: localCluster, argoHub
+    # localCluster: Scan the current cluster where the controller is deployed
+    # argoHub: Scan clusters managed by ArgoCD (hub-spoke architecture)
+    type: localCluster
+  
+  # Target configuration (optional for localCluster, required for argoHub)
+  target:
+    # LocalCluster target configuration
+    # Used when environment.type is localCluster
+    localCluster:
+      # Reference to ConfigMap containing repo-namespace mappings
+      # Required for localCluster remediation workflows
+      repoNamespaceMappingRef:
+        name: ""           # ConfigMap name
+        namespace: ""      # ConfigMap namespace (defaults to release namespace)
+        key: "mapping"     # Key within ConfigMap (defaults to "mapping")
+    
+    # ArgoHub target configuration
+    # Used when environment.type is argoHub
+    # Define which clusters and applications to scan
+    argoHub:
+      # List of cluster names to target (optional)
+      # Example:
+      # clusterNames:
+      #   - prod-cluster-1
+      #   - staging-cluster
+      clusterNames: []
+      
+      # List of cluster server URLs to target (optional)
+      # Example:
+      # clusterServerUrls:
+      #   - https://prod-cluster.example.com
+      clusterServerUrls: []
+      
+      # Application selector
+      # Defines which ArgoCD applications to scan
+      appSelector:
+        # Select all applications (wildcard)
+        # When true, other selector options are ignored
+        allApps: false
+        
+        # OR select by application names
+        # names:
+        #   - app-1
+        #   - app-2
+        
+        # OR select by label selector
+        # labelSelector:
+        #   matchLabels:
+        #     environment: production
+        #   matchExpressions:
+        #     - key: tier
+        #       operator: In
+        #       values:
+        #         - frontend
+        #         - backend
+    
+    # VCS (Version Control System) target configuration
+    # Can be used with any environment type
+    # Define policies and resources from git repositories
+    vcs:
+      # List of policy repositories
+      # Example:
+      # policies:
+      #   - name: pss-restricted
+      #     repo: https://github.com/nirmata/kyverno-policies
+      #     path: pod-security/restricted
+      #     ref: main
+      policies: []
+      
+      # List of resource repositories with associated policies
+      # Example:
+      # resources:
+      #   - name: nginx-deployment
+      #     repo: https://github.com/myorg/k8s-resources
+      #     path: apps/nginx
+      #     ref: main
+      #     policyRefs:
+      #       - pss-restricted
+      resources: []
+  
+  # Triggers define when the agent should execute
+  # At least one trigger is required
+  triggers:
+    # Schedule-based trigger (cron expression)
+    - schedule:
+        # Cron expression for scheduling
+        # Examples:
+        #   "0 9 * * *"      - Daily at 9 AM
+        #   "0 */6 * * *"    - Every 6 hours
+        #   "0 9 * * MON"    - Weekly on Monday at 9 AM
+        #   "*/30 * * * *"   - Every 30 minutes
+        crontab: "0 */6 * * *"
+  
+  # LLM configuration reference
+  # Points to the LLMConfig resource to use for AI operations
+  llmConfigRef:
+    # API version (optional, defaults to serviceagents.nirmata.io/v1alpha1)
+    apiVersion: ""
+    
+    # Kind (optional, defaults to LLMConfig)
+    kind: ""
+    
+    # Name of the LLMConfig resource
+    # Defaults to <release-name>-llm if not specified
+    name: ""
+    
+    # Namespace of the LLMConfig resource
+    # Defaults to release namespace if not specified
+    namespace: ""

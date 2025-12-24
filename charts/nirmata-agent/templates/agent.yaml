@@ -1,0 +1,108 @@
+{{- if .Values.agent.enabled }}
+{{- if not .Values.agent.prompt }}
+{{- fail "agent.prompt is required when agent.enabled is true" }}
+{{- end }}
+{{- if lt (len .Values.agent.prompt) 10 }}
+{{- fail "agent.prompt must be at least 10 characters" }}
+{{- end }}
+{{- if not .Values.agent.triggers }}
+{{- fail "agent.triggers is required - at least one trigger must be configured" }}
+{{- end }}
+{{- if eq .Values.agent.environment.type "argoHub" }}
+  {{- if not (or .Values.agent.target.argoHub.clusterNames .Values.agent.target.argoHub.clusterServerUrls (and .Values.agent.target.argoHub.appSelector (or .Values.agent.target.argoHub.appSelector.allApps .Values.agent.target.argoHub.appSelector.names .Values.agent.target.argoHub.appSelector.labelSelector))) }}
+{{- fail "agent.target.argoHub is required when environment type is argoHub - must specify at least one of: clusterNames, clusterServerUrls, or appSelector" }}
+  {{- end }}
+{{- end }}
+apiVersion: serviceagents.nirmata.io/v1alpha1
+kind: Agent
+metadata:
+  name: {{ .Values.agent.name | default (printf "%s-agent" (include "go-nirmata-agent.name" .)) }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-nirmata-agent.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "5"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  prompt: {{ .Values.agent.prompt | quote }}
+  {{- if .Values.agent.tools }}
+  tools:
+    {{- toYaml .Values.agent.tools | nindent 4 }}
+  {{- end }}
+  environment:
+    type: {{ .Values.agent.environment.type }}
+  {{- $hasLocalCluster := and .Values.agent.target.localCluster .Values.agent.target.localCluster.repoNamespaceMappingRef.name -}}
+  {{- $hasArgoHub := or .Values.agent.target.argoHub.clusterNames .Values.agent.target.argoHub.clusterServerUrls (and .Values.agent.target.argoHub.appSelector (or .Values.agent.target.argoHub.appSelector.allApps .Values.agent.target.argoHub.appSelector.names .Values.agent.target.argoHub.appSelector.labelSelector)) -}}
+  {{- $hasVcs := and .Values.agent.target.vcs (or .Values.agent.target.vcs.policies .Values.agent.target.vcs.resources) -}}
+  {{- if or $hasLocalCluster $hasArgoHub $hasVcs }}
+  target:
+    {{- if and (eq .Values.agent.environment.type "localCluster") .Values.agent.target.localCluster .Values.agent.target.localCluster.repoNamespaceMappingRef.name }}
+    localCluster:
+      repoNamespaceMappingRef:
+        name: {{ .Values.agent.target.localCluster.repoNamespaceMappingRef.name }}
+        namespace: {{ .Values.agent.target.localCluster.repoNamespaceMappingRef.namespace | default .Release.Namespace }}
+        {{- if .Values.agent.target.localCluster.repoNamespaceMappingRef.key }}
+        key: {{ .Values.agent.target.localCluster.repoNamespaceMappingRef.key }}
+        {{- end }}
+    {{- else if eq .Values.agent.environment.type "argoHub" }}
+    argoHub:
+      {{- if .Values.agent.target.argoHub }}
+      {{- if .Values.agent.target.argoHub.clusterNames }}
+      clusterNames:
+        {{- toYaml .Values.agent.target.argoHub.clusterNames | nindent 8 }}
+      {{- end }}
+      {{- if .Values.agent.target.argoHub.clusterServerUrls }}
+      clusterServerUrls:
+        {{- toYaml .Values.agent.target.argoHub.clusterServerUrls | nindent 8 }}
+      {{- end }}
+      {{- with .Values.agent.target.argoHub.appSelector }}
+      appSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- if $hasVcs }}
+    vcs:
+      {{- if .Values.agent.target.vcs.policies }}
+      policies:
+        {{- range .Values.agent.target.vcs.policies }}
+        - name: {{ .name }}
+          repo: {{ .repo }}
+          path: {{ .path }}
+          ref: {{ .ref }}
+        {{- end }}
+      {{- end }}
+      {{- if .Values.agent.target.vcs.resources }}
+      resources:
+        {{- range .Values.agent.target.vcs.resources }}
+        - name: {{ .name }}
+          repo: {{ .repo }}
+          path: {{ .path }}
+          ref: {{ .ref }}
+          policyRefs:
+            {{- toYaml .policyRefs | nindent 12 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  triggers:
+    {{- range .Values.agent.triggers }}
+    - schedule:
+        crontab: {{ .schedule.crontab | quote }}
+    {{- end }}
+  llmConfigRef:
+    {{- if .Values.agent.llmConfigRef.apiVersion }}
+    apiVersion: {{ .Values.agent.llmConfigRef.apiVersion }}
+    {{- end }}
+    {{- if .Values.agent.llmConfigRef.kind }}
+    kind: {{ .Values.agent.llmConfigRef.kind }}
+    {{- end }}
+    name: {{ .Values.agent.llmConfigRef.name | default (printf "%s-llm" (include "go-nirmata-agent.name" .)) }}
+    {{- if .Values.agent.llmConfigRef.namespace }}
+    namespace: {{ .Values.agent.llmConfigRef.namespace }}
+    {{- else }}
+    namespace: {{ .Release.Namespace }}
+    {{- end }}
+{{- end }}
+

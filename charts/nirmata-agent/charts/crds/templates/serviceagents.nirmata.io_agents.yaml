@@ -1,0 +1,400 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.18.0
+  name: agents.serviceagents.nirmata.io
+spec:
+  group: serviceagents.nirmata.io
+  names:
+    kind: Agent
+    listKind: AgentList
+    plural: agents
+    shortNames:
+    - sa
+    - agent
+    singular: agent
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.environment.type
+      name: Environment
+      type: string
+    - jsonPath: .spec.triggers[0].schedule.crontab
+      name: Schedule
+      type: string
+    - jsonPath: .spec.llmConfigRef.name
+      name: LLM
+      priority: 1
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: |-
+          Agent is the Schema for the agents API
+          Agent enables platform engineers to define custom autonomous agents that execute
+          prompts with skills and tools on a scheduled basis
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: |-
+              AgentSpec defines the desired state of Agent
+              Agent allows platform engineers to define custom autonomous agents with prompts and tools
+            properties:
+              environment:
+                description: |-
+                  Environment defines the environment configuration for the agent
+                  Reused from existing Remediator CRD
+                properties:
+                  type:
+                    description: Type determines the environment type
+                    enum:
+                    - localCluster
+                    - argoHub
+                    type: string
+                required:
+                - type
+                type: object
+              llmConfigRef:
+                description: |-
+                  LLMConfigRef defines a reference to a LLMConfig resource
+                  Reused from Remediator CRD
+                properties:
+                  apiVersion:
+                    default: serviceagents.nirmata.io/v1alpha1
+                    description: APIVersion is the API version of the referenced object
+                    type: string
+                  kind:
+                    default: LLMConfig
+                    description: Kind is the kind of the referenced object
+                    type: string
+                  name:
+                    description: Name is the name of the provider configuration
+                    type: string
+                  namespace:
+                    description: Namespace is the namespace of the provider configuration
+                    type: string
+                required:
+                - name
+                type: object
+              prompt:
+                description: |-
+                  Prompt is the custom instruction that defines the agent's behavior and task
+                  This is the primary directive that tells the agent what to accomplish
+                  Example: "Scan my cluster and send the policy report as an email"
+                minLength: 10
+                type: string
+              target:
+                description: |-
+                  Target defines the target configuration for the agent
+                  Optional when environment type is localCluster (will use current cluster)
+                  Required when environment type is argoHub
+                properties:
+                  argoHub:
+                    description: ArgoHubTarget holds cluster-based targeting configuration
+                    properties:
+                      appSelector:
+                        description: |-
+                          ArgoAppSelector defines how to select Argo applications for remediation
+                          If not specified, no applications will be selected
+                        properties:
+                          allApps:
+                            description: |-
+                              AllApps indicates whether to select all applications (wildcard behavior)
+                              When true, other selector fields are ignored
+                            type: boolean
+                          labelSelector:
+                            description: LabelSelector is used to select applications
+                              based on their labels
+                            properties:
+                              matchExpressions:
+                                description: matchExpressions is a list of label selector
+                                  requirements. The requirements are ANDed.
+                                items:
+                                  description: |-
+                                    A label selector requirement is a selector that contains values, a key, and an operator that
+                                    relates the key and values.
+                                  properties:
+                                    key:
+                                      description: key is the label key that the selector
+                                        applies to.
+                                      type: string
+                                    operator:
+                                      description: |-
+                                        operator represents a key's relationship to a set of values.
+                                        Valid operators are In, NotIn, Exists and DoesNotExist.
+                                      type: string
+                                    values:
+                                      description: |-
+                                        values is an array of string values. If the operator is In or NotIn,
+                                        the values array must be non-empty. If the operator is Exists or DoesNotExist,
+                                        the values array must be empty. This array is replaced during a strategic
+                                        merge patch.
+                                      items:
+                                        type: string
+                                      type: array
+                                      x-kubernetes-list-type: atomic
+                                  required:
+                                  - key
+                                  - operator
+                                  type: object
+                                type: array
+                                x-kubernetes-list-type: atomic
+                              matchLabels:
+                                additionalProperties:
+                                  type: string
+                                description: |-
+                                  matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+                                  map is equivalent to an element of matchExpressions, whose key field is "key", the
+                                  operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                type: object
+                            type: object
+                            x-kubernetes-map-type: atomic
+                          names:
+                            description: Names is a list of specific Argo application
+                              names to select
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      clusterNames:
+                        description: |-
+                          ClusterNames is a list of cluster names to remediate
+                          Optional when LocalCluster is true (will use current cluster)
+                        items:
+                          type: string
+                        type: array
+                      clusterServerUrls:
+                        description: ClusterServerUrls is a list of cluster server
+                          URLs (optional)
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  localCluster:
+                    description: LocalClusterTarget holds local cluster-based targeting
+                      configuration
+                    properties:
+                      repoNamespaceMappingRef:
+                        description: |-
+                          RepoNamespaceMappingRef defines a reference to a ConfigMap containing
+                          mapping between git repositories and target namespaces
+                        properties:
+                          key:
+                            default: mapping
+                            description: Key is the key within the ConfigMap containing
+                              the mapping data
+                            type: string
+                          name:
+                            description: Name is the name of the ConfigMap
+                            type: string
+                          namespace:
+                            description: Namespace is the namespace of the ConfigMap
+                            type: string
+                        required:
+                        - name
+                        type: object
+                    required:
+                    - repoNamespaceMappingRef
+                    type: object
+                  vcs:
+                    description: VCSTarget holds VCS-based targeting configuration
+                    properties:
+                      policies:
+                        description: PolicyRepos defines the list of policies with
+                          their git repositories
+                        items:
+                          description: PolicyRepo defines a policy with its git repository
+                            location
+                          properties:
+                            name:
+                              description: Name is the name of the policy
+                              type: string
+                            path:
+                              description: Path is the path to the policy within the
+                                repository
+                              type: string
+                            ref:
+                              description: Ref is the git reference (branch, tag,
+                                or commit) to use
+                              type: string
+                            repo:
+                              description: RepoURL is the repository URL containing
+                                the policy
+                              type: string
+                          required:
+                          - name
+                          - path
+                          - ref
+                          - repo
+                          type: object
+                        type: array
+                      resources:
+                        description: ResourceRepos defines the list of resources with
+                          their git repositories and associated policies
+                        items:
+                          description: ResourceRepo defines a resource with its git
+                            repository location and associated policies
+                          properties:
+                            name:
+                              description: Name is the name of the resource
+                              type: string
+                            path:
+                              description: Path is the path to the resource within
+                                the repository
+                              type: string
+                            policyRefs:
+                              description: |-
+                                PolicyRefs is a list of policy names that should be applied to this resource
+                                These policy names correspond to the policies defined in the VCSTarget.PolicyRepos list
+                              items:
+                                type: string
+                              type: array
+                            ref:
+                              description: Ref is the git reference (branch, tag,
+                                or commit) to use
+                              type: string
+                            repo:
+                              description: RepoURL is the repository URL containing
+                                the resource
+                              type: string
+                          required:
+                          - name
+                          - path
+                          - policyRefs
+                          - ref
+                          - repo
+                          type: object
+                        type: array
+                    required:
+                    - policies
+                    - resources
+                    type: object
+                type: object
+                x-kubernetes-validations:
+                - message: localCluster and argoHub cannot both be set
+                  rule: '!(has(self.localCluster) && has(self.argoHub))'
+              tools:
+                description: |-
+                  Tools defines the list of tool names available to the agent for executing tasks
+                  Supported tools: email, send_slack_message, list_slack_channels
+                  Default tools (Kubernetes operations, scanning, etc.) are always available and don't need to be specified
+                items:
+                  description: AgentToolName represents a supported tool name for
+                    the Agent
+                  enum:
+                  - email
+                  - send_slack_message
+                  - list_slack_channels
+                  type: string
+                type: array
+              triggers:
+                description: |-
+                  Triggers defines when the agent should be executed
+                  Reused from Remediator CRD
+                items:
+                  description: Trigger defines when remediation should be triggered
+                  properties:
+                    schedule:
+                      description: Schedule defines a cron-based schedule trigger
+                      properties:
+                        crontab:
+                          description: Crontab defines the cron expression for scheduling
+                          type: string
+                      required:
+                      - crontab
+                      type: object
+                  type: object
+                type: array
+            required:
+            - environment
+            - llmConfigRef
+            - prompt
+            - triggers
+            type: object
+            x-kubernetes-validations:
+            - message: target is required when environment type is not localCluster
+              rule: self.environment.type == 'localCluster' || has(self.target)
+          status:
+            description: AgentStatus defines the observed state of Agent
+            properties:
+              lastRunSummary:
+                description: LastRunSummary contains details about the most recent
+                  agent execution
+                properties:
+                  endTime:
+                    description: EndTime is when the agent execution completed
+                    format: date-time
+                    type: string
+                  errors:
+                    description: Errors contains any errors encountered during the
+                      run
+                    items:
+                      type: string
+                    type: array
+                  message:
+                    description: Message provides details about the run outcome
+                    type: string
+                  startTime:
+                    description: StartTime is when the agent execution started
+                    format: date-time
+                    type: string
+                  status:
+                    description: Status indicates whether the last run succeeded or
+                      failed
+                    type: string
+                  toolCallsExecuted:
+                    description: ToolCallsExecuted is the number of tool calls made
+                      during execution
+                    format: int32
+                    type: integer
+                type: object
+              lastScheduleTime:
+                description: LastScheduleTime is the last time the agent was scheduled
+                  to run
+                format: date-time
+                type: string
+              lastSuccessfulTime:
+                description: LastSuccessfulTime is the last time an agent execution
+                  completed successfully
+                format: date-time
+                type: string
+              message:
+                description: Message provides human readable details about the current
+                  state
+                type: string
+              nextScheduledTime:
+                description: NextScheduledTime is when the next agent execution is
+                  scheduled
+                format: date-time
+                type: string
+              phase:
+                description: Phase represents the current operational phase of the
+                  agent
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
