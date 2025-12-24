@@ -69,32 +69,3 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-{{/*
-Validate Nirmata authentication configuration
-This template validates the authentication settings and fails early with clear error messages
-*/}}
-{{- define "go-agent-remediator.validateNirmataAuth" -}}
-{{- $authMethod := .Values.nirmata.auth | default "" -}}
-{{- if not $authMethod -}}
-{{- fail "nirmata.auth is required and must be set to either 'serviceAccountToken' or 'apiToken'" -}}
-{{- end -}}
-{{- if and (ne $authMethod "serviceAccountToken") (ne $authMethod "apiToken") -}}
-{{- fail (printf "nirmata.auth must be either 'serviceAccountToken' or 'apiToken', got: '%s'" $authMethod) -}}
-{{- end -}}
-{{- if eq $authMethod "serviceAccountToken" -}}
-{{- if not .Values.nirmata.serviceAccountTokenSecret -}}
-{{- fail "nirmata.serviceAccountTokenSecret is required when auth is 'serviceAccountToken'. Please provide the name of the Kubernetes secret containing your service account token in the same namespace as the deployment." -}}
-{{- end -}}
-{{- if not .Values.nirmata.serviceAccountTokenSecretKey -}}
-{{- fail "nirmata.serviceAccountTokenSecretKey is required when auth is 'serviceAccountToken'" -}}
-{{- end -}}
-{{- else if eq $authMethod "apiToken" -}}
-{{- if not .Values.nirmata.apiTokenSecret -}}
-{{- fail "nirmata.apiTokenSecret is required when auth is 'apiToken'. Please provide the name of the Kubernetes secret containing your API token in the same namespace as the deployment." -}}
-{{- end -}}
-{{- if not .Values.nirmata.apiTokenSecretKey -}}
-{{- fail "nirmata.apiTokenSecretKey is required when auth is 'apiToken'" -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}

@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.0
+    controller-gen.kubebuilder.io/version: v0.15.0
   name: validatingpolicies.nirmata.io
 spec:
   group: nirmata.io
@@ -93,6 +93,7 @@ spec:
                         Expression represents the expression which will be evaluated by CEL. Must evaluate to bool.
                         CEL expressions have access to the contents of the AdmissionRequest and Authorizer, organized into CEL variables:
 
+
                         'object' - The object from the incoming request. The value is null for DELETE requests.
                         'oldObject' - The existing object. The value is null for CREATE requests.
                         'request' - Attributes of the admission request(/pkg/apis/admission/types.go#AdmissionRequest).
@@ -101,6 +102,7 @@ spec:
                         'authorizer.requestResource' - A CEL ResourceCheck constructed from the 'authorizer' and configured with the
                           request resource.
                         Documentation on CEL: https://kubernetes.io/docs/reference/using-api/cel/
+
 
                         Required.
                       type: string
@@ -113,6 +115,7 @@ spec:
                         must start and end with an alphanumeric character (e.g. 'MyName',  or 'my.name',  or
                         '123-abc', regex used for validation is '([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]') with an
                         optional DNS subdomain prefix and '/' (e.g. 'example.com/MyName')
+
 
                         Required.
                       type: string
@@ -146,9 +149,9 @@ spec:
                         be evaluated by CEL.\nref: https://github.com/google/cel-spec\nCEL
                         expressions have access to the contents of the API request/response,
                         organized into CEL variables as well as some other useful
-                        variables:\n\n- 'object' - The object from the incoming request.
-                        The value is null for DELETE requests.\n- 'oldObject' - The
-                        existing object. The value is null for CREATE requests.\n-
+                        variables:\n\n\n- 'object' - The object from the incoming
+                        request. The value is null for DELETE requests.\n- 'oldObject'
+                        - The existing object. The value is null for CREATE requests.\n-
                         'request' - Attributes of the API request([ref](/pkg/apis/admission/types.go#AdmissionRequest)).\n-
                         'params' - Parameter resource referred to by the policy binding
                         being evaluated. Only populated if the policy has a ParamKind.\n-
@@ -161,10 +164,10 @@ spec:
                         for the principal (user or service account) of the request.\n
                         \ See https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz\n-
                         'authorizer.requestResource' - A CEL ResourceCheck constructed
-                        from the 'authorizer' and configured with the\n  request resource.\n\nThe
+                        from the 'authorizer' and configured with the\n  request resource.\n\n\nThe
                         `apiVersion`, `kind`, `metadata.name` and `metadata.generateName`
                         are always accessible from the root of the\nobject. No other
-                        metadata properties are accessible.\n\nOnly property names
+                        metadata properties are accessible.\n\n\nOnly property names
                         of the form `[a-zA-Z_.-/][a-zA-Z0-9_.-/]*` are accessible.\nAccessible
                         property names are escaped according to the following rules
                         when accessed in the expression:\n- '__' escapes to '__underscores__'\n-
@@ -179,7 +182,7 @@ spec:
                         > 0\"}\n  - Expression accessing a property named \"x-prop\":
                         {\"Expression\": \"object.x__dash__prop > 0\"}\n  - Expression
                         accessing a property named \"redact__d\": {\"Expression\":
-                        \"object.redact__underscores__d > 0\"}\n\nEquality on arrays
+                        \"object.redact__underscores__d > 0\"}\n\n\nEquality on arrays
                         with list type of 'set' or 'map' ignores element order, i.e.
                         [1, 2] == [2, 1].\nConcatenation on arrays with x-kubernetes-list-type
                         use the semantics of the list type:\n  - 'set': `X + Y` performs

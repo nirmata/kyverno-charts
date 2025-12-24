@@ -55,11 +55,6 @@ commonLabels: {}
 podSecurityContext:
   fsGroup: 2000
 
-# -- Server version to use (v1 or v2). Defaults to v1 for backward compatibility.
-# v1: Stable implementation (default)
-# v2: Optimized implementation with improved performance
-serverVersion: v1
-
 # -- Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env.
 podEnv: {}
 
@@ -97,14 +92,6 @@ readinessProbe:
     port: https
     scheme: HTTPS
 
-compliance:
-  # -- Enable all compliance monitoring features at once
-  # When enabled, this automatically enables:
-  # - metrics.serviceMonitor.enabled
-  # - metrics.prometheusRules.enabled
-  # - metrics.grafanaDashboard.enabled
-  enabled: false
-
 metrics:
   # -- Enable prometheus metrics
   enabled: true
@@ -127,28 +114,6 @@ metrics:
 
     # -- Service monitor scrape timeout
     scrapeTimeout: ""
-
-  prometheusRules:
-    # -- Enable prometheus recording rules for policy compliance metrics
-    enabled: false
-
-    # -- PrometheusRule additional labels
-    additionalLabels: {}
-
-  grafanaDashboard:
-    # -- Enable Grafana dashboard ConfigMap creation
-    enabled: false
-
-    # -- Namespace to create the ConfigMap in (defaults to release namespace)
-    namespace: ""
-
-    # -- Labels to add to the ConfigMap (for Grafana sidecar discovery)
-    # @default -- See values.yaml
-    labels:
-      grafana_dashboard: "1"
-
-    # -- Annotations to add to the ConfigMap
-    annotations: {}
 
 # We usually recommend not to specify default resources and to leave this as a conscious
 # choice for the user. This also increases chances charts run on environments with little

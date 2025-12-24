@@ -39,8 +39,6 @@ rules:
   - clusterconfigs/status
   - awsaccountconfigs/status
   - awsorgconfigs/status
-  - cloudresources
-  - cloudresources/status
   verbs:
   - get
   - list

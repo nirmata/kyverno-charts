@@ -113,33 +113,13 @@ llm:
     model: ""
 
 nirmata:
-  # Nirmata endpoint URL - used to set the --url command-line flag
   endpoint: "https://nirmata.io"
+  # Name of secret containing Nirmata API token
+  # Create manually: kubectl create secret generic nirmata-api-token --from-literal=api-token=YOUR_TOKEN -n nirmata
+  apiTokenSecret: "nirmata-api-token"
 
-  # Authentication method selection
-  # Options: "serviceAccountToken" or "apiToken"
-  # This determines which authentication method will be used
-  auth: "serviceAccountToken"
-
-  # Service Account Token configuration
-  # Used when auth is set to "serviceAccountToken"
-  # The secret must be in the same namespace as the deployment
-  # Create manually: kubectl create secret generic nirmata-service-account-token --from-literal=service-account-token=YOUR_TOKEN -n <namespace>
-  serviceAccountTokenSecret: "nirmata-service-account-token"
-
-  # Key within the secret containing Nirmata service account token
-  # Defaults to "service-account-token"
-  serviceAccountTokenSecretKey: "service-account-token"
-
-  # API Token configuration
-  # Used when auth is set to "apiToken"
-  # The secret must be in the same namespace as the deployment
-  # Create manually: kubectl create secret generic nirmata-api-token --from-literal=api-token=YOUR_API_TOKEN -n <namespace>
-  apiTokenSecret: ""
-
-  # Key within the secret containing Nirmata API token
-  # Defaults to "api-token"
-  apiTokenSecretKey: "api-token"
+  # Namespace of secret containing Nirmata API token
+  apiTokenSecretNamespace: "nirmata"
 
 # ToolConfig for GitHub (used by CreatePR)
 tool:
@@ -202,9 +182,6 @@ remediator:
     #         - pss-restricted
   remediation:
     schedule: "0 */6 * * *"
-    eventPolling:
-      enabled: true
-      # intervalMinutes: 5  # Optional: polling interval in minutes (default: 5)
     actions:
       - type: CreatePR
         toolRefName: github-tool
