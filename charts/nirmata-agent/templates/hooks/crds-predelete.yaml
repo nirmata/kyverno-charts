@@ -1,0 +1,66 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "go-nirmata-agent.fullname" . }}-crds-delete
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: pre-delete
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
+    helm.sh/hook-weight: "100"
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 300
+  template:
+    spec:
+      serviceAccountName: {{ include "go-nirmata-agent.serviceAccountName" . }}
+      {{- with .Values.jobConfigurations.podSecurityContext }}
+      securityContext:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      {{- with .Values.jobConfigurations.imagePullSecrets | default .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: kubectl
+          image: "{{ .Values.jobConfigurations.image.registry }}/{{ .Values.jobConfigurations.image.repository }}:{{ .Values.jobConfigurations.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.jobConfigurations.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              set +e
+              echo "Deleting CRDs (ignore errors)"
+              kubectl delete crd llmconfigs.serviceagents.nirmata.io || true
+              kubectl delete crd toolconfigs.serviceagents.nirmata.io || true
+              kubectl delete crd remediators.serviceagents.nirmata.io || true
+              kubectl delete crd remediationrecords.serviceagents.nirmata.io || true
+          {{- with .Values.jobConfigurations.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.jobConfigurations.tolerations | default .Values.tolerations}}
+      tolerations:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with .Values.jobConfigurations.nodeSelector | default .Values.nodeSelector }}
+      nodeSelector:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.jobConfigurations.podAntiAffinity .Values.jobConfigurations.podAffinity .Values.jobConfigurations.nodeAffinity }}
+      affinity:
+        {{- with .Values.jobConfigurations.podAntiAffinity }}
+        podAntiAffinity:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with .Values.jobConfigurations.podAffinity }}
+        podAffinity:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with .Values.jobConfigurations.nodeAffinity }}
+        nodeAffinity:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+      {{- end }}
+
