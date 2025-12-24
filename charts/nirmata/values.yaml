@@ -1,11 +1,11 @@
-global:
+# -- Internal settings used with `helm template` to generate install manifest
+# @ignored
+templating:
+  enabled: false
+  debug: false
+  version: ~
 
-  # -- Internal settings used with `helm template` to generate install manifest
-  # @ignored
-  templating:
-    enabled: false
-    debug: false
-    version: ~
+global:
 
   image:
     # -- (string) Global value that allows to set a single image registry across all deployments.
@@ -114,12 +114,9 @@ crds:
       validatingpolicies: true
       policyexceptions: true
       imagevalidatingpolicies: true
-      namespacedimagevalidatingpolicies: true
       mutatingpolicies: true
       generatingpolicies: true
       deletingpolicies: true
-      namespaceddeletingpolicies: true
-      namespacedvalidatingpolicies: true
 
     # -- Install CRDs in group `reports.kyverno.io`
     reports:
@@ -153,15 +150,6 @@ crds:
       - policies.kyverno.io
       - policyexceptions.kyverno.io
       - updaterequests.kyverno.io
-      - deletingpolicies.policies.kyverno.io
-      - generatingpolicies.policies.kyverno.io
-      - imagevalidatingpolicies.policies.kyverno.io
-      - namespacedimagevalidatingpolicies.policies.kyverno.io
-      - mutatingpolicies.policies.kyverno.io
-      - namespaceddeletingpolicies.policies.kyverno.io
-      - namespacedvalidatingpolicies.policies.kyverno.io
-      - policyexceptions.policies.kyverno.io
-      - validatingpolicies.policies.kyverno.io
 
     image:
       # -- (string) Image registry
@@ -471,18 +459,6 @@ metricsConfig:
     kyverno_policy_execution_duration_seconds:
       # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
       disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
-    kyverno_validating_policy_execution_duration_seconds:
-      # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
-      disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
-    kyverno_image_validating_policy_execution_duration_seconds:
-      # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
-      disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
-    kyverno_mutating_policy_execution_duration_seconds:
-      # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
-      disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
-    kyverno_generating_policy_execution_duration_seconds:
-      # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
-      disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
     kyverno_admission_review_duration_seconds:
       # enabled: false
       disabledLabelDimensions: ["resource_namespace"]
@@ -561,9 +537,6 @@ test:
 
   # -- Node labels for pod assignment
   nodeSelector: {}
-
-   # -- Additional Pod annotations
-  podAnnotations: {}
 
   # -- List of node taints to tolerate
   tolerations: []
@@ -1019,7 +992,7 @@ admissionController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
-    # -- Unhealthy pod eviction policy to be used.
+    # -- Unhealty pod eviction policy to be used.
     # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
     unhealthyPodEvictionPolicy:
 
@@ -1467,7 +1440,7 @@ backgroundController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
-    # -- Unhealthy pod eviction policy to be used.
+    # -- Unhealty pod eviction policy to be used.
     # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
     unhealthyPodEvictionPolicy:
 
@@ -1804,7 +1777,7 @@ cleanupController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
-    # -- Unhealthy pod eviction policy to be used.
+    # -- Unhealty pod eviction policy to be used.
     # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
     unhealthyPodEvictionPolicy:
 
@@ -2108,7 +2081,7 @@ reportsController:
     # -- Configures the maximum unavailable pods for disruptions.
     # Cannot be used if `minAvailable` is set.
     maxUnavailable:
-    # -- Unhealthy pod eviction policy to be used.
+    # -- Unhealty pod eviction policy to be used.
     # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
     unhealthyPodEvictionPolicy:
 
@@ -2282,6 +2255,11 @@ reports-server:
   podSecurityContext:
     fsGroup: 2000
 
+  # -- Server version to use (v1 or v2). Defaults to v1 for backward compatibility.
+  # v1: Stable implementation (default)
+  # v2: Optimized implementation with improved performance
+  serverVersion: v1
+
   # -- Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env.
   podEnv: {}
 
@@ -2319,6 +2297,14 @@ reports-server:
       port: https
       scheme: HTTPS
 
+  compliance:
+    # -- Enable all compliance monitoring features at once
+    # When enabled, this automatically enables:
+    # - metrics.serviceMonitor.enabled
+    # - metrics.prometheusRules.enabled
+    # - metrics.grafanaDashboard.enabled
+    enabled: false
+
   metrics:
     # -- Enable prometheus metrics
     enabled: true
@@ -2341,6 +2327,28 @@ reports-server:
 
       # -- Service monitor scrape timeout
       scrapeTimeout: ""
+
+    prometheusRules:
+      # -- Enable prometheus recording rules for policy compliance metrics
+      enabled: false
+
+      # -- PrometheusRule additional labels
+      additionalLabels: {}
+
+    grafanaDashboard:
+      # -- Enable Grafana dashboard ConfigMap creation
+      enabled: false
+
+      # -- Namespace to create the ConfigMap in (defaults to release namespace)
+      namespace: ""
+
+      # -- Labels to add to the ConfigMap (for Grafana sidecar discovery)
+      # @default -- See values.yaml
+      labels:
+        grafana_dashboard: "1"
+
+      # -- Annotations to add to the ConfigMap
+      annotations: {}
 
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -2440,11 +2448,6 @@ reports-server:
       # This value defines the size of the persistent volume claim (PVC) for etcd.
       storage: 2Gi
 
-      # -- Storage class name for etcd PVC
-      # - Leave empty to use the default storage class
-      # - Set to a specific storage class name (e.g., "fast", "standard", "aws-ebs")
-      storageClassName: ""
-
     # Quota for etcd's internal database (BoltDB) **in bytes**
     # - What it limits: the logical size of the etcd DB file, *not* the PVC.
     # - Format: plain integer bytes (no Ki/Mi/Gi suffix).
@@ -2537,8 +2540,6 @@ reports-server:
 
       # -- Store ephemeral reports in reports-server
       installEphemeralReportsService: true
-      # -- Store open reports in reports-server
-      installOpenreportsService: true
 
     migrateReportsServer:
       # -- Create api services only when reports-server is ready and migration is guaranteed
@@ -2598,3 +2599,4 @@ reports-server:
           - ALL
       seccompProfile:
         type: RuntimeDefault
+

@@ -1,5 +1,5 @@
 {{- if .Values.config.preserve -}}
-{{- if not .Values.global.templating.enabled -}}
+{{- if not .Values.templating.enabled -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:

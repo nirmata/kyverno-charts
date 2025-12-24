@@ -1,6 +1,6 @@
 {{- if .Values.backgroundController.enabled -}}
-{{- if not .Values.global.templating.debug -}}
-{{- $automountSAToken := .Values.backgroundController.rbac.serviceAccount.automountServiceAccountToken -}}
+{{- if not .Values.templating.debug -}}
+{{- $automountSAToken := .Values.admissionController.rbac.serviceAccount.automountServiceAccountToken -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -113,7 +113,7 @@ spec:
                 for apiservice in "v1.reports.kyverno.io" "v1alpha2.wgpolicyk8s.io"; do
                   if kubectl get apiservice "$apiservice" >/dev/null 2>&1; then
                     status=$(kubectl get apiservice "$apiservice" -o jsonpath='{.status.conditions[?(@.type=="Available")].status}' 2>/dev/null || echo "False")
-                    if [ "$status" != "True" ]; then
+                    if [[ "$status" != "True" ]]; then
                       echo "APIService $apiservice is not available"
                       all_available=false
                     fi
@@ -128,7 +128,7 @@ spec:
                   sleep 10
                 fi
               done
-              echo "Reports-server is ready, proceeding with background-controller startup..."
+              echo "Reports-server is ready, proceeding with reports-controller startup..."
           securityContext:
             runAsUser: 1000
             runAsGroup: 3000
@@ -230,13 +230,11 @@ spec:
           {{- end }}
           {{- if or .Values.backgroundController.caCertificates.data .Values.global.caCertificates.data .Values.backgroundController.caCertificates.volume .Values.global.caCertificates.volume (not $automountSAToken)}}
           volumeMounts:
-            {{- if or .Values.backgroundController.caCertificates.data .Values.global.caCertificates.data .Values.backgroundController.caCertificates.volume .Values.global.caCertificates.volume }}
             - name: ca-certificates
               mountPath: /etc/ssl/certs/ca-certificates.crt
               {{- if or .Values.backgroundController.caCertificates.data .Values.global.caCertificates.data }}
               subPath: ca-certificates.crt
               {{- end }}
-            {{- end }}
             {{- if not $automountSAToken }}
             - name: serviceaccount-token
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
