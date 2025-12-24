@@ -97,6 +97,14 @@ readinessProbe:
     port: https
     scheme: HTTPS
 
+compliance:
+  # -- Enable all compliance monitoring features at once
+  # When enabled, this automatically enables:
+  # - metrics.serviceMonitor.enabled
+  # - metrics.prometheusRules.enabled
+  # - metrics.grafanaDashboard.enabled
+  enabled: false
+
 metrics:
   # -- Enable prometheus metrics
   enabled: true
@@ -119,6 +127,28 @@ metrics:
 
     # -- Service monitor scrape timeout
     scrapeTimeout: ""
+
+  prometheusRules:
+    # -- Enable prometheus recording rules for policy compliance metrics
+    enabled: false
+
+    # -- PrometheusRule additional labels
+    additionalLabels: {}
+
+  grafanaDashboard:
+    # -- Enable Grafana dashboard ConfigMap creation
+    enabled: false
+
+    # -- Namespace to create the ConfigMap in (defaults to release namespace)
+    namespace: ""
+
+    # -- Labels to add to the ConfigMap (for Grafana sidecar discovery)
+    # @default -- See values.yaml
+    labels:
+      grafana_dashboard: "1"
+
+    # -- Annotations to add to the ConfigMap
+    annotations: {}
 
 # We usually recommend not to specify default resources and to leave this as a conscious
 # choice for the user. This also increases chances charts run on environments with little
