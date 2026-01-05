@@ -14,7 +14,23 @@ spec:
     singular: cloudresource
   scope: Cluster
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.cloudProvider
+      name: Provider
+      type: string
+    - jsonPath: .spec.serviceType
+      name: Service
+      type: string
+    - jsonPath: .spec.resourceType
+      name: Type
+      type: string
+    - jsonPath: .spec.region
+      name: Region
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: CloudResource is a generic resource in cloud.
@@ -39,26 +55,36 @@ spec:
           spec:
             description: Cloud resource configuration spec.
             properties:
+              accountID:
+                description: AccountID is the cloud account identifier.
+                type: string
               cloudProvider:
-                description: CloudProvider is the cloud service provider.
+                description: CloudProvider is the cloud service provider (e.g., "AWS",
+                  "GCP", "Azure").
+                enum:
+                - AWS
+                - GCP
+                - Azure
                 type: string
               region:
                 description: Region is the region of the resource.
                 type: string
-              resourceArn:
-                description: ResourceArn is the ARN of the resource.
-                type: string
               resourceData:
                 description: |-
-                  ResourceData is the data fetched and populated in the resource.
-                  Mark as schemaless and preserve unknown fields so arbitrary service payloads (ecs/lambda/etc.) are accepted.
+                  ResourceData is the resource payload (formatted or raw from Cloud Control API).
+                  Mark as schemaless and preserve unknown fields so arbitrary service payloads are accepted.
                 type: object
                 x-kubernetes-preserve-unknown-fields: true
+              resourceID:
+                description: ResourceID is the unique identifier for the resource
+                  (typically ARN for AWS).
+                type: string
               resourceName:
-                description: ResourceName is the name of the resource.
+                description: ResourceName is the human-readable name of the resource.
                 type: string
               resourceType:
-                description: ResourceType is the type of the resource.
+                description: ResourceType is the type of resource within the service
+                  (e.g., "Cluster", "Function", "Instance").
                 type: string
               scanInterval:
                 default: 1h
@@ -68,12 +94,18 @@ spec:
                   such as "300ms", "1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
                 format: duration
                 type: string
+              serviceType:
+                description: ServiceType is the cloud service (e.g., "ECS", "Lambda",
+                  "EC2").
+                type: string
             required:
+            - accountID
             - cloudProvider
             - region
-            - resourceArn
+            - resourceID
             - resourceName
             - resourceType
+            - serviceType
             type: object
           status:
             description: Status contains the current state of the CloudResource
