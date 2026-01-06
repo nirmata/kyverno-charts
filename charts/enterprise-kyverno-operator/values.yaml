@@ -11,6 +11,8 @@ namespace:
 globalLabels: {}
 globalAnnotations: {}
 enablePreDeleteHook: true
+# Timeout in seconds for the pre-delete cleanup job (default: 180 seconds / 3 minutes)
+preDeleteHookTimeoutSeconds: 180
 
 replicaCount: 1
 
