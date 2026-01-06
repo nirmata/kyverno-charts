@@ -15,6 +15,9 @@ metadata:
     app: {{ template "enterprise-kyverno.name" . }}-operator
 {{ include "enterprise-kyverno.labels" . | indent 4 }}
 spec:
+  # Timeout for the entire job - prevents indefinite hanging during helm uninstall
+  activeDeadlineSeconds: {{ .Values.preDeleteHookTimeoutSeconds | default 180 }}
+  backoffLimit: 2
   template:
     metadata:
       name: {{ template "enterprise-kyverno.fullname" . }}-operator-cleanup
@@ -41,11 +44,17 @@ spec:
           - sh
           - -c
           - >
-              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete policyset --all;
+              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete policyset --all --timeout=60s;
               {{- if .Values.kyverno.createCR }}
+              echo "Deleting ValidatingWebhookConfiguration to prevent webhook from blocking cleanup...";
+
+              kubectl delete validatingwebhookconfiguration kyverno-operator-validating-webhook-configuration --ignore-not-found=true --timeout=30s;
+
+              echo "Removing finalizer from kyvernoconfigs...";
+
               kubectl -n {{ include "enterprise-kyverno.namespace" . }} patch kyvernoconfigs kyverno -p '{"metadata":{"finalizers":[]}}' --type=merge;
 
-              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoconfigs kyverno;
+              kubectl -n {{ include "enterprise-kyverno.namespace" . }} delete kyvernoconfigs kyverno --timeout=60s;
               
               sleep 10;
               {{- end }}
