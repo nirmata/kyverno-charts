@@ -48,7 +48,7 @@ For installation, refer to the [documentation](https://docs.nirmata.io/docs/agen
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `remediator.enabled` | Enable creation of Remediator resource | `false` |
-| `remediator.name` | Remediator resource name | `remediator-agent` |
+| `remediator.name` | Remediator resource name | `nirmata-agent` |
 | `remediator.environment.type` | Environment type (localCluster or argoHub) | `argoHub` |
 | `remediator.remediation.schedule` | Cron schedule for remediation | `0 */6 * * *` |
 | `remediator.remediation.eventPolling.enabled` | Enable PR event polling | `true` |
