@@ -180,7 +180,7 @@ tool:
 # Remediator CR
 remediator:
   enabled: false
-  name: remediator-agent
+  name: nirmata-agent
   environment:
     type: argoHub  # Options: localCluster, argoHub (vcsTarget can be used with any environment type)
   target:
