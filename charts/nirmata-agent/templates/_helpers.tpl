@@ -6,10 +6,10 @@ Expand the name of the chart.
 {{- end }}
 
 {{/*
-Resource name (always remediator-agent)
+Resource name (always nirmata-agent)
 */}}
 {{- define "go-nirmata-agent.name" -}}
-remediator-agent
+nirmata-agent
 {{- end }}
 
 {{/*
@@ -53,7 +53,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "go-nirmata-agent.selectorLabels" -}}
-app.kubernetes.io/name: remediator-agent
+app.kubernetes.io/name: nirmata-agent
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
