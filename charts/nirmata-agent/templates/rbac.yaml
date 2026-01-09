@@ -1,6 +1,3 @@
-# TODO: Already pruned many of the unnecessary permissions, 
-# but still need to check if we need to remove any more permissions
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -10,6 +7,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 rules:
+# Service Agent CRDs - full access for controller operations
 - apiGroups:
   - serviceagents.nirmata.io
   resources:
@@ -32,6 +30,8 @@ rules:
   - patch
   - update
   - watch
+
+# ArgoCD applications - for ArgoHub mode
 - apiGroups:
   - argoproj.io
   resources:
@@ -40,22 +40,8 @@ rules:
   - get
   - list
   - watch
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - wgpolicyk8s.io
-  resources:
-  - policyreports
-  verbs:
-  - get
-  - list
-  - watch
+
+# Kyverno policies
 - apiGroups:
   - kyverno.io
   resources:
@@ -65,6 +51,19 @@ rules:
   - get
   - list
   - watch
+
+# Policy reports (Kyverno, Policy Working Group)
+- apiGroups:
+  - wgpolicyk8s.io
+  resources:
+  - policyreports
+  - clusterpolicyreports
+  verbs:
+  - get
+  - list
+  - watch
+
+# Leader election
 - apiGroups:
   - coordination.k8s.io
   resources:
@@ -77,6 +76,8 @@ rules:
   - update
   - patch
   - delete
+
+# Controller events
 - apiGroups:
   - ""
   resources:
@@ -84,10 +85,119 @@ rules:
   verbs:
   - create
   - patch
+  - get
+  - list
+  - watch
+
+# =============================================================================
+# Kubernetes tools permissions (pkg/agent/tools/k8s/)
+# These permissions are required for the Agent CRD's built-in k8s tools:
+# k8s_get_resources, k8s_describe, k8s_events, k8s_pod_logs
+# =============================================================================
+
+# Core v1 resources
 - apiGroups:
   - ""
   resources:
+  - pods
+  - pods/log
+  - services
   - configmaps
+  - secrets
+  - persistentvolumeclaims
+  - persistentvolumes
+  - nodes
+  - namespaces
+  - serviceaccounts
+  - endpoints
+  verbs:
+  - get
+  - list
+  - watch
+
+# Apps v1 resources
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  - daemonsets
+  - replicasets
+  verbs:
+  - get
+  - list
+  - watch
+
+# Batch resources
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  - cronjobs
+  verbs:
+  - get
+  - list
+  - watch
+
+# Networking resources
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  - networkpolicies
+  verbs:
+  - get
+  - list
+  - watch
+
+# RBAC resources (read-only for inspection)
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
+  - clusterroles
+  - clusterrolebindings
+  verbs:
+  - get
+  - list
+  - watch
+
+# Storage resources
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  verbs:
+  - get
+  - list
+  - watch
+
+# Policy resources
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - get
+  - list
+  - watch
+
+# Autoscaling resources
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - get
+  - list
+  - watch
+
+# Custom Resource Definitions (read-only for discovery)
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
   verbs:
   - get
   - list
