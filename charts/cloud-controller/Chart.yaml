@@ -2,8 +2,8 @@ apiVersion: v2
 name: cloud-controller
 description: A Helm chart for Kubernetes
 type: application
-version: v0.4.1-rc5
-appVersion: v0.4.4
+version: v0.4.1-rc6
+appVersion: v0.4.5-rc3
 maintainers:
   - name: Nirmata
     url: https://nirmata.com/
