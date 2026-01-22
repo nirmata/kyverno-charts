@@ -27,18 +27,10 @@ rules:
     verbs:
       - get
   - apiGroups:
-      - apiregistration.k8s.io
-    resources:
-      - apiservices
-    verbs:
-      - get
-      - list
-  - apiGroups:
       - ''
     resources:
       - configmaps
       - namespaces
-      - pods
     verbs:
       - get
       - list
@@ -72,7 +64,9 @@ rules:
       - namespacedimagevalidatingpolicies
       - namespacedimagevalidatingpolicies/status
       - generatingpolicies
+      - namespacedgeneratingpolicies
       - mutatingpolicies
+      - namespacedmutatingpolicies
     verbs:
       - create
       - delete
