@@ -19,7 +19,7 @@ Waits for reports-server pod to be running AND APIServices to be available
 */}}
 {{- define "kyverno.reportsServer.initContainer" -}}
 - name: wait-for-reports-server
-  image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.webhooksCleanup.image "defaultTag" (default .Chart.AppVersion .Values.webhooksCleanup.image.tag)) | quote }}
+  image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.webhooksCleanup.image "defaultTag" (default .Chart.AppVersion .Values.webhooksCleanup.image.tag) "fipsEnabled" .Values.fipsEnabled) | quote }}
   imagePullPolicy: {{ .Values.webhooksCleanup.image.pullPolicy }}
   command:
     - /bin/sh

@@ -38,6 +38,13 @@ rules:
       - watch
       {{- end }}
   - apiGroups:
+      - apiregistration.k8s.io
+    resources:
+      - apiservices
+    verbs:
+      - get
+      - list
+  - apiGroups:
       - admissionregistration.k8s.io
     resources:
       - mutatingwebhookconfigurations
