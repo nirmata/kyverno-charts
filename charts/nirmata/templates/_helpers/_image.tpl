@@ -14,6 +14,10 @@
     {{- print $imageRegistry "/" (required "An image repository is required" .image.repository) ":" $tag -}}
   {{- end -}}
 {{- else -}}
-  {{- print (required "An image repository is required" .image.repository) ":" $tag -}}
+  {{- if $fipsEnabled -}}
+    {{- print (required "An image repository is required" .image.repository) "-fips:" $tag -}}
+  {{- else -}}
+    {{- print (required "An image repository is required" .image.repository) ":" $tag -}}
+  {{- end -}}
 {{- end -}}
 {{- end -}}
