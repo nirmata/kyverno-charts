@@ -14,6 +14,10 @@ rules:
 - apiGroups: ["nirmata.io"]
   resources: ["validatingpolicies", "imageverificationpolicies", "preprocessors", "awsaccountconfigs"]
   verbs: ["get", "list", "watch"]
+# Permissions for reading policy exceptions
+- apiGroups: ["policies.kyverno.io"]
+  resources: ["policyexceptions"]
+  verbs: ["get", "list", "watch"]
 # Permissions for creating Kyverno reports
 - apiGroups: ["reports.kyverno.io"]
   resources: ["clusterephemeralreports"]
