@@ -1,6 +1,6 @@
 # reports-server
 
-![Version: 0.2.9-rc1](https://img.shields.io/badge/Version-0.2.9--rc1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.5-rc1](https://img.shields.io/badge/AppVersion-v0.2.5--rc1-informational?style=flat-square)
+![Version: 0.2.14-rc2](https://img.shields.io/badge/Version-0.2.14--rc2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.11](https://img.shields.io/badge/AppVersion-v0.2.11-informational?style=flat-square)
 
 TODO
 
@@ -38,10 +38,12 @@ helm install reports-server --namespace reports-server --create-namespace report
 | podAnnotations | object | `{}` | Pod annotations |
 | commonLabels | object | `{}` | Labels to add to resources managed by the chart |
 | podSecurityContext | object | `{"fsGroup":2000}` | Pod security context |
+| serverVersion | string | `"v1"` | Server version to use (v1 or v2). Defaults to v1 for backward compatibility. v1: Stable implementation (default) v2: Optimized implementation with improved performance |
 | podEnv | object | `{}` | Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env. |
 | securityContext | object | See [values.yaml](values.yaml) | Container security context |
 | livenessProbe | object | `{"failureThreshold":10,"httpGet":{"path":"/livez","port":"https","scheme":"HTTPS"},"initialDelaySeconds":20,"periodSeconds":10}` | Liveness probe |
 | readinessProbe | object | `{"failureThreshold":10,"httpGet":{"path":"/readyz","port":"https","scheme":"HTTPS"},"initialDelaySeconds":30,"periodSeconds":10}` | Readiness probe |
+| compliance.enabled | bool | `false` | Enable all compliance monitoring features at once When enabled, this automatically enables: - metrics.serviceMonitor.enabled - metrics.prometheusRules.enabled - metrics.grafanaDashboard.enabled |
 | metrics.enabled | bool | `true` | Enable prometheus metrics |
 | metrics.serviceMonitor.enabled | bool | `false` | Enable service monitor for scraping prometheus metrics |
 | metrics.serviceMonitor.additionalLabels | object | `{}` | Service monitor additional labels |
@@ -49,6 +51,12 @@ helm install reports-server --namespace reports-server --create-namespace report
 | metrics.serviceMonitor.metricRelabelings | list | `[]` | Service monitor metric relabelings |
 | metrics.serviceMonitor.relabelings | list | `[]` | Service monitor relabelings |
 | metrics.serviceMonitor.scrapeTimeout | string | `""` | Service monitor scrape timeout |
+| metrics.prometheusRules.enabled | bool | `false` | Enable prometheus recording rules for policy compliance metrics |
+| metrics.prometheusRules.additionalLabels | object | `{}` | PrometheusRule additional labels |
+| metrics.grafanaDashboard.enabled | bool | `false` | Enable Grafana dashboard ConfigMap creation |
+| metrics.grafanaDashboard.namespace | string | `""` | Namespace to create the ConfigMap in (defaults to release namespace) |
+| metrics.grafanaDashboard.labels | object | See values.yaml | Labels to add to the ConfigMap (for Grafana sidecar discovery) |
+| metrics.grafanaDashboard.annotations | object | `{}` | Annotations to add to the ConfigMap |
 | resources.limits | object | `{"memory":"128Mi"}` | Container resource limits |
 | resources.requests | object | `{"cpu":"100m","memory":"64Mi"}` | Container resource requests |
 | autoscaling.enabled | bool | `false` | Enable autoscaling |

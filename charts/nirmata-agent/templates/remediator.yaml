@@ -1,0 +1,97 @@
+{{- if .Values.remediator.enabled }}
+apiVersion: serviceagents.nirmata.io/v1alpha1
+kind: Remediator
+metadata:
+  name: {{ .Values.remediator.name | default (include "go-nirmata-agent.name" .) }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-nirmata-agent.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "5"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  environment:
+    type: {{ .Values.remediator.environment.type }}
+  {{- if .Values.remediator.target }}
+  target:
+    {{- if eq .Values.remediator.environment.type "localCluster" }}
+    localCluster:
+      repoNamespaceMappingRef:
+        name: {{ .Values.remediator.target.localCluster.repoNamespaceMappingRef.name | default "repo-namespace-mapping" }}
+        namespace: {{ .Values.remediator.target.localCluster.repoNamespaceMappingRef.namespace | default .Release.Namespace }}
+        {{- if .Values.remediator.target.localCluster.repoNamespaceMappingRef.key }}
+        key: {{ .Values.remediator.target.localCluster.repoNamespaceMappingRef.key }}
+        {{- end }}
+    {{- else if eq .Values.remediator.environment.type "argoHub" }}
+    argoHub:
+      {{- if .Values.remediator.target.argoHub }}
+      {{- if .Values.remediator.target.argoHub.clusterNames }}
+      clusterNames:
+        {{- toYaml .Values.remediator.target.argoHub.clusterNames | nindent 8 }}
+      {{- end }}
+      {{- if .Values.remediator.target.argoHub.clusterServerUrls }}
+      clusterServerUrls:
+        {{- toYaml .Values.remediator.target.argoHub.clusterServerUrls | nindent 8 }}
+      {{- end }}
+      {{- with .Values.remediator.target.argoHub.appSelector }}
+      appSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- if .Values.remediator.target.vcs }}
+    vcs:
+      {{- if .Values.remediator.target.vcs.policies }}
+      policies:
+        {{- range .Values.remediator.target.vcs.policies }}
+        - name: {{ .name }}
+          repo: {{ .repo }}
+          path: {{ .path }}
+          ref: {{ .ref }}
+        {{- end }}
+      {{- end }}
+      {{- if .Values.remediator.target.vcs.resources }}
+      resources:
+        {{- range .Values.remediator.target.vcs.resources }}
+        - name: {{ .name }}
+          repo: {{ .repo }}
+          path: {{ .path }}
+          ref: {{ .ref }}
+          policyRefs:
+            {{- toYaml .policyRefs | nindent 12 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  remediation:
+    triggers:
+      - schedule:
+          crontab: {{ .Values.remediator.remediation.schedule | quote }}
+    {{- if .Values.remediator.remediation.matchSeverity }}
+    filters:
+      policySelector:
+        matchSeverity:
+          {{- toYaml .Values.remediator.remediation.matchSeverity | nindent 10 }}
+    {{- end }}
+    llmConfigRef:
+      name: {{ include "go-nirmata-agent.name" . }}-llm
+      namespace: {{ .Release.Namespace }}
+    gitCredentials:
+      name: {{ .Values.tool.name | default (printf "%s-github" (include "go-nirmata-agent.name" .)) }}
+      namespace: {{ .Release.Namespace }}
+    eventPolling:
+      enabled: {{ if .Values.remediator.remediation.eventPolling }}{{ .Values.remediator.remediation.eventPolling.enabled | default true }}{{ else }}true{{ end }}
+      {{- if and .Values.remediator.remediation.eventPolling .Values.remediator.remediation.eventPolling.intervalMinutes }}
+      intervalMinutes: {{ .Values.remediator.remediation.eventPolling.intervalMinutes }}
+      {{- end }}
+    actions:
+      {{- range .Values.remediator.remediation.actions }}
+      - type: {{ .type }}
+        {{- if or (eq .type "CreatePR") (eq .type "DryRun") }}
+        toolRef:
+          name: {{ .toolRefName | default $.Values.tool.name | default (printf "%s-github" (include "go-nirmata-agent.name" $)) }}
+          namespace: {{ $.Release.Namespace }}
+        {{- end }}
+      {{- end }}
+{{- end }}

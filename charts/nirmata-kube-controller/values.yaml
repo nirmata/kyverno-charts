@@ -125,14 +125,25 @@ cluster:
 #       - "key2:value2"
   labels: {}
 
-# api token is just for registering the cluster to Nirmata Control Hub.
-# This token is required for the nirmata-kube-controller to communicate with the Nirmata Control Hub. (Required)
+# Authentication Configuration
+# You can use EITHER apiToken/apiTokenSecret OR serviceAccountToken for authentication
+
+# API Token Authentication (traditional method)
+# api token is used for registering the cluster to Nirmata Control Hub.
 apiToken: ""
 
-clusterOnboardingToken: ""
-
 # apiTokenSecret is the name of the secret containing the API token.
+# If using a secret, it should have an 'apiKey' field containing the token
 apiTokenSecret: "nirmata-api-token"
+
+# Service Account Token Authentication (alternative, more secure method)
+# Service account token provides more secure, rotatable authentication
+# If set, this takes precedence over API token
+# When set, a secret 'nirmata-service-account-token' will be automatically created
+serviceAccountToken: ""
+
+# Cluster onboarding token for registration
+clusterOnboardingToken: ""
 
 # features enables or disables specific features while installing kube-controller.
 # features:

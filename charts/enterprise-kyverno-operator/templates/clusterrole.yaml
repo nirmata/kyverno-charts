@@ -53,6 +53,7 @@ rules:
   - get
   - list
   - watch
+  - delete
   {{- if eq .Values.certManager "operator" }}
   - update
   {{- end}}

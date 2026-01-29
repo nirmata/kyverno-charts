@@ -1,0 +1,38 @@
+{{- if .Values.llm.enabled }}
+apiVersion: serviceagents.nirmata.io/v1alpha1
+kind: LLMConfig
+metadata:
+  name: {{ include "go-nirmata-agent.name" . }}-llm
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-nirmata-agent.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "5"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  type: {{ .Values.llm.provider | quote }}
+  {{- if eq .Values.llm.provider "bedrock" }}
+  bedrock:
+    model: {{ .Values.llm.bedrock.model | quote }}
+    region: {{ .Values.llm.bedrock.region | quote }}
+    {{- if .Values.llm.bedrock.secretRef.name }}
+    credentialsSecretRef:
+      name: {{ .Values.llm.bedrock.secretRef.name | quote }}
+      {{- if .Values.llm.bedrock.secretRef.key }}
+      key: {{ .Values.llm.bedrock.secretRef.key | quote }}
+      {{- end }}
+    {{- end }}
+  {{- else if eq .Values.llm.provider "azure-openai" }}
+  azureOpenAI:
+    endpoint: {{ .Values.llm.azureOpenAI.endpoint | quote }}
+    deploymentName: {{ .Values.llm.azureOpenAI.deploymentName | quote }}
+    apiKeySecretRef:
+      name: {{ .Values.llm.azureOpenAI.secretRef.name | quote }}
+      key: {{ .Values.llm.azureOpenAI.secretRef.key | default "api-key" | quote }}
+  {{- else if eq .Values.llm.provider "nirmataAI" }}
+  nirmataAI:
+    model: {{ .Values.llm.nirmataAI.model | quote }}
+  {{- end }}
+{{- end }}
+

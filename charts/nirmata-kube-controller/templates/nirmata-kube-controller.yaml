@@ -241,8 +241,26 @@ data:
     /metadata/generation
     /results/*/timestamp/*
   IgnoreFields: metadata.managedFields
-  FilterEvents: Warning.PolicyViolation.*,Normal.PolicySkipped.*,Normal.PolicyModified.*,Normal.PolicyDeleted.*,Normal.PolicyApplied.Resource\
-    \ Generated.*,Normal.PolicyApplied.Resource Mutated.*,Normal.PolicyTamperDetected.*,Normal.PolicyTamperReverted.*
+  FilterEvents: |-
+    Warning.PolicyViolation.Resource Blocked.Policy.*
+    Warning.PolicyViolation.Resource Blocked.ClusterPolicy.*
+    Warning.PolicyViolation.Resource Blocked.ValidatingPolicy.*
+    Normal.PolicySkipped.*.PolicyException.*
+    Normal.PolicyModified.*.Policy.*
+    Normal.PolicyModified.*.ClusterPolicy.*
+    Normal.PolicyDeleted.*.Policy.*
+    Normal.PolicyDeleted.*.ClusterPolicy.*
+    Normal.PolicyApplied.Resource Generated.Policy.*
+    Normal.PolicyApplied.Resource Generated.ClusterPolicy.*
+    Normal.PolicyApplied.Resource Mutated.Policy.*
+    Normal.PolicyApplied.Resource Mutated.ClusterPolicy.*
+    Normal.PolicyTamperDetected.*.Policy.*
+    Normal.PolicyTamperDetected.*.ClusterPolicy.*
+    Normal.PolicyTamperReverted.*.Policy.*
+    Normal.PolicyTamperReverted.*.ClusterPolicy.*
+    Normal.PolicyTamperBlocked.*.Policy.*
+    Normal.PolicyTamperBlocked.*.ClusterPolicy.*
+    *.*.*.ClusterCleanupPolicy.*
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -282,8 +300,13 @@ spec:
         - "-cluster-labels"
         - "{{ $key }}:{{ $value }}"
         {{ end }}
+        {{- if .Values.serviceAccountToken }}
+        - -service-account-token-secret
+        - nirmata-service-account-token
+        {{- else }}
         - -api-token-secret
         - {{ .Values.apiTokenSecret }}
+        {{- end }}
         - -onboarding-token
         - {{ .Values.clusterOnboardingToken }}
         {{- if .Values.kubeController.insecure }}

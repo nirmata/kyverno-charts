@@ -1,0 +1,231 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "go-nirmata-agent.name" . }}-role
+  labels:
+    app.kubernetes.io/name: {{ include "go-nirmata-agent.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+rules:
+# Service Agent CRDs - full access for controller operations
+- apiGroups:
+  - serviceagents.nirmata.io
+  resources:
+  - agents
+  - agents/status
+  - agents/finalizers
+  - remediators
+  - remediators/status
+  - remediators/finalizers
+  - llmconfigs
+  - remediationrecords
+  - remediationrecords/status
+  - toolconfigs
+  - toolconfigs/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+
+# ArgoCD applications - for ArgoHub mode
+- apiGroups:
+  - argoproj.io
+  resources:
+  - applications
+  verbs:
+  - get
+  - list
+  - watch
+
+# Kyverno policies (kyverno.io API group)
+- apiGroups:
+  - kyverno.io
+  resources:
+  - policies
+  - clusterpolicies
+  verbs:
+  - get
+  - list
+  - watch
+
+# Kyverno ValidatingPolicy (policies.kyverno.io API group)
+- apiGroups:
+  - policies.kyverno.io
+  resources:
+  - validatingpolicies
+  verbs:
+  - get
+  - list
+  - watch
+
+# Policy reports (Kyverno, Policy Working Group)
+- apiGroups:
+  - wgpolicyk8s.io
+  resources:
+  - policyreports
+  - clusterpolicyreports
+  verbs:
+  - get
+  - list
+  - watch
+
+# Leader election
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+
+# Controller events
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+  - get
+  - list
+  - watch
+
+# =============================================================================
+# Kubernetes tools permissions (pkg/agent/tools/k8s/)
+# These permissions are required for the Agent CRD's built-in k8s tools:
+# k8s_get_resources, k8s_describe, k8s_events, k8s_pod_logs
+# =============================================================================
+
+# Core v1 resources
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  - services
+  - configmaps
+  - secrets
+  - persistentvolumeclaims
+  - persistentvolumes
+  - nodes
+  - namespaces
+  - serviceaccounts
+  - endpoints
+  verbs:
+  - get
+  - list
+  - watch
+
+# Apps v1 resources
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  - daemonsets
+  - replicasets
+  verbs:
+  - get
+  - list
+  - watch
+
+# Batch resources
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  - cronjobs
+  verbs:
+  - get
+  - list
+  - watch
+
+# Networking resources
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  - networkpolicies
+  verbs:
+  - get
+  - list
+  - watch
+
+# RBAC resources (read-only for inspection)
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
+  - clusterroles
+  - clusterrolebindings
+  verbs:
+  - get
+  - list
+  - watch
+
+# Storage resources
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  verbs:
+  - get
+  - list
+  - watch
+
+# Policy resources
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - get
+  - list
+  - watch
+
+# Autoscaling resources
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - get
+  - list
+  - watch
+
+# Custom Resource Definitions (read-only for discovery)
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "go-nirmata-agent.name" . }}-rolebinding
+  labels:
+    app.kubernetes.io/name: {{ include "go-nirmata-agent.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "go-nirmata-agent.name" . }}-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "go-nirmata-agent.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }} 
