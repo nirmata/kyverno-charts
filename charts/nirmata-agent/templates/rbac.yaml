@@ -41,12 +41,22 @@ rules:
   - list
   - watch
 
-# Kyverno policies
+# Kyverno policies (kyverno.io API group)
 - apiGroups:
   - kyverno.io
   resources:
   - policies
   - clusterpolicies
+  verbs:
+  - get
+  - list
+  - watch
+
+# Kyverno ValidatingPolicy (policies.kyverno.io API group)
+- apiGroups:
+  - policies.kyverno.io
+  resources:
+  - validatingpolicies
   verbs:
   - get
   - list
