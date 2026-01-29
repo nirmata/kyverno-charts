@@ -269,6 +269,14 @@ config:
   # -- Generate success events.
   generateSuccessEvents: false
 
+  # -- Maximum cumulative size of context data during policy evaluation.
+  # Supports Kubernetes quantity format (e.g., 100Mi, 2Gi) or plain bytes (e.g., 2097152).
+  # Limits memory used by context variables to prevent unbounded growth.
+  # Increase if policies legitimately need large context data (e.g., processing large ConfigMaps).
+  # Set to 0 to disable the limit (not recommended for production).
+  # @default -- 2Mi
+  maxContextSize: ~
+
   # -- Resource types to be skipped by the Kyverno policy engine.
   # Make sure to surround each entry in quotes so that it doesn't get parsed as a nested YAML list.
   # These are joined together without spaces, run through `tpl`, and the result is set in the config map.
@@ -514,16 +522,17 @@ existingImagePullSecrets: []
 # Tests configuration
 test:
   # -- Sleep time before running test
-  sleep: 20
+  sleep: 60
 
   image:
     # -- (string) Image registry
     registry: ~
     # -- Image repository
-    repository: busybox
+    # Using alpine instead of busybox for better TLS support with Go 1.25+
+    repository: alpine
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.35'
+    tag: '3.19'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -570,6 +579,7 @@ test:
 
 # -- Additional labels
 customLabels: {}
+
 
 webhooksCleanup:
   # -- Create a helm pre-delete hook to cleanup webhooks.
@@ -2129,6 +2139,8 @@ reportsController:
     # hostPath:
     #   path: /etc/pki/tls/ca-certificates.crt
     #   type: File
+
+
   metricsService:
     # -- Create service.
     create: true
@@ -2227,9 +2239,13 @@ reports-server:
   templating:
     enabled: false
   fipsEnabled: false
+
+
   # cloudnative-pg:
   #   crds:
   #     create: false
+
+
   # -- Name override
   nameOverride: ""
 
@@ -2417,6 +2433,8 @@ reports-server:
     #       value: 4
     #       periodSeconds: 15
     #     selectPolicy: Max
+
+
   # -- Using a PDB is highly recommended for highly available deployments. Defaults to enabled. The default configuration doesn't prevent disruption when using a single replica
   pdb:
     # -- Enable PodDisruptionBudget
@@ -2569,6 +2587,8 @@ reports-server:
     migrateReportsServer:
       # -- Create api services only when reports-server is ready and migration is guaranteed
       enabled: false
+
+
   jobConfigurations:
     image:
       # -- (string) Image registry
