@@ -4912,6 +4912,61 @@ entries:
       artifacthub.io/operator: "false"
       artifacthub.io/prerelease: "false"
     apiVersion: v2
+    appVersion: v1.14.4-n4k.nirmata.5
+    created: "2026-01-30T17:02:39.684929941Z"
+    dependencies:
+    - condition: grafana.enabled
+      name: grafana
+      repository: ""
+      version: 3.4.3
+    - condition: reports-server.install
+      name: reports-server
+      repository: https://nirmata.github.io/kyverno-charts
+      version: 0.2.14-rc2
+    - condition: crds.install
+      name: crds
+      repository: ""
+      version: 3.4.3
+    description: Kubernetes Native Policy Management
+    digest: 8407d98adf77a5fb1809e73e00ade0b7fa38c537be185875bfb7137ca0a269d2
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy
+    - validating webhook
+    - admission controller
+    - mutation
+    - mutate
+    - validate
+    - generate
+    - supply chain
+    - security
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://kyverno.io/
+    name: kyverno
+    sources:
+    - https://github.com/nirmata/enterprise-kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.4.14/kyverno-3.4.14.tgz
+    version: 3.4.14
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: fixed
+          description: Ensure spec.template.metadata isn't null
+        - kind: removed
+          description: Remove the `delete` permission for policyexceptions in the admission controller
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
     appVersion: v1.14.4-n4k.nirmata.4
     created: "2026-01-06T12:54:07.244095762Z"
     dependencies:
@@ -28919,4 +28974,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2026-01-30T08:38:44.501326733Z"
+generated: "2026-01-30T17:02:39.686561817Z"
