@@ -15,7 +15,7 @@ global:
   # When set, it will override any values set under `imagePullSecrets` under different components across the chart.
   imagePullSecrets: []
 
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.35.0"
+  kubectlImage: "ghcr.io/nirmata/kubectl:1.34.0"
 
   # -- Resync period for informers
   resyncPeriod: 15m
@@ -596,7 +596,7 @@ webhooksCleanup:
     repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.35.0'
+    tag: '1.34.0'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -2597,7 +2597,7 @@ reports-server:
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.35.0'
+      tag: '1.34.0'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
