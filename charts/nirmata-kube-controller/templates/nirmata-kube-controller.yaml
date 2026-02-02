@@ -131,6 +131,20 @@ rules:
   - get
   - list
   - watch
+- apiGroups: ["serviceagents.nirmata.io"]
+  resources:
+  - agents
+  - agents/status
+  - remediators
+  - remediators/status
+  - llmconfigs
+  - llmconfigs/status
+  - toolconfigs
+  - toolconfigs/status
+  verbs:
+  - get
+  - list
+  - watch
 - apiGroups: [""]
   resources:
   - nodes
@@ -220,6 +234,31 @@ subjects:
   namespace: {{ .Values.namespace }}
 {{- end }}
 ---
+# ClusterRole for reading metrics from secure endpoints
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nirmata-metrics-reader
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
+---
+# ClusterRoleBinding to allow nirmata service account to read metrics
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nirmata-metrics-reader-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nirmata-metrics-reader
+subjects:
+- kind: ServiceAccount
+  name: nirmata
+  namespace: {{ .Values.namespace }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -235,6 +274,10 @@ data:
     clusterconfigs.v1alpha1.nirmata.io
     policysets.v1alpha1.security.nirmata.io
     kyvernoconfigs.v1alpha1.security.nirmata.io
+    agents.v1alpha1.serviceagents.nirmata.io
+    remediators.v1alpha1.serviceagents.nirmata.io
+    llmconfigs.v1alpha1.serviceagents.nirmata.io
+    toolconfigs.v1alpha1.serviceagents.nirmata.io
   IgnoreEvents: Normal.PolicyPlaceHolder.*
   FilterPatches: |-
     /metadata/resourceVersion
@@ -449,6 +492,12 @@ data:
                 action: replace
                 target_label: __metrics_path__
                 regex: (kyverno_.*)
+          - job_name: 'nirmata-agent'
+            scrape_interval: 1m
+            scheme: http
+            static_configs:
+              - targets: [service-agent-metrics-service.{{ .Values.namespace }}.svc.cluster.local:8443]
+            metrics_path: /metrics
     exporters:
       prometheusremotewrite:
         endpoint: https://{{ include "controller.metricsEndpointDomain" . }}{{ if .Values.isNpmOnly }}/gateway-service{{ else }}/host-gateway{{ end }}/metrics-receiver
