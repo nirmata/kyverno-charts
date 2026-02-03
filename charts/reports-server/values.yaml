@@ -233,7 +233,7 @@ config:
       # -- Image repository
       repository: nirmata/etcd
       # -- Image tag
-      tag: v3.5.18-cve-free
+      tag: v3.5.26-hardened
 
     # -- Image pull secrets
     imagePullSecrets: []
