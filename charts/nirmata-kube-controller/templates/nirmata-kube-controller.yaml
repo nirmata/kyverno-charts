@@ -111,6 +111,10 @@ rules:
   resources:
   - clusterconfigs
   - clusterconfigs/status
+  - cloudresources
+  - cloudresources/status
+  - awsaccountconfigs
+  - awsaccountconfigs/status
   verbs:
   - get
   - list
@@ -274,10 +278,12 @@ data:
     clusterconfigs.v1alpha1.nirmata.io
     policysets.v1alpha1.security.nirmata.io
     kyvernoconfigs.v1alpha1.security.nirmata.io
+    cloudresources.v1alpha1.nirmata.io
     agents.v1alpha1.serviceagents.nirmata.io
     remediators.v1alpha1.serviceagents.nirmata.io
     llmconfigs.v1alpha1.serviceagents.nirmata.io
     toolconfigs.v1alpha1.serviceagents.nirmata.io
+    awsaccountconfigs.v1alpha1.nirmata.io
   IgnoreEvents: Normal.PolicyPlaceHolder.*
   FilterPatches: |-
     /metadata/resourceVersion
