@@ -545,7 +545,7 @@ webhooksCleanup:
     repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.33.2'
+    tag: '1.35.0'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -613,7 +613,7 @@ policyReportsCleanup:
     repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.33.2'
+    tag: '1.35.0'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -812,7 +812,7 @@ admissionController:
       # -- (string) Image repository
       repository: nirmata/kubectl
       # -- (string) Image tag
-      tag: "1.33.2"
+      tag: "1.35.0"
       # -- (string) Image pull policy
       pullPolicy: IfNotPresent
 
@@ -1266,7 +1266,7 @@ backgroundController:
       # -- (string) Image repository
       repository: nirmata/kubectl
       # -- (string) Image tag
-      tag: "1.33.2"
+      tag: "1.35.0"
       # -- (string) Image pull policy
       pullPolicy: IfNotPresent
   # -- Overrides features defined at the root level
@@ -1911,7 +1911,7 @@ reportsController:
       # -- (string) Image repository
       repository: nirmata/kubectl
       # -- (string) Image tag
-      tag: "1.33.2"
+      tag: "1.35.0"
       # -- (string) Image pull policy
       pullPolicy: IfNotPresent
   # -- Overrides features defined at the root level
@@ -2574,7 +2574,7 @@ reports-server:
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.34.0'
+      tag: '1.35.0'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
