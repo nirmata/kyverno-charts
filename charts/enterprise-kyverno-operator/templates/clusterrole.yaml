@@ -176,4 +176,18 @@ rules:
   - get
   - list
   - watch
+# Service Agent health monitoring permissions
+- apiGroups:
+  - serviceagents.nirmata.io
+  resources:
+  - agents
+  - agents/status
+  - remediators
+  - remediators/status
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
 {{- end }}
