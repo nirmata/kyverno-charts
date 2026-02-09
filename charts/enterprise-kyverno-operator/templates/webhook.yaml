@@ -58,7 +58,7 @@ webhooks:
       name: {{ include "enterprise-kyverno.fullname" . }}
       namespace: {{ template "enterprise-kyverno.namespace" . }}
       path: /validate-security-nirmata-io-v1alpha1-kyvernoconfig
-  failurePolicy: Fail
+  failurePolicy: Ignore
   name: vkyverno.kb.io
   rules:
   - apiGroups:
