@@ -15,7 +15,7 @@ spec:
     type: {{ .Values.remediator.environment.type }}
   {{- if .Values.remediator.target }}
   target:
-    {{- if eq .Values.remediator.environment.type "localCluster" }}
+    {{- if and (eq .Values.remediator.environment.type "localCluster") .Values.remediator.target.localCluster }}
     localCluster:
       repoNamespaceMappingRef:
         name: {{ .Values.remediator.target.localCluster.repoNamespaceMappingRef.name | default "repo-namespace-mapping" }}
