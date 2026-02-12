@@ -425,6 +425,40 @@ spec:
                   - type
                   type: object
                 type: array
+              controllerHealth:
+                description: |-
+                  ControllerHealth contains the health status of the nirmata-agent controller
+                  This field is written by enterprise-kyverno-operator
+                properties:
+                  checks:
+                    description: Checks contains the individual health check results
+                    items:
+                      description: HealthCheck represents a single health check result
+                      properties:
+                        message:
+                          description: Message provides details about the check result
+                          type: string
+                        status:
+                          description: Status indicates whether the check passed or
+                            failed (e.g., "Healthy", "Unhealthy")
+                          type: string
+                        type:
+                          description: Type is the type of health check
+                          type: string
+                      required:
+                      - status
+                      - type
+                      type: object
+                    type: array
+                  lastUpdateTime:
+                    description: LastUpdateTime is when the health was last updated
+                    format: date-time
+                    type: string
+                  status:
+                    description: Status is the overall health status (e.g., "Healthy",
+                      "Warning", "Unhealthy")
+                    type: string
+                type: object
               lastRunSummary:
                 description: LastRunSummary contains details about the most recent
                   remediation run
