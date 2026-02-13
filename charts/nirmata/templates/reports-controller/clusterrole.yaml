@@ -38,7 +38,6 @@ rules:
     resources:
       - configmaps
       - namespaces
-      - pods
     verbs:
       - get
       - list
@@ -72,7 +71,9 @@ rules:
       - namespacedimagevalidatingpolicies
       - namespacedimagevalidatingpolicies/status
       - generatingpolicies
+      - namespacedgeneratingpolicies
       - mutatingpolicies
+      - namespacedmutatingpolicies
     verbs:
       - create
       - delete

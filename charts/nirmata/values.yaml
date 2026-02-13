@@ -1,3 +1,6 @@
+# -- (bool) Deploy FIPS compliant images of all the components of n4k
+fipsEnabled: false
+
 global:
 
   # -- Internal settings used with `helm template` to generate install manifest
@@ -14,8 +17,6 @@ global:
   # -- (list) Global list of Image pull secrets
   # When set, it will override any values set under `imagePullSecrets` under different components across the chart.
   imagePullSecrets: []
-
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.35.0"
 
   # -- Resync period for informers
   resyncPeriod: 15m
@@ -60,9 +61,6 @@ fullnameOverride: ~
 # -- (string) Override the namespace the chart deploys to
 namespaceOverride: ~
 
-# -- (bool) Deploy FIPS compliant images of all the components of n4k
-fipsEnabled: false
-
 upgrade:
   # -- Upgrading from v2 to v3 is not allowed by default, set this to true once changes have been reviewed.
   fromV2: false
@@ -86,6 +84,17 @@ openreports:
   enabled: false
   # -- Whether to install CRDs from the upstream OpenReports chart. Setting this to true requires enabled to also be true.
   installCrds: false
+
+# Reports Server configuration
+reportsServer:
+  # -- Enable reports-server deployment alongside Kyverno
+  enabled: false
+
+  # -- Wait for reports-server to be ready before starting Kyverno components
+  waitForReady: true
+
+  # -- Timeout for waiting for reports-server readiness (in seconds)
+  readinessTimeout: 300
 
 # CRDs configuration
 crds:
@@ -116,6 +125,7 @@ crds:
       imagevalidatingpolicies: true
       namespacedimagevalidatingpolicies: true
       mutatingpolicies: true
+      namespacedmutatingpolicies: true
       generatingpolicies: true
       deletingpolicies: true
       namespaceddeletingpolicies: true
@@ -158,6 +168,7 @@ crds:
       - imagevalidatingpolicies.policies.kyverno.io
       - namespacedimagevalidatingpolicies.policies.kyverno.io
       - mutatingpolicies.policies.kyverno.io
+      - namespacedmutatingpolicies.policies.kyverno.io
       - namespaceddeletingpolicies.policies.kyverno.io
       - namespacedvalidatingpolicies.policies.kyverno.io
       - policyexceptions.policies.kyverno.io
@@ -268,6 +279,21 @@ config:
 
   # -- Generate success events.
   generateSuccessEvents: false
+
+  # -- Disable auto webhook generation. This is useful for environments like AKS
+  # where certain webhooks may cause issues.
+  disableAutoWebhookGeneration:
+    # -- Enable the disableAutoWebhookGeneration feature
+    enable: false
+    # -- List of webhooks to disable
+    webhooks:
+      - kyverno-policy-validating-webhook-cfg
+      - kyverno-exception-validating-webhook-cfg
+
+  # -- Generate events on policy objects.
+  # When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects.
+  # This reduces event noise in multi-tenant environments where policy events may not be needed.
+  generatePolicyEvents: true
 
   # -- Maximum cumulative size of context data during policy evaluation.
   # Supports Kubernetes quantity format (e.g., 100Mi, 2Gi) or plain bytes (e.g., 2097152).
@@ -411,14 +437,6 @@ config:
     # Example to disable admission enforcer on AKS:
     'admissions.enforcer/disabled': 'true'
 
-  # -- Disable generation and management of webhooks by kyverno
-  disableAutoWebhookGeneration:
-    enable: false
-    webhooks:
-      # Example to disable
-      # - kyverno-policy-validating-webhook-cfg
-      # - kyverno-exception-validating-webhook-cfg
-
   # -- Defines labels to set on webhook configurations.
   webhookLabels: {}
     # Example to adopt webhook resources in ArgoCD:
@@ -522,17 +540,16 @@ existingImagePullSecrets: []
 # Tests configuration
 test:
   # -- Sleep time before running test
-  sleep: 60
+  sleep: 20
 
   image:
     # -- (string) Image registry
-    registry: ~
+    registry: bitnami
     # -- Image repository
-    # Using alpine instead of busybox for better TLS support with Go 1.25+
-    repository: alpine
+    repository: kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '3.19'
+    tag: latest
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -596,7 +613,7 @@ webhooksCleanup:
     repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.35.0'
+    tag: '1.34.0'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -655,8 +672,6 @@ webhooksCleanup:
   serviceAccount:
     # -- Toggle automounting of the ServiceAccount
     automountServiceAccountToken: true
-
-## policyReportsCleanup removed: post-upgrade clean reports hook no longer supported
 
 grafana:
   # -- Enable grafana dashboard creation.
@@ -863,6 +878,49 @@ admissionController:
   # The certificates won't be automatically renewed if this is set to `true`.
   createSelfSignedCert: false
 
+  # -- Key algorithm for self-signed TLS certificates.
+  # Supported values: RSA, ECDSA, Ed25519
+  # Only used when createSelfSignedCert is false (Kyverno-managed certificates).
+  tlsKeyAlgorithm: RSA
+
+  # -- Configure cert-manager to manage TLS certificates.
+  # When enabled, cert-manager Certificate resources will be created to provision
+  # the TLS certificates for the admission controller.
+  # Requires cert-manager to be installed in the cluster.
+  # Takes precedence over createSelfSignedCert when enabled.
+  certManager:
+    # -- Enable cert-manager integration for certificate management
+    enabled: false
+    # -- Create a self-signed ClusterIssuer for CA generation.
+    # Set to false if you want to use an existing issuer specified in issuerRef.
+    createSelfSignedIssuer: true
+    # -- Reference to an existing issuer for signing CA certificates.
+    # Only used when createSelfSignedIssuer is false.
+    issuerRef:
+      # -- Name of the issuer
+      name: ""
+      # -- Kind of the issuer (ClusterIssuer or Issuer)
+      kind: ClusterIssuer
+      # -- Group of the issuer
+      group: cert-manager.io
+    # -- Key algorithm for certificates (RSA, ECDSA, Ed25519)
+    algorithm: RSA
+    # -- Key size for RSA (2048, 4096) or ECDSA (256, 384).
+    # Ignored for Ed25519.
+    size: 2048
+    # -- CA certificate configuration
+    ca:
+      # -- Duration of the CA certificate (default 10 years)
+      duration: 87600h
+      # -- Time before expiry to renew the CA certificate (default 30 days)
+      renewBefore: 720h
+    # -- TLS certificate configuration
+    tls:
+      # -- Duration of the TLS certificate (default 1 year)
+      duration: 8760h
+      # -- Time before expiry to renew the TLS certificate (default 30 days)
+      renewBefore: 720h
+
   # -- (int) Desired number of pods
   replicas: ~
 
@@ -948,7 +1006,7 @@ admissionController:
       port: 9443
       scheme: HTTPS
     failureThreshold: 20
-    initialDelaySeconds: 2
+    initialDelaySeconds: 7
     periodSeconds: 6
 
   # -- Liveness probe.
@@ -982,7 +1040,8 @@ admissionController:
     successThreshold: 1
 
   # -- Node labels for pod assignment
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/os: linux
 
   # -- List of node taints to tolerate
   tolerations: []
@@ -1319,7 +1378,17 @@ backgroundController:
             - update
             - patch
             - delete
-
+        - apiGroups:
+            - resource.k8s.io
+          resources:
+            - resourceclaims
+            - resourceclaimtemplates
+          verbs:
+            - create
+            - delete
+            - update
+            - patch
+            - deletecollection
     clusterRole:
       # -- Extra resource permissions to add in the cluster role
       extraResources: []
@@ -1418,7 +1487,8 @@ backgroundController:
       memory: 64Mi
 
   # -- Node labels for pod assignment
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/os: linux
 
   # -- List of node taints to tolerate
   tolerations: []
@@ -1618,6 +1688,49 @@ cleanupController:
   # The certificates won't be automatically renewed if this is set to `true`.
   createSelfSignedCert: false
 
+  # -- Key algorithm for self-signed TLS certificates.
+  # Supported values: RSA, ECDSA, Ed25519
+  # Only used when createSelfSignedCert is false (Kyverno-managed certificates).
+  tlsKeyAlgorithm: RSA
+
+  # -- Configure cert-manager to manage TLS certificates.
+  # When enabled, cert-manager Certificate resources will be created to provision
+  # the TLS certificates for the cleanup controller.
+  # Requires cert-manager to be installed in the cluster.
+  # Takes precedence over createSelfSignedCert when enabled.
+  certManager:
+    # -- Enable cert-manager integration for certificate management
+    enabled: false
+    # -- Create a self-signed ClusterIssuer for CA generation.
+    # Set to false if you want to use an existing issuer specified in issuerRef.
+    createSelfSignedIssuer: true
+    # -- Reference to an existing issuer for signing CA certificates.
+    # Only used when createSelfSignedIssuer is false.
+    issuerRef:
+      # -- Name of the issuer
+      name: ""
+      # -- Kind of the issuer (ClusterIssuer or Issuer)
+      kind: ClusterIssuer
+      # -- Group of the issuer
+      group: cert-manager.io
+    # -- Key algorithm for certificates (RSA, ECDSA, Ed25519)
+    algorithm: RSA
+    # -- Key size for RSA (2048, 4096) or ECDSA (256, 384).
+    # Ignored for Ed25519.
+    size: 2048
+    # -- CA certificate configuration
+    ca:
+      # -- Duration of the CA certificate (default 10 years)
+      duration: 87600h
+      # -- Time before expiry to renew the CA certificate (default 30 days)
+      renewBefore: 720h
+    # -- TLS certificate configuration
+    tls:
+      # -- Duration of the TLS certificate (default 1 year)
+      duration: 8760h
+      # -- Time before expiry to renew the TLS certificate (default 30 days)
+      renewBefore: 720h
+
   image:
     # -- Image registry
     registry: ~
@@ -1675,10 +1788,6 @@ cleanupController:
   # in case you are using hostNetwork: true, you might want to change the port the cleanupController is listening to
   server:
     port: 9443
-  # -- cleanupController webhook server port
-  # in case you are using hostNetwork: true, you might want to change the port the webhookServer is listening to
-  webhookServer:
-    port: 9443
 
   # -- `dnsPolicy` determines the manner in which DNS resolution happens in the cluster.
   # In case of `hostNetwork: true`, usually, the `dnsPolicy` is suitable to be `ClusterFirstWithHostNet`.
@@ -1721,7 +1830,7 @@ cleanupController:
       port: 9443
       scheme: HTTPS
     failureThreshold: 20
-    initialDelaySeconds: 2
+    initialDelaySeconds: 7
     periodSeconds: 6
 
   # -- Liveness probe.
@@ -1755,7 +1864,8 @@ cleanupController:
     successThreshold: 1
 
   # -- Node labels for pod assignment
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/os: linux
 
   # -- List of node taints to tolerate
   tolerations: []
@@ -2059,7 +2169,8 @@ reportsController:
       memory: 64Mi
 
   # -- Node labels for pod assignment
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/os: linux
 
   # -- List of node taints to tolerate
   tolerations: []
@@ -2597,7 +2708,7 @@ reports-server:
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.35.0'
+      tag: '1.34.0'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~

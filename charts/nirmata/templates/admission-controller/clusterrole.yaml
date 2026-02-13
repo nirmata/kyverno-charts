@@ -38,6 +38,13 @@ rules:
       - watch
       {{- end }}
   - apiGroups:
+      - apiregistration.k8s.io
+    resources:
+      - apiservices
+    verbs:
+      - get
+      - list
+  - apiGroups:
       - admissionregistration.k8s.io
     resources:
       - mutatingwebhookconfigurations
@@ -45,6 +52,10 @@ rules:
       {{- if .Values.features.generateValidatingAdmissionPolicy.enabled }}
       - validatingadmissionpolicies
       - validatingadmissionpolicybindings
+      {{- end }}
+      {{- if .Values.features.generateMutatingAdmissionPolicy.enabled }}
+      - mutatingadmissionpolicies
+      - mutatingadmissionpolicybindings
       {{- end }}
     verbs:
       - create
@@ -55,13 +66,6 @@ rules:
       - update
       - watch
       - deletecollection
-  - apiGroups:
-      - apiregistration.k8s.io
-    resources:
-      - apiservices
-    verbs:
-      - get
-      - list
   - apiGroups:
       - rbac.authorization.k8s.io
     resources:
@@ -117,8 +121,12 @@ rules:
       - namespacedimagevalidatingpolicies/status
       - generatingpolicies
       - generatingpolicies/status
+      - namespacedgeneratingpolicies
+      - namespacedgeneratingpolicies/status
       - mutatingpolicies
       - mutatingpolicies/status
+      - namespacedmutatingpolicies
+      - namespacedmutatingpolicies/status
     verbs:
       - create
       - delete
@@ -188,7 +196,6 @@ rules:
       - ''
     resources:
       - configmaps
-      - pods
       - namespaces
     verbs:
       - get
