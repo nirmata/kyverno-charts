@@ -50,6 +50,14 @@ rules:
   - list
   - watch
 - apiGroups:
+  - policies.kyverno.io
+  resources:
+  - policyexceptions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - nirmata.io
   resources:
   - proxies
