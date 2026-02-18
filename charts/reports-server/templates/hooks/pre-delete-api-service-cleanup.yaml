@@ -50,7 +50,7 @@ spec:
               
               # Delete API services individually with retry logic
               # This approach is more reliable than deleting multiple services at once
-              api_services="v1alpha2.wgpolicyk8s.io v1.reports.kyverno.io"
+              api_services="v1alpha2.wgpolicyk8s.io v1.reports.kyverno.io v1alpha1.openreports.io"
               success_count=0
               total_count=0
               
