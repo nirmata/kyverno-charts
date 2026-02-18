@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.6.3](https://img.shields.io/badge/Version-3.6.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.16.3](https://img.shields.io/badge/AppVersion-v1.16.3-informational?style=flat-square)
+![Version: 3.6.8](https://img.shields.io/badge/Version-3.6.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.16.3-n4k.nirmata.2](https://img.shields.io/badge/AppVersion-v1.16.3--n4k.nirmata.2-informational?style=flat-square)
 
 ## About
 
@@ -268,7 +268,7 @@ The chart values are organised per component.
 | crds.migration.resources | list | `["cleanuppolicies.kyverno.io","clustercleanuppolicies.kyverno.io","clusterpolicies.kyverno.io","globalcontextentries.kyverno.io","policies.kyverno.io","policyexceptions.kyverno.io","updaterequests.kyverno.io","deletingpolicies.policies.kyverno.io","generatingpolicies.policies.kyverno.io","imagevalidatingpolicies.policies.kyverno.io","namespacedimagevalidatingpolicies.policies.kyverno.io","mutatingpolicies.policies.kyverno.io","namespaceddeletingpolicies.policies.kyverno.io","namespacedvalidatingpolicies.policies.kyverno.io","policyexceptions.policies.kyverno.io","validatingpolicies.policies.kyverno.io"]` | Resources to migrate |
 | crds.migration.image.registry | string | `nil` | Image registry |
 | crds.migration.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
-| crds.migration.image.repository | string | `"kyverno/kyverno-cli"` | Image repository |
+| crds.migration.image.repository | string | `"nirmata/kyverno-cli"` | Image repository |
 | crds.migration.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | crds.migration.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | crds.migration.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -305,6 +305,7 @@ The chart values are organised per component.
 | config.updateRequestThreshold | int | `1000` | Sets the threshold for the total number of UpdateRequests generated for mutateExisitng and generate policies. |
 | config.webhooks | object | `{"namespaceSelector":{"matchExpressions":[{"key":"kubernetes.io/metadata.name","operator":"NotIn","values":["kube-system"]}]}}` | Defines the `namespaceSelector`/`objectSelector` in the webhook configurations. The Kyverno namespace is excluded if `excludeKyvernoNamespace` is `true` (default) |
 | config.webhookAnnotations | object | `{"admissions.enforcer/disabled":"true"}` | Defines annotations to set on webhook configurations. |
+| config.disableAutoWebhookGeneration | object | `{"enable":false,"webhooks":null}` | Disable generation and management of webhooks by kyverno |
 | config.webhookLabels | object | `{}` | Defines labels to set on webhook configurations. |
 | config.matchConditions | list | `[]` | Defines match conditions to set on webhook configurations (requires Kubernetes 1.27+). |
 | config.excludeKyvernoNamespace | bool | `true` | Exclude Kyverno namespace Determines if default Kyverno namespace exclusion is enabled for webhooks and resourceFilters |
@@ -425,7 +426,7 @@ The chart values are organised per component.
 | admissionController.imagePullSecrets | list | `[]` | Image pull secrets |
 | admissionController.initContainer.image.registry | string | `nil` | Image registry |
 | admissionController.initContainer.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
-| admissionController.initContainer.image.repository | string | `"kyverno/kyvernopre"` | Image repository |
+| admissionController.initContainer.image.repository | string | `"nirmata/kyvernopre"` | Image repository |
 | admissionController.initContainer.image.tag | string | `nil` | Image tag If missing, defaults to image.tag |
 | admissionController.initContainer.image.pullPolicy | string | `nil` | Image pull policy If missing, defaults to image.pullPolicy |
 | admissionController.initContainer.resources.limits | object | `{"cpu":"100m","memory":"256Mi"}` | Pod resource limits |
@@ -435,7 +436,7 @@ The chart values are organised per component.
 | admissionController.initContainer.extraEnvVars | list | `[]` | Additional container environment variables. |
 | admissionController.container.image.registry | string | `nil` | Image registry |
 | admissionController.container.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
-| admissionController.container.image.repository | string | `"kyverno/kyverno"` | Image repository |
+| admissionController.container.image.repository | string | `"nirmata/kyverno"` | Image repository |
 | admissionController.container.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | admissionController.container.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | admissionController.container.resources.limits | object | `{"memory":"384Mi"}` | Pod resource limits |
@@ -498,7 +499,7 @@ The chart values are organised per component.
 | backgroundController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
 | backgroundController.image.registry | string | `nil` | Image registry |
 | backgroundController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
-| backgroundController.image.repository | string | `"kyverno/background-controller"` | Image repository |
+| backgroundController.image.repository | string | `"nirmata/background-controller"` | Image repository |
 | backgroundController.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | backgroundController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | backgroundController.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -579,7 +580,7 @@ The chart values are organised per component.
 | cleanupController.createSelfSignedCert | bool | `false` | Create self-signed certificates at deployment time. The certificates won't be automatically renewed if this is set to `true`. |
 | cleanupController.image.registry | string | `nil` | Image registry |
 | cleanupController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
-| cleanupController.image.repository | string | `"kyverno/cleanup-controller"` | Image repository |
+| cleanupController.image.repository | string | `"nirmata/cleanup-controller"` | Image repository |
 | cleanupController.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | cleanupController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | cleanupController.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -593,6 +594,7 @@ The chart values are organised per component.
 | cleanupController.priorityClassName | string | `""` | Optional priority class |
 | cleanupController.hostNetwork | bool | `false` | Change `hostNetwork` to `true` when you want the pod to share its host's network namespace. Useful for situations like when you end up dealing with a custom CNI over Amazon EKS. Update the `dnsPolicy` accordingly as well to suit the host network mode. |
 | cleanupController.server | object | `{"port":9443}` | cleanupController server port in case you are using hostNetwork: true, you might want to change the port the cleanupController is listening to |
+| cleanupController.webhookServer | object | `{"port":9443}` | cleanupController webhook server port in case you are using hostNetwork: true, you might want to change the port the webhookServer is listening to |
 | cleanupController.dnsPolicy | string | `"ClusterFirst"` | `dnsPolicy` determines the manner in which DNS resolution happens in the cluster. In case of `hostNetwork: true`, usually, the `dnsPolicy` is suitable to be `ClusterFirstWithHostNet`. For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy. |
 | cleanupController.dnsConfig | object | `{}` | `dnsConfig` allows to specify DNS configuration for the pod. For further reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config. |
 | cleanupController.extraArgs | object | `{}` | Extra arguments passed to the container on the command line |
@@ -668,7 +670,7 @@ The chart values are organised per component.
 | reportsController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
 | reportsController.image.registry | string | `nil` | Image registry |
 | reportsController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
-| reportsController.image.repository | string | `"kyverno/reports-controller"` | Image repository |
+| reportsController.image.repository | string | `"nirmata/reports-controller"` | Image repository |
 | reportsController.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | reportsController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | reportsController.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -757,9 +759,9 @@ The chart values are organised per component.
 |-----|------|---------|-------------|
 | webhooksCleanup.enabled | bool | `true` | Create a helm pre-delete hook to cleanup webhooks. |
 | webhooksCleanup.autoDeleteWebhooks.enabled | bool | `false` | Allow webhooks controller to delete webhooks using finalizers |
-| webhooksCleanup.image.registry | string | `"registry.k8s.io"` | Image registry |
-| webhooksCleanup.image.repository | string | `"kubectl"` | Image repository |
-| webhooksCleanup.image.tag | string | `"v1.32.7"` | Image tag Defaults to `latest` if omitted |
+| webhooksCleanup.image.registry | string | `"reg.nirmata.io"` | Image registry |
+| webhooksCleanup.image.repository | string | `"nirmata/kubectl"` | Image repository |
+| webhooksCleanup.image.tag | string | `"1.35.0"` | Image tag Defaults to `latest` if omitted |
 | webhooksCleanup.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | webhooksCleanup.imagePullSecrets | list | `[]` | Image pull secrets |
 | webhooksCleanup.podSecurityContext | object | `{}` | Security context for the pod |
@@ -779,10 +781,10 @@ The chart values are organised per component.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| test.sleep | int | `20` | Sleep time before running test |
-| test.image.registry | string | `"curlimages"` | Image registry |
-| test.image.repository | string | `"curl"` | Image repository |
-| test.image.tag | string | `"8.10.1"` | Image tag Defaults to `latest` if omitted |
+| test.sleep | int | `60` | Sleep time before running test |
+| test.image.registry | string | `nil` | Image registry |
+| test.image.repository | string | `"alpine"` | Image repository Using alpine instead of busybox for better TLS support with Go 1.25+ |
+| test.image.tag | string | `"3.19"` | Image tag Defaults to `latest` if omitted |
 | test.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | test.imagePullSecrets | list | `[]` | Image pull secrets |
 | test.resources.limits | object | `{"cpu":"100m","memory":"256Mi"}` | Pod resource limits |
@@ -805,6 +807,7 @@ The chart values are organised per component.
 |-----|------|---------|-------------|
 | global.image.registry | string | `nil` | Global value that allows to set a single image registry across all deployments. When set, it will override any values set under `.image.registry` across the chart. |
 | global.imagePullSecrets | list | `[]` | Global list of Image pull secrets When set, it will override any values set under `imagePullSecrets` under different components across the chart. |
+| global.kubectlImage | string | `"ghcr.io/nirmata/kubectl:1.35.0"` |  |
 | global.resyncPeriod | string | `"15m"` | Resync period for informers |
 | global.crdWatcher | bool | `false` | Enable/Disable custom resource watcher to invalidate cache |
 | global.caCertificates.data | string | `nil` | Global CA certificates to use with Kyverno deployments This value is expected to be one large string of CA certificates Individual controller values will override this global value |
@@ -815,6 +818,7 @@ The chart values are organised per component.
 | nameOverride | string | `nil` | Override the name of the chart |
 | fullnameOverride | string | `nil` | Override the expanded name of the chart |
 | namespaceOverride | string | `nil` | Override the namespace the chart deploys to |
+| fipsEnabled | bool | `false` | Deploy FIPS compliant images of all the components of n4k |
 | upgrade.fromV2 | bool | `false` | Upgrading from v2 to v3 is not allowed by default, set this to true once changes have been reviewed. |
 | rbac.roles.aggregate | object | `{"admin":true,"view":true}` | Aggregate ClusterRoles to Kubernetes default user-facing roles. For more information, see [User-facing roles](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles) |
 | openreports.enabled | bool | `false` | Enable OpenReports feature in controllers |
@@ -822,6 +826,111 @@ The chart values are organised per component.
 | imagePullSecrets | object | `{}` | Image pull secrets for image verification policies, this will define the `--imagePullSecrets` argument |
 | existingImagePullSecrets | list | `[]` | Existing Image pull secrets for image verification policies, this will define the `--imagePullSecrets` argument |
 | customLabels | object | `{}` | Additional labels |
+| reports-server.install | bool | `false` |  |
+| reports-server.fipsEnabled | bool | `false` |  |
+| reports-server.nameOverride | string | `""` | Name override |
+| reports-server.fullnameOverride | string | `""` | Full name override |
+| reports-server.replicaCount | int | `1` | Number of pod replicas |
+| reports-server.image.registry | string | `"reg.nirmata.io"` | Image registry |
+| reports-server.image.repository | string | `"nirmata/reports-server"` | Image repository |
+| reports-server.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| reports-server.image.tag | string | `nil` | Image tag (will default to app version if not set) |
+| reports-server.imagePullSecrets | list | `[]` | Image pull secrets |
+| reports-server.priorityClassName | string | `"system-cluster-critical"` | Priority class name |
+| reports-server.serviceAccount.create | bool | `true` | Create service account |
+| reports-server.serviceAccount.annotations | object | `{}` | Service account annotations |
+| reports-server.serviceAccount.name | string | `""` | Service account name (required if `serviceAccount.create` is `false`) |
+| reports-server.podAnnotations | object | `{}` | Pod annotations |
+| reports-server.commonLabels | object | `{}` | Labels to add to resources managed by the chart |
+| reports-server.podSecurityContext | object | `{"fsGroup":2000}` | Pod security context |
+| reports-server.serverVersion | string | `"v1"` | Server version to use (v1 or v2). Defaults to v1 for backward compatibility. v1: Stable implementation (default) v2: Optimized implementation with improved performance |
+| reports-server.podEnv | object | `{}` | Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env. |
+| reports-server.securityContext | object | See [values.yaml](values.yaml) | Container security context |
+| reports-server.livenessProbe | object | `{"failureThreshold":10,"httpGet":{"path":"/livez","port":"https","scheme":"HTTPS"},"initialDelaySeconds":20,"periodSeconds":10}` | Liveness probe |
+| reports-server.readinessProbe | object | `{"failureThreshold":10,"httpGet":{"path":"/readyz","port":"https","scheme":"HTTPS"},"initialDelaySeconds":30,"periodSeconds":10}` | Readiness probe |
+| reports-server.compliance.enabled | bool | `false` | Enable all compliance monitoring features at once When enabled, this automatically enables: - metrics.serviceMonitor.enabled - metrics.prometheusRules.enabled - metrics.grafanaDashboard.enabled |
+| reports-server.metrics.enabled | bool | `true` | Enable prometheus metrics |
+| reports-server.metrics.serviceMonitor.enabled | bool | `false` | Enable service monitor for scraping prometheus metrics |
+| reports-server.metrics.serviceMonitor.additionalLabels | object | `{}` | Service monitor additional labels |
+| reports-server.metrics.serviceMonitor.interval | string | `""` | Service monitor scrape interval |
+| reports-server.metrics.serviceMonitor.metricRelabelings | list | `[]` | Service monitor metric relabelings |
+| reports-server.metrics.serviceMonitor.relabelings | list | `[]` | Service monitor relabelings |
+| reports-server.metrics.serviceMonitor.scrapeTimeout | string | `""` | Service monitor scrape timeout |
+| reports-server.metrics.prometheusRules.enabled | bool | `false` | Enable prometheus recording rules for policy compliance metrics |
+| reports-server.metrics.prometheusRules.additionalLabels | object | `{}` | PrometheusRule additional labels |
+| reports-server.metrics.grafanaDashboard.enabled | bool | `false` | Enable Grafana dashboard ConfigMap creation |
+| reports-server.metrics.grafanaDashboard.namespace | string | `""` | Namespace to create the ConfigMap in (defaults to release namespace) |
+| reports-server.metrics.grafanaDashboard.labels | object | See values.yaml | Labels to add to the ConfigMap (for Grafana sidecar discovery) |
+| reports-server.metrics.grafanaDashboard.annotations | object | `{}` | Annotations to add to the ConfigMap |
+| reports-server.resources.limits | object | `{"memory":"128Mi"}` | Container resource limits |
+| reports-server.resources.requests | object | `{"cpu":"100m","memory":"64Mi"}` | Container resource requests |
+| reports-server.autoscaling.enabled | bool | `false` | Enable autoscaling |
+| reports-server.autoscaling.minReplicas | int | `1` | Min number of replicas |
+| reports-server.autoscaling.maxReplicas | int | `100` | Max number of replicas |
+| reports-server.autoscaling.targetCPUUtilizationPercentage | int | `80` | Target CPU utilisation |
+| reports-server.autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Target Memory utilisation |
+| reports-server.pdb | object | `{"enabled":true,"maxUnavailable":"50%","minAvailable":null}` | Using a PDB is highly recommended for highly available deployments. Defaults to enabled. The default configuration doesn't prevent disruption when using a single replica |
+| reports-server.pdb.enabled | bool | `true` | Enable PodDisruptionBudget |
+| reports-server.pdb.minAvailable | string | `nil` | minAvailable pods for PDB, cannot be used together with maxUnavailable |
+| reports-server.pdb.maxUnavailable | string | `"50%"` | maxUnavailable pods for PDB, will take precedence over minAvailable if both are defined |
+| reports-server.nodeSelector | object | `{}` | Node selector |
+| reports-server.tolerations | list | `[]` | Tolerations |
+| reports-server.affinity | object | `{}` | Affinity |
+| reports-server.service.type | string | `"ClusterIP"` | Service type |
+| reports-server.service.port | int | `443` | Service port |
+| reports-server.config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
+| reports-server.config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
+| reports-server.config.etcd.image.tag | string | `"v3.5.18-cve-free"` | Image tag |
+| reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
+| reports-server.config.etcd.enabled | bool | `true` |  |
+| reports-server.config.etcd.endpoints | string | `nil` |  |
+| reports-server.config.etcd.insecure | bool | `true` |  |
+| reports-server.config.etcd.storage | string | `"2Gi"` |  |
+| reports-server.config.etcd.storageClassName | string | `""` | Storage class name for etcd PVC - Leave empty to use the default storage class - Set to a specific storage class name (e.g., "fast", "standard", "aws-ebs") |
+| reports-server.config.etcd.quotaBackendBytes | int | `1932735283` |  |
+| reports-server.config.etcd.autoCompaction.enabled | bool | `true` | Enable auto-compaction for etcd |
+| reports-server.config.etcd.autoCompaction.mode | string | `"periodic"` | Auto-compaction mode (periodic or revision) |
+| reports-server.config.etcd.autoCompaction.retention | string | `"30m"` | Auto-compaction retention (e.g., 30m for 30 minutes, 1h for 1 hour) |
+| reports-server.config.etcd.nodeSelector | object | `{}` |  |
+| reports-server.config.etcd.tolerations | list | `[]` |  |
+| reports-server.config.db.secretCreation | bool | `false` | If set, a secret will be created with the database connection information. If this is set to true, secretName must be set. |
+| reports-server.config.db.secretName | string | `""` | If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password` and `db.readReplicaHosts`. |
+| reports-server.config.db.host | string | `"reports-server-cluster-rw.reports-server"` | Database host |
+| reports-server.config.db.hostSecretKeyName | string | `"host"` | The database host will be read from this `key` in the specified Secret, when `db.secretName` is set. |
+| reports-server.config.db.readReplicaHosts | string | `""` | Database read replica hosts |
+| reports-server.config.db.readReplicaHostsSecretKeyName | string | `"readReplicaHosts"` | The database read replica hosts will be read from this `key` in the specified Secret, when `db.secretName` is set. |
+| reports-server.config.db.port | string | `nil` | Database port |
+| reports-server.config.db.portSecretKeyName | string | `"port"` | The database port will be read from this `key` in the specified Secret, when `db.secretName` is set. |
+| reports-server.config.db.name | string | `"reportsdb"` | Database name |
+| reports-server.config.db.dbNameSecretKeyName | string | `"dbname"` | The database name will be read from this `key` in the specified Secret, when `db.secretName` is set. |
+| reports-server.config.db.user | string | `"app"` | Database user |
+| reports-server.config.db.userSecretKeyName | string | `"username"` | The database username will be read from this `key` in the specified Secret, when `db.secretName` is set. |
+| reports-server.config.db.password | string | `"password"` | Database password |
+| reports-server.config.db.passwordSecretKeyName | string | `"password"` | The database password will be read from this `key` in the specified Secret, when `db.secretName` is set. |
+| reports-server.config.db.sslmode | string | `"disable"` | Database SSL |
+| reports-server.config.db.sslrootcert | string | `""` | Database SSL root cert |
+| reports-server.config.db.sslkey | string | `""` | Database SSL key |
+| reports-server.config.db.sslcert | string | `""` | Database SSL cert |
+| reports-server.config.db.sslrds | object | `{"mountPath":"/etc/ssl/rds","secretName":""}` | Volume configuration for RDS certificate |
+| reports-server.apiServicesManagement.installApiServices | object | `{"enabled":true,"installEphemeralReportsService":true,"installOpenreportsService":true}` | Install api services in manifest |
+| reports-server.apiServicesManagement.installApiServices.enabled | bool | `true` | Store reports in reports-server |
+| reports-server.apiServicesManagement.installApiServices.installEphemeralReportsService | bool | `true` | Store ephemeral reports in reports-server |
+| reports-server.apiServicesManagement.installApiServices.installOpenreportsService | bool | `true` | Store open reports in reports-server |
+| reports-server.apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
+| reports-server.jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
+| reports-server.jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
+| reports-server.jobConfigurations.image.tag | string | `"1.35.0"` | Image tag Defaults to `latest` if omitted |
+| reports-server.jobConfigurations.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
+| reports-server.jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
+| reports-server.jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
+| reports-server.jobConfigurations.nodeSelector | object | `{}` | Node labels for pod assignment |
+| reports-server.jobConfigurations.tolerations | list | `[]` | List of node taints to tolerate |
+| reports-server.jobConfigurations.podAntiAffinity | object | `{}` | Pod anti affinity constraints. |
+| reports-server.jobConfigurations.podAffinity | object | `{}` | Pod affinity constraints. |
+| reports-server.jobConfigurations.podLabels | object | `{}` | Pod labels. |
+| reports-server.jobConfigurations.podAnnotations | object | `{}` | Pod annotations. |
+| reports-server.jobConfigurations.nodeAffinity | object | `{}` | Node affinity constraints. |
+| reports-server.jobConfigurations.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the hook containers |
 
 ## TLS Configuration
 
@@ -874,7 +983,7 @@ Please see https://kyverno.io/docs/installation/#security-vs-operability for mor
 
 ## Source Code
 
-* <https://github.com/kyverno/kyverno>
+* <https://github.com/nirmata/enterprise-kyverno>
 
 ## Requirements
 
@@ -884,13 +993,14 @@ Kubernetes: `>=1.25.0-0`
 |------------|------|---------|
 |  | crds | 3.6.3 |
 |  | grafana | 3.6.3 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.20 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Nirmata |  | <https://kyverno.io/> |
+| Nirmata |  | <https://nirmata.com/> |
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.14.2](https://github.com/norwoodj/helm-docs/releases/v1.14.2)
