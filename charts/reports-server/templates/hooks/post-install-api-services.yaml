@@ -37,7 +37,7 @@ spec:
       containers:
         - name: kubectl
           image: "{{ .Values.jobConfigurations.image.registry }}/{{ .Values.jobConfigurations.image.repository }}:{{ .Values.jobConfigurations.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.jobConfigurations.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.jobConfigurations.image.pullPolicy | default "IfNotPresent" }}
           command:
             - sh
             - '-c'

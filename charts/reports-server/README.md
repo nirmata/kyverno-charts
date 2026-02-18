@@ -1,6 +1,6 @@
 # reports-server
 
-![Version: 0.2.18](https://img.shields.io/badge/Version-0.2.18-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.13](https://img.shields.io/badge/AppVersion-v0.2.13-informational?style=flat-square)
+![Version: 0.2.19](https://img.shields.io/badge/Version-0.2.19-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.13](https://img.shields.io/badge/AppVersion-v0.2.13-informational?style=flat-square)
 
 TODO
 
@@ -114,8 +114,8 @@ helm install reports-server --namespace reports-server --create-namespace report
 | apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
 | jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
 | jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| jobConfigurations.image.tag | string | `"1.35.0-debian13"` | Image tag Defaults to `latest` if omitted |
-| jobConfigurations.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
+| jobConfigurations.image.tag | string | `"1.35.0-alpine3.23-dev"` | Image tag Defaults to `latest` if omitted |
+| jobConfigurations.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
 | jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
 | jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
 | jobConfigurations.nodeSelector | object | `{}` | Node labels for pod assignment |
