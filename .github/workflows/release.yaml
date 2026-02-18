@@ -18,7 +18,7 @@ jobs:
       - name: Lint Charts
         uses: ./.github/actions/chart-lint
         with:
-          target-branch: main
+          target-branch: ${{ github.ref_name }}
 
   release:
     runs-on: ubuntu-latest
