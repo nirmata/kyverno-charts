@@ -361,10 +361,10 @@ jobConfigurations:
     repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.35.0-debian13'
+    tag: '1.35.0-alpine3.23-dev'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
-    pullPolicy: ~
+    pullPolicy: IfNotPresent
 
   # -- Image pull secrets
   imagePullSecrets: []
