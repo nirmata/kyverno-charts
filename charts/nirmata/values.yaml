@@ -2469,7 +2469,7 @@ reports-server:
         # -- Image repository
         repository: nirmata/etcd
         # -- Image tag
-        tag: v3.5.26-hardened
+        tag: v3.5.27-hardened
 
       # -- Image pull secrets
       imagePullSecrets: []
