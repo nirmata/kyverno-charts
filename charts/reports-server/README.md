@@ -1,6 +1,6 @@
 # reports-server
 
-![Version: 0.2.20](https://img.shields.io/badge/Version-0.2.20-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.13](https://img.shields.io/badge/AppVersion-v0.2.13-informational?style=flat-square)
+![Version: 0.2.21](https://img.shields.io/badge/Version-0.2.21-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.13](https://img.shields.io/badge/AppVersion-v0.2.13-informational?style=flat-square)
 
 TODO
 
@@ -75,7 +75,7 @@ helm install reports-server --namespace reports-server --create-namespace report
 | service.port | int | `443` | Service port |
 | config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| config.etcd.image.tag | string | `"v3.5.26-hardened"` | Image tag |
+| config.etcd.image.tag | string | `"v3.5.27-hardened"` | Image tag |
 | config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | config.etcd.enabled | bool | `true` |  |
 | config.etcd.endpoints | string | `nil` |  |
