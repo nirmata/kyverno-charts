@@ -107,6 +107,10 @@ helm install reports-server --namespace reports-server --create-namespace report
 | config.db.sslkey | string | `""` | Database SSL key |
 | config.db.sslcert | string | `""` | Database SSL cert |
 | config.db.sslrds | object | `{"mountPath":"/etc/ssl/rds","secretName":""}` | Volume configuration for RDS certificate |
+| config.db.connectionPool.maxOpenConns | int | `25` | Maximum number of open PostgreSQL connections per reports-server pod |
+| config.db.connectionPool.maxIdleConns | int | `5` | Maximum number of idle PostgreSQL connections per reports-server pod |
+| config.db.connectionPool.connMaxLifetimeSeconds | int | `300` | Maximum lifetime of a DB connection in seconds (0 uses default of 300s / 5m) |
+| config.db.connectionPool.connMaxIdleTimeSeconds | int | `120` | Maximum idle time of a DB connection in seconds (0 uses default of 120s / 2m) |
 | apiServicesManagement.installApiServices | object | `{"enabled":true,"installEphemeralReportsService":true,"installOpenreportsService":true}` | Install api services in manifest |
 | apiServicesManagement.installApiServices.enabled | bool | `true` | Store reports in reports-server |
 | apiServicesManagement.installApiServices.installEphemeralReportsService | bool | `true` | Store ephemeral reports in reports-server |
