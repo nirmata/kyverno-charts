@@ -1,6 +1,6 @@
 # reports-server
 
-![Version: 0.2.21](https://img.shields.io/badge/Version-0.2.21-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.13](https://img.shields.io/badge/AppVersion-v0.2.13-informational?style=flat-square)
+![Version: 0.2.22](https://img.shields.io/badge/Version-0.2.22-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.14](https://img.shields.io/badge/AppVersion-v0.2.14-informational?style=flat-square)
 
 TODO
 
@@ -107,6 +107,11 @@ helm install reports-server --namespace reports-server --create-namespace report
 | config.db.sslkey | string | `""` | Database SSL key |
 | config.db.sslcert | string | `""` | Database SSL cert |
 | config.db.sslrds | object | `{"mountPath":"/etc/ssl/rds","secretName":""}` | Volume configuration for RDS certificate |
+| config.db.connectionPool | object | `{"connMaxIdleTimeSeconds":120,"connMaxLifetimeSeconds":300,"maxIdleConns":5,"maxOpenConns":25}` | Database connection pool configuration (per reports-server pod) These control how many concurrent connections each pod can open. Defaults match the current hardcoded behavior. |
+| config.db.connectionPool.maxOpenConns | int | `25` | Maximum number of open connections per pod (sql.DB.SetMaxOpenConns) |
+| config.db.connectionPool.maxIdleConns | int | `5` | Maximum number of idle connections per pod (sql.DB.SetMaxIdleConns) |
+| config.db.connectionPool.connMaxLifetimeSeconds | int | `300` | Maximum lifetime of a connection in seconds (0 = use default of 300s / 5m) |
+| config.db.connectionPool.connMaxIdleTimeSeconds | int | `120` | Maximum idle time of a connection in seconds (0 = use default of 120s / 2m) |
 | apiServicesManagement.installApiServices | object | `{"enabled":true,"installEphemeralReportsService":true,"installOpenreportsService":true}` | Install api services in manifest |
 | apiServicesManagement.installApiServices.enabled | bool | `true` | Store reports in reports-server |
 | apiServicesManagement.installApiServices.installEphemeralReportsService | bool | `true` | Store ephemeral reports in reports-server |
