@@ -78,6 +78,15 @@ spec:
               {{- include "reports-server.dbUser" . | nindent 14 }}
             - name: DB_PASSWORD
               {{- include "reports-server.dbPassword" . | nindent 14 }}
+            # Optional database connection pool settings (per pod)
+            - name: DB_MAX_OPEN_CONNS
+              value: "{{ .Values.config.db.connectionPool.maxOpenConns }}"
+            - name: DB_MAX_IDLE_CONNS
+              value: "{{ .Values.config.db.connectionPool.maxIdleConns }}"
+            - name: DB_CONN_MAX_LIFETIME_SECONDS
+              value: "{{ .Values.config.db.connectionPool.connMaxLifetimeSeconds }}"
+            - name: DB_CONN_MAX_IDLE_TIME_SECONDS
+              value: "{{ .Values.config.db.connectionPool.connMaxIdleTimeSeconds }}"
           {{- with $env }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
