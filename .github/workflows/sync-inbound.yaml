@@ -1,0 +1,141 @@
+# Inbound chart sync handler for kyverno-charts.
+#
+# Triggered by n4k-release-bot (or any external system) via repository_dispatch.
+# Ensures sync PRs are created correctly:
+#   1. Checks out the TARGET release branch
+#   2. Creates a sync branch FROM that release branch
+#   3. Updates chart version + appVersion
+#   4. Creates a PR targeting the release branch
+#
+# This addresses the requirement: "Sync PR should be proper and the target
+# branch should be the release we are targeting and the sync branch should
+# be checked out from the targeted release branch."
+
+name: Inbound Chart Sync
+
+on:
+  repository_dispatch:
+    types:
+      - sync-chart-update
+
+  workflow_dispatch:
+    inputs:
+      chart_name:
+        description: "Chart to update (e.g. reports-server, nirmata)"
+        required: true
+        type: string
+      chart_version:
+        description: "New chart version"
+        required: true
+        type: string
+      app_version:
+        description: "New appVersion"
+        required: true
+        type: string
+      target_branch:
+        description: "Target release branch (e.g. release-1.15-n4k)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract parameters
+        id: params
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "chart_name=${{ github.event.client_payload.chart_name }}" >> "$GITHUB_OUTPUT"
+            echo "chart_version=${{ github.event.client_payload.chart_version }}" >> "$GITHUB_OUTPUT"
+            echo "app_version=${{ github.event.client_payload.app_version }}" >> "$GITHUB_OUTPUT"
+            echo "target_branch=${{ github.event.client_payload.target_branch }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "chart_name=${{ inputs.chart_name }}" >> "$GITHUB_OUTPUT"
+            echo "chart_version=${{ inputs.chart_version }}" >> "$GITHUB_OUTPUT"
+            echo "app_version=${{ inputs.app_version }}" >> "$GITHUB_OUTPUT"
+            echo "target_branch=${{ inputs.target_branch }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout target release branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.params.outputs.target_branch }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "n4k-release-bot[bot]"
+          git config user.email "n4k-release-bot[bot]@users.noreply.github.com"
+
+      - name: Create sync branch from target
+        id: branch
+        run: |
+          SYNC_BRANCH="sync/${{ steps.params.outputs.chart_name }}-${{ steps.params.outputs.chart_version }}-to-${{ steps.params.outputs.target_branch }}"
+          git checkout -b "$SYNC_BRANCH"
+          echo "sync_branch=$SYNC_BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Update chart
+        run: |
+          CHART_DIR="charts/${{ steps.params.outputs.chart_name }}"
+          CHART_YAML="$CHART_DIR/Chart.yaml"
+
+          if [ ! -f "$CHART_YAML" ]; then
+            echo "Error: $CHART_YAML not found"
+            exit 1
+          fi
+
+          echo "Before update:"
+          grep -E '^(version|appVersion):' "$CHART_YAML"
+
+          sed -i "s/^version:.*/version: ${{ steps.params.outputs.chart_version }}/" "$CHART_YAML"
+          sed -i "s/^appVersion:.*/appVersion: ${{ steps.params.outputs.app_version }}/" "$CHART_YAML"
+
+          echo "After update:"
+          grep -E '^(version|appVersion):' "$CHART_YAML"
+
+      - name: Commit and push
+        run: |
+          git add -A
+          git commit -m "$(cat <<EOF
+          chore: sync ${{ steps.params.outputs.chart_name }} ${{ steps.params.outputs.chart_version }} to ${{ steps.params.outputs.target_branch }}
+
+          Chart: ${{ steps.params.outputs.chart_name }}
+          Chart version: ${{ steps.params.outputs.chart_version }}
+          App version: ${{ steps.params.outputs.app_version }}
+
+          Automated sync by n4k-release-bot.
+          EOF
+          )"
+          git push origin "${{ steps.branch.outputs.sync_branch }}"
+
+      - name: Create pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr create \
+            --base "${{ steps.params.outputs.target_branch }}" \
+            --head "${{ steps.branch.outputs.sync_branch }}" \
+            --title "chore: sync ${{ steps.params.outputs.chart_name }} ${{ steps.params.outputs.chart_version }} to ${{ steps.params.outputs.target_branch }}" \
+            --body "$(cat <<EOF
+          ## Inbound Chart Sync
+
+          Automated sync PR created by **n4k-release-bot**.
+
+          | Field | Value |
+          |-------|-------|
+          | Chart | \`${{ steps.params.outputs.chart_name }}\` |
+          | Chart version | \`${{ steps.params.outputs.chart_version }}\` |
+          | App version | \`${{ steps.params.outputs.app_version }}\` |
+          | Target branch | \`${{ steps.params.outputs.target_branch }}\` |
+
+          ### Verification
+          - [x] Sync branch created from \`${{ steps.params.outputs.target_branch }}\`
+          - [x] Chart.yaml version and appVersion updated
+          - [ ] CI lint passes
+          - [ ] Approve and merge to trigger the release action
+          EOF
+          )"

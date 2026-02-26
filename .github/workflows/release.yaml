@@ -15,10 +15,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Determine target branch
+        id: target
+        run: echo "branch=${GITHUB_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
+
       - name: Lint Charts
         uses: ./.github/actions/chart-lint
         with:
-          target-branch: main
+          target-branch: ${{ steps.target.outputs.branch }}
 
   release:
     runs-on: ubuntu-latest
@@ -40,6 +44,37 @@ jobs:
           version: v3.13.0
 
       - name: Run chart-releaser
+        id: releaser
         uses: helm/chart-releaser-action@v1.6.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: release
+    if: success()
+    steps:
+      - name: Notify Slack dev-n4k-nctl
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_DEV_N4K }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Helm Chart Released"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "A chart release has been published from branch `${{ github.ref_name }}`.\n\n*Commit:* `${{ github.sha }}`\n*Author:* ${{ github.actor }}\n*Message:* ${{ github.event.head_commit.message }}\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View release run>"
+                  }
+                }
+              ]
+            }
