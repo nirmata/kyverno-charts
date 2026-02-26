@@ -54,7 +54,7 @@ jobs:
       - name: Send Slack notification
         uses: slackapi/slack-github-action@v2.0.0
         with:
-          webhook: ${{ inputs.channel == 'cve_alerts' && secrets.NIGHTLY_SCAN_WEBHOOK || inputs.channel == 'dev_releases' && secrets.SLACK_WEBHOOK_DEV_N4K || secrets.SLACK_WEBHOOK_CODE_REVIEW }}
+          webhook: ${{ secrets.SLACK_WEBHOOK_TEST }}
           webhook-type: incoming-webhook
           payload: |
             {

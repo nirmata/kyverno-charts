@@ -57,7 +57,7 @@ jobs:
       - name: Notify Slack dev-n4k-nctl
         uses: slackapi/slack-github-action@v2.0.0
         with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_DEV_N4K }}
+          webhook: ${{ secrets.SLACK_WEBHOOK_TEST }}
           webhook-type: incoming-webhook
           payload: |
             {
