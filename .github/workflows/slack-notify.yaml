@@ -1,0 +1,91 @@
+# Reusable Slack notification workflow for kyverno-charts.
+#
+# Supports three channels:
+#   dev_releases  -> dev-n4k-nctl  (release announcements)
+#   code_review   -> code-review   (PR notifications)
+#   cve_alerts    -> CVE-nightly-scan-alerts
+#
+# Usage:
+#   jobs:
+#     notify:
+#       uses: ./.github/workflows/slack-notify.yaml
+#       with:
+#         channel: dev_releases
+#         title: "Chart Released"
+#         message: "kyverno 3.7.1 has been released"
+#       secrets: inherit
+
+name: Slack Notification
+
+on:
+  workflow_call:
+    inputs:
+      channel:
+        description: "Target channel: cve_alerts | dev_releases | code_review"
+        required: true
+        type: string
+      title:
+        description: "Notification title"
+        required: true
+        type: string
+      message:
+        description: "Notification body (Slack mrkdwn format)"
+        required: true
+        type: string
+      severity:
+        description: "Colour coding: info | warning | critical"
+        required: false
+        type: string
+        default: info
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve colour
+        id: colour
+        run: |
+          case "${{ inputs.severity }}" in
+            critical) echo "hex=#dc3545" >> "$GITHUB_OUTPUT";;
+            warning)  echo "hex=#ffc107" >> "$GITHUB_OUTPUT";;
+            *)        echo "hex=#36a64f" >> "$GITHUB_OUTPUT";;
+          esac
+
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ inputs.channel == 'cve_alerts' && secrets.NIGHTLY_SCAN_WEBHOOK || inputs.channel == 'dev_releases' && secrets.SLACK_WEBHOOK_DEV_N4K || secrets.SLACK_WEBHOOK_CODE_REVIEW }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "attachments": [
+                {
+                  "color": "${{ steps.colour.outputs.hex }}",
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "${{ inputs.title }}"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "${{ inputs.message }}"
+                      }
+                    },
+                    {
+                      "type": "context",
+                      "elements": [
+                        {
+                          "type": "mrkdwn",
+                          "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
