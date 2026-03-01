@@ -511,6 +511,10 @@ data:
           queue_size: 2000
           num_consumers: 1
         timeout: 300s
+        {{- if .Values.kubeController.insecure }}
+        tls:
+          insecure_skip_verify: true
+        {{- end }}
     service:
       pipelines:
         metrics:
