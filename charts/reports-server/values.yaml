@@ -367,14 +367,16 @@ apiServicesManagement:
 
 
 jobConfigurations:
+  # -- Timeout in seconds for waiting for reports-server to be ready before creating APIServices (post-install hook)
+  readinessTimeout: 120
   image:
-    # -- (string) Image registry
+    # -- (string) Image registry for the api-service-hook (replaces kubectl image; build from cmd/api-service-hook)
     registry: ghcr.io
-    # -- Image repository
-    repository: nirmata/kubectl
+    # -- Image repository for the api-service-hook binary
+    repository: nirmata/reports-server-api-service-hook
     # -- Image tag
-    # Defaults to `latest` if omitted
-    tag: '1.35.0-alpine3.23-dev'
+    # Defaults to Chart app version if omitted
+    tag: ''
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: IfNotPresent
