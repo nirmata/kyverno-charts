@@ -117,9 +117,10 @@ helm install reports-server --namespace reports-server --create-namespace report
 | apiServicesManagement.installApiServices.installEphemeralReportsService | bool | `true` | Store ephemeral reports in reports-server |
 | apiServicesManagement.installApiServices.installOpenreportsService | bool | `true` | Store open reports in reports-server |
 | apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
-| jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
-| jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| jobConfigurations.image.tag | string | `"1.35.0-alpine3.23-dev"` | Image tag Defaults to `latest` if omitted |
+| jobConfigurations.readinessTimeout | int | `120` | Timeout (seconds) for post-install hook to wait for reports-server before creating APIServices |
+| jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry for api-service-hook (build from `cmd/api-service-hook`) |
+| jobConfigurations.image.repository | string | `"nirmata/reports-server-api-service-hook"` | Image repository |
+| jobConfigurations.image.tag | string | `""` | Image tag; defaults to Chart app version if omitted |
 | jobConfigurations.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
 | jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
 | jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
