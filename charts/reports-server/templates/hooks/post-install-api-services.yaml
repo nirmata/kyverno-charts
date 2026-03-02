@@ -35,69 +35,15 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       containers:
-        - name: kubectl
+        - name: api-service-hook
           image: "{{ .Values.jobConfigurations.image.registry }}/{{ .Values.jobConfigurations.image.repository }}:{{ .Values.jobConfigurations.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.jobConfigurations.image.pullPolicy | default "IfNotPresent" }}
-          command:
-            - sh
-            - '-c'
-            - |-
-              set -euo pipefail
-              kubectl wait -n {{ $.Release.Namespace }} pod --for=condition=ready -l app.kubernetes.io/name={{ include "reports-server.name" . }} --timeout=120s
-              kubectl apply -f - <<EOF
-              {
-                "apiVersion": "apiregistration.k8s.io/v1",
-                "kind": "APIService",
-                "metadata": {
-                  "name": "v1alpha2.wgpolicyk8s.io",
-                  "namespace": {{ $.Release.Namespace | quote }},
-                  "labels": {
-                    "kube-aggregator.kubernetes.io/automanaged": "false"
-                  },
-                  "annotations": {
-                    "helm.sh/hook": "post-install"
-                  }
-                },
-                "spec": {
-                  "group": "wgpolicyk8s.io",
-                  "groupPriorityMinimum": 100,
-                  "insecureSkipTLSVerify": true,
-                  "service": {
-                    "name": {{ include "reports-server.fullname" . | quote }},
-                    "namespace": {{ $.Release.Namespace | quote }}
-                  },
-                  "version": "v1alpha2",
-                  "versionPriority": 100
-                }
-              }
-              EOF
-              kubectl apply -f - <<EOF
-              {
-                "apiVersion": "apiregistration.k8s.io/v1",
-                "kind": "APIService",
-                "metadata": {
-                  "name": "v1.reports.kyverno.io",
-                  "namespace": {{ $.Release.Namespace | quote }},
-                  "labels": {
-                    "kube-aggregator.kubernetes.io/automanaged": "false"
-                  },
-                  "annotations": {
-                    "helm.sh/hook": "post-install"
-                  }
-                },
-                "spec": {
-                  "group": "reports.kyverno.io",
-                  "groupPriorityMinimum": 100,
-                  "insecureSkipTLSVerify": true,
-                  "service": {
-                    "name": {{ include "reports-server.fullname" . | quote }},
-                    "namespace": {{ $.Release.Namespace | quote }}
-                  },
-                  "version": "v1",
-                  "versionPriority": 100
-                }
-              }
-              EOF
+          args:
+            - install
+            - --service-name={{ include "reports-server.fullname" . }}
+            - --namespace={{ $.Release.Namespace }}
+            - --timeout={{ .Values.jobConfigurations.readinessTimeout | default 120 }}s
+            - --install-openreports={{ .Values.apiServicesManagement.installApiServices.installOpenreportsService }}
           {{- with .Values.jobConfigurations.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
