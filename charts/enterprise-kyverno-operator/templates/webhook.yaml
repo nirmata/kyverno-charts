@@ -48,6 +48,30 @@ webhooks:
     - policies
   sideEffects: None
 - admissionReviewVersions:
+  - v1
+  clientConfig:
+    {{- if eq .Values.certManager "other" }}
+    caBundle: {{ .Values.caBundle }}
+    {{- end}}
+    service:
+      name: {{ include "enterprise-kyverno.fullname" . }}
+      namespace: {{ template "enterprise-kyverno.namespace" . }}
+      path: /validate-security-nirmata-io-v1-kyvernooperator
+  failurePolicy: Ignore
+  name: vkyvernopolicies.kb.io
+  rules:
+  - apiGroups:
+    - policies.kyverno.io
+    apiVersions:
+    - '*'
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - '*'
+  sideEffects: None
+- admissionReviewVersions:
   - v1alpha1
   - v1beta1
   clientConfig:
