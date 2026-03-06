@@ -87,12 +87,50 @@ rules:
   - get
   - list
   - watch
+- apiGroups: ["policies.kyverno.io"]
+  resources:
+  - validatingpolicies
+  - validatingpolicies/status
+  - mutatingpolicies
+  - mutatingpolicies/status
+  - generatingpolicies
+  - generatingpolicies/status
+  - deletingpolicies
+  - deletingpolicies/status
+  - imagevalidatingpolicies
+  - imagevalidatingpolicies/status
+  - namespacedvalidatingpolicies
+  - namespacedvalidatingpolicies/status
+  - namespacedmutatingpolicies
+  - namespacedmutatingpolicies/status
+  - namespacedgeneratingpolicies
+  - namespacedgeneratingpolicies/status
+  - namespaceddeletingpolicies
+  - namespaceddeletingpolicies/status
+  - namespacedimagevalidatingpolicies
+  - namespacedimagevalidatingpolicies/status
+  - policyexceptions
+  - policyexceptions/status
+  verbs:
+  - get
+  - list
+  - watch
 - apiGroups: ["wgpolicyk8s.io"]
   resources:
   - policyreports
   - policyreports/status
   - clusterpolicyreports
   - clusterpolicyreports/status
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups: ["openreports.io"]
+  resources:
+  - reports
+  - reports/status
+  - clusterreports
+  - clusterreports/status
   verbs:
   - get
   - list
@@ -182,6 +220,15 @@ rules:
   - update
   - patch
   - delete
+- apiGroups: ["policies.kyverno.io"]
+  resources:
+  - policyexceptions
+  - policyexceptions/status
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -212,12 +259,32 @@ rules:
   - update
   - patch
   - delete
-- apiGroups: ["kyverno.io", "operator.kyverno.io"]
+- apiGroups: ["kyverno.io", "operator.kyverno.io", "policies.kyverno.io"]
   resources:
   - policies
   - policies/status
   - clusterpolicies
   - clusterpolicies/status
+  - validatingpolicies
+  - validatingpolicies/status
+  - mutatingpolicies
+  - mutatingpolicies/status
+  - generatingpolicies
+  - generatingpolicies/status
+  - deletingpolicies
+  - deletingpolicies/status
+  - imagevalidatingpolicies
+  - imagevalidatingpolicies/status
+  - namespacedvalidatingpolicies
+  - namespacedvalidatingpolicies/status
+  - namespacedmutatingpolicies
+  - namespacedmutatingpolicies/status
+  - namespacedgeneratingpolicies
+  - namespacedgeneratingpolicies/status
+  - namespaceddeletingpolicies
+  - namespaceddeletingpolicies/status
+  - namespacedimagevalidatingpolicies
+  - namespacedimagevalidatingpolicies/status
   verbs:
   - create
   - update
