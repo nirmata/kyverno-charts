@@ -16,6 +16,13 @@ false
 {{- end -}}
 {{- end -}}
 
+{{- define "kyverno.reportsServerServiceName" -}}
+{{- if (index .Values "reports-server").fullnameOverride -}}
+{{- (index .Values "reports-server").fullnameOverride -}}
+{{- else -}}
+{{- printf "%s-reports-server" .Release.Name -}}
+{{- end -}}
+{{- end -}}
 
 {{- define "kyverno.features.flags" -}}
 {{- $flags := list -}}
