@@ -508,10 +508,11 @@ webhooksCleanup:
   image:
     # -- (string) Image registry
     registry: ~
+    defaultRegistry: ghcr.io
     # -- Image repository
-    repository: kyverno/readiness-checker
+    repository: nirmata/readiness-checker
     # -- Image tag
-    # Defaults to `latest` if omitted
+    # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
@@ -565,10 +566,11 @@ policyReportsCleanup:
   image:
     # -- (string) Image registry
     registry: ~
+    defaultRegistry: ghcr.io
     # -- Image repository
-    repository: kyverno/readiness-checker
+    repository: nirmata/readiness-checker
     # -- Image tag
-    # Defaults to `latest` if omitted
+    # Defaults to appVersion in Chart.yaml if omitted
     tag: ~
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
@@ -2444,10 +2446,10 @@ reports-server:
     image:
       # -- (string) Image registry
       registry: ~
+      defaultRegistry: ghcr.io
       # -- Image repository
-      repository: kyverno/readiness-checker
-      # -- Image tag
-      # Defaults to `latest` if omitted
+      repository: nirmata/readiness-checker
+      # Defaults to appVersion in Chart.yaml if omitted
       tag: ~
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
