@@ -1,0 +1,12 @@
+dependencies:
+- name: grafana
+  repository: ""
+  version: 3.3.6
+- name: reports-server
+  repository: file://../reports-server
+  version: 0.2.23-rc3
+- name: crds
+  repository: ""
+  version: 3.3.6
+digest: sha256:1c3adf0400119a7ab56fe511e5fbc2ef3f5e9d08d75e267729c4248d875a4890
+generated: "2026-03-11T15:30:05.06113+05:30"
