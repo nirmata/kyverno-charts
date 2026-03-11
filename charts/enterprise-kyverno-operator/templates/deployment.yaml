@@ -61,6 +61,8 @@ spec:
             value: {{ template "enterprise-kyverno.namespace" . }}
           - name: OPERATOR_NAME
             value: {{ include "enterprise-kyverno.fullname" . }}
+          - name: OPERATOR_SERVICE_ACCOUNT
+            value: "system:serviceaccount:{{ template "enterprise-kyverno.namespace" . }}:{{ template "enterprise-kyverno.rbac.serviceAccountName" . }}"
           - name: STORAGE_PATH
             value: /var/local
           - name: HELM_CACHE_HOME

@@ -21,32 +21,8 @@ metadata:
   annotations: 
     {{- toYaml .Values.globalAnnotations| nindent 4 }}
   {{- end }}
+
 webhooks:
-- admissionReviewVersions:
-  - v1
-  clientConfig:
-    {{- if eq .Values.certManager "other" }}
-    caBundle: {{ .Values.caBundle }}
-    {{- end}}
-    service:
-      name: {{ include "enterprise-kyverno.fullname" . }}
-      namespace: {{ template "enterprise-kyverno.namespace" . }}
-      path: /validate-security-nirmata-io-v1-kyvernooperator
-  failurePolicy: Ignore
-  name: vkyvernopolcpol.kb.io
-  rules:
-  - apiGroups:
-    - kyverno.io
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    - UPDATE
-    - DELETE
-    resources:
-    - clusterpolicies
-    - policies
-  sideEffects: None
 - admissionReviewVersions:
   - v1
   clientConfig:
@@ -60,6 +36,17 @@ webhooks:
   failurePolicy: Ignore
   name: vkyvernopolicies.kb.io
   rules:
+  - apiGroups:
+    - kyverno.io
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - clusterpolicies
+    - policies
   - apiGroups:
     - policies.kyverno.io
     apiVersions:
