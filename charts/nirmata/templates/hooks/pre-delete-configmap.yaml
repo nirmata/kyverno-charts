@@ -77,7 +77,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
-      serviceAccount: {{ template "kyverno.fullname" . }}-remove-configmap
+      serviceAccountName: {{ template "kyverno.fullname" . }}-remove-configmap
       {{- with .Values.webhooksCleanup.podSecurityContext }}
       securityContext:
         {{- tpl (toYaml .) $ | nindent 8 }}
@@ -88,15 +88,13 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       containers:
-        - name: kubectl
+        - name: configmap-cleanup
           image: {{ (include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.webhooksCleanup.image "defaultTag" (default .Chart.AppVersion .Values.webhooksCleanup.image.tag))) | quote }}
           imagePullPolicy: {{ .Values.webhooksCleanup.image.pullPolicy | default "IfNotPresent" }}
-          command:
-            - /bin/bash
-            - '-c'
-            - |-
-              set -euo pipefail
-              kubectl delete cm --ignore-not-found -n {{ template "kyverno.namespace" . }} {{ template "kyverno.config.configMapName" . }}
+          args:
+            - delete-configmap
+            - --namespace={{ template "kyverno.namespace" . }}
+            - --name={{ template "kyverno.config.configMapName" . }}
           {{- with .Values.webhooksCleanup.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
