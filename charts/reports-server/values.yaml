@@ -370,8 +370,9 @@ jobConfigurations:
   # -- Timeout in seconds for waiting for reports-server to be ready before creating APIServices (post-install hook)
   readinessTimeout: 120
   image:
-    # -- (string) Image registry for the api-service-hook (replaces kubectl image; build from cmd/api-service-hook)
-    registry: ghcr.io
+    # -- (string) Image registry for the api-service-hook (replaces kubectl image; build from cmd/api-service-hook).
+    # Use same registry as main reports-server image (reg.nirmata.io) so the hook image is pullable when the main image is.
+    registry: reg.nirmata.io
     # -- Image repository for the api-service-hook binary
     repository: nirmata/reports-server-api-service-hook
     # -- Image tag
