@@ -37,6 +37,9 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 65532
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
           args:
             - --metrics-bind-address=:8443
             - --leader-elect
