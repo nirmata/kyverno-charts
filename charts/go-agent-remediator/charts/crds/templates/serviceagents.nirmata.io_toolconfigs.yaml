@@ -86,6 +86,7 @@ spec:
                     enum:
                     - pat
                     - app
+                    - nirmata-app
                     type: string
                   pat:
                     description: |-
@@ -119,7 +120,8 @@ spec:
                 - message: exactly one authentication method must be specified based
                     on the method field
                   rule: (self.method == 'pat' && has(self.pat) && !has(self.app))
-                    || (self.method == 'app' && has(self.app) && !has(self.pat))
+                    || (self.method == 'app' && has(self.app) && !has(self.pat)) ||
+                    (self.method == 'nirmata-app' && !has(self.pat) && !has(self.app))
               defaults:
                 description: Defaults defines the default values for PRs/commits the
                   agent will create
