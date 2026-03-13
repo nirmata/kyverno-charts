@@ -340,7 +340,17 @@ data:
     events.v1.
     policies.v1.kyverno.io
     clusterpolicies.v1.kyverno.io
-    policyexceptions.v2alpha1.kyverno.io
+    validatingpolicies.v1.policies.kyverno.io
+    mutatingpolicies.v1.policies.kyverno.io
+    generatingpolicies.v1.policies.kyverno.io
+    deletingpolicies.v1.policies.kyverno.io
+    imagevalidatingpolicies.v1.policies.kyverno.io
+    namespacedvalidatingpolicies.v1.policies.kyverno.io
+    namespacedmutatingpolicies.v1.policies.kyverno.io
+    namespacedgeneratingpolicies.v1.policies.kyverno.io
+    namespaceddeletingpolicies.v1.policies.kyverno.io
+    namespacedimagevalidatingpolicies.v1.policies.kyverno.io
+    policyexceptions.v2beta1.kyverno.io
     policyexceptions.v2.kyverno.io
     clusterconfigs.v1alpha1.nirmata.io
     policysets.v1alpha1.security.nirmata.io
@@ -361,21 +371,61 @@ data:
     Warning.PolicyViolation.Resource Blocked.Policy.*
     Warning.PolicyViolation.Resource Blocked.ClusterPolicy.*
     Warning.PolicyViolation.Resource Blocked.ValidatingPolicy.*
+    Warning.PolicyViolation.Resource Blocked.MutatingPolicy.*
+    Warning.PolicyViolation.Resource Blocked.GeneratingPolicy.*
+    Warning.PolicyViolation.Resource Blocked.DeletingPolicy.*
+    Warning.PolicyViolation.Resource Blocked.ImageValidatingPolicy.*
+    Warning.PolicyViolation.Resource Blocked.NamespacedValidatingPolicy.*
+    Warning.PolicyViolation.Resource Blocked.NamespacedMutatingPolicy.*
+    Warning.PolicyViolation.Resource Blocked.NamespacedGeneratingPolicy.*
+    Warning.PolicyViolation.Resource Blocked.NamespacedDeletingPolicy.*
+    Warning.PolicyViolation.Resource Blocked.NamespacedImageValidatingPolicy.*
     Normal.PolicySkipped.*.PolicyException.*
     Normal.PolicyModified.*.Policy.*
     Normal.PolicyModified.*.ClusterPolicy.*
+    Normal.PolicyModified.*.ValidatingPolicy.*
+    Normal.PolicyModified.*.MutatingPolicy.*
+    Normal.PolicyModified.*.GeneratingPolicy.*
+    Normal.PolicyModified.*.DeletingPolicy.*
+    Normal.PolicyModified.*.ImageValidatingPolicy.*
+    Normal.PolicyModified.*.NamespacedValidatingPolicy.*
+    Normal.PolicyModified.*.NamespacedMutatingPolicy.*
+    Normal.PolicyModified.*.NamespacedGeneratingPolicy.*
+    Normal.PolicyModified.*.NamespacedDeletingPolicy.*
+    Normal.PolicyModified.*.NamespacedImageValidatingPolicy.*
     Normal.PolicyDeleted.*.Policy.*
     Normal.PolicyDeleted.*.ClusterPolicy.*
+    Normal.PolicyDeleted.*.ValidatingPolicy.*
+    Normal.PolicyDeleted.*.MutatingPolicy.*
+    Normal.PolicyDeleted.*.GeneratingPolicy.*
+    Normal.PolicyDeleted.*.DeletingPolicy.*
+    Normal.PolicyDeleted.*.ImageValidatingPolicy.*
+    Normal.PolicyDeleted.*.NamespacedValidatingPolicy.*
+    Normal.PolicyDeleted.*.NamespacedMutatingPolicy.*
+    Normal.PolicyDeleted.*.NamespacedGeneratingPolicy.*
+    Normal.PolicyDeleted.*.NamespacedDeletingPolicy.*
+    Normal.PolicyDeleted.*.NamespacedImageValidatingPolicy.*
     Normal.PolicyApplied.Resource Generated.Policy.*
     Normal.PolicyApplied.Resource Generated.ClusterPolicy.*
+    Normal.PolicyApplied.Resource Generated.ValidatingPolicy.*
+    Normal.PolicyApplied.Resource Generated.MutatingPolicy.*
+    Normal.PolicyApplied.Resource Generated.GeneratingPolicy.*
     Normal.PolicyApplied.Resource Mutated.Policy.*
     Normal.PolicyApplied.Resource Mutated.ClusterPolicy.*
+    Normal.PolicyApplied.Resource Mutated.ValidatingPolicy.*
+    Normal.PolicyApplied.Resource Mutated.MutatingPolicy.*
     Normal.PolicyTamperDetected.*.Policy.*
     Normal.PolicyTamperDetected.*.ClusterPolicy.*
+    Normal.PolicyTamperDetected.*.ValidatingPolicy.*
+    Normal.PolicyTamperDetected.*.MutatingPolicy.*
     Normal.PolicyTamperReverted.*.Policy.*
     Normal.PolicyTamperReverted.*.ClusterPolicy.*
+    Normal.PolicyTamperReverted.*.ValidatingPolicy.*
+    Normal.PolicyTamperReverted.*.MutatingPolicy.*
     Normal.PolicyTamperBlocked.*.Policy.*
     Normal.PolicyTamperBlocked.*.ClusterPolicy.*
+    Normal.PolicyTamperBlocked.*.ValidatingPolicy.*
+    Normal.PolicyTamperBlocked.*.MutatingPolicy.*
     *.*.*.ClusterCleanupPolicy.*
 ---
 apiVersion: apps/v1
@@ -399,6 +449,7 @@ spec:
     metadata:
       labels:
         app: nirmata-kube-controller
+        version: "1"
         nirmata.io/container.type: system
         app.kubernetes.io/name: nirmata
         app.kubernetes.io/instance: nirmata
