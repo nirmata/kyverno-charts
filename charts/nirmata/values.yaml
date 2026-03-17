@@ -2451,7 +2451,7 @@ reports-server:
       defaultRegistry: ghcr.io
       # -- Image repository
       repository: nirmata/readiness-checker
-      # Defaults to appVersion in Chart.yaml if omitted
+      # -- Image tag for readiness-checker. When empty, N4K templates use Chart appVersion
       tag: ~
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
