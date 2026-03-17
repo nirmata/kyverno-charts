@@ -2451,10 +2451,8 @@ reports-server:
       defaultRegistry: ghcr.io
       # -- Image repository
       repository: nirmata/readiness-checker
-      # -- Image tag for readiness-checker. Must be set explicitly: the reports-server subchart
-      # defaults to its own Chart.AppVersion (e.g. v0.2.21) when tag is omitted, but
-      # readiness-checker is published with the N4K/Kyverno appVersion (e.g. v1.13.6-n4k.nirmata.23).
-      tag: v1.13.6-n4k.nirmata.23
+      # -- Image tag for readiness-checker. When empty, N4K templates use Chart appVersion
+      tag: ~
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
