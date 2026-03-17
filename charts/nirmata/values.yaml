@@ -2444,8 +2444,10 @@ reports-server:
 
   jobConfigurations:
     image:
-      # -- (string) Image registry
-      registry: ~
+      # -- (string) Image registry. Must be set here: reports-server subchart's post-install hook
+      # builds image as registry/repository:tag and does not use defaultRegistry, so empty registry
+      # produces invalid image "/repository:tag" (InvalidImageName).
+      registry: ghcr.io
       defaultRegistry: ghcr.io
       # -- Image repository
       repository: nirmata/readiness-checker
