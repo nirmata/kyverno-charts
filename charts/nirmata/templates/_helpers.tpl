@@ -24,6 +24,12 @@ false
 {{- end -}}
 {{- end -}}
 
+{{/* Effective tag for reports-server readiness-checker image: use jobConfigurations.image.tag when set, else N4K chart appVersion. */}}
+{{- define "kyverno.reportsServerReadinessCheckerTag" -}}
+{{- $rs := index .Values "reports-server" -}}
+{{- default .Chart.AppVersion $rs.jobConfigurations.image.tag -}}
+{{- end -}}
+
 {{- define "kyverno.features.flags" -}}
 {{- $flags := list -}}
 {{- with .admissionReports -}}
