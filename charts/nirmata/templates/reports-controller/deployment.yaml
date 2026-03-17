@@ -82,7 +82,7 @@ spec:
       {{- if eq (include "kyverno.installReportsServer" .) "true" }}
       initContainers:
         - name: wait-for-reports-server
-          image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" (index .Values "reports-server").jobConfigurations.image "defaultTag" (default .Chart.AppVersion (index .Values "reports-server").jobConfigurations.image.tag) "fipsEnabled" false) | quote }}
+          image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" (index .Values "reports-server").jobConfigurations.image "defaultTag" (include "kyverno.reportsServerReadinessCheckerTag" . | trim) "fipsEnabled" false) | quote }}
           imagePullPolicy: {{ (index .Values "reports-server").jobConfigurations.image.pullPolicy | default "IfNotPresent" }}
           command:
             - readiness-checker
