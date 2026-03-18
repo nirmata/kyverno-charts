@@ -37,6 +37,14 @@ rules:
   verbs:
     - get
     - list
+# readiness-checker (migrateReportsServer post-install hook) lists EndpointSlices to verify service readiness (K8s 1.22+)
+- apiGroups:
+    - discovery.k8s.io
+  resources:
+    - endpointslices
+  verbs:
+    - get
+    - list
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
