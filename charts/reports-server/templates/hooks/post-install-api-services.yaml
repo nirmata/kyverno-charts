@@ -44,6 +44,7 @@ spec:
             - --namespace={{ $.Release.Namespace }}
             - --timeout={{ .Values.jobConfigurations.readinessTimeout | default 120 }}s
             - --install-openreports={{ .Values.apiServicesManagement.installApiServices.installOpenreportsService }}
+            - --install-ephemeral-reports={{ .Values.apiServicesManagement.installApiServices.installEphemeralReportsService }}
           {{- with .Values.jobConfigurations.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
