@@ -2452,7 +2452,7 @@ reports-server:
       # -- Image repository
       repository: nirmata/readiness-checker
       # -- Image tag for readiness-checker
-      tag: v1.13.6-n4k.nirmata.23
+      tag: v1.13.6-n4k.nirmata.24
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
