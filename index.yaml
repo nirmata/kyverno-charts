@@ -30927,6 +30927,26 @@ entries:
     version: 0.2.23
   - apiVersion: v2
     appVersion: v0.2.21
+    created: "2026-03-18T07:29:11.750817891Z"
+    digest: 3f3b50e33e20db8bfefbfa698b1dcb37748bda61aba7ec87890a3ead5e4f8011
+    keywords:
+    - kubernetes
+    - policy reports storage
+    - postgresql
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - email: support@nirmata.com
+      name: Nirmata
+      url: https://nirmata.com/
+    name: reports-server
+    sources:
+    - https://github.com/nirmata/reports-server
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/reports-server-0.2.23-rc9/reports-server-0.2.23-rc9.tgz
+    version: 0.2.23-rc9
+  - apiVersion: v2
+    appVersion: v0.2.21
     created: "2026-03-13T14:05:05.268676545Z"
     digest: 8b5782cb95e5cd942db2bedc5e9af0e0d6ee70ba2c81fe9354b2e901af9bb838
     keywords:
@@ -31767,4 +31787,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2026-03-18T07:10:50.457466436Z"
+generated: "2026-03-18T07:29:11.752470774Z"
