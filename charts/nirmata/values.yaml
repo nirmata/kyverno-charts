@@ -2576,7 +2576,7 @@ reports-server:
       sslrds:
         secretName: ""
         mountPath: "/etc/ssl/rds"
-      
+
       # -- Database connection pool configuration (per reports-server pod)
       # These control how many concurrent connections each pod can open.
       # Defaults match the current hardcoded behavior.
