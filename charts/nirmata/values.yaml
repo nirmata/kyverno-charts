@@ -2600,7 +2600,7 @@ reports-server:
       # -- Store ephemeral reports in reports-server
       installEphemeralReportsService: true
       # -- Store open reports in reports-server
-      installOpenreportsService: true
+      installOpenreportsService: false
 
     migrateReportsServer:
       # -- Create api services only when reports-server is ready and migration is guaranteed
