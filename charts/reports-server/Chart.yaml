@@ -1,7 +1,7 @@
 apiVersion: v2
 name: reports-server
 type: application
-version: 0.2.26
+version: 0.2.27
 appVersion: v0.2.24
 keywords:
 - kubernetes
