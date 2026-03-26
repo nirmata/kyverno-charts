@@ -55,6 +55,9 @@ spec:
 {{- if .Values.config.etcd.imagePullSecrets }}
       imagePullSecrets: {{ toYaml .Values.config.etcd.imagePullSecrets | nindent 8 }}
 {{- end }}
+{{- if .Values.config.etcd.podSecurityContext }}
+      securityContext: {{ toYaml .Values.config.etcd.podSecurityContext | nindent 8 }}
+{{- end }}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -71,6 +74,9 @@ spec:
       - name: etcd
         image:  "{{ .Values.config.etcd.image.registry }}/{{ .Values.config.etcd.image.repository }}:{{ .Values.config.etcd.image.tag }}"
         imagePullPolicy: IfNotPresent
+        {{- if .Values.config.etcd.securityContext }}
+        securityContext: {{ toYaml .Values.config.etcd.securityContext | nindent 10 }}
+        {{- end }}
         ports:
         - name: etcd-client
           containerPort: 2379

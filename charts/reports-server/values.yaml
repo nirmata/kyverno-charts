@@ -277,6 +277,14 @@ config:
     ##
     tolerations: []
 
+    # -- Pod-level security context for etcd pods
+    # Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls)
+    podSecurityContext: {}
+
+    # -- Container-level security context for the etcd container
+    # @default -- See [values.yaml](values.yaml)
+    securityContext: {}
+
   db:
 
     # -- If set, a secret will be created with the database connection information. If this is set to true, secretName must be set.
