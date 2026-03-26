@@ -2474,7 +2474,7 @@ reports-server:
         # -- Image repository
         repository: nirmata/etcd
         # -- Image tag
-        tag: v3.5.27-hardened
+        tag: 3.6.9-hardened
 
       # -- Image pull secrets
       imagePullSecrets: []
@@ -2517,6 +2517,14 @@ reports-server:
       ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
       ##
       tolerations: []
+
+      # -- Pod-level security context for etcd pods
+      # Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls)
+      podSecurityContext: {}
+
+      # -- Container-level security context for the etcd container
+      # @default -- See [values.yaml](values.yaml)
+      securityContext: {}
 
     db:
 
