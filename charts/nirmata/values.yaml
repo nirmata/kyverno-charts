@@ -2524,7 +2524,7 @@ reports-server:
 
       # -- Container-level security context for the etcd container
       # @default -- See [values.yaml](values.yaml)
-      securityContext: {} 
+      securityContext: {}
 
     db:
 
