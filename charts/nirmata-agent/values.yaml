@@ -91,6 +91,16 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
+# Metrics server configuration
+metrics:
+  port: 8080
+  secure: false
+  service:
+    enabled: true
+    name: service-agent-metrics-service
+    type: ClusterIP
+    port: 8443
+
 # LLM provider configuration for creating an LLMConfig CR
 llm:
   enabled: true
