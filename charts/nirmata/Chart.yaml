@@ -1,7 +1,7 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 3.7.0
+version: 3.7.1-rc.1
 appVersion: v1.17.0-n4k.nirmata.2
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
@@ -53,7 +53,7 @@ dependencies:
     repository: "https://kyverno.github.io/api"
     condition: crds.install
   - name: reports-server
-    version: "0.2.13"
+    version: 0.2.27
     repository: "https://nirmata.github.io/kyverno-charts"
     condition: reports-server.install
   - name: openreports
