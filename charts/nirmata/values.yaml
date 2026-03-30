@@ -1661,6 +1661,12 @@ cleanupController:
     # -- Create RBAC resources
     create: true
 
+    # -- Create a ClusterRoleBinding to the view ClusterRole
+    createViewRoleBinding: true
+
+    # -- The view ClusterRole to bind to
+    viewRoleName: view
+
     serviceAccount:
       # -- Service account name
       name:
@@ -1671,6 +1677,12 @@ cleanupController:
 
       # -- Toggle automounting of the ServiceAccount
       automountServiceAccountToken: true
+
+    coreClusterRole:
+      # -- Extra resource permissions to add in the core cluster role.
+      # This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`.
+      # @default -- See [values.yaml](values.yaml)
+      extraResources: []
 
     clusterRole:
       # -- Extra resource permissions to add in the cluster role
@@ -2580,7 +2592,7 @@ reports-server:
         # -- Image repository
         repository: nirmata/etcd
         # -- Image tag
-        tag: v3.5.18-cve-free
+        tag: 3.6.9-hardened
 
       # -- Image pull secrets
       imagePullSecrets: []
@@ -2623,6 +2635,14 @@ reports-server:
       ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
       ##
       tolerations: []
+
+      # -- Pod-level security context for etcd pods
+      # Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls)
+      podSecurityContext: {}
+
+      # -- Container-level security context for the etcd container
+      # @default -- See [values.yaml](values.yaml)
+      securityContext: {}
 
     db:
 
@@ -2683,6 +2703,19 @@ reports-server:
         secretName: ""
         mountPath: "/etc/ssl/rds"
 
+      # -- Database connection pool configuration (per reports-server pod)
+      # These control how many concurrent connections each pod can open.
+      # Defaults match the current hardcoded behavior.
+      connectionPool:
+        # -- Maximum number of open connections per pod (sql.DB.SetMaxOpenConns)
+        maxOpenConns: 25
+        # -- Maximum number of idle connections per pod (sql.DB.SetMaxIdleConns)
+        maxIdleConns: 5
+        # -- Maximum lifetime of a connection in seconds (0 = use default of 300s / 5m)
+        connMaxLifetimeSeconds: 300
+        # -- Maximum idle time of a connection in seconds (0 = use default of 120s / 2m)
+        connMaxIdleTimeSeconds: 120
+
   apiServicesManagement:
     # -- Install api services in manifest
     installApiServices:
@@ -2708,7 +2741,7 @@ reports-server:
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.34.0'
+      tag: '1.35-alpine3.23-dev'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
