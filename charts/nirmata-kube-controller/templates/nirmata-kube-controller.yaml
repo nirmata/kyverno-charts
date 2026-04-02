@@ -198,6 +198,14 @@ rules:
   - get
   - list
   - watch
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources:
+  - clusterroles
+  - clusterrolebindings
+  verbs:
+  - get
+  - list
+  - watch
 - apiGroups: ["apps"]
   resources:
   - deployments
