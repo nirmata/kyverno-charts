@@ -183,6 +183,8 @@ rules:
   - llmconfigs/status
   - toolconfigs
   - toolconfigs/status
+  - remediationrecords
+  - remediationrecords/status
   verbs:
   - get
   - list
@@ -360,6 +362,7 @@ data:
     remediators.v1alpha1.serviceagents.nirmata.io
     llmconfigs.v1alpha1.serviceagents.nirmata.io
     toolconfigs.v1alpha1.serviceagents.nirmata.io
+    remediationrecords.v1alpha1.serviceagents.nirmata.io
     awsaccountconfigs.v1alpha1.nirmata.io
   IgnoreEvents: Normal.PolicyPlaceHolder.*
   FilterPatches: |-
