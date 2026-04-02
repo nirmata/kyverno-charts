@@ -248,8 +248,24 @@ spec:
                 - message: localCluster and argoHub cannot both be set
                   rule: '!(has(self.localCluster) && has(self.argoHub))'
               remediatorRef:
-                description: RemediatorRef references the parent Remediator name
-                type: string
+                description: |-
+                  RemediatorRef references the parent Remediator resource.
+                  Carries the name, namespace, and UID of the owning Remediator so that
+                  external consumers (e.g. policies-service) can resolve the parent agent
+                  directly by UID without a name-based lookup.
+                properties:
+                  name:
+                    description: Name is the name of the parent Remediator.
+                    type: string
+                  namespace:
+                    description: Namespace is the namespace of the parent Remediator.
+                    type: string
+                  uid:
+                    description: UID is the unique identifier of the parent Remediator.
+                    type: string
+                required:
+                - name
+                type: object
             required:
             - collectorId
             type: object
@@ -280,6 +296,10 @@ spec:
                                 description: IssueInfo contains information about
                                   a single issue.
                                 properties:
+                                  conversationId:
+                                    description: ConversationID is the LLM conversation
+                                      ID for the remediation that produced this issue.
+                                    type: string
                                   createdAt:
                                     description: CreatedAt is when the issue was created
                                     format: date-time
@@ -319,6 +339,10 @@ spec:
                                     description: CommitSHA is the commit SHA of the
                                       PR
                                     type: string
+                                  conversationId:
+                                    description: ConversationID is the LLM conversation
+                                      ID for the remediation that produced this PR.
+                                    type: string
                                   createdAt:
                                     description: CreatedAt is when the PR was created
                                     format: date-time
@@ -334,11 +358,54 @@ spec:
                                       of the last comment processed on this PR
                                     format: int64
                                     type: integer
+                                  mergedAt:
+                                    description: MergedAt is when the PR was merged
+                                      (nil if not merged yet)
+                                    format: date-time
+                                    type: string
                                   policies:
                                     description: Policies is the list of policies
                                       this PR addresses
                                     items:
                                       type: string
+                                    type: array
+                                  policyExceptions:
+                                    description: |-
+                                      PolicyExceptions tracks Policy Exception Requests created via @nirmatabot request-exception
+                                      for policies that were excepted from this PR instead of being fixed
+                                    items:
+                                      description: |-
+                                        PolicyExceptionInfo tracks a Policy Exception Request created via @nirmatabot request-exception.
+                                        It records the NCH PER name, the policies covered, and the requested duration.
+                                      properties:
+                                        createdAt:
+                                          description: CreatedAt is when the exception
+                                            request was submitted to NCH
+                                          format: date-time
+                                          type: string
+                                        duration:
+                                          description: Duration is the requested exception
+                                            duration in NCH TTL format (e.g., "720h");
+                                            empty means permanent
+                                          type: string
+                                        perName:
+                                          description: PERName is the Nirmata Control
+                                            Hub Policy Exception Request name/identifier
+                                          type: string
+                                        policies:
+                                          description: Policies is the list of policy
+                                            names covered by this exception request
+                                          items:
+                                            type: string
+                                          type: array
+                                        state:
+                                          description: State is the last known PER
+                                            state (e.g., "pendingApproval")
+                                          type: string
+                                      required:
+                                      - perName
+                                      - policies
+                                      type: object
                                     type: array
                                   prNumber:
                                     description: PRNumber is the pull request number
@@ -347,6 +414,10 @@ spec:
                                     description: PRURL is the URL of the created pull
                                       request
                                     type: string
+                                  state:
+                                    description: 'State tracks the current PR state:
+                                      "open", "merged", "closed"'
+                                    type: string
                                 type: object
                               type: array
                           type: object
@@ -354,6 +425,10 @@ spec:
                           description: JiraTicketAction contains metadata about a
                             Jira ticket action taken
                           properties:
+                            conversationId:
+                              description: ConversationID is the LLM conversation
+                                ID for the remediation that produced this ticket.
+                              type: string
                             ticketKey:
                               description: TicketKey is the Jira ticket key (e.g.,
                                 "PROJ-123")

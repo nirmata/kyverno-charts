@@ -164,6 +164,37 @@ spec:
                         type: object
                     type: object
                 type: object
+              tls:
+                description: |-
+                  TLS defines optional TLS configuration for connections to the git provider.
+                  Use this when the git server uses certificates signed by a corporate/private CA
+                  (e.g. a TLS-intercepting proxy) that is not in the system trust store.
+                properties:
+                  caBundleSecretRef:
+                    description: |-
+                      CABundleSecretRef references a Secret containing PEM-encoded CA certificates
+                      to trust when connecting to the git server. The Secret key should contain
+                      the concatenated PEM bundle.
+                    properties:
+                      key:
+                        description: Key is the key within the secret
+                        type: string
+                      name:
+                        description: Name is the name of the secret
+                        type: string
+                      namespace:
+                        description: Namespace is the namespace of the secret
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  insecureSkipVerify:
+                    description: |-
+                      InsecureSkipVerify disables TLS certificate verification entirely.
+                      This is NOT recommended for production — use CABundleSecretRef instead.
+                    type: boolean
+                type: object
               type:
                 description: Type defines the tool/provider type
                 enum:
