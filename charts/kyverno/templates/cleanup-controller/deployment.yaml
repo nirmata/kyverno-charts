@@ -196,5 +196,20 @@ spec:
           readinessProbe:
             {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
+          volumeMounts:
+            - name: apicall-token
+              mountPath: /var/run/secrets/kyverno/apicall
+              readOnly: true
+      volumes:
+        - name: apicall-token
+          projected:
+            defaultMode: 0444
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  expirationSeconds: {{ .Values.apiCallToken.expirationSeconds | default 3600 }}
+                  {{- with .Values.apiCallToken.audience }}
+                  audience: {{ . }}
+                  {{- end }}
 {{- end -}}
 {{- end -}}
