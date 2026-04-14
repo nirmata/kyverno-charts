@@ -10,7 +10,8 @@ metadata:
   annotations:
     helm.sh/hook: pre-delete
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
-    helm.sh/hook-weight: "100"
+    {{/* Run first so deployments are scaled to zero before webhook deletion */}}
+    helm.sh/hook-weight: "90"
 spec:
   backoffLimit: 2
   template:
@@ -24,7 +25,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
-      serviceAccount: {{ template "kyverno.admission-controller.serviceAccountName" . }}
+      serviceAccountName: {{ template "kyverno.admission-controller.serviceAccountName" . }}
       {{- with .Values.webhooksCleanup.podSecurityContext }}
       securityContext:
         {{- tpl (toYaml .) $ | nindent 8 }}
@@ -35,18 +36,18 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       containers:
-        - name: kubectl
+        - name: readiness-checker
           image: {{ (include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.webhooksCleanup.image "defaultTag" (default .Chart.AppVersion .Values.webhooksCleanup.image.tag))) | quote }}
-          imagePullPolicy: {{ .Values.webhooksCleanup.image.pullPolicy }}
-          command:
-            - /bin/bash
-            - '-c'
-            - |-
-              set -euo pipefail
-              kubectl scale -n {{ template "kyverno.namespace" . }} deployment -l app.kubernetes.io/part-of={{ template "kyverno.fullname" . }} --replicas=0
-              sleep 30
-              kubectl delete validatingwebhookconfiguration -l webhook.kyverno.io/managed-by=kyverno
-              kubectl delete mutatingwebhookconfiguration -l webhook.kyverno.io/managed-by=kyverno
+          imagePullPolicy: {{ .Values.webhooksCleanup.image.pullPolicy | default "IfNotPresent" }}
+          args:
+            - scale-deploy
+            - --namespace={{ template "kyverno.namespace" . }}
+            - --replicas=0
+            - --label=app.kubernetes.io/part-of={{ template "kyverno.fullname" . }}
+          {{- with .Values.webhooksCleanup.resources }}
+          resources:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           {{- with .Values.webhooksCleanup.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}

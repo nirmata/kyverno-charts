@@ -16,6 +16,19 @@ false
 {{- end -}}
 {{- end -}}
 
+{{- define "kyverno.reportsServerServiceName" -}}
+{{- if (index .Values "reports-server").fullnameOverride -}}
+{{- (index .Values "reports-server").fullnameOverride -}}
+{{- else -}}
+{{- printf "%s-reports-server" .Release.Name -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Effective tag for reports-server readiness-checker image: use jobConfigurations.image.tag when set, else N4K chart appVersion. */}}
+{{- define "kyverno.reportsServerReadinessCheckerTag" -}}
+{{- $rs := index .Values "reports-server" -}}
+{{- default .Chart.AppVersion $rs.jobConfigurations.image.tag -}}
+{{- end -}}
 
 {{- define "kyverno.features.flags" -}}
 {{- $flags := list -}}
