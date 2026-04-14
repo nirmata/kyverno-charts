@@ -86,10 +86,6 @@ spec:
       {{- end }}
       serviceAccountName: {{ template "kyverno.reports-controller.serviceAccountName" . }}
       automountServiceAccountToken: {{ $automountSAToken }}
-      {{- if or (eq (include "kyverno.installReportsServer" .) "true") (and .Values.reportsServer.enabled .Values.reportsServer.waitForReady) }}
-      initContainers:
-        {{- include "kyverno.reportsServer.initContainer" . | nindent 8 }}
-      {{- end }}
       containers:
         - name: controller
           image: {{ include "kyverno.reports-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.reportsController.image "defaultTag" .Chart.AppVersion "fipsEnabled" .Values.fipsEnabled) | quote }}
@@ -105,6 +101,19 @@ spec:
           - containerPort: {{ .Values.reportsController.profiling.port }}
             name: profiling-port
             protocol: TCP
+          {{- end }}
+          {{- if not .Values.reportsController.metering.disabled }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.reportsController.metering.port }}
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.reportsController.metering.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
           {{- end }}
           args:
             {{- if .Values.reportsController.tracing.enabled }}
