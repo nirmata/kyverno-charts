@@ -15,8 +15,6 @@ global:
   # When set, it will override any values set under `imagePullSecrets` under different components across the chart.
   imagePullSecrets: []
 
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.35.0"
-
   # -- Resync period for informers
   resyncPeriod: 15m
 
@@ -510,11 +508,12 @@ webhooksCleanup:
   image:
     # -- (string) Image registry
     registry: ~
+    defaultRegistry: ghcr.io
     # -- Image repository
-    repository: reg.nirmata.io/nirmata/kubectl
+    repository: nirmata/readiness-checker
     # -- Image tag
-    # Defaults to `latest` if omitted
-    tag: '1.35.0'
+    # Defaults to appVersion in Chart.yaml if omitted
+    tag: ~
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -566,12 +565,13 @@ policyReportsCleanup:
 
   image:
     # -- (string) Image registry
-    registry: reg.nirmata.io
+    registry: ~
+    defaultRegistry: ghcr.io
     # -- Image repository
-    repository: nirmata/kubectl
+    repository: nirmata/readiness-checker
     # -- Image tag
-    # Defaults to `latest` if omitted
-    tag: '1.35.0'
+    # Defaults to appVersion in Chart.yaml if omitted
+    tag: ~
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -2444,13 +2444,15 @@ reports-server:
 
   jobConfigurations:
     image:
-      # -- (string) Image registry
+      # -- (string) Image registry. Must be set here: reports-server subchart's post-install hook
+      # builds image as registry/repository:tag and does not use defaultRegistry, so empty registry
+      # produces invalid image "/repository:tag" (InvalidImageName).
       registry: ghcr.io
+      defaultRegistry: ghcr.io
       # -- Image repository
-      repository: nirmata/kubectl
-      # -- Image tag
-      # Defaults to `latest` if omitted
-      tag: '1.35.0'
+      repository: nirmata/readiness-checker
+      # -- Image tag for readiness-checker
+      tag: v1.13.6-n4k.nirmata.24
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
