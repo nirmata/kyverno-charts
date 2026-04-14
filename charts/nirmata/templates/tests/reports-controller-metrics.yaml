@@ -26,8 +26,11 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      command:
-        - /bin/sh
-        - -c
-        - sleep {{ .Values.test.sleep }} ; wget -O- -S --no-check-certificate http://{{ template "kyverno.reports-controller.name" . }}-metrics.{{ template "kyverno.namespace" . }}:{{ .Values.reportsController.metricsService.port }}/metrics
+      args:
+        - check-http
+        - --service-name={{ template "kyverno.admission-controller.serviceName" . }}
+        - --namespace={{ template "kyverno.namespace" . }}
+        - --port={{ .Values.admissionController.service.port }}
+        - --path=health/liveness
+        - --https
 {{- end -}}
