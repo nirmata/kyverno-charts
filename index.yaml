@@ -32270,6 +32270,31 @@ entries:
     - https://github.com/nirmata/kyverno-charts/releases/download/remediator-agent-0.1.0-rc1/remediator-agent-0.1.0-rc1.tgz
     version: 0.1.0-rc1
   reports-server:
+  - annotations:
+      artifacthub.io/links: |
+        - name: EULA
+          url: https://nirmata.com/eula/
+    apiVersion: v2
+    appVersion: v0.2.24
+    created: "2026-04-15T13:04:35.245910492Z"
+    digest: f55a9bb09e4845763b8004c241edff2a00450c8b687005a994166b619b1fdf84
+    home: https://nirmata.com/
+    keywords:
+    - kubernetes
+    - policy reports storage
+    - postgresql
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - email: support@nirmata.com
+      name: Nirmata
+      url: https://nirmata.com/
+    name: reports-server
+    sources:
+    - https://github.com/nirmata/reports-server
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/reports-server-0.2.28/reports-server-0.2.28.tgz
+    version: 0.2.28
   - apiVersion: v2
     appVersion: v0.2.24
     created: "2026-03-26T08:28:34.416301504Z"
@@ -33272,4 +33297,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2026-04-14T13:34:09.365381305Z"
+generated: "2026-04-15T13:04:35.248756211Z"
