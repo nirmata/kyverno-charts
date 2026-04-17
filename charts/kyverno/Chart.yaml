@@ -1,7 +1,7 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 3.7.2
+version: 3.7.3
 appVersion: v1.17.0-n4k.nirmata.3
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
@@ -31,6 +31,9 @@ annotations:
   artifacthub.io/links: |
     - name: Documentation
       url: https://kyverno.io/docs
+    - name: Nirmata Enterprise Software License Agreement (EULA)
+      url: https://nirmata.com/eula/
+  nirmata.com/eula: "https://nirmata.com/eula/"
   # valid kinds are: added, changed, deprecated, removed, fixed and security
   artifacthub.io/changes: |
     - kind: fixed
@@ -53,7 +56,7 @@ dependencies:
     repository: "https://kyverno.github.io/api"
     condition: crds.install
   - name: reports-server
-    version: 0.2.27
+    version: 0.2.28
     repository: "https://nirmata.github.io/kyverno-charts"
     condition: reports-server.install
   - name: openreports
