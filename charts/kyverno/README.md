@@ -836,7 +836,17 @@ Please see https://kyverno.io/docs/installation/#security-vs-operability for mor
 
 ## Source Code
 
-* <https://github.com/kyverno/kyverno>
+* <https://github.com/nirmata/enterprise-kyverno>
+
+
+## License
+
+This software is proprietary to Nirmata Inc. and is made available under the terms of the [Nirmata Enterprise Software License Agreement](https://nirmata.com/eula/). By downloading, installing, or using this software, you acknowledge that you have read and understood, and agree to be bound by, all terms and conditions of that Agreement. If you do not agree, do not download, install, or use this software.
+
+Unauthorized use, reproduction, modification, or distribution of this software, in whole or in part, is strictly prohibited and may result in civil and criminal penalties.
+
+© 2026 Nirmata Inc. All rights reserved.
+
 
 ## Requirements
 
