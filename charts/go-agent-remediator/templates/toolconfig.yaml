@@ -36,8 +36,10 @@ spec:
     {{- else }}
     {{- fail "tool.credentials.pat must be configured when method is 'pat'" }}
     {{- end }}
+    {{- else if eq .Values.tool.credentials.method "nirmata-app" }}
+    # Nirmata GitHub App requires no additional configuration
     {{- else }}
-    {{- fail "tool.credentials.method must be either 'pat' or 'app'" }}
+    {{- fail "tool.credentials.method must be either 'pat', 'app', or 'nirmata-app'" }}
     {{- end }}
   defaults:
     {{- if .Values.tool.defaults.git }}
