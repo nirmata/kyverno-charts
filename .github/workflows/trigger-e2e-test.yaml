@@ -21,7 +21,7 @@ jobs:
             echo "is_nirmata_kyverno_operator=false" >> $GITHUB_ENV
           fi
 
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410  # v6
         if: env.is_kyverno == 'true'
         with:
           github-token: ${{ secrets.CI_ACTION_PAT_TOKEN }}
@@ -33,7 +33,7 @@ jobs:
               ref: 'main'
             })
 
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410  # v6
         if: env.is_nirmata_kyverno_operator == 'true'
         with:
           github-token: ${{ secrets.CI_ACTION_PAT_TOKEN }}
