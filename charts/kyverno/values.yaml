@@ -96,6 +96,50 @@ reportsServer:
   # -- Timeout for waiting for reports-server readiness (in seconds)
   readinessTimeout: 300
 
+  staleCrdsCleanup:
+    # -- Delete stale report CRDs before install/upgrade when reports-server is enabled.
+    # reports-server serves these resources via aggregated API so the CRDs must be absent.
+    enabled: true
+
+    image:
+      # -- (string) Image registry
+      registry: reg.nirmata.io
+      # -- Image repository
+      repository: nirmata/kubectl
+      # -- Image tag
+      tag: '1.34.0'
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+
+    # -- Image pull secrets
+    imagePullSecrets: []
+
+    # -- Security context for the pod
+    podSecurityContext: {}
+
+    # -- Security context for the container
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      runAsGroup: 65534
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+
+    # -- Node labels for pod assignment
+    nodeSelector: {}
+
+    # -- List of node taints to tolerate
+    tolerations: []
+
+    # -- Pod labels
+    podLabels: {}
+
+    # -- Pod annotations
+    podAnnotations: {}
+
 # CRDs configuration
 crds:
 

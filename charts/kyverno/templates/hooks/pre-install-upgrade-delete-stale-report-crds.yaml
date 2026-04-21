@@ -1,0 +1,140 @@
+{{- if and .Values.reportsServer.enabled .Values.reportsServer.staleCrdsCleanup.enabled -}}
+{{- if not .Values.global.templating.enabled -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "kyverno.fullname" . }}-delete-stale-report-crds
+  namespace: {{ template "kyverno.namespace" . }}
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
+    helm.sh/hook-weight: "1"
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ template "kyverno.fullname" . }}:delete-stale-report-crds
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
+    helm.sh/hook-weight: "1"
+rules:
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - get
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "kyverno.fullname" . }}:delete-stale-report-crds
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
+    helm.sh/hook-weight: "1"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "kyverno.fullname" . }}:delete-stale-report-crds
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "kyverno.fullname" . }}-delete-stale-report-crds
+    namespace: {{ template "kyverno.namespace" . }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "kyverno.fullname" . }}-delete-stale-report-crds
+  namespace: {{ template "kyverno.namespace" . }}
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
+    helm.sh/hook-weight: "10"
+spec:
+  backoffLimit: 2
+  template:
+    {{- if or .Values.reportsServer.staleCrdsCleanup.podAnnotations .Values.reportsServer.staleCrdsCleanup.podLabels }}
+    metadata:
+      {{- with .Values.reportsServer.staleCrdsCleanup.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.reportsServer.staleCrdsCleanup.podLabels }}
+      labels:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- end }}
+    spec:
+      serviceAccountName: {{ template "kyverno.fullname" . }}-delete-stale-report-crds
+      automountServiceAccountToken: false
+      {{- with .Values.reportsServer.staleCrdsCleanup.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      {{- with .Values.reportsServer.staleCrdsCleanup.imagePullSecrets | default .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- tpl (include "kyverno.sortedImagePullSecrets" .) $ | nindent 8 }}
+      {{- end }}
+      {{- with .Values.reportsServer.staleCrdsCleanup.tolerations | default .Values.global.tolerations }}
+      tolerations:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with .Values.reportsServer.staleCrdsCleanup.nodeSelector | default .Values.global.nodeSelector }}
+      nodeSelector:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: kubectl
+          image: {{ (include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.reportsServer.staleCrdsCleanup.image "defaultTag" .Values.reportsServer.staleCrdsCleanup.image.tag "fipsEnabled" .Values.fipsEnabled)) | quote }}
+          imagePullPolicy: {{ .Values.reportsServer.staleCrdsCleanup.image.pullPolicy }}
+          command:
+            - kubectl
+            - delete
+            - crd
+            - clusterephemeralreports.reports.kyverno.io
+            - clusterpolicyreports.wgpolicyk8s.io
+            - ephemeralreports.reports.kyverno.io
+            - policyreports.wgpolicyk8s.io
+            - --ignore-not-found
+          {{- with .Values.reportsServer.staleCrdsCleanup.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: serviceaccount-token
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              readOnly: true
+      volumes:
+        - name: serviceaccount-token
+          projected:
+            defaultMode: 0444
+            sources:
+              - serviceAccountToken:
+                  expirationSeconds: 3607
+                  path: token
+              - configMap:
+                  name: kube-root-ca.crt
+                  items:
+                    - key: ca.crt
+                      path: ca.crt
+              - downwardAPI:
+                  items:
+                    - path: namespace
+                      fieldRef:
+                        apiVersion: v1
+                        fieldPath: metadata.namespace
+{{- end -}}
+{{- end -}}
