@@ -364,6 +364,11 @@ apiServicesManagement:
     # -- Store reports in reports-server
     enabled: true
 
+    # -- Install v1alpha2.wgpolicyk8s.io APIService.
+    # Set to false on clusters where ACM (Advanced Cluster Management) manages
+    # policyreports.wgpolicyk8s.io via its own CRD to avoid OpenAPI schema conflicts.
+    installWgpolicyk8sService: true
+
     # -- Store ephemeral reports in reports-server
     installEphemeralReportsService: true
     # -- Store open reports in reports-server

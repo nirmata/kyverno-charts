@@ -1,4 +1,5 @@
 {{- if and .Values.apiServicesManagement.installApiServices.enabled (not .Values.apiServicesManagement.migrateReportsServer.enabled) }}
+{{- if .Values.apiServicesManagement.installApiServices.installWgpolicyk8sService }}
 ---
 apiVersion: apiregistration.k8s.io/v1
 kind: APIService
@@ -17,6 +18,7 @@ spec:
     namespace: {{ $.Release.Namespace }}
   version: v1alpha2
   versionPriority: 100
+{{- end }}
 
 {{- if .Values.apiServicesManagement.installApiServices.installEphemeralReportsService }}
 ---
