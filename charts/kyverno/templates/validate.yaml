@@ -105,6 +105,32 @@
   {{- end -}}
 {{- end -}}
 
+{{- if eq (include "kyverno.installReportsServer" .) "true" -}}
+  {{- $staleCRDs := list -}}
+  {{- range list "policyreports.wgpolicyk8s.io" "clusterpolicyreports.wgpolicyk8s.io" "ephemeralreports.reports.kyverno.io" "clusterephemeralreports.reports.kyverno.io" -}}
+    {{- if lookup "apiextensions.k8s.io/v1" "CustomResourceDefinition" "" . -}}
+      {{- $staleCRDs = append $staleCRDs . -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if $staleCRDs -}}
+    {{- fail (join "\n" (list
+      ""
+      ""
+      "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+      "  | reports-server is enabled but conflicting CRDs already exist in the cluster:                                                          |"
+      (printf "  |   %s" (join ", " $staleCRDs))
+      "  |                                                                                                                                        |"
+      "  | These CRDs conflict with the aggregated APIServices registered by reports-server.                                                     |"
+      "  | Please delete them before installing with reports-server enabled:                                                                      |"
+      "  |   kubectl delete crd policyreports.wgpolicyk8s.io clusterpolicyreports.wgpolicyk8s.io                                                 |"
+      "  |                    ephemeralreports.reports.kyverno.io clusterephemeralreports.reports.kyverno.io                                      |"
+      "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+      ""
+      ))
+  -}}
+  {{- end -}}
+{{- end -}}
+
 {{- if hasKey .Values "mode" -}}
   {{- fail "mode is not supported anymore, please remove it from your release and use admissionController.replicas instead." -}}
 {{- end -}}
