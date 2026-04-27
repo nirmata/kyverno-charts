@@ -56,6 +56,6 @@ dependencies:
     repository: "https://nirmata.github.io/kyverno-charts"
     condition: reports-server.install
   - name: openreports
-    version: "0.1.0"
+    version: 0.1.0
     repository: "https://openreports.github.io/reports-api"
     condition: openreports.installCrds
