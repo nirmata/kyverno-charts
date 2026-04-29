@@ -98,9 +98,6 @@ spec:
         {{- with .Values.admissionController.extraInitContainers }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- if or (eq (include "kyverno.installReportsServer" .) "true") (and .Values.reportsServer.enabled .Values.reportsServer.waitForReady) }}
-        {{- include "kyverno.reportsServer.initContainer" . | nindent 8 }}
-        {{- end }}
         - name: kyverno-pre
           image: {{ include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.admissionController.initContainer.image "defaultTag" (default .Chart.AppVersion .Values.admissionController.initContainer.image.tag) "fipsEnabled" .Values.fipsEnabled) | quote }}
           imagePullPolicy: {{ default .Values.admissionController.container.image.pullPolicy .Values.admissionController.initContainer.image.pullPolicy }}
