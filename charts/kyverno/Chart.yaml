@@ -34,7 +34,7 @@ annotations:
     - name: Nirmata Enterprise Software License Agreement (EULA)
       url: https://nirmata.com/eula/
   nirmata.com/eula: "https://nirmata.com/eula/"
-  # valid kinds are: added, changed, deprecated, removed, fixed and security
+  # valid kinds are: added, changed, deprecated, removed, fixed and security.
   artifacthub.io/changes: |
     - kind: added
       description: Add a key to preserve configmap settings during upgrade
