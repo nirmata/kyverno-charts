@@ -26,6 +26,24 @@
 {{- end -}}
 
 
+{{- if and (eq (include "kyverno.installReportsServer" .) "true") (eq .Values.crds.reportsServer.enabled false) -}}
+  {{- fail (join "\n" (list
+    ""
+    ""
+    "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+    "  | reports-server is enabled but crds.reportsServer.enabled is false.                                                                   |"
+    "  | When reports-server is installed it registers aggregated APIServices for reports.kyverno.io and wgpolicyk8s.io.                       |"
+    "  | The native CRDs for those groups must be suppressed to avoid a duplicate-path error in the Kubernetes OpenAPI spec (K8s 1.28+).       |"
+    "  | Add the following to your Helm values:                                                                                                |"
+    "  |   crds:                                                                                                                               |"
+    "  |     reportsServer:                                                                                                                    |"
+    "  |       enabled: true                                                                                                                   |"
+    "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+    ""
+    ))
+  -}}
+{{- end -}}
+
 {{- if and (eq .Values.crds.reportsServer.enabled true) (eq (include "kyverno.installReportsServer" .) "false") -}}
   {{- $reportsServerPods := lookup "v1" "Pod" (include "kyverno.namespace" .) "" -}}
   {{- $apiServices := lookup "apiregistration.k8s.io/v1" "APIService" "" "" -}}
