@@ -459,6 +459,13 @@ spec:
                       "Warning", "Unhealthy")
                     type: string
                 type: object
+              currentRunId:
+                description: |-
+                  CurrentRunID is the UUID generated at the start of the current (or most recent) Reconcile() call.
+                  policies-service reads this field from Remediator events to create an agent_run row in PostgreSQL,
+                  which enables run history tracking including runs that never touch a RemediationRecord
+                  (e.g. auth failures that occur before any collector is processed).
+                type: string
               lastRunSummary:
                 description: LastRunSummary contains details about the most recent
                   remediation run
