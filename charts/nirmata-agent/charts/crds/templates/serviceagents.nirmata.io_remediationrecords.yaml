@@ -20,6 +20,9 @@ spec:
     - jsonPath: .spec.collectorId
       name: Collector
       type: string
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
     - jsonPath: .status.totalResources
       name: Resources
       type: integer
@@ -266,6 +269,18 @@ spec:
                 required:
                 - name
                 type: object
+              scheduledAt:
+                description: |-
+                  ScheduledAt is the cron tick time that triggered the run that created this record.
+                  Populated from the parent agent's Status.LastScheduleTime.
+                format: date-time
+                type: string
+              triggerSource:
+                description: TriggerSource describes what caused this run.
+                enum:
+                - schedule
+                - manual
+                type: string
             required:
             - collectorId
             type: object
@@ -275,6 +290,12 @@ spec:
               lastUpdateTime:
                 description: LastUpdateTime is when this record was last updated
                 format: date-time
+                type: string
+              phase:
+                description: |-
+                  Phase is the lifecycle phase of the current (or most recent) reconcile run.
+                  Set to Running at the start of each collector's processing, then updated to
+                  Succeeded, Failed, or Skipped at completion.
                 type: string
               resourceStates:
                 additionalProperties:
@@ -478,6 +499,14 @@ spec:
                   ResourceStates maps resource keys to their remediation state
                   Key format: "namespace/kind/name" or "kind/name" for cluster-scoped resources
                 type: object
+              runId:
+                description: |-
+                  RunID is a UUID generated once per Reconcile() call.
+                  It groups all RemediationRecord updates from a single reconcile loop so that
+                  policies-service can correlate run history with individual outcomes (agent_outcome rows).
+                  Run-level metrics (violationsFound, actionsExecuted, etc.) are sourced from
+                  Remediator.Status.LastRunSummary which already carries them — not duplicated here.
+                type: string
               totalResources:
                 description: TotalResources is the total number of resources tracked
                 format: int32
