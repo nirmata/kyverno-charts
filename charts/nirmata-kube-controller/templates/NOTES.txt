@@ -1,0 +1,10 @@
+​
+Release:       {{ .Release.Name }}
+Namespace:     {{ .Release.Namespace }}
+Revision:      {{ .Release.Revision }}
+ChartVersion:  {{ .Chart.Version }}
+AppVersion:    {{ .Chart.AppVersion }}
+
+Verify the deployment:
+  kubectl -n {{ .Release.Namespace }} get pods
+  kubectl -n {{ .Release.Namespace }} rollout status deploy/nirmata-kube-controller

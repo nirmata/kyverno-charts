@@ -704,8 +704,7 @@ spec:
       serviceAccount: nirmata
       containers:
       - name: otel-agent
-        command:
-        - /otelcol
+        args:
         - --config=/etc/otel/config.yaml
         image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/otel-collector:{{ .Values.otelAgent.imageTag }}"
         resources:
