@@ -42,9 +42,9 @@ global:
 # otelAgent contains configuration for the nirmata otel agent, which is used for observability and monitoring.
 otelAgent:
   # imageTag is the tag or version of the otel-agent image.
-  imageTag: "nirmata-0.130.1"
+  imageTag: "nirmata-0.151.0"
 
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.33.2"
+  kubectlImage: "ghcr.io/nirmata/kubectl:nirmata-kubectl-1.35-hardened"
   # resources defines the resource requests and limits for the otel-agent
   resources:
     requests:
