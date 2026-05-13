@@ -2,13 +2,23 @@
 # @ignored
 templating:
   enabled: false
+
 fipsEnabled: false
 
+postgresql:
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 16.1.0-debian-11-r22
+    digest: ""
 
-# cloudnative-pg:
-#   crds:
-#     create: false
+  # -- Deploy postgresql dependency chart
+  enabled: false
 
+  auth:
+    postgresPassword: reports
+
+    database: reportsdb
 
 # -- Name override
 nameOverride: ""
@@ -18,6 +28,9 @@ fullnameOverride: ""
 
 # -- Number of pod replicas
 replicaCount: 1
+
+# -- Optional cluster name, used to easily identify database records when querying the database directly
+clusterName: ""
 
 image:
   # -- Image registry
@@ -55,11 +68,6 @@ commonLabels: {}
 podSecurityContext:
   fsGroup: 2000
 
-# -- Server version to use (v1 or v2). Defaults to v1 for backward compatibility.
-# v1: Stable implementation (default)
-# v2: Optimized implementation with improved performance
-serverVersion: v1
-
 # -- Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env.
 podEnv: {}
 
@@ -68,7 +76,7 @@ podEnv: {}
 securityContext:
   capabilities:
     drop:
-    - ALL
+      - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
   runAsUser: 1000
@@ -157,11 +165,13 @@ metrics:
 resources:
   # -- Container resource limits
   limits:
-    memory: 128Mi
+  # cpu: 100m
+  # memory: 128Mi
+
   # -- Container resource requests
   requests:
-    cpu: 100m
-    memory: 64Mi
+  # cpu: 100m
+  # memory: 128Mi
 
 autoscaling:
   # -- Enable autoscaling
@@ -173,31 +183,30 @@ autoscaling:
   # -- Max number of replicas
   maxReplicas: 100
 
-  # -- Target CPU utilisation
+  # -- Target CPU utilisation percentage
   targetCPUUtilizationPercentage: 80
 
-  # -- Target Memory utilisation
+  # -- Target memory utilization percentage
   targetMemoryUtilizationPercentage: ~
 
-  # -- HPA behavior configuration (optional)
-  # behavior:
-  #   scaleDown:
-  #     stabilizationWindowSeconds: 300
-  #     policies:
-  #     - type: Percent
-  #       value: 100
-  #       periodSeconds: 15
-  #   scaleUp:
-  #     stabilizationWindowSeconds: 0
-  #     policies:
-  #     - type: Percent
-  #       value: 100
-  #       periodSeconds: 15
-  #     - type: Pods
-  #       value: 4
-  #       periodSeconds: 15
-  #     selectPolicy: Max
+  # -- Configures custom HPA metrics
+  # Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+  metrics: []
 
+  # -- Configures the scaling behavior of the target in both Up and Down directions.
+  behavior: {}
+  # scaleDown:
+  #  stabilizationWindowSeconds: 300
+  #  policies:
+  #    - type: Pods
+  #      value: 1
+  #      periodSeconds: 180
+  # scaleUp:
+  #   stabilizationWindowSeconds: 300
+  #   policies:
+  #     - type: Pods
+  #       value: 2
+  #       periodSeconds: 60
 
 # -- Using a PDB is highly recommended for highly available deployments. Defaults to enabled. The default configuration doesn't prevent disruption when using a single replica
 pdb:
@@ -225,6 +234,8 @@ service:
   port: 443
 
 config:
+  # -- Skip database migration on startup
+  skipMigration: false
 
   etcd:
     image:
@@ -235,30 +246,40 @@ config:
       # -- Image tag
       tag: 3.6.9-hardened
 
-    # -- Image pull secrets
+    # -- Image pull secrets for the etcd container image
     imagePullSecrets: []
 
     enabled: true
     endpoints: ~
     insecure: true
-    # PVC Storage configuration for etcd persistence:
-    # - Default: If not specified, the chart will allocate 2Gi of storage.
-    # - Override: Set a custom storage size (e.g., "2Gi", "5Gi") as needed.
-    # - NOTE: keep this **10‑20 % greater** than `quotaBackendBytes`
-    # This value defines the size of the persistent volume claim (PVC) for etcd.
+
+    # PVC storage size for etcd persistence (e.g., "2Gi", "5Gi"). This sizes
+    # the persistent volume claim, not the etcd DB quota.
+    # NOTE: keep this 10-20% greater than `quotaBackendBytes` so etcd has
+    # filesystem headroom above its logical DB quota.
     storage: 2Gi
 
-    # -- Storage class name for etcd PVC
-    # - Leave empty to use the default storage class
-    # - Set to a specific storage class name (e.g., "fast", "standard", "aws-ebs")
-    storageClassName: ""
-
-  # Quota for etcd's internal database (BoltDB) **in bytes**
-  # - What it limits: the logical size of the etcd DB file, *not* the PVC.
-  # - Format: plain integer bytes (no Ki/Mi/Gi suffix).
+    # Quota for etcd's internal database (BoltDB) in bytes. Limits the logical
+    # size of the etcd DB file, not the PVC. Format: plain integer bytes
+    # (no Ki/Mi/Gi suffix). Default ~1.8GiB pairs with the 2Gi PVC default.
     quotaBackendBytes: 1932735283
 
-    # Auto-compaction configuration for etcd
+    # -- Storage class name for etcd PVC.
+    # Leave empty to use the cluster's default storage class. Set to a specific
+    # storage class name (e.g., "fast", "standard", "aws-ebs") to pin the PV.
+    storageClassName: ""
+
+    ## Node labels for etcd pod assignment.
+    ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+    nodeSelector: {}
+
+    ## Tolerations for etcd pod assignment.
+    ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+    tolerations: []
+
+    # Auto-compaction configuration for etcd. Compaction reclaims storage taken
+    # by historical revisions; without it, the etcd DB grows unboundedly under
+    # write load.
     autoCompaction:
       # -- Enable auto-compaction for etcd
       enabled: true
@@ -267,46 +288,26 @@ config:
       # -- Auto-compaction retention (e.g., 30m for 30 minutes, 1h for 1 hour)
       retention: 30m
 
-    ## @param nodeSelector [object] Node labels for pod assignment
-    ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
-    ##
-    nodeSelector: {}
-
-    ## @param tolerations [array] Tolerations for pod assignment
-    ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-    ##
-    tolerations: []
-
-    # -- Pod-level security context for etcd pods
-    # Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls)
-    podSecurityContext: {}
-
-    # -- Container-level security context for the etcd container
-    # @default -- See [values.yaml](values.yaml)
-    securityContext: {}
-
   db:
 
     # -- If set, a secret will be created with the database connection information. If this is set to true, secretName must be set.
     secretCreation: false
 
-    # -- If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password` and `db.readReplicaHosts`.
+    # -- If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password`, and `db.readReplicaHosts`.
     secretName: ""
 
     # -- Database host
-    host: reports-server-cluster-rw.reports-server
-
+    host: ""
     # -- The database host will be read from this `key` in the specified Secret, when `db.secretName` is set.
     hostSecretKeyName: "host"
 
-    # -- Database read replica hosts
+    # -- Database read replica hosts. Comma-separated list of hostnames; reads are routed to a random replica with fallback to the primary.
     readReplicaHosts: ""
-
     # -- The database read replica hosts will be read from this `key` in the specified Secret, when `db.secretName` is set.
-    readReplicaHostsSecretKeyName: readReplicaHosts
+    readReplicaHostsSecretKeyName: "readReplicaHosts"
 
     # -- Database port
-    port:
+    port: 5432
     # -- The database port will be read from this `key` in the specified Secret, when `db.secretName` is set.
     portSecretKeyName: "port"
 
@@ -316,13 +317,13 @@ config:
     dbNameSecretKeyName: "dbname"
 
     # -- Database user
-    user: app
+    user: postgres
 
     # -- The database username will be read from this `key` in the specified Secret, when `db.secretName` is set.
     userSecretKeyName: "username"
 
     # -- Database password
-    password: password
+    password: reports
 
     # -- The database password will be read from this `key` in the specified Secret, when `db.secretName` is set.
     passwordSecretKeyName: "password"
@@ -339,42 +340,43 @@ config:
     # -- Database SSL cert
     sslcert: ""
 
-    # -- Volume configuration for RDS certificate
+    # -- Volume configuration for an RDS (or other managed Postgres) CA bundle.
+    # When `secretName` is set, the chart mounts the named Secret at `mountPath`
+    # inside the reports-server pod. Pair with `sslrootcert` pointing at a file
+    # under that mountPath to enable TLS verification.
     sslrds:
       secretName: ""
       mountPath: "/etc/ssl/rds"
 
-    # -- Database connection pool configuration (per reports-server pod)
-    # These control how many concurrent connections each pod can open.
-    # Defaults match the current hardcoded behavior.
+    # -- Database connection pool configuration (per reports-server pod).
+    # These control how many concurrent PostgreSQL connections each pod opens.
+    # Defaults match the storage layer's built-in defaults.
     connectionPool:
       # -- Maximum number of open connections per pod (sql.DB.SetMaxOpenConns)
       maxOpenConns: 25
       # -- Maximum number of idle connections per pod (sql.DB.SetMaxIdleConns)
       maxIdleConns: 5
-      # -- Maximum lifetime of a connection in seconds (0 = use default of 300s / 5m)
+      # -- Maximum lifetime of a connection in seconds (0 = use storage default of 300s / 5m)
       connMaxLifetimeSeconds: 300
-      # -- Maximum idle time of a connection in seconds (0 = use default of 120s / 2m)
+      # -- Maximum idle time of a connection in seconds (0 = use storage default of 120s / 2m)
       connMaxIdleTimeSeconds: 120
 
 apiServicesManagement:
+  # -- Manage APIService objects for the reports-server. APIServices are anchored
+  # to the chart's ClusterRole via OwnerReferences and garbage-collected on uninstall.
+  enabled: true
+
   # -- Install api services in manifest
   installApiServices:
-
     # -- Store reports in reports-server
     enabled: true
 
     # -- Store ephemeral reports in reports-server
     installEphemeralReportsService: true
+
     # -- Store open reports in reports-server
     installOpenreportsService: true
 
-  migrateReportsServer:
-    # -- Create api services only when reports-server is ready and migration is guaranteed
-    enabled: false
-
-
-jobConfigurations:
   image:
     # -- (string) Image registry
     registry: ghcr.io
@@ -427,3 +429,9 @@ jobConfigurations:
         - ALL
     seccompProfile:
       type: RuntimeDefault
+
+extraObjects: []
+
+openreports:
+  # -- Deploy openreports-api CRDs
+  enabled: false

@@ -1,21 +1,30 @@
 apiVersion: v2
 name: reports-server
 type: application
-version: 0.2.30-rc1
-appVersion: v0.2.26-rc1
+version: 0.3.0-rc1
+appVersion: v0.3.0-rc3
 home: https://nirmata.com/
 annotations:
   artifacthub.io/links: |
     - name: EULA
       url: https://nirmata.com/eula/
 keywords:
-- kubernetes
-- policy reports storage
-- postgresql
+  - kubernetes
+  - policy reports storage
+  - postgresql
 sources:
-- https://github.com/nirmata/reports-server
+  - https://github.com/nirmata/reports-server
 maintainers:
-- name: Nirmata
-  url: https://nirmata.com/
-  email: support@nirmata.com
+  - name: Nirmata
+    url: https://nirmata.com/
+    email: support@nirmata.com
 kubeVersion: ">=1.16.0-0"
+dependencies:
+  - condition: postgresql.enabled
+    name: postgresql
+    version: 13.4.1
+    repository: oci://registry-1.docker.io/bitnamicharts
+  - condition: openreports.enabled
+    name: openreports
+    repository: oci://ghcr.io/openreports/charts
+    version: 0.2.1

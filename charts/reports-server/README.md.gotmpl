@@ -8,16 +8,11 @@ TODO
 
 ## Installing the Chart
 
-Add `reports-server` Helm repository:
+Install `reports-server` Helm repository:
 
 ```shell
-helm repo add reports-server https://kyverno.github.io/reports-server/
-```
-
-Install `reports-server` Helm chart:
-
-```shell
-helm install reports-server --namespace reports-server --create-namespace reports-server/reports-server
+helm repo add nirmata https://nirmata.github.io/kyverno-charts/
+helm install reports-server nirmata/reports-server --namespace reports-server --create-namespace
 ```
 
 {{ template "chart.valuesSection" . }}

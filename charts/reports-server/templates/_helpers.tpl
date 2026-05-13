@@ -93,6 +93,7 @@ valueFrom:
   secretKeyRef:
     key: {{ .Values.config.db.readReplicaHostsSecretKeyName }}
     name: {{ .Values.config.db.secretName }}
+    optional: true
 {{- else -}}
 value: {{ .Values.config.db.readReplicaHosts | quote }}
 {{- end }}
