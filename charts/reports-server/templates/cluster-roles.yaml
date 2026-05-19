@@ -41,12 +41,12 @@ rules:
     - apiservices
   verbs:
     - create
+    - get
 - apiGroups:
     - apiregistration.k8s.io
   resources:
     - apiservices
   verbs:
-    - get
     - delete
     - update
     - patch
@@ -54,6 +54,8 @@ rules:
     - v1.reports.kyverno.io
     - v1alpha2.wgpolicyk8s.io
     - v1alpha1.openreports.io
+    - v1beta1.wgpolicyk8s.io
+    - v1alpha1.wgpolicyk8s.io
 - apiGroups:
     - wgpolicyk8s.io
   resources:
