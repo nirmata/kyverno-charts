@@ -27226,6 +27226,29 @@ entries:
     version: 3.0.5-rc7
   nirmata-agent:
   - apiVersion: v2
+    appVersion: v0.2.7
+    created: "2026-05-20T14:02:51.216056235Z"
+    dependencies:
+    - condition: crds.install
+      name: crds
+      repository: ""
+      version: 0.1.0
+    description: A Helm chart for Nirmata Service Agents
+    digest: 49356493ec152d0ca6dce0e4b73fdcb384ef34652cca01f55c5362d98d34a526
+    keywords:
+    - kubernetes
+    - serviceagents
+    - argocd
+    - remediation
+    maintainers:
+    - email: support@nirmata.com
+      name: Nirmata
+    name: nirmata-agent
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/nirmata-agent-v0.2.7/nirmata-agent-v0.2.7.tgz
+    version: v0.2.7
+  - apiVersion: v2
     appVersion: v0.2.7-rc.5
     created: "2026-05-04T13:47:17.318684661Z"
     dependencies:
@@ -35009,4 +35032,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2026-05-20T13:51:46.181748266Z"
+generated: "2026-05-20T14:02:51.217848188Z"
