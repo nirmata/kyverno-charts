@@ -15,6 +15,9 @@ metadata:
   {{- end }}
   labels:
     {{- include "kyverno.cleanup-controller.labels" . | nindent 4 }}
+    {{- with .Values.cleanupController.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
   {{- with .Values.cleanupController.annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
@@ -60,7 +63,7 @@ spec:
       topologySpreadConstraints:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-      {{- with .Values.cleanupController.priorityClassName }}
+      {{- with .Values.cleanupController.priorityClassName | default .Values.global.priorityClassName }}
       priorityClassName: {{ . | quote }}
       {{- end }}
       {{- with .Values.cleanupController.hostNetwork }}
@@ -92,6 +95,10 @@ spec:
       {{- end }}
       serviceAccountName: {{ template "kyverno.cleanup-controller.serviceAccountName" . }}
       automountServiceAccountToken: {{ $automountSAToken }}
+      {{- if and .Values.reportsServer.enabled .Values.reportsServer.waitForReady }}
+      initContainers:
+        {{- include "kyverno.reportsServer.initContainer" . | nindent 8 }}
+      {{- end }}
       containers:
         - name: controller
           image: {{ include "kyverno.cleanup-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.cleanupController.image "defaultTag" .Chart.AppVersion "fipsEnabled" .Values.fipsEnabled) | quote }}
@@ -130,6 +137,11 @@ spec:
             {{- if not .Values.cleanupController.metering.disabled }}
             - --otelConfig={{ .Values.cleanupController.metering.config }}
             - --metricsPort={{ .Values.cleanupController.metering.port }}
+            {{- if .Values.cleanupController.metering.secure }}
+            - --metricsCASecretName={{ template "kyverno.cleanup-controller.name" . }}.{{ template "kyverno.namespace" . }}.metering.kyverno-tls-ca
+            - --metricsTLSSecretName={{ template "kyverno.cleanup-controller.name" . }}.{{ template "kyverno.namespace" . }}.metering.kyverno-tls-pair
+            - --metricsKeyAlgorithm={{ .Values.cleanupController.metering.tlsKeyAlgorithm | default "RSA" }}
+            {{- end }}
             {{- with .Values.cleanupController.metering.collector }}
             - --otelCollector={{ . }}
             {{- end }}
@@ -207,6 +219,9 @@ spec:
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               readOnly: true
             {{- end }}
+            {{- with .Values.cleanupController.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       volumes:
         - name: apicall-token
           projected:
@@ -216,7 +231,7 @@ spec:
                   path: token
                   expirationSeconds: {{ .Values.apiCallToken.expirationSeconds | default 3600 }}
                   {{- with .Values.apiCallToken.audience }}
-                  audience: {{ . | quote }}
+                  audience: {{ . }}
                   {{- end }}
         {{- if not $automountSAToken }}
         - name: serviceaccount-token
@@ -224,8 +239,11 @@ spec:
             defaultMode: 0444
             sources:
               - serviceAccountToken:
-                  expirationSeconds: 3607
+                  expirationSeconds: {{ .Values.cleanupController.rbac.serviceAccount.projectedServiceAccountToken.expirationSeconds | default 3600 }}
                   path: token
+                  {{- with .Values.cleanupController.rbac.serviceAccount.projectedServiceAccountToken.audience }}
+                  audience: {{ . }}
+                  {{- end }}
               - configMap:
                   name: kube-root-ca.crt
                   items:
@@ -237,6 +255,9 @@ spec:
                       fieldRef:
                         apiVersion: v1
                         fieldPath: metadata.namespace
-      {{- end }}
+        {{- end }}
+        {{- with .Values.cleanupController.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
 {{- end -}}
 {{- end -}}

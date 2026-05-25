@@ -15,6 +15,9 @@ metadata:
   {{- end }}
   labels:
     {{- include "kyverno.admission-controller.labels" . | nindent 4 }}
+    {{- with .Values.admissionController.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
   {{- with .Values.admissionController.annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
@@ -62,7 +65,7 @@ spec:
       topologySpreadConstraints:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-      {{- with .Values.admissionController.priorityClassName }}
+      {{- with .Values.admissionController.priorityClassName | default .Values.global.priorityClassName }}
       priorityClassName: {{ . | quote }}
       {{- end }}
       {{- with .Values.admissionController.hostNetwork }}
@@ -301,6 +304,9 @@ spec:
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               readOnly: true
             {{- end }}
+            {{- with .Values.admissionController.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       volumes:
       - name: sigstore
         {{- toYaml (required "A valid .Values.admissionController.sigstoreVolume entry is required" .Values.admissionController.sigstoreVolume) | nindent 8 }}
@@ -346,5 +352,8 @@ spec:
                     fieldRef:
                       apiVersion: v1
                       fieldPath: metadata.namespace
+      {{- end }}
+      {{- with .Values.admissionController.extraVolumes }}
+      {{- toYaml . | nindent 6 }}
       {{- end }}
 {{- end -}}

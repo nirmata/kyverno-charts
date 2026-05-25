@@ -8,6 +8,9 @@ metadata:
   namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.background-controller.labels" . | nindent 4 }}
+    {{- with .Values.backgroundController.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
   {{- with .Values.backgroundController.annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
@@ -53,7 +56,7 @@ spec:
       topologySpreadConstraints:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-      {{- with .Values.backgroundController.priorityClassName }}
+      {{- with .Values.backgroundController.priorityClassName | default .Values.global.priorityClassName }}
       priorityClassName: {{ . | quote }}
       {{- end }}
       {{- with .Values.backgroundController.hostNetwork }}
@@ -129,6 +132,7 @@ spec:
             {{- include "kyverno.features.flags" (pick (mergeOverwrite (deepCopy .Values.features) .Values.backgroundController.featuresOverride)
               "reporting"
               "configMapCaching"
+              "controllerRuntimeMetrics"
               "deferredLoading"
               "globalContext"
               "logging"
@@ -188,6 +192,9 @@ spec:
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               readOnly: true
             {{- end }}
+            {{- with .Values.backgroundController.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       volumes:
       - name: apicall-token
         projected:
@@ -231,6 +238,9 @@ spec:
                     fieldRef:
                       apiVersion: v1
                       fieldPath: metadata.namespace
+      {{- end }}
+      {{- with .Values.backgroundController.extraVolumes }}
+      {{- toYaml . | nindent 6 }}
       {{- end }}
 {{- end -}}
 {{- end -}}
