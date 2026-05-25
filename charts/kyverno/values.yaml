@@ -39,6 +39,9 @@ global:
     #   path: /etc/pki/tls/ca-certificates.crt
     #   type: File
 
+  # -- Global priority class name for pod priority. Non-global values will override the global value.
+  priorityClassName: ''
+
   # -- Additional container environment variables to apply to all containers and init containers
   extraEnvVars: []
   # Example setting proxy
@@ -93,8 +96,8 @@ reportsServer:
   # -- Wait for reports-server to be ready before starting Kyverno components
   waitForReady: true
 
-  # -- Timeout for waiting for reports-server readiness (as duration string, e.g. 300s, 5m)
-  readinessTimeout: 300s
+  # -- Timeout for waiting for reports-server readiness (in seconds)
+  readinessTimeout: 300
 
 # CRDs configuration
 crds:
@@ -163,6 +166,7 @@ crds:
       - policies.kyverno.io
       - policyexceptions.kyverno.io
       - updaterequests.kyverno.io
+      # policies.kyverno.io
       - deletingpolicies.policies.kyverno.io
       - generatingpolicies.policies.kyverno.io
       - imagevalidatingpolicies.policies.kyverno.io
@@ -170,6 +174,9 @@ crds:
       - mutatingpolicies.policies.kyverno.io
       - namespacedmutatingpolicies.policies.kyverno.io
       - namespaceddeletingpolicies.policies.kyverno.io
+      - namespacedgeneratingpolicies.policies.kyverno.io
+      - namespacedimagevalidatingpolicies.policies.kyverno.io
+      - namespacedmutatingpolicies.policies.kyverno.io
       - namespacedvalidatingpolicies.policies.kyverno.io
       - policyexceptions.policies.kyverno.io
       - validatingpolicies.policies.kyverno.io
@@ -242,7 +249,16 @@ crds:
       # -- Toggle automounting of the ServiceAccount
       automountServiceAccountToken: true
 
-# -- Scoped token injected into outbound APICall and CEL HTTP requests.
+      # -- Projected service account token configuration (only used when automountServiceAccountToken is false)
+      projectedServiceAccountToken:
+        # -- Token expiration time in seconds.
+        # The kubelet will request a new token before the token expires.
+        expirationSeconds: 3600
+        # -- Audience for the projected service account token.
+        # If not set, the token will have no audience restriction.
+        audience: ""
+
+# -- Scoped token injected into outbound APICall and CEL http requests.
 # This token carries a custom audience so that if leaked to an external service
 # it cannot be replayed against the Kubernetes API server.
 apiCallToken:
@@ -272,6 +288,16 @@ config:
   # -- Additional annotations to add to the configmap.
   annotations: {}
 
+  # -- Disable auto webhook generation. This is useful for environments like AKS
+  # where certain webhooks may cause issues.
+  disableAutoWebhookGeneration:
+    # -- Enable the disableAutoWebhookGeneration feature
+    enable: false
+    # -- List of webhooks to disable
+    webhooks:
+      - kyverno-policy-validating-webhook-cfg
+      - kyverno-exception-validating-webhook-cfg
+
   # -- Enable registry mutation for container images. Enabled by default.
   enableDefaultRegistryMutation: true
 
@@ -295,20 +321,13 @@ config:
   # -- Generate success events.
   generateSuccessEvents: false
 
-  # -- Disable auto webhook generation. This is useful for environments like AKS
-  # where certain webhooks may cause issues.
-  disableAutoWebhookGeneration:
-    # -- Enable the disableAutoWebhookGeneration feature
-    enable: false
-    # -- List of webhooks to disable
-    webhooks:
-      - kyverno-policy-validating-webhook-cfg
-      - kyverno-exception-validating-webhook-cfg
-
-  # -- Generate events on policy objects.
-  # When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects.
-  # This reduces event noise in multi-tenant environments where policy events may not be needed.
-  generatePolicyEvents: true
+  # -- Comma-separated list of event actions for which success events should be generated.
+  # When set, only success events matching the specified actions are emitted.
+  # Requires `generateSuccessEvents` to be `true`.
+  # Valid values: "Resource Mutated", "Resource Passed", "Resource Generated", "Resource Cleaned Up".
+  # Example: "Resource Mutated" or "Resource Mutated,Resource Generated".
+  # @default -- "" (empty, all success events are emitted when generateSuccessEvents is true)
+  successEventActions: ""
 
   # -- Maximum cumulative size of context data during policy evaluation.
   # Supports Kubernetes quantity format (e.g., 100Mi, 2Gi) or plain bytes (e.g., 2097152).
@@ -559,12 +578,12 @@ test:
 
   image:
     # -- (string) Image registry
-    registry: bitnami
+    registry: ghcr.io
     # -- Image repository
-    repository: kubectl
+    repository: kyverno/readiness-checker
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: latest
+    tag: 'v0.1.0'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -623,12 +642,12 @@ webhooksCleanup:
 
   image:
     # -- (string) Image registry
-    registry: reg.nirmata.io
-    # -- Image repository
-    repository: nirmata/kubectl
+    registry: ghcr.io
+    # -- Image repository (readiness-checker supports delete-webhooks and scale-deploy)
+    repository: kyverno/readiness-checker
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: 'nirmata-kubectl-1.35-hardened'
+    tag: ~
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -782,6 +801,8 @@ features:
   globalContext:
     # -- Maximum allowed response size from API Calls. A value of 0 bypasses checks (not recommended)
     maxApiCallResponseLength: 2000000
+    # -- Timeout for HTTP API calls made by policies. A value of 0s means no timeout.
+    apiCallTimeout: 30s
   logging:
     # -- Logging format
     format: text
@@ -840,6 +861,9 @@ admissionController:
 
     # -- Target CPU utilization percentage
     targetCPUUtilizationPercentage: 80
+
+    # -- (int) Target memory utilization percentage
+    targetMemoryUtilizationPercentage: ~
 
     # -- Configurable scaling behavior
     behavior: {}
@@ -1233,6 +1257,16 @@ admissionController:
     #   image: busybox
     #   command: ['sh', '-c', 'echo Hello && sleep 3600']
 
+  # -- Additional volumes to be mounted in the pod
+  extraVolumes: []
+    # - name: my-volume
+    #   emptyDir: {}
+
+  # -- Additional volumeMounts to be mounted to the main container
+  extraVolumeMounts: []
+    # - name: my-volume
+    #   mountPath: /path/to/mount
+
   service:
     # -- Service port.
     port: 443
@@ -1576,6 +1610,16 @@ backgroundController:
     # hostPath:
     #   path: /etc/pki/tls/ca-certificates.crt
     #   type: File
+
+  # -- Additional volumes to be mounted in the pod
+  extraVolumes: []
+    # - name: my-volume
+    #   emptyDir: {}
+
+  # -- Additional volumeMounts to be mounted to the main container
+  extraVolumeMounts: []
+    # - name: my-volume
+    #   mountPath: /path/to/mount
 
   metricsService:
     # -- Create service.
@@ -1954,6 +1998,16 @@ cleanupController:
     # Possible values are `IfHealthyBudget` or `AlwaysAllow`.
     unhealthyPodEvictionPolicy:
 
+  # -- Additional volumes to be mounted in the pod
+  extraVolumes: []
+    # - name: my-volume
+    #   emptyDir: {}
+
+  # -- Additional volumeMounts to be mounted to the main container
+  extraVolumeMounts: []
+    # - name: my-volume
+    #   mountPath: /path/to/mount
+
   service:
     # -- Service port.
     port: 443
@@ -2278,6 +2332,15 @@ reportsController:
     #   path: /etc/pki/tls/ca-certificates.crt
     #   type: File
 
+  # -- Additional volumes to be mounted in the pod
+  extraVolumes: []
+    # - name: my-volume
+    #   emptyDir: {}
+
+  # -- Additional volumeMounts to be mounted to the main container
+  extraVolumeMounts: []
+    # - name: my-volume
+    #   mountPath: /path/to/mount
 
   metricsService:
     # -- Create service.
@@ -2377,12 +2440,6 @@ reports-server:
   templating:
     enabled: false
   fipsEnabled: false
-
-
-  # cloudnative-pg:
-  #   crds:
-  #     create: false
-
 
   # -- Name override
   nameOverride: ""
@@ -2756,7 +2813,7 @@ reports-server:
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: 'nirmata-kubectl-1.35-hardened'
+      tag: '1.35-alpine3.23-dev'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
