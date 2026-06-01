@@ -813,9 +813,9 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 |-----|------|---------|-------------|
 | webhooksCleanup.enabled | bool | `true` | Create a helm pre-delete hook to cleanup webhooks. |
 | webhooksCleanup.autoDeleteWebhooks.enabled | bool | `false` | Allow webhooks controller to delete webhooks using finalizers |
-| webhooksCleanup.image.registry | string | `"reg.nirmata.io"` | Image registry |
-| webhooksCleanup.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| webhooksCleanup.image.tag | string | `"nirmata-kubectl-1.35-hardened"` | Image tag Defaults to `latest` if omitted |
+| webhooksCleanup.image.registry | string | `"ghcr.io"` | Image registry |
+| webhooksCleanup.image.repository | string | `"nirmata/readiness-checker"` | Image repository (readiness-checker supports delete-webhooks and scale-deploy) |
+| webhooksCleanup.image.tag | string | `nil` | Image tag Defaults to `latest` if omitted |
 | webhooksCleanup.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | webhooksCleanup.imagePullSecrets | list | `[]` | Image pull secrets |
 | webhooksCleanup.podSecurityContext | object | `{}` | Security context for the pod |
@@ -877,7 +877,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | openreports.installCrds | bool | `false` | Whether to install CRDs from the upstream OpenReports chart. Setting this to true requires enabled to also be true. |
 | reportsServer.enabled | bool | `false` | Enable reports-server deployment alongside Kyverno |
 | reportsServer.waitForReady | bool | `true` | Wait for reports-server to be ready before starting Kyverno components |
-| reportsServer.readinessTimeout | string | `"300s"` | Timeout for waiting for reports-server readiness (as duration string, e.g. 300s, 5m) |
+| reportsServer.readinessTimeout | int | `300` | Timeout for waiting for reports-server readiness (in seconds) |
 | apiCallToken | object | `{"audience":"kyverno-svc.kyverno.io","expirationSeconds":3600}` | Scoped token injected into outbound APICall and CEL HTTP requests. This token carries a custom audience so that if leaked to an external service it cannot be replayed against the Kubernetes API server. |
 | apiCallToken.audience | string | `"kyverno-svc.kyverno.io"` | Audience for the projected token used in outbound requests. Set this to the audience your receiving service validates in the OIDC token's `aud` claim. The default is `kyverno-svc.kyverno.io`, which is a Kyverno-specific audience and prevents the token from being accepted by the Kubernetes API server. |
 | apiCallToken.expirationSeconds | int | `3600` | Token lifetime in seconds for the projected outbound API call token. The default is `3600` (1 hour). The kubelet requests a replacement before the token expires, so lowering this reduces token lifetime while increasing rotation frequency. |

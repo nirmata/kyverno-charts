@@ -623,9 +623,9 @@ webhooksCleanup:
 
   image:
     # -- (string) Image registry
-    registry: reg.nirmata.io
-    # -- Image repository
-    repository: nirmata/kubectl
+    registry: ghcr.io
+    # -- Image repository (readiness-checker supports delete-webhooks and scale-deploy)
+    repository: nirmata/readiness-checker
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: 'nirmata-kubectl-1.35-hardened'
