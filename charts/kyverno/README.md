@@ -262,16 +262,6 @@ Configure this token with `apiCallToken.*`:
 
 The default audience is Kyverno-specific so leaked tokens are not accepted by the Kubernetes API server.
 
-### Outbound API call token
-
-Kyverno projects a dedicated ServiceAccount token for outbound APICall and CEL HTTP requests.
-Configure this token with `apiCallToken.*`:
-
-- `apiCallToken.audience` (default: `kyverno-svc.kyverno.io`) sets the OIDC `aud` claim expected by your receiving service.
-- `apiCallToken.expirationSeconds` (default: `3600`) sets token lifetime before kubelet rotation.
-
-The default audience is Kyverno-specific so leaked tokens are not accepted by the Kubernetes API server.
-
 ### Custom resource definitions
 
 | Key | Type | Default | Description |
@@ -287,8 +277,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | crds.migration.enabled | bool | `true` | Enable CRDs migration using helm post upgrade hook |
 | crds.migration.resources | list | `["cleanuppolicies.kyverno.io","clustercleanuppolicies.kyverno.io","clusterpolicies.kyverno.io","globalcontextentries.kyverno.io","policies.kyverno.io","policyexceptions.kyverno.io","updaterequests.kyverno.io","deletingpolicies.policies.kyverno.io","generatingpolicies.policies.kyverno.io","imagevalidatingpolicies.policies.kyverno.io","namespacedimagevalidatingpolicies.policies.kyverno.io","mutatingpolicies.policies.kyverno.io","namespacedmutatingpolicies.policies.kyverno.io","namespaceddeletingpolicies.policies.kyverno.io","namespacedvalidatingpolicies.policies.kyverno.io","policyexceptions.policies.kyverno.io","validatingpolicies.policies.kyverno.io"]` | Resources to migrate |
 | crds.migration.image.registry | string | `nil` | Image registry |
-| crds.migration.image.defaultRegistry | string | `"reg.kyverno.io"` |  |
-| crds.migration.image.repository | string | `"kyverno/kyverno-cli"` | Image repository |
+| crds.migration.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| crds.migration.image.repository | string | `"nirmata/kyverno-cli"` | Image repository |
 | crds.migration.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | crds.migration.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | crds.migration.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -464,8 +454,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | admissionController.caCertificates.volume | object | `{}` | Volume to be mounted for CA certificates Not used when `.Values.admissionController.caCertificates.data` is defined |
 | admissionController.imagePullSecrets | list | `[]` | Image pull secrets |
 | admissionController.initContainer.image.registry | string | `nil` | Image registry |
-| admissionController.initContainer.image.defaultRegistry | string | `"reg.kyverno.io"` |  |
-| admissionController.initContainer.image.repository | string | `"kyverno/kyvernopre"` | Image repository |
+| admissionController.initContainer.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| admissionController.initContainer.image.repository | string | `"nirmata/kyvernopre"` | Image repository |
 | admissionController.initContainer.image.tag | string | `nil` | Image tag If missing, defaults to image.tag |
 | admissionController.initContainer.image.pullPolicy | string | `nil` | Image pull policy If missing, defaults to image.pullPolicy |
 | admissionController.initContainer.resources.limits | object | `{"cpu":"100m","memory":"256Mi"}` | Pod resource limits |
@@ -474,8 +464,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | admissionController.initContainer.extraArgs | object | `{}` | Additional container args. |
 | admissionController.initContainer.extraEnvVars | list | `[]` | Additional container environment variables. |
 | admissionController.container.image.registry | string | `nil` | Image registry |
-| admissionController.container.image.defaultRegistry | string | `"reg.kyverno.io"` |  |
-| admissionController.container.image.repository | string | `"kyverno/kyverno"` | Image repository |
+| admissionController.container.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| admissionController.container.image.repository | string | `"nirmata/kyverno"` | Image repository |
 | admissionController.container.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | admissionController.container.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | admissionController.container.resources.limits | object | `{"memory":"384Mi"}` | Pod resource limits |
@@ -537,8 +527,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | backgroundController.rbac.coreClusterRole.extraResources | list | See [values.yaml](values.yaml) | Extra resource permissions to add in the core cluster role. This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`. |
 | backgroundController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
 | backgroundController.image.registry | string | `nil` | Image registry |
-| backgroundController.image.defaultRegistry | string | `"reg.kyverno.io"` |  |
-| backgroundController.image.repository | string | `"kyverno/background-controller"` | Image repository |
+| backgroundController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| backgroundController.image.repository | string | `"nirmata/background-controller"` | Image repository |
 | backgroundController.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | backgroundController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | backgroundController.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -612,9 +602,12 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | cleanupController.featuresOverride | object | `{}` | Overrides features defined at the root level |
 | cleanupController.enabled | bool | `true` | Enable cleanup controller. |
 | cleanupController.rbac.create | bool | `true` | Create RBAC resources |
+| cleanupController.rbac.createViewRoleBinding | bool | `true` | Create a ClusterRoleBinding to the view ClusterRole |
+| cleanupController.rbac.viewRoleName | string | `"view"` | The view ClusterRole to bind to |
 | cleanupController.rbac.serviceAccount.name | string | `nil` | Service account name |
 | cleanupController.rbac.serviceAccount.annotations | object | `{}` | Annotations for the ServiceAccount |
 | cleanupController.rbac.serviceAccount.automountServiceAccountToken | bool | `true` | Toggle automounting of the ServiceAccount |
+| cleanupController.rbac.coreClusterRole.extraResources | list | See [values.yaml](values.yaml) | Extra resource permissions to add in the core cluster role. This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`. |
 | cleanupController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
 | cleanupController.createSelfSignedCert | bool | `false` | Create self-signed certificates at deployment time. The certificates won't be automatically renewed if this is set to `true`. |
 | cleanupController.tlsKeyAlgorithm | string | `"RSA"` | Key algorithm for self-signed TLS certificates. Supported values: RSA, ECDSA, Ed25519 Only used when createSelfSignedCert is false (Kyverno-managed certificates). |
@@ -634,8 +627,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | cleanupController.certManager.tls.duration | string | `"8760h"` | Duration of the TLS certificate (default 1 year) |
 | cleanupController.certManager.tls.renewBefore | string | `"720h"` | Time before expiry to renew the TLS certificate (default 30 days) |
 | cleanupController.image.registry | string | `nil` | Image registry |
-| cleanupController.image.defaultRegistry | string | `"reg.kyverno.io"` |  |
-| cleanupController.image.repository | string | `"kyverno/cleanup-controller"` | Image repository |
+| cleanupController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| cleanupController.image.repository | string | `"nirmata/cleanup-controller"` | Image repository |
 | cleanupController.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | cleanupController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | cleanupController.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -723,8 +716,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reportsController.rbac.coreClusterRole.extraResources | list | See [values.yaml](values.yaml) | Extra resource permissions to add in the core cluster role. This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`. |
 | reportsController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
 | reportsController.image.registry | string | `nil` | Image registry |
-| reportsController.image.defaultRegistry | string | `"reg.kyverno.io"` |  |
-| reportsController.image.repository | string | `"kyverno/reports-controller"` | Image repository |
+| reportsController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| reportsController.image.repository | string | `"nirmata/reports-controller"` | Image repository |
 | reportsController.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | reportsController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | reportsController.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -859,6 +852,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| fipsEnabled | bool | `false` | Deploy FIPS compliant images of all the components of n4k |
 | global.image.registry | string | `nil` | Global value that allows to set a single image registry across all deployments. When set, it will override any values set under `.image.registry` across the chart. |
 | global.imagePullSecrets | list | `[]` | Global list of Image pull secrets When set, it will override any values set under `imagePullSecrets` under different components across the chart. |
 | global.resyncPeriod | string | `"15m"` | Resync period for informers |
@@ -1085,24 +1079,6 @@ This software is proprietary to Nirmata Inc. and is made available under the ter
 Unauthorized use, reproduction, modification, or distribution of this software, in whole or in part, is strictly prohibited and may result in civil and criminal penalties.
 
 © 2026 Nirmata Inc. All rights reserved.
-
-## Requirements
-
-Kubernetes: `>=1.25.0-0`
-
-| Repository | Name | Version |
-|------------|------|---------|
-|  | crds | v0.0.0 |
-|  | grafana | v0.0.0 |
-| https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.1 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.13 |
-| https://openreports.github.io/reports-api | openreports | 0.1.0 |
-
-## Maintainers
-
-| Name | Email | Url |
-| ---- | ------ | --- |
-| Nirmata |  | <https://kyverno.io/> |
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.14.2](https://github.com/norwoodj/helm-docs/releases/v1.14.2)
