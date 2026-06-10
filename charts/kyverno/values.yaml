@@ -93,8 +93,8 @@ reportsServer:
   # -- Wait for reports-server to be ready before starting Kyverno components
   waitForReady: true
 
-  # -- Timeout for waiting for reports-server readiness (as duration string, e.g. 300s, 5m)
-  readinessTimeout: 300s
+  # -- Timeout for waiting for reports-server readiness (in seconds)
+  readinessTimeout: 300
 
 # CRDs configuration
 crds:
@@ -628,7 +628,7 @@ webhooksCleanup:
     repository: nirmata/readiness-checker
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: 'nirmata-kubectl-1.35-hardened'
+    tag: ~
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
