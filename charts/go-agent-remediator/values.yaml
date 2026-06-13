@@ -148,10 +148,17 @@ tool:
   type: github
 
   # Authentication method configuration
-  # Choose between "pat" (Personal Access Token) or "app" (GitHub App)
+  # Choose between:
+  #   - "nirmata-app" (default & recommended): Uses Nirmata-managed GitHub App with existing credentials
+  #   - "app": Custom GitHub App authentication with private key
+  #   - "pat": Personal Access Token (simplest for testing)
   credentials:
-    method: pat  # Options: "pat" or "app" (recommended: "app" for better security)
+    method: nirmata-app  # Options: "nirmata-app" (default), "app", or "pat"
 
+    # Nirmata GitHub App is the default - no additional configuration needed!
+    # Uses SERVICE_ACCOUNT_TOKEN or API_TOKEN already configured for LLM access
+
+    # Custom GitHub App configuration (uncomment and use when method: app)
     # app:
     #   appId: ""  # Set this to your GitHub App ID
     #   # installationId: ""  # Optional: set if you want to specify installation ID
@@ -159,11 +166,11 @@ tool:
     #     name: "github-app-private-key"
     #     key: "private-key.pem"
 
-    # PAT configuration (used when method: pat)
-    pat:
-      secret:
-        name: "github-token"
-        key: "token"
+    # PAT configuration (uncomment and use when method: pat)
+    # pat:
+    #   secret:
+    #     name: "github-token"
+    #     key: "token"
 
   defaults:
     git:
