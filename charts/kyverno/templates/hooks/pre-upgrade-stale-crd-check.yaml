@@ -1,0 +1,182 @@
+{{- if eq (include "kyverno.installReportsServer" .) "true" -}}
+{{- if not .Values.global.templating.enabled -}}
+{{- $automountSAToken := .Values.webhooksCleanup.serviceAccount.automountServiceAccountToken }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "kyverno.fullname" . }}-stale-crd-check
+  namespace: {{ template "kyverno.namespace" . }}
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ template "kyverno.fullname" . }}-stale-crd-check
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+rules:
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "kyverno.fullname" . }}-stale-crd-check
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "kyverno.fullname" . }}-stale-crd-check
+    namespace: {{ template "kyverno.namespace" . }}
+roleRef:
+  kind: ClusterRole
+  name: {{ template "kyverno.fullname" . }}-stale-crd-check
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "kyverno.fullname" . }}-stale-crd-check
+  namespace: {{ template "kyverno.namespace" . }}
+  labels:
+    {{- include "kyverno.hooks.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 600
+  template:
+    {{- if or .Values.webhooksCleanup.podAnnotations .Values.webhooksCleanup.podLabels }}
+    metadata:
+      {{- with .Values.webhooksCleanup.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.webhooksCleanup.podLabels }}
+      labels:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- end }}
+    spec:
+      serviceAccountName: {{ template "kyverno.fullname" . }}-stale-crd-check
+      automountServiceAccountToken: {{ $automountSAToken }}
+      {{- with .Values.webhooksCleanup.podSecurityContext }}
+      securityContext:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      {{- with .Values.webhooksCleanup.imagePullSecrets | default .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- tpl (include "kyverno.sortedImagePullSecrets" .) $ | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: check
+          image: {{ (include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.webhooksCleanup.image "defaultTag" (default .Chart.AppVersion .Values.webhooksCleanup.image.tag) "fipsEnabled" .Values.fipsEnabled)) | quote }}
+          imagePullPolicy: {{ .Values.webhooksCleanup.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              CRDS="policyreports.wgpolicyk8s.io clusterpolicyreports.wgpolicyk8s.io ephemeralreports.reports.kyverno.io clusterephemeralreports.reports.kyverno.io"
+              STALE=""
+              for c in $CRDS; do
+                if kubectl get crd "$c" -o name >/dev/null 2>&1; then
+                  STALE="$STALE $c"
+                fi
+              done
+              if [ -n "$STALE" ]; then
+                echo
+                echo "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+                echo "  | reports-server is being installed but legacy reporting CRDs already exist on the cluster.                                            |"
+                echo "  | reports-server registers aggregated APIServices for reports.kyverno.io and wgpolicyk8s.io and owns those resources at runtime.       |"
+                echo "  | Pre-existing native CRDs collide with those APIServices and trigger a duplicate-path error in the Kubernetes OpenAPI spec (1.28+).   |"
+                echo "  | The CRDs listed below must be deleted before the upgrade can proceed - reports-server will serve these resources via APIServices.    |"
+                echo "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+                echo
+                echo "  Stale CRDs detected:"
+                for c in $STALE; do echo "    - $c"; done
+                echo
+                echo "  Run the following and re-run the upgrade:"
+                echo "    kubectl delete crd$STALE"
+                echo
+                exit 1
+              fi
+              echo "No stale reporting CRDs found. Proceeding with install/upgrade."
+          {{- with .Values.webhooksCleanup.resources }}
+          resources:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
+          {{- with .Values.webhooksCleanup.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if not $automountSAToken }}
+          volumeMounts:
+            - name: serviceaccount-token
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              readOnly: true
+          {{- end }}
+      {{- with .Values.webhooksCleanup.tolerations | default .Values.global.tolerations}}
+      tolerations:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with .Values.webhooksCleanup.nodeSelector | default .Values.global.nodeSelector }}
+      nodeSelector:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.webhooksCleanup.podAntiAffinity .Values.webhooksCleanup.podAffinity .Values.webhooksCleanup.nodeAffinity }}
+      affinity:
+        {{- with .Values.webhooksCleanup.podAntiAffinity }}
+        podAntiAffinity:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with .Values.webhooksCleanup.podAffinity }}
+        podAffinity:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with .Values.webhooksCleanup.nodeAffinity }}
+        nodeAffinity:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- if not $automountSAToken }}
+      volumes:
+        - name: serviceaccount-token
+          projected:
+            defaultMode: 0444
+            sources:
+              - serviceAccountToken:
+                  expirationSeconds: 3607
+                  path: token
+              - configMap:
+                  name: kube-root-ca.crt
+                  items:
+                    - key: ca.crt
+                      path: ca.crt
+              - downwardAPI:
+                  items:
+                    - path: namespace
+                      fieldRef:
+                        apiVersion: v1
+                        fieldPath: metadata.namespace
+      {{- end }}
+{{- end -}}
+{{- end -}}
