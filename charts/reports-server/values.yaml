@@ -233,7 +233,7 @@ config:
       # -- Image repository
       repository: nirmata/etcd
       # -- Image tag
-      tag: 3.6.9-hardened
+      tag: 3.6.12-hardened
 
     # -- Image pull secrets
     imagePullSecrets: []
@@ -279,11 +279,14 @@ config:
 
     # -- Pod-level security context for etcd pods
     # Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls)
-    podSecurityContext: {}
+    podSecurityContext:
+      runAsNonRoot: true
+      fsGroup: 65532
 
     # -- Container-level security context for the etcd container
     # @default -- See [values.yaml](values.yaml)
-    securityContext: {}
+    securityContext:
+      allowPrivilegeEscalation: false
 
   db:
 
