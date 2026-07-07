@@ -34702,6 +34702,40 @@ entries:
         - name: EULA
           url: https://nirmata.com/eula/
     apiVersion: v2
+    appVersion: v0.3.1
+    created: "2026-07-07T12:02:05.12162852Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 13.4.1
+    - condition: openreports.enabled
+      name: openreports
+      repository: oci://ghcr.io/openreports/charts
+      version: 0.2.1
+    digest: db3dfe9f7d22bb773e197f3fafc736eeaff90b4de20f86142bcdbd09f264efab
+    home: https://nirmata.com/
+    keywords:
+    - kubernetes
+    - policy reports storage
+    - postgresql
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - email: support@nirmata.com
+      name: Nirmata
+      url: https://nirmata.com/
+    name: reports-server
+    sources:
+    - https://github.com/nirmata/reports-server
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/reports-server-0.3.0/reports-server-0.3.0.tgz
+    version: 0.3.0
+  - annotations:
+      artifacthub.io/links: |
+        - name: EULA
+          url: https://nirmata.com/eula/
+    apiVersion: v2
     appVersion: v0.3.0
     created: "2026-06-25T07:12:54.401081039Z"
     dependencies:
@@ -35960,4 +35994,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2026-07-07T11:29:20.342997605Z"
+generated: "2026-07-07T12:02:05.125111012Z"
