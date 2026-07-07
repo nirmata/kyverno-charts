@@ -1,6 +1,15 @@
 {{- if .Values.config.etcd.enabled }}
 ---
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "reports-server.fullname" . }}-etcd
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    app: etcd-reports-server
+    {{- include "reports-server.labels" . | nindent 4 }}
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: etcd
@@ -58,6 +67,12 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      serviceAccountName: {{ include "reports-server.fullname" . }}-etcd
+      automountServiceAccountToken: false
+      {{- with .Values.config.etcd.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -74,6 +89,10 @@ spec:
       - name: etcd
         image: "{{ .Values.config.etcd.image.registry }}/{{ .Values.config.etcd.image.repository }}:{{ .Values.config.etcd.image.tag }}"
         imagePullPolicy: IfNotPresent
+        {{- with .Values.config.etcd.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         ports:
         - name: etcd-client
           containerPort: 2379

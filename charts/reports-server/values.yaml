@@ -244,7 +244,7 @@ config:
       # -- Image repository
       repository: nirmata/etcd
       # -- Image tag
-      tag: 3.6.9-hardened
+      tag: 3.6.12-hardened
 
     # -- Image pull secrets for the etcd container image
     imagePullSecrets: []
@@ -276,6 +276,15 @@ config:
     ## Tolerations for etcd pod assignment.
     ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
     tolerations: []
+
+    # -- Pod-level security context for etcd pods
+    podSecurityContext:
+      runAsNonRoot: true
+      fsGroup: 65532
+
+    # -- Container-level security context for the etcd container
+    securityContext:
+      allowPrivilegeEscalation: false
 
     # Auto-compaction configuration for etcd. Compaction reclaims storage taken
     # by historical revisions; without it, the etcd DB grows unboundedly under
