@@ -526,7 +526,7 @@ webhooksCleanup:
     # -- (string) Image registry
     registry: ghcr.io
     # -- Image repository
-    repository: reg.nirmata.io/nirmata/kubectl
+    repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: '1.35.5-multiarch.1'
@@ -2339,7 +2339,7 @@ reports-server:
         # -- Image repository
         repository: nirmata/etcd
         # -- Image tag
-        tag: v3.6.6-os-cve-fixed
+        tag: 3.6.12-hardened
 
       # -- Image pull secrets
       imagePullSecrets: []
@@ -2382,6 +2382,17 @@ reports-server:
       ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
       ##
       tolerations: []
+
+      # -- Pod-level security context for etcd pods
+      # Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls)
+      podSecurityContext:
+        runAsNonRoot: true
+        fsGroup: 65532
+
+      # -- Container-level security context for the etcd container
+      # @default -- See [values.yaml](values.yaml)
+      securityContext:
+        allowPrivilegeEscalation: false
 
     db:
 
@@ -2470,7 +2481,7 @@ reports-server:
       tag: '1.35.5-multiarch.1'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
-      pullPolicy: ~
+      pullPolicy: IfNotPresent
 
     # -- Image pull secrets
     imagePullSecrets: []
