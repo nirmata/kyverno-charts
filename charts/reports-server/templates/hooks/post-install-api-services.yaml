@@ -24,7 +24,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
-      serviceAccount: {{ include "reports-server.serviceAccountName" . }}
+      serviceAccountName: {{ include "reports-server.serviceAccountName" . }}
       {{- with .Values.apiServicesManagement.podSecurityContext }}
       securityContext:
         {{- tpl (toYaml .) $ | nindent 8 }}

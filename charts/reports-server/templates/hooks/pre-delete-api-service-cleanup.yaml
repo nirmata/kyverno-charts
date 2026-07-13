@@ -26,7 +26,7 @@ spec:
       {{- end }}
       {{- include "reports-server.labels" . | nindent 8 }}
     spec:
-      serviceAccount: {{ include "reports-server.serviceAccountName" . }}
+      serviceAccountName: {{ include "reports-server.serviceAccountName" . }}
       {{- with .Values.jobConfigurations.podSecurityContext }}
       securityContext:
         {{- tpl (toYaml .) $ | nindent 8 }}
