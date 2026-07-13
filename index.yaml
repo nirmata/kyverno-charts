@@ -10761,6 +10761,70 @@ entries:
       nirmata.com/eula: https://nirmata.com/eula/
     apiVersion: v2
     appVersion: v1.13.6-n4k.nirmata.29
+    created: "2026-07-13T08:11:53.284595722Z"
+    dependencies:
+    - condition: grafana.enabled
+      name: grafana
+      repository: ""
+      version: 3.3.6
+    - condition: reports-server.install
+      name: reports-server
+      repository: https://nirmata.github.io/kyverno-charts
+      version: 0.2.31
+    - condition: crds.install
+      name: crds
+      repository: ""
+      version: 3.3.6
+    description: Kubernetes Native Policy Management
+    digest: 1fe7e946180eb463e7aae6fe4991920b15327270cfa0cc8e90d990571b6e0ead
+    home: https://kyverno.io/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy
+    - validating webhook
+    - admission controller
+    - mutation
+    - mutate
+    - validate
+    - generate
+    - supply chain
+    - security
+    kubeVersion: '>=1.22.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://kyverno.io/
+    name: kyverno
+    sources:
+    - https://github.com/nirmata/enterprise-kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.3.52-rc.5/kyverno-3.3.52-rc.5.tgz
+    version: 3.3.52-rc.5
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: Add a key to preserve configmap settings during upgrade
+        - kind: added
+          description: Make admission reports breaker threshold configurable
+        - kind: added
+          description: ImagePullSecrets made globally configurable
+        - kind: removed
+          description: Deprecated configuration `features.reports.chunkSize` was removed
+        - kind: added
+          description: ImagePullSecrets made configurable for tests
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+        - name: Nirmata Enterprise Software License Agreement (EULA)
+          url: https://nirmata.com/eula/
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+      nirmata.com/eula: https://nirmata.com/eula/
+    apiVersion: v2
+    appVersion: v1.13.6-n4k.nirmata.29
     created: "2026-07-10T12:53:41.831185324Z"
     dependencies:
     - condition: grafana.enabled
@@ -36219,4 +36283,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2026-07-13T07:57:16.488720596Z"
+generated: "2026-07-13T08:11:53.286552607Z"
