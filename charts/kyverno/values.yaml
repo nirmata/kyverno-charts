@@ -2662,27 +2662,6 @@ reports-server:
         # -- Auto-compaction retention (e.g., 30m for 30 minutes, 1h for 1 hour)
         retention: 30m
 
-      ## @param nodeSelector [object] Node labels for pod assignment
-      ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
-      ##
-      nodeSelector: {}
-
-      ## @param tolerations [array] Tolerations for pod assignment
-      ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-      ##
-      tolerations: []
-
-      # -- Pod-level security context for etcd pods
-      # Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls)
-      podSecurityContext:
-        runAsNonRoot: true
-        fsGroup: 65532
-
-      # -- Container-level security context for the etcd container
-      # @default -- See [values.yaml](values.yaml)
-      securityContext:
-        allowPrivilegeEscalation: false
-
     db:
 
       # -- If set, a secret will be created with the database connection information. If this is set to true, secretName must be set.
