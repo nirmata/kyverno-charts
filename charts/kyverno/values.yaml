@@ -2379,20 +2379,11 @@ reports-server:
 
   fipsEnabled: false
 
-  postgresql:
-    image:
-      registry: docker.io
-      repository: bitnamilegacy/postgresql
-      tag: 16.1.0-debian-11-r22
-      digest: ""
 
-    # -- Deploy postgresql dependency chart
-    enabled: false
+  # cloudnative-pg:
+  #   crds:
+  #     create: false
 
-    auth:
-      postgresPassword: reports
-
-      database: reportsdb
 
   # -- Name override
   nameOverride: ""
@@ -2618,7 +2609,7 @@ reports-server:
         # -- Image repository
         repository: nirmata/etcd
         # -- Image tag
-        tag: 3.6.12-hardened
+        tag: 3.6.13-hardened
 
       # -- Image pull secrets for the etcd container image
       imagePullSecrets: []
@@ -2767,7 +2758,7 @@ reports-server:
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: 'nirmata-kubectl-1.35-hardened'
+      tag: '1.36.2-hardened'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: IfNotPresent
