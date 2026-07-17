@@ -2634,23 +2634,6 @@ reports-server:
       # storage class name (e.g., "fast", "standard", "aws-ebs") to pin the PV.
       storageClassName: ""
 
-      ## Node labels for etcd pod assignment.
-      ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
-      nodeSelector: {}
-
-      ## Tolerations for etcd pod assignment.
-      ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-      tolerations: []
-
-      # -- Pod-level security context for etcd pods
-      podSecurityContext:
-        runAsNonRoot: true
-        fsGroup: 65532
-
-      # -- Container-level security context for the etcd container
-      securityContext:
-        allowPrivilegeEscalation: false
-
       # Auto-compaction configuration for etcd. Compaction reclaims storage taken
       # by historical revisions; without it, the etcd DB grows unboundedly under
       # write load.
@@ -2661,6 +2644,33 @@ reports-server:
         mode: periodic
         # -- Auto-compaction retention (e.g., 30m for 30 minutes, 1h for 1 hour)
         retention: 30m
+
+      ## @param nodeSelector [object] Node labels for pod assignment
+      ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+      ##
+      nodeSelector: {}
+
+      ## @param tolerations [array] Tolerations for pod assignment
+      ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+      ##
+      tolerations: []
+
+      # -- Pod-level security context for etcd pods
+      # Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls)
+      # runAsUser/runAsGroup are set explicitly (rather than relying on the image's
+      # default user) so kubelet can verify non-root without introspecting the image -
+      # otherwise an image with a non-numeric USER (e.g. "nonroot") fails admission with
+      # "cannot verify user is non-root".
+      podSecurityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+
+      # -- Container-level security context for the etcd container
+      # @default -- See [values.yaml](values.yaml)
+      securityContext:
+        allowPrivilegeEscalation: false
 
     db:
 
