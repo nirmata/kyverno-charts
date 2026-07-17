@@ -233,7 +233,7 @@ config:
       # -- Image repository
       repository: nirmata/etcd
       # -- Image tag
-      tag: 3.6.12-hardened
+      tag: 3.6.13-hardened
 
     # -- Image pull secrets
     imagePullSecrets: []
@@ -279,8 +279,14 @@ config:
 
     # -- Pod-level security context for etcd pods
     # Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls)
+    # runAsUser/runAsGroup are set explicitly (rather than relying on the image's
+    # default user) so kubelet can verify non-root without introspecting the image -
+    # otherwise an image with a non-numeric USER (e.g. "nonroot") fails admission with
+    # "cannot verify user is non-root".
     podSecurityContext:
       runAsNonRoot: true
+      runAsUser: 65532
+      runAsGroup: 65532
       fsGroup: 65532
 
     # -- Container-level security context for the etcd container
@@ -385,7 +391,7 @@ jobConfigurations:
     repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.35-alpine3.23-dev'
+    tag: '1.36.2-hardened'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: IfNotPresent
