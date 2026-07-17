@@ -1,0 +1,145 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.0
+  name: driftrecords.drift.nirmata.io
+spec:
+  group: drift.nirmata.io
+  names:
+    categories:
+    - drift
+    kind: DriftRecord
+    listKind: DriftRecordList
+    plural: driftrecords
+    singular: driftrecord
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.resourceAddress
+      name: Resource
+      type: string
+    - jsonPath: .spec.resourceType
+      name: Type
+      type: string
+    - jsonPath: .status.state
+      name: State
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: DriftRecord represents a single detected drift event for a Terraform-managed resource.
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              configRef:
+                description: Name of the DriftWatchConfig that created this record.
+                type: string
+              planDiff:
+                description: Field-level diff from terraform plan -refresh-only.
+                properties:
+                  actions:
+                    description: Change actions from the plan (e.g. ["update"]).
+                    items:
+                      type: string
+                    type: array
+                  before:
+                    description: Full resource state as recorded in Terraform state,
+                      stored as a compact JSON string (not expanded into YAML).
+                    type: string
+                  driftedAttributes:
+                    description: Each changed attribute with its individual before and after values.
+                    items:
+                      properties:
+                        after:
+                          description: Live value detected by terraform plan (any JSON type — string, boolean, number, object, array).
+                          x-kubernetes-preserve-unknown-fields: true
+                        before:
+                          description: Value as recorded in Terraform state (any JSON type — string, boolean, number, object, array).
+                          x-kubernetes-preserve-unknown-fields: true
+                        key:
+                          description: Terraform attribute name that changed.
+                          type: string
+                      required:
+                      - key
+                      type: object
+                    type: array
+                type: object
+              resourceAddress:
+                description: Full Terraform resource address (e.g. module.ec2.aws_instance.main).
+                type: string
+              resourceName:
+                description: Terraform resource name (e.g. main).
+                type: string
+              resourceType:
+                description: Terraform resource type (e.g. aws_instance).
+                type: string
+            required:
+            - configRef
+            - planDiff
+            - resourceAddress
+            - resourceName
+            - resourceType
+            type: object
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      maxLength: 32768
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      minimum: 0
+                      type: integer
+                    reason:
+                      maxLength: 1024
+                      minLength: 1
+                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                      type: string
+                    status:
+                      enum:
+                      - "True"
+                      - "False"
+                      - Unknown
+                      type: string
+                    type:
+                      maxLength: 316
+                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - type
+                x-kubernetes-list-type: map
+              state:
+                description: Current lifecycle state.
+                enum:
+                - Pending
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
