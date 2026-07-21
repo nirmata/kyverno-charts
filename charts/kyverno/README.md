@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.7.6-rc.1](https://img.shields.io/badge/Version-3.7.6--rc.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.17.2-n4k.nirmata.2](https://img.shields.io/badge/AppVersion-v1.17.2--n4k.nirmata.2-informational?style=flat-square)
+![Version: 3.7.7-rc.6](https://img.shields.io/badge/Version-3.7.7--rc.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.17.2-n4k.nirmata.8](https://img.shields.io/badge/AppVersion-v1.17.2--n4k.nirmata.8-informational?style=flat-square)
 
 ## About
 
@@ -942,8 +942,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.config.skipMigration | bool | `false` | Skip database migration on startup |
 | reports-server.config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| reports-server.config.etcd.image.tag | string | `"3.6.9-hardened"` | Image tag |
-| reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets for the etcd container image |
+| reports-server.config.etcd.image.tag | string | `"3.6.13-hardened"` | Image tag |
+| reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.config.etcd.enabled | bool | `true` |  |
 | reports-server.config.etcd.endpoints | string | `nil` |  |
 | reports-server.config.etcd.insecure | bool | `true` |  |
@@ -955,6 +955,10 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.config.etcd.autoCompaction.enabled | bool | `true` | Enable auto-compaction for etcd |
 | reports-server.config.etcd.autoCompaction.mode | string | `"periodic"` | Auto-compaction mode (periodic or revision) |
 | reports-server.config.etcd.autoCompaction.retention | string | `"30m"` | Auto-compaction retention (e.g., 30m for 30 minutes, 1h for 1 hour) |
+| reports-server.config.etcd.nodeSelector | object | `{}` |  |
+| reports-server.config.etcd.tolerations | list | `[]` |  |
+| reports-server.config.etcd.podSecurityContext | object | `{"fsGroup":65532,"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532}` | Pod-level security context for etcd pods Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls) runAsUser/runAsGroup are set explicitly (rather than relying on the image's default user) so kubelet can verify non-root without introspecting the image - otherwise an image with a non-numeric USER (e.g. "nonroot") fails admission with "cannot verify user is non-root". |
+| reports-server.config.etcd.securityContext | object | See [values.yaml](values.yaml) | Container-level security context for the etcd container |
 | reports-server.config.db.secretCreation | bool | `false` | If set, a secret will be created with the database connection information. If this is set to true, secretName must be set. |
 | reports-server.config.db.secretName | string | `""` | If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password`, and `db.readReplicaHosts`. |
 | reports-server.config.db.host | string | `""` | Database host |
@@ -977,27 +981,28 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.config.db.connectionPool | object | `{"connMaxIdleTimeSeconds":120,"connMaxLifetimeSeconds":300,"maxIdleConns":5,"maxOpenConns":25}` | Database connection pool configuration (per reports-server pod). These control how many concurrent PostgreSQL connections each pod opens. Defaults match the storage layer's built-in defaults. |
 | reports-server.config.db.connectionPool.maxOpenConns | int | `25` | Maximum number of open connections per pod (sql.DB.SetMaxOpenConns) |
 | reports-server.config.db.connectionPool.maxIdleConns | int | `5` | Maximum number of idle connections per pod (sql.DB.SetMaxIdleConns) |
-| reports-server.config.db.connectionPool.connMaxLifetimeSeconds | int | `300` | Maximum lifetime of a connection in seconds (0 = use storage default of 300s / 5m) |
-| reports-server.config.db.connectionPool.connMaxIdleTimeSeconds | int | `120` | Maximum idle time of a connection in seconds (0 = use storage default of 120s / 2m) |
+| reports-server.config.db.connectionPool.connMaxLifetimeSeconds | int | `300` | Maximum lifetime of a connection in seconds (0 = use default of 300s / 5m) |
+| reports-server.config.db.connectionPool.connMaxIdleTimeSeconds | int | `120` | Maximum idle time of a connection in seconds (0 = use default of 120s / 2m) |
 | reports-server.apiServicesManagement.enabled | bool | `true` | Manage APIService objects for the reports-server. APIServices are anchored to the chart's ClusterRole via OwnerReferences and garbage-collected on uninstall. |
 | reports-server.apiServicesManagement.installApiServices | object | `{"enabled":true,"installEphemeralReportsService":true,"installOpenreportsService":true}` | Install api services in manifest |
 | reports-server.apiServicesManagement.installApiServices.enabled | bool | `true` | Store reports in reports-server |
 | reports-server.apiServicesManagement.installApiServices.installEphemeralReportsService | bool | `true` | Store ephemeral reports in reports-server |
 | reports-server.apiServicesManagement.installApiServices.installOpenreportsService | bool | `true` | Store open reports in reports-server |
-| reports-server.apiServicesManagement.image.registry | string | `"ghcr.io"` | Image registry |
-| reports-server.apiServicesManagement.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| reports-server.apiServicesManagement.image.tag | string | `"nirmata-kubectl-1.35-hardened"` | Image tag Defaults to `latest` if omitted |
-| reports-server.apiServicesManagement.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
-| reports-server.apiServicesManagement.imagePullSecrets | list | `[]` | Image pull secrets |
-| reports-server.apiServicesManagement.podSecurityContext | object | `{}` | Security context for the pod |
-| reports-server.apiServicesManagement.nodeSelector | object | `{}` | Node labels for pod assignment |
-| reports-server.apiServicesManagement.tolerations | list | `[]` | List of node taints to tolerate |
-| reports-server.apiServicesManagement.podAntiAffinity | object | `{}` | Pod anti affinity constraints. |
-| reports-server.apiServicesManagement.podAffinity | object | `{}` | Pod affinity constraints. |
-| reports-server.apiServicesManagement.podLabels | object | `{}` | Pod labels. |
-| reports-server.apiServicesManagement.podAnnotations | object | `{}` | Pod annotations. |
-| reports-server.apiServicesManagement.nodeAffinity | object | `{}` | Node affinity constraints. |
-| reports-server.apiServicesManagement.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the hook containers |
+| reports-server.apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
+| reports-server.jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
+| reports-server.jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
+| reports-server.jobConfigurations.image.tag | string | `"1.36.2-hardened"` | Image tag Defaults to `latest` if omitted |
+| reports-server.jobConfigurations.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
+| reports-server.jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
+| reports-server.jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
+| reports-server.jobConfigurations.nodeSelector | object | `{}` | Node labels for pod assignment |
+| reports-server.jobConfigurations.tolerations | list | `[]` | List of node taints to tolerate |
+| reports-server.jobConfigurations.podAntiAffinity | object | `{}` | Pod anti affinity constraints. |
+| reports-server.jobConfigurations.podAffinity | object | `{}` | Pod affinity constraints. |
+| reports-server.jobConfigurations.podLabels | object | `{}` | Pod labels. |
+| reports-server.jobConfigurations.podAnnotations | object | `{}` | Pod annotations. |
+| reports-server.jobConfigurations.nodeAffinity | object | `{}` | Node affinity constraints. |
+| reports-server.jobConfigurations.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the hook containers |
 | reports-server.extraObjects | list | `[]` |  |
 | reports-server.openreports.enabled | bool | `false` | Deploy openreports-api CRDs |
 
@@ -1063,7 +1068,7 @@ Kubernetes: `>=1.25.0-0`
 |  | crds | 3.7.0 |
 |  | grafana | 3.7.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.1 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.3.0-rc2 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.33 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers
