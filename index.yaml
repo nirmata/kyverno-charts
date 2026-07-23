@@ -2745,6 +2745,76 @@ entries:
       artifacthub.io/prerelease: "false"
       nirmata.com/eula: https://nirmata.com/eula/
     apiVersion: v2
+    appVersion: v1.17.2-n4k.nirmata.10
+    created: "2026-07-23T12:51:49.065363181Z"
+    dependencies:
+    - condition: grafana.enabled
+      name: grafana
+      repository: ""
+      version: 3.7.0
+    - condition: crds.install
+      name: crds
+      repository: ""
+      version: 3.7.0
+    - condition: crds.install
+      name: kyverno-api
+      repository: https://kyverno.github.io/api
+      version: 0.0.1-alpha.1
+    - condition: reports-server.install
+      name: reports-server
+      repository: https://nirmata.github.io/kyverno-charts
+      version: 0.2.33
+    - condition: openreports.installCrds
+      name: openreports
+      repository: https://openreports.github.io/reports-api
+      version: 0.1.0
+    description: Kubernetes Native Policy Management
+    digest: 889895646c86e8ab5e13dd6d8e96ffd65e81cce98afba4ce5e0166f331fde7d9
+    home: https://nirmata.com/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy
+    - validating webhook
+    - admission controller
+    - mutation
+    - mutate
+    - validate
+    - generate
+    - supply chain
+    - security
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno
+    sources:
+    - https://github.com/nirmata/enterprise-kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.7.7-rc.8/kyverno-3.7.7-rc.8.tgz
+    version: 3.7.7-rc.8
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: fixed
+          description: Ensure spec.template.metadata isn't null
+        - kind: removed
+          description: Remove the `delete` permission for policyexceptions in the admission controller
+        - kind: changed
+          description: Enable the flag `--generateValidatingAdmissionPolicy` by default in the admission controller.
+        - kind: changed
+          description: Enable the flag `--validatingAdmissionPolicyReports` by default in the reports controller.
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+        - name: Nirmata Enterprise Software License Agreement (EULA)
+          url: https://nirmata.com/eula/
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+      nirmata.com/eula: https://nirmata.com/eula/
+    apiVersion: v2
     appVersion: v1.17.2-n4k.nirmata.9
     created: "2026-07-22T06:40:05.579600676Z"
     dependencies:
@@ -37081,4 +37151,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2026-07-22T06:40:05.581421354Z"
+generated: "2026-07-23T12:51:49.067391622Z"
