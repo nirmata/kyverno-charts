@@ -1,8 +1,8 @@
 apiVersion: v2
 name: reports-server
 type: application
-version: 0.2.33
-appVersion: v0.2.30
+version: 0.2.34
+appVersion: v0.2.31
 home: https://nirmata.com/
 annotations:
   artifacthub.io/links: |
