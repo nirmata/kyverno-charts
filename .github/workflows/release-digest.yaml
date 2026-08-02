@@ -1,0 +1,199 @@
+# Twice-daily digest of `kyverno-*` chart releases.
+#
+# Runs at 11:30 UTC (5:00 PM IST) and 23:30 UTC (5:00 AM IST). Each run reports
+# the releases published in the preceding 12 hours as a single Slack message.
+#
+# The window is anchored to the fixed 11:30/23:30 UTC slots rather than to the
+# actual start time, so a delayed cron (GitHub does not guarantee punctuality)
+# still produces exact, non-overlapping windows.
+#
+# Nothing is posted when no releases landed in the window.
+
+name: Release Digest
+
+on:
+  schedule:
+    - cron: "30 11,23 * * *"
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: "Look back this many hours instead of using the 12h slot window"
+        required: false
+        type: string
+        default: ""
+  # TEMPORARY -- lets the workflow be exercised before it reaches the default
+  # branch, where `schedule` and `workflow_dispatch` first become available.
+  # Remove this trigger (and the push branch of HOURS_OVERRIDE) before merging.
+  push:
+    branches:
+      - "release-digest-test"
+
+permissions:
+  contents: read
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve reporting window
+        id: window
+        env:
+          # via env, not direct interpolation, so the input cannot break out of the script.
+          # The push branch is TEMPORARY: a push event carries no inputs, so the
+          # 12h slot window would almost always be empty. 168h = one week.
+          HOURS_OVERRIDE: ${{ inputs.hours || (github.event_name == 'push' && '168' || '') }}
+        run: |
+          set -euo pipefail
+          now=$(date -u +%s)
+          override="${HOURS_OVERRIDE:-}"
+
+          if [ -n "$override" ]; then
+            end=$now
+            start=$(( now - override * 3600 ))
+          else
+            today=$(date -u +%Y-%m-%d)
+            slot_am=$(date -u -d "${today}T11:30:00Z" +%s)
+            slot_pm=$(date -u -d "${today}T23:30:00Z" +%s)
+            if   [ "$now" -ge "$slot_pm" ]; then end=$slot_pm
+            elif [ "$now" -ge "$slot_am" ]; then end=$slot_am
+            else end=$(( slot_am - 43200 ))
+            fi
+            start=$(( end - 43200 ))
+          fi
+
+          label="$(TZ=Asia/Kolkata date -d "@$start" +'%-d %b %-I:%M %p') → $(TZ=Asia/Kolkata date -d "@$end" +'%-d %b %-I:%M %p') IST"
+
+          {
+            echo "start=$start"
+            echo "end=$end"
+            echo "label=$label"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Window: $label ($start .. $end)"
+
+      - name: Collect releases
+        id: collect
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          START: ${{ steps.window.outputs.start }}
+          END: ${{ steps.window.outputs.end }}
+        run: |
+          set -euo pipefail
+
+          # chart-releaser publishes one GitHub Release per chart version.
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" \
+            --jq '.[] | select(.tag_name | startswith("kyverno-"))
+                      | [.tag_name, .published_at, .html_url] | @tsv' > all.tsv || true
+
+          : > releases.jsonl
+
+          while IFS=$'\t' read -r tag published url; do
+            [ -n "${tag:-}" ] || continue
+            ts=$(date -u -d "$published" +%s)
+            [ "$ts" -ge "$START" ] && [ "$ts" -lt "$END" ] || continue
+
+            if ! git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
+              echo "::warning::tag $tag not found locally, skipping"
+              continue
+            fi
+
+            read_field() {
+              git show "${tag}:$1" 2>/dev/null \
+                | grep -m1 "^$2:" \
+                | sed -E "s/^$2:[[:space:]]*//; s/[\"']//g; s/[[:space:]]+#.*$//; s/[[:space:]]+$//" \
+                || true
+            }
+
+            app=$(read_field charts/kyverno/Chart.yaml appVersion)
+
+            # reports-server chart version comes from the kyverno chart's own
+            # dependency pin -- that is the RS version this release ships with.
+            # \047 is a single quote, so the awk program needs no nested quoting.
+            rs_ver=$(git show "${tag}:charts/kyverno/Chart.yaml" 2>/dev/null | awk '
+              $0 ~ /^[[:space:]]*-[[:space:]]*name:[[:space:]]*reports-server[[:space:]]*$/ { f = 1; next }
+              f && $0 ~ /^[[:space:]]*-[[:space:]]*name:/ { f = 0 }
+              f && $0 ~ /^[[:space:]]*version:/ {
+                sub(/^[[:space:]]*version:[[:space:]]*/, "")
+                gsub(/["]/, ""); gsub(/[\047]/, "")
+                sub(/[[:space:]]+#.*$/, ""); sub(/[[:space:]]+$/, "")
+                print; exit
+              }')
+
+            # appVersion is not carried in the dependency entry, so resolve it
+            # from that exact pinned chart version's own release tag.
+            rs_app=""
+            if [ -n "$rs_ver" ]; then
+              rs_app=$(git show "reports-server-${rs_ver}:charts/reports-server/Chart.yaml" 2>/dev/null \
+                | grep -m1 "^appVersion:" \
+                | sed -E "s/^appVersion:[[:space:]]*//; s/[\"']//g; s/[[:space:]]+#.*$//; s/[[:space:]]+$//" \
+                || true)
+            fi
+
+            case "$tag" in
+              *-rc*) kind=rc ;;
+              *)     kind=stable ;;
+            esac
+
+            jq -nc \
+              --arg tag "$tag" \
+              --arg url "$url" \
+              --arg app "${app:-unknown}" \
+              --arg rsv "${rs_ver:-}" \
+              --arg rsa "${rs_app:-}" \
+              --arg kind "$kind" \
+              '{tag:$tag, url:$url, app:$app, rsv:$rsv, rsa:$rsa, kind:$kind}' >> releases.jsonl
+          done < all.tsv
+
+          count=$(wc -l < releases.jsonl | tr -d ' ')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "Matched $count release(s)"
+
+      - name: Build Slack payload
+        if: steps.collect.outputs.count != '0'
+        env:
+          LABEL: ${{ steps.window.outputs.label }}
+        run: |
+          set -euo pipefail
+          jq -s --arg window "$LABEL" '
+            # the reports-server line is dropped entirely when the kyverno
+            # chart carries no reports-server dependency pin
+            def entry:
+              "*<\(.url)|\(.tag)>*\n"
+              + "n4k  `\(.app)`"
+              + (if   .rsv == "" then ""
+                 elif .rsa == "" then "\nreports-server  chart `\(.rsv)`"
+                 else "\nreports-server  chart `\(.rsv)` · app `\(.rsa)`"
+                 end);
+            def chunks($n): [range(0; length; $n) as $i | .[$i:$i+$n]];
+            def sect($t): {type:"section", text:{type:"mrkdwn", text:$t}};
+            def group($title; $items):
+              if ($items | length) == 0 then []
+              else [{type:"divider"}, sect("*\($title)*  ·  \($items|length)")]
+                   + ([$items[] | entry] | chunks(8) | map(sect(join("\n\n"))))
+              end;
+
+            . as $all
+            | {
+                blocks: (
+                  [ {type:"header", text:{type:"plain_text", text:"N4K Chart Releases"}},
+                    {type:"context", elements:[{type:"mrkdwn", text:$window}]} ]
+                  + group("Releases";           [$all[] | select(.kind == "stable")])
+                  + group("Release Candidates"; [$all[] | select(.kind == "rc")])
+                )
+              }
+          ' releases.jsonl > payload.json
+
+          jq . payload.json
+
+      - name: Send to Slack
+        if: steps.collect.outputs.count != '0'
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_RELEASE_DIGEST }}
+          webhook-type: incoming-webhook
+          payload-file-path: payload.json
