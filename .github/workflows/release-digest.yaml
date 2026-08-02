@@ -164,10 +164,10 @@ jobs:
             # chart carries no reports-server dependency pin
             def entry:
               "*<\(.url)|\(.tag)>*\n"
-              + "n4k  `\(.app)`"
+              + "N4K:    `\(.app)`"
               + (if   .rsv == "" then ""
-                 elif .rsa == "" then "\nreports-server  chart `\(.rsv)`"
-                 else "\nreports-server  chart `\(.rsv)` · app `\(.rsa)`"
+                 elif .rsa == "" then "\nReports Server:    Chart `\(.rsv)`"
+                 else "\nReports Server:    Chart `\(.rsv)` · Image `\(.rsa)`"
                  end);
             def chunks($n): [range(0; length; $n) as $i | .[$i:$i+$n]];
             def sect($t): {type:"section", text:{type:"mrkdwn", text:$t}};
