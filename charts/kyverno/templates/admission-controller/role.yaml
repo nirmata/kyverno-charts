@@ -39,6 +39,26 @@ rules:
     resourceNames:
       - {{ include "kyverno.config.configMapName" . }}
       - {{ include "kyverno.config.metricsConfigMapName" . }}
+  # Licensing trial and grace bookkeeping. Written only by the leader.
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - update
+      - patch
+    resourceNames:
+      - {{ include "kyverno.config.licenseStateConfigMapName" . }}
+  # `create` cannot be restricted by resourceNames, so it is namespace-scoped. Only
+  # needed to self-heal a deleted ConfigMap, and this Role already grants create on
+  # secrets here.
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - create
   - apiGroups:
       - coordination.k8s.io
     resources:
