@@ -317,6 +317,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | config.excludeClusterRoles | list | `[]` | Exclude roles |
 | config.generateSuccessEvents | bool | `false` | Generate success events. |
 | config.successEventActions | string | "" (empty, all success events are emitted when generateSuccessEvents is true) | Comma-separated list of event actions for which success events should be generated. When set, only success events matching the specified actions are emitted. Requires `generateSuccessEvents` to be `true`. Valid values: "Resource Mutated", "Resource Passed", "Resource Generated", "Resource Cleaned Up". Example: "Resource Mutated" or "Resource Mutated,Resource Generated". |
+| config.generatePolicyEvents | bool | `true` | Generate events on policy objects. When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects. This reduces event noise in multi-tenant environments where policy events may not be needed. |
 | config.maxContextSize | string | 2Mi | Maximum cumulative size of context data during policy evaluation. Supports Kubernetes quantity format (e.g., 100Mi, 2Gi) or plain bytes (e.g., 2097152). Limits memory used by context variables to prevent unbounded growth. Increase if policies legitimately need large context data (e.g., processing large ConfigMaps). Set to 0 to disable the limit (not recommended for production). |
 | config.resourceFilters | list | See [values.yaml](values.yaml) | Resource types to be skipped by the Kyverno policy engine. Make sure to surround each entry in quotes so that it doesn't get parsed as a nested YAML list. These are joined together without spaces, run through `tpl`, and the result is set in the config map. |
 | config.updateRequestThreshold | int | `1000` | Sets the threshold for the total number of UpdateRequests generated for mutateExisitng and generate policies. |
@@ -1067,7 +1068,7 @@ Kubernetes: `>=1.25.0-0`
 |  | crds | 3.8.0 |
 |  | grafana | 3.8.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.2 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.30-rc2 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.34 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers

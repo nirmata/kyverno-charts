@@ -329,6 +329,11 @@ config:
   # @default -- "" (empty, all success events are emitted when generateSuccessEvents is true)
   successEventActions: ""
 
+  # -- Generate events on policy objects.
+  # When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects.
+  # This reduces event noise in multi-tenant environments where policy events may not be needed.
+  generatePolicyEvents: true
+
   # -- Maximum cumulative size of context data during policy evaluation.
   # Supports Kubernetes quantity format (e.g., 100Mi, 2Gi) or plain bytes (e.g., 2097152).
   # Limits memory used by context variables to prevent unbounded growth.
