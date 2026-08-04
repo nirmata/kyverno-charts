@@ -211,6 +211,7 @@ spec:
               "generateMutatingAdmissionPolicy"
               "dumpPatches"
               "globalContext"
+              "licensing"
               "logging"
               "omitEvents"
               "policyExceptions"
@@ -253,6 +254,8 @@ spec:
             value: {{ template "kyverno.config.configMapName" . }}
           - name: METRICS_CONFIG
             value: {{ template "kyverno.config.metricsConfigMapName" . }}
+          - name: LICENSE_STATE_CONFIG
+            value: {{ template "kyverno.config.licenseStateConfigMapName" . }}
           - name: KYVERNO_NAMESPACE
             valueFrom:
               fieldRef:

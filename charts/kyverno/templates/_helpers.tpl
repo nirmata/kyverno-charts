@@ -85,6 +85,13 @@ false
   {{- $flags = append $flags (print "--maxAPICallResponseLength=" (int .maxApiCallResponseLength)) -}}
   {{- $flags = append $flags (print "--apiCallTimeout=" .apiCallTimeout) -}}
 {{- end -}}
+{{- with .licensing -}}
+  {{/* Licensing itself is always on and has no enable flag; only the cadence is
+       adjustable, and the controller clamps it to a sane range. */}}
+  {{- with .evaluationInterval -}}
+    {{- $flags = append $flags (print "--licenseEvaluationInterval=" .) -}}
+  {{- end -}}
+{{- end -}}
 {{- with .logging -}}
   {{- $flags = append $flags (print "--loggingFormat=" .format) -}}
   {{- $flags = append $flags (print "--v=" .verbosity) -}}

@@ -306,6 +306,10 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | config.preserve | bool | `true` | Preserve the configmap settings during upgrade. |
 | config.name | string | `nil` | The configmap name (required if `create` is `false`). |
 | config.annotations | object | `{}` | Additional annotations to add to the configmap. |
+| config.licenseState | object | `{"create":true,"name":null,"preserve":true}` | Nirmata license state. Holds trial and grace bookkeeping, written only by the leader-elected admission controller. |
+| config.licenseState.create | bool | `true` | Create the license state configmap. |
+| config.licenseState.preserve | bool | `true` | Keep the configmap on `helm uninstall`, so that reinstalling into the same namespace does not hand out a fresh trial window. Set to `false` in throwaway environments where an orphaned configmap is the bigger nuisance. |
+| config.licenseState.name | string | `nil` | The configmap name (required if `create` is `false`). |
 | config.disableAutoWebhookGeneration | object | `{"enable":false,"webhooks":["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]}` | Disable auto webhook generation. This is useful for environments like AKS where certain webhooks may cause issues. |
 | config.disableAutoWebhookGeneration.enable | bool | `false` | Enable the disableAutoWebhookGeneration feature |
 | config.disableAutoWebhookGeneration.webhooks | list | `["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]` | List of webhooks to disable |
@@ -317,6 +321,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | config.excludeClusterRoles | list | `[]` | Exclude roles |
 | config.generateSuccessEvents | bool | `false` | Generate success events. |
 | config.successEventActions | string | "" (empty, all success events are emitted when generateSuccessEvents is true) | Comma-separated list of event actions for which success events should be generated. When set, only success events matching the specified actions are emitted. Requires `generateSuccessEvents` to be `true`. Valid values: "Resource Mutated", "Resource Passed", "Resource Generated", "Resource Cleaned Up". Example: "Resource Mutated" or "Resource Mutated,Resource Generated". |
+| config.generatePolicyEvents | bool | `true` | Generate events on policy objects. When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects. This reduces event noise in multi-tenant environments where policy events may not be needed. |
 | config.maxContextSize | string | 2Mi | Maximum cumulative size of context data during policy evaluation. Supports Kubernetes quantity format (e.g., 100Mi, 2Gi) or plain bytes (e.g., 2097152). Limits memory used by context variables to prevent unbounded growth. Increase if policies legitimately need large context data (e.g., processing large ConfigMaps). Set to 0 to disable the limit (not recommended for production). |
 | config.resourceFilters | list | See [values.yaml](values.yaml) | Resource types to be skipped by the Kyverno policy engine. Make sure to surround each entry in quotes so that it doesn't get parsed as a nested YAML list. These are joined together without spaces, run through `tpl`, and the result is set in the config map. |
 | config.updateRequestThreshold | int | `1000` | Sets the threshold for the total number of UpdateRequests generated for mutateExisitng and generate policies. |
@@ -372,6 +377,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | features.dumpPatches.enabled | bool | `false` | Enables the feature |
 | features.globalContext.maxApiCallResponseLength | int | `2000000` | Maximum allowed response size from API Calls. A value of 0 bypasses checks (not recommended) |
 | features.globalContext.apiCallTimeout | string | `"30s"` | Timeout for HTTP API calls made by policies. A value of 0s means no timeout. |
+| features.licensing.evaluationInterval | string | `nil` | How often Nirmata license state is re-evaluated. Clamped to between `1m` and `1h`. Leave unset to use the built-in default of `15m`.  Licensing itself is always enabled and cannot be turned off. It is reporting-only: license state is surfaced through logs, Kubernetes events and metrics, and no admission request is ever refused and no policy is ever disabled. |
 | features.logging.format | string | `"text"` | Logging format |
 | features.logging.verbosity | int | `2` | Logging verbosity |
 | features.omitEvents.eventTypes | list | `["PolicyApplied","PolicySkipped"]` | Events which should not be emitted (possible values `PolicyViolation`, `PolicyApplied`, `PolicyError`, and `PolicySkipped`) |
@@ -1067,7 +1073,7 @@ Kubernetes: `>=1.25.0-0`
 |  | crds | 3.8.0 |
 |  | grafana | 3.8.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.2 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.30-rc2 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.34 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers

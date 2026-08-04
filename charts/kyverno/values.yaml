@@ -288,6 +288,18 @@ config:
   # -- Additional annotations to add to the configmap.
   annotations: {}
 
+  # -- Nirmata license state. Holds trial and grace bookkeeping, written only by
+  # the leader-elected admission controller.
+  licenseState:
+    # -- Create the license state configmap.
+    create: true
+    # -- Keep the configmap on `helm uninstall`, so that reinstalling into the same
+    # namespace does not hand out a fresh trial window. Set to `false` in
+    # throwaway environments where an orphaned configmap is the bigger nuisance.
+    preserve: true
+    # -- (string) The configmap name (required if `create` is `false`).
+    name: ~
+
   # -- Disable auto webhook generation. This is useful for environments like AKS
   # where certain webhooks may cause issues.
   disableAutoWebhookGeneration:
@@ -328,6 +340,11 @@ config:
   # Example: "Resource Mutated" or "Resource Mutated,Resource Generated".
   # @default -- "" (empty, all success events are emitted when generateSuccessEvents is true)
   successEventActions: ""
+
+  # -- Generate events on policy objects.
+  # When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects.
+  # This reduces event noise in multi-tenant environments where policy events may not be needed.
+  generatePolicyEvents: true
 
   # -- Maximum cumulative size of context data during policy evaluation.
   # Supports Kubernetes quantity format (e.g., 100Mi, 2Gi) or plain bytes (e.g., 2097152).
@@ -803,6 +820,15 @@ features:
     maxApiCallResponseLength: 2000000
     # -- Timeout for HTTP API calls made by policies. A value of 0s means no timeout.
     apiCallTimeout: 30s
+  licensing:
+    # -- (string) How often Nirmata license state is re-evaluated. Clamped to
+    # between `1m` and `1h`. Leave unset to use the built-in default of `15m`.
+    #
+    # Licensing itself is always enabled and cannot be turned off. It is
+    # reporting-only: license state is surfaced through logs, Kubernetes events and
+    # metrics, and no admission request is ever refused and no policy is ever
+    # disabled.
+    evaluationInterval: ~
   logging:
     # -- Logging format
     format: text
