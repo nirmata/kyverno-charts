@@ -2,4 +2,4 @@
 # licensing is always on. The controller clamps the interval to 1m..1h.
 features:
   licensing:
-    evaluationInterval: 5m
+    evaluationInterval: 1m
