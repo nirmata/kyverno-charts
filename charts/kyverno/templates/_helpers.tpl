@@ -86,10 +86,16 @@ false
   {{- $flags = append $flags (print "--apiCallTimeout=" .apiCallTimeout) -}}
 {{- end -}}
 {{- with .licensing -}}
-  {{/* Licensing itself is always on and has no enable flag; only the cadence is
-       adjustable, and the controller clamps it to a sane range. */}}
+  {{/* Licensing itself is always on and has no enable flag; only the cadence and
+       optional commercial license path are adjustable. */}}
   {{- with .evaluationInterval -}}
     {{- $flags = append $flags (print "--licenseEvaluationInterval=" .) -}}
+  {{- end -}}
+  {{- with .licensePath -}}
+    {{- $flags = append $flags (print "--licensePath=" .) -}}
+  {{- end -}}
+  {{- with .warnRatio -}}
+    {{- $flags = append $flags (print "--licenseWarnRatio=" .) -}}
   {{- end -}}
 {{- end -}}
 {{- with .logging -}}

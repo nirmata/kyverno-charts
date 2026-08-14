@@ -310,6 +310,11 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | config.licenseState.create | bool | `true` | Create the license state configmap. |
 | config.licenseState.preserve | bool | `true` | Keep the configmap on `helm uninstall`, so that reinstalling into the same namespace does not hand out a fresh trial window. Set to `false` in throwaway environments where an orphaned configmap is the bigger nuisance. |
 | config.licenseState.name | string | `nil` | The configmap name (required if `create` is `false`). |
+| license.create | bool | `false` | Create a Secret from `license.value` for the commercial Nirmata license. |
+| license.name | string | `nil` | Secret name (defaults to `<fullname>-license` when create is true). |
+| license.key | string | `"license"` | Key inside the Secret that holds the license file body. |
+| license.value | string | `nil` | Raw license file content. Required when `create` is true. |
+| license.existingSecret | string | `nil` | Name of an existing Secret that already holds the license file. |
 | config.disableAutoWebhookGeneration | object | `{"enable":false,"webhooks":["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]}` | Disable auto webhook generation. This is useful for environments like AKS where certain webhooks may cause issues. |
 | config.disableAutoWebhookGeneration.enable | bool | `false` | Enable the disableAutoWebhookGeneration feature |
 | config.disableAutoWebhookGeneration.webhooks | list | `["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]` | List of webhooks to disable |
@@ -377,7 +382,9 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | features.dumpPatches.enabled | bool | `false` | Enables the feature |
 | features.globalContext.maxApiCallResponseLength | int | `2000000` | Maximum allowed response size from API Calls. A value of 0 bypasses checks (not recommended) |
 | features.globalContext.apiCallTimeout | string | `"30s"` | Timeout for HTTP API calls made by policies. A value of 0s means no timeout. |
-| features.licensing.evaluationInterval | string | `nil` | How often Nirmata license state is re-evaluated. Clamped to between `1m` and `1h`. Leave unset to use the built-in default of `15m`.  Licensing itself is always enabled and cannot be turned off. It is reporting-only: license state is surfaced through logs, Kubernetes events and metrics, and no admission request is ever refused and no policy is ever disabled. |
+| features.licensing.evaluationInterval | string | `nil` | How often Nirmata license state is re-evaluated. Clamped to between `1m` and `1h`. Leave unset to use the built-in default of `15m`. Licensing itself is always enabled and cannot be turned off. In FreeTier, FreeExpired and Degraded, CREATE of a new policy at or over the licensed policy cap is refused. Core workload admission is never gated. |
+| features.licensing.licensePath | string | `nil` | Path to a commercial license file inside the admission controller. When `license.create` or `license.existingSecret` is set, defaults to the chart mount path. |
+| features.licensing.warnRatio | float | `nil` | Capacity utilization fraction, in (0, 1], at which the license state enters Warning. Leave unset to use the built-in default of `0.9`. Values outside that range fall back to the default. |
 | features.logging.format | string | `"text"` | Logging format |
 | features.logging.verbosity | int | `2` | Logging verbosity |
 | features.omitEvents.eventTypes | list | `["PolicyApplied","PolicySkipped"]` | Events which should not be emitted (possible values `PolicyViolation`, `PolicyApplied`, `PolicyError`, and `PolicySkipped`) |

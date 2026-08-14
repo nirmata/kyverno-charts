@@ -273,6 +273,23 @@ apiCallToken:
   # frequency.
   expirationSeconds: 3600
 
+# -- Nirmata commercial license. When create or existingSecret is set, the
+# admission controller mounts the Secret (optional volume) and validates the
+# license offline. Deleting the Secret does not take pods down: the evaluator
+# falls back to the free-tier community license (FreeTier / FreeExpired).
+license:
+  # -- Create a Secret from `license.value`.
+  create: false
+  # -- (string) Secret name (defaults to `<fullname>-license` when create is true).
+  name: ~
+  # -- Key inside the Secret that holds the license file body.
+  key: license
+  # -- (string) Raw license file content. Required when `create` is true.
+  value: ~
+  # -- (string) Name of an existing Secret in the release namespace that already
+  # holds the license file. Ignored when `create` is true.
+  existingSecret: ~
+
 # Configuration
 config:
 
@@ -824,11 +841,21 @@ features:
     # -- (string) How often Nirmata license state is re-evaluated. Clamped to
     # between `1m` and `1h`. Leave unset to use the built-in default of `15m`.
     #
-    # Licensing itself is always enabled and cannot be turned off. It is
-    # reporting-only: license state is surfaced through logs, Kubernetes events and
-    # metrics, and no admission request is ever refused and no policy is ever
-    # disabled.
+    # Licensing itself is always enabled and cannot be turned off. In FreeTier,
+    # FreeExpired and Degraded states, CREATE of a new policy that would exceed
+    # the licensed policy cap is refused. Core workload admission
+    # (validate/mutate/generate) is never gated. Feature-tier gating is not
+    # enforced in this release.
     evaluationInterval: ~
+    # -- (string) Path to a commercial license file inside the admission
+    # controller container. Leave unset to use the free-tier community license.
+    # When `license.create` or `license.existingSecret` is set, the chart mounts
+    # the Secret and defaults this to the mount path unless overridden here.
+    licensePath: ~
+    # -- (float) Capacity utilization fraction, in (0, 1], at which the license
+    # state enters Warning. Leave unset to use the built-in default of `0.9`.
+    # Values outside that range fall back to the default.
+    warnRatio: ~
   logging:
     # -- Logging format
     format: text

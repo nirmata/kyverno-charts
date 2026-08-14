@@ -220,6 +220,10 @@ spec:
               "reporting"
               "tuf"
             ) | nindent 12 }}
+            {{- $licensing := mergeOverwrite (deepCopy .Values.features.licensing) (.Values.admissionController.featuresOverride.licensing | default dict) }}
+            {{- if and (include "kyverno.license.enabled" .) (not $licensing.licensePath) }}
+            - --licensePath={{ include "kyverno.license.filePath" . }}
+            {{- end }}
             {{- range $key, $value := .Values.admissionController.container.extraArgs }}
             {{- if $value }}
             - --{{ $key }}={{ $value }}
@@ -307,6 +311,11 @@ spec:
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               readOnly: true
             {{- end }}
+            {{- if (include "kyverno.license.enabled" .) }}
+            - name: nirmata-license
+              mountPath: {{ template "kyverno.license.mountPath" . }}
+              readOnly: true
+            {{- end }}
             {{- with .Values.admissionController.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -336,6 +345,18 @@ spec:
                 {{- with .Values.apiCallToken.audience }}
                 audience: {{ . | quote }}
                 {{- end }}
+      {{- if (include "kyverno.license.enabled" .) }}
+      # optional: deleting the license Secret must not block or crash the
+      # admission controller. The evaluator falls back to the free-tier
+      # community license (FreeTier / FreeExpired) when the file is missing.
+      - name: nirmata-license
+        secret:
+          secretName: {{ template "kyverno.license.secretName" . }}
+          optional: true
+          items:
+            - key: {{ default "license" .Values.license.key }}
+              path: {{ default "license" .Values.license.key }}
+      {{- end }}
       {{- if not $automountSAToken }}
       - name: serviceaccount-token
         projected:
