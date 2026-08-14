@@ -27,6 +27,15 @@ jobs:
   release:
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      contents: write   # chart-releaser pushes gh-pages + creates GitHub Releases
+      packages: write   # helm push to ghcr.io
+      id-token: write   # keyless cosign (OIDC)
+    env:
+      # Charts published to the OCI registry. Add deliberately: everything
+      # listed here becomes publicly pullable from ghcr.io/nirmata/charts.
+      OCI_CHARTS: kyverno,reports-server
+      OCI_REGISTRY: oci://ghcr.io/${{ github.repository_owner }}/charts
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,6 +57,62 @@ jobs:
         uses: helm/chart-releaser-action@v1.6.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Install Cosign
+        if: steps.releaser.outputs.changed_charts != ''
+        uses: sigstore/cosign-installer@v3.7.0
+
+      - name: Login to GitHub Container Registry
+        if: steps.releaser.outputs.changed_charts != ''
+        run: |
+          helm registry login ghcr.io \
+            --username "${GITHUB_ACTOR}" \
+            --password "${{ secrets.GITHUB_TOKEN }}"
+          cosign login ghcr.io \
+            --username "${GITHUB_ACTOR}" \
+            --password "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Publish and sign OCI charts
+        if: steps.releaser.outputs.changed_charts != ''
+        run: |
+          set -euo pipefail
+
+          # chart-releaser leaves ONLY the charts it just released here.
+          shopt -s nullglob
+          pkgs=(.cr-release-packages/*.tgz)
+          if [ ${#pkgs[@]} -eq 0 ]; then
+            echo "No packaged charts found; nothing to publish."
+            exit 0
+          fi
+
+          for pkg in "${pkgs[@]}"; do
+            name=$(helm show chart "$pkg" | awk '/^name:/{print $2}')
+            ver=$(helm show chart "$pkg" | awk '/^version:/{print $2}')
+            repo="ghcr.io/${{ github.repository_owner }}/charts/${name}"
+
+            # Allowlist gate
+            case ",${OCI_CHARTS}," in
+              *",${name},"*) ;;
+              *) echo "skip ${name}: not in OCI_CHARTS"; continue ;;
+            esac
+
+            # Idempotency: never re-push an existing tag (safe workflow re-runs)
+            if helm show chart "oci://${repo}" --version "$ver" >/dev/null 2>&1; then
+              echo "skip ${name}:${ver}: already published"
+              continue
+            fi
+
+            echo "Publishing ${name}:${ver}"
+            helm push "$pkg" "${OCI_REGISTRY}" 2>&1 | tee .digest
+            digest=$(awk -F "[, ]+" '/Digest/{print $NF}' .digest)
+
+            cosign sign --yes \
+              -a "repo=${{ github.repository }}" \
+              -a "workflow=${{ github.workflow }}" \
+              -a "ref=${{ github.sha }}" \
+              -a "kind=helm-chart" \
+              "${repo}@${digest}"
+          done
 
   notify:
     runs-on: ubuntu-latest
