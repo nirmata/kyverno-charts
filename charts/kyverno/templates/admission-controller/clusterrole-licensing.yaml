@@ -21,7 +21,10 @@ rules:
       - get
       - list
   # Counted toward the policy cap, but granted only to the cleanup controller by
-  # default.
+  # default. watch is required alongside list: the live policy counter behind the
+  # capacity gate reads these through informers, and an informer denied watch
+  # lists once then retries forever, leaving the counter permanently unsynced so
+  # the gate silently falls back to the stale evaluated count.
   - apiGroups:
       - policies.kyverno.io
     resources:
@@ -30,4 +33,5 @@ rules:
     verbs:
       - get
       - list
+      - watch
 {{- end }}
