@@ -678,7 +678,7 @@ webhooksCleanup:
     # -- (string) Image registry
     registry: ghcr.io
     # -- Image repository (readiness-checker supports delete-webhooks and scale-deploy)
-    repository: kyverno/readiness-checker
+    repository: nirmata/readiness-checker
     # -- Image tag
     # Defaults to `latest` if omitted
     tag: ~
