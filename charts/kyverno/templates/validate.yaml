@@ -42,6 +42,36 @@
   -}}
 {{- end -}}
 
+{{- if eq (include "kyverno.installReportsServer" .) "true" -}}
+  {{- $staleCRDs := list -}}
+  {{- range $crdName := list "policyreports.wgpolicyk8s.io" "clusterpolicyreports.wgpolicyk8s.io" "ephemeralreports.reports.kyverno.io" "clusterephemeralreports.reports.kyverno.io" -}}
+    {{- if lookup "apiextensions.k8s.io/v1" "CustomResourceDefinition" "" $crdName -}}
+      {{- $staleCRDs = append $staleCRDs $crdName -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if $staleCRDs -}}
+    {{- $msg := list
+      ""
+      ""
+      "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+      "  | reports-server is being installed but legacy reporting CRDs already exist on the cluster.                                            |"
+      "  | reports-server registers aggregated APIServices for reports.kyverno.io and wgpolicyk8s.io and owns those resources at runtime.       |"
+      "  | Pre-existing native CRDs collide with those APIServices and trigger a duplicate-path error in the Kubernetes OpenAPI spec (1.28+).   |"
+      "  | The CRDs listed below must be deleted before the upgrade can proceed — reports-server will serve these resources via APIServices.    |"
+      "  +--------------------------------------------------------------------------------------------------------------------------------------+"
+      ""
+      "  Stale CRDs detected:"
+    -}}
+    {{- range $name := $staleCRDs -}}
+      {{- $msg = append $msg (printf "    - %s" $name) -}}
+    {{- end -}}
+    {{- $msg = append $msg "" -}}
+    {{- $msg = append $msg (printf "  Run the following and re-run the upgrade:\n    kubectl delete crd %s" (join " " $staleCRDs)) -}}
+    {{- $msg = append $msg "" -}}
+    {{- fail (join "\n" $msg) -}}
+  {{- end -}}
+{{- end -}}
+
 {{- if and (eq .Values.crds.reportsServer.enabled true) (eq (include "kyverno.installReportsServer" .) "false") -}}
   {{- $reportsServerPods := lookup "v1" "Pod" (include "kyverno.namespace" .) "" -}}
   {{- $apiServices := lookup "apiregistration.k8s.io/v1" "APIService" "" "" -}}
