@@ -203,6 +203,18 @@ rules:
   - list
   - watch
 
+# Vertical Pod Autoscaler recommendations (read-only).
+# Used by prescriptive (non-LLM) resource-optimization remediation to source
+# right-sizing target values from VPA .status.recommendation.
+- apiGroups:
+  - autoscaling.k8s.io
+  resources:
+  - verticalpodautoscalers
+  verbs:
+  - get
+  - list
+  - watch
+
 # Custom Resource Definitions (read-only for discovery)
 - apiGroups:
   - apiextensions.k8s.io

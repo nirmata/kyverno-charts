@@ -104,7 +104,7 @@ metrics:
 # LLM provider configuration for creating an LLMConfig CR
 llm:
   enabled: true
-  provider: "nirmataAI"  # Options: bedrock, azure-openai
+  provider: "nirmataAI"  # Options: nirmataAI, bedrock, azure-openai, anthropic
   bedrock:
     model: ""
     region: ""
@@ -121,6 +121,17 @@ llm:
       key: "api-key"
   nirmataAI:
     model: ""
+  # Direct Anthropic API, using a customer-supplied API key. Use baseURL to
+  # point at an internal gateway instead of the public Anthropic API.
+  anthropic:
+    # Required. For example: claude-opus-5, claude-sonnet-5, claude-haiku-4-5
+    model: ""
+    # Optional. Include the scheme, e.g. https://ai-gateway.internal
+    # Leave empty to use https://api.anthropic.com
+    baseURL: ""
+    secretRef:
+      name: ""
+      key: "api-key"
 
 nirmata:
   # Nirmata endpoint URL - used to set the --url command-line flag

@@ -48,6 +48,7 @@ spec:
                     enum:
                     - localCluster
                     - argoHub
+                    - fluxHub
                     type: string
                 required:
                 - type
@@ -157,7 +158,9 @@ spec:
                     - name
                     type: object
                   llmConfigRef:
-                    description: LLMConfigRef defines a reference to a LLMConfig resource
+                    description: |-
+                      LLMConfigRef defines a reference to a LLMConfig resource.
+                      Required when remediationMode is "ai"; ignored in "prescriptive" mode.
                     properties:
                       apiVersion:
                         default: serviceagents.nirmata.io/v1alpha1
@@ -176,6 +179,35 @@ spec:
                         type: string
                     required:
                     - name
+                    type: object
+                  remediationMode:
+                    default: ai
+                    description: |-
+                      RemediationMode selects how remediation plans are generated.
+                        - "ai":           uses an LLM to generate remediation diffs (requires llmConfigRef).
+                        - "prescriptive": computes fixes deterministically without any LLM
+                                           (currently scoped to resource-optimization policies).
+                    enum:
+                    - ai
+                    - prescriptive
+                    type: string
+                  resourceOptimization:
+                    description: |-
+                      ResourceOptimization configures prescriptive (non-LLM) resource-optimization
+                      remediation. Only consulted when remediationMode is "prescriptive".
+                    properties:
+                      policyCategories:
+                        default:
+                        - Resource Management
+                        description: |-
+                          PolicyCategories lists the values of the standard Kyverno annotation
+                          "policies.kyverno.io/category" that mark a policy as in-scope for
+                          prescriptive resource-optimization remediation. A violation is only
+                          remediated when its policy's category is in this list. No new labels
+                          are introduced on workloads or policies.
+                        items:
+                          type: string
+                        type: array
                     type: object
                   triggers:
                     description: Triggers defines when remediation should be triggered
@@ -196,7 +228,6 @@ spec:
                     type: array
                 required:
                 - actions
-                - llmConfigRef
                 - triggers
                 type: object
               target:
@@ -205,7 +236,8 @@ spec:
                   Optional when LocalCluster is true (will use current cluster)
                 properties:
                   argoHub:
-                    description: ArgoHubTarget holds cluster-based targeting configuration
+                    description: ArgoHubTarget holds ArgoCD hub cluster targeting
+                      configuration
                     properties:
                       appSelector:
                         description: |-
@@ -284,6 +316,161 @@ spec:
                         items:
                           type: string
                         type: array
+                    type: object
+                  fluxHub:
+                    description: FluxHubTarget holds FluxCD hub cluster targeting
+                      configuration
+                    properties:
+                      fluxNamespace:
+                        default: flux-system
+                        description: |-
+                          FluxNamespace is the namespace where Flux controllers are installed.
+                          Used for reference and logging only; defaults to "flux-system".
+                        type: string
+                      helmReleaseSelector:
+                        description: |-
+                          HelmReleaseSelector defines which Flux HelmReleases to target.
+                          If not specified, no HelmReleases will be selected.
+                          Can be configured alongside KustomizationSelector to remediate both types.
+                        properties:
+                          allHelmReleases:
+                            description: |-
+                              AllHelmReleases selects all HelmReleases found in the searched namespaces.
+                              When true, Names and LabelSelector are ignored.
+                            type: boolean
+                          labelSelector:
+                            description: LabelSelector selects HelmReleases by their
+                              labels.
+                            properties:
+                              matchExpressions:
+                                description: matchExpressions is a list of label selector
+                                  requirements. The requirements are ANDed.
+                                items:
+                                  description: |-
+                                    A label selector requirement is a selector that contains values, a key, and an operator that
+                                    relates the key and values.
+                                  properties:
+                                    key:
+                                      description: key is the label key that the selector
+                                        applies to.
+                                      type: string
+                                    operator:
+                                      description: |-
+                                        operator represents a key's relationship to a set of values.
+                                        Valid operators are In, NotIn, Exists and DoesNotExist.
+                                      type: string
+                                    values:
+                                      description: |-
+                                        values is an array of string values. If the operator is In or NotIn,
+                                        the values array must be non-empty. If the operator is Exists or DoesNotExist,
+                                        the values array must be empty. This array is replaced during a strategic
+                                        merge patch.
+                                      items:
+                                        type: string
+                                      type: array
+                                      x-kubernetes-list-type: atomic
+                                  required:
+                                  - key
+                                  - operator
+                                  type: object
+                                type: array
+                                x-kubernetes-list-type: atomic
+                              matchLabels:
+                                additionalProperties:
+                                  type: string
+                                description: |-
+                                  matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+                                  map is equivalent to an element of matchExpressions, whose key field is "key", the
+                                  operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                type: object
+                            type: object
+                            x-kubernetes-map-type: atomic
+                          names:
+                            description: Names is a list of specific HelmRelease names
+                              to select.
+                            items:
+                              type: string
+                            type: array
+                          namespaces:
+                            description: |-
+                              Namespaces restricts which namespaces are searched for HelmReleases.
+                              When empty, all namespaces are searched.
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      kustomizationSelector:
+                        description: |-
+                          KustomizationSelector defines which Flux Kustomizations to target.
+                          If not specified, no Kustomizations will be selected.
+                        properties:
+                          allKustomizations:
+                            description: |-
+                              AllKustomizations selects all Kustomizations found in the searched namespaces.
+                              When true, Names and LabelSelector are ignored.
+                            type: boolean
+                          labelSelector:
+                            description: LabelSelector selects Kustomizations by their
+                              labels.
+                            properties:
+                              matchExpressions:
+                                description: matchExpressions is a list of label selector
+                                  requirements. The requirements are ANDed.
+                                items:
+                                  description: |-
+                                    A label selector requirement is a selector that contains values, a key, and an operator that
+                                    relates the key and values.
+                                  properties:
+                                    key:
+                                      description: key is the label key that the selector
+                                        applies to.
+                                      type: string
+                                    operator:
+                                      description: |-
+                                        operator represents a key's relationship to a set of values.
+                                        Valid operators are In, NotIn, Exists and DoesNotExist.
+                                      type: string
+                                    values:
+                                      description: |-
+                                        values is an array of string values. If the operator is In or NotIn,
+                                        the values array must be non-empty. If the operator is Exists or DoesNotExist,
+                                        the values array must be empty. This array is replaced during a strategic
+                                        merge patch.
+                                      items:
+                                        type: string
+                                      type: array
+                                      x-kubernetes-list-type: atomic
+                                  required:
+                                  - key
+                                  - operator
+                                  type: object
+                                type: array
+                                x-kubernetes-list-type: atomic
+                              matchLabels:
+                                additionalProperties:
+                                  type: string
+                                description: |-
+                                  matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+                                  map is equivalent to an element of matchExpressions, whose key field is "key", the
+                                  operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                type: object
+                            type: object
+                            x-kubernetes-map-type: atomic
+                          names:
+                            description: Names is a list of specific Kustomization
+                              names to select.
+                            items:
+                              type: string
+                            type: array
+                          namespaces:
+                            description: |-
+                              Namespaces restricts which namespaces are searched for Kustomizations.
+                              In hub-driven setups each spoke typically has a dedicated namespace on the hub
+                              (e.g. "production", "staging"). When empty, all namespaces are searched.
+                            items:
+                              type: string
+                            type: array
+                        type: object
                     type: object
                   localCluster:
                     description: LocalClusterTarget holds local cluster-based targeting
@@ -388,6 +575,10 @@ spec:
                 x-kubernetes-validations:
                 - message: localCluster and argoHub cannot both be set
                   rule: '!(has(self.localCluster) && has(self.argoHub))'
+                - message: localCluster and fluxHub cannot both be set
+                  rule: '!(has(self.localCluster) && has(self.fluxHub))'
+                - message: argoHub and fluxHub cannot both be set
+                  rule: '!(has(self.argoHub) && has(self.fluxHub))'
             required:
             - environment
             - remediation
@@ -397,6 +588,10 @@ spec:
               rule: self.environment.type == 'localCluster' || has(self.target)
             - message: target is required when environment type is argoHub
               rule: 'self.environment.type == ''argoHub'' ? has(self.target) : true'
+            - message: target is required when environment type is fluxHub
+              rule: 'self.environment.type == ''fluxHub'' ? has(self.target) : true'
+            - message: llmConfigRef is required when remediationMode is 'ai'
+              rule: self.remediation.remediationMode != 'ai' || has(self.remediation.llmConfigRef)
           status:
             description: RemediatorStatus defines the observed state of Remediator.
             properties:
@@ -534,6 +729,8 @@ spec:
               phase:
                 description: Phase represents the current operational phase of the
                   remediator
+                type: string
+              triggerSource:
                 type: string
             type: object
         type: object

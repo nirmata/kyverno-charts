@@ -33,6 +33,17 @@ spec:
   {{- else if eq .Values.llm.provider "nirmataAI" }}
   nirmataAI:
     model: {{ .Values.llm.nirmataAI.model | quote }}
+  {{- else if eq .Values.llm.provider "anthropic" }}
+  anthropic:
+    model: {{ required "llm.anthropic.model is required when llm.provider is \"anthropic\"" .Values.llm.anthropic.model | quote }}
+    {{- if .Values.llm.anthropic.baseURL }}
+    baseURL: {{ .Values.llm.anthropic.baseURL | quote }}
+    {{- end }}
+    apiKeySecretRef:
+      name: {{ required "llm.anthropic.secretRef.name is required when llm.provider is \"anthropic\"" .Values.llm.anthropic.secretRef.name | quote }}
+      key: {{ .Values.llm.anthropic.secretRef.key | default "api-key" | quote }}
+  {{- else }}
+  {{- fail (printf "llm.provider %q is not supported. Valid values: nirmataAI, bedrock, azure-openai, anthropic" .Values.llm.provider) }}
   {{- end }}
 {{- end }}
 
