@@ -23,7 +23,7 @@ For installation, refer to the [documentation](https://docs.nirmata.io/docs/agen
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `llm.enabled` | Enable creation of LLMConfig resource | `true` |
-| `llm.provider` | LLM provider (bedrock, azure-openai, nirmataAI) | `nirmataAI` |
+| `llm.provider` | LLM provider (nirmataAI, bedrock, azure-openai, anthropic) | `nirmataAI` |
 | `llm.nirmataAI.model` | Model name for Nirmata AI | `""` |
 | `llm.bedrock.model` | AWS Bedrock model name | `""` |
 | `llm.bedrock.region` | AWS region | `""` |
@@ -31,6 +31,50 @@ For installation, refer to the [documentation](https://docs.nirmata.io/docs/agen
 | `llm.azureOpenAI.endpoint` | Azure OpenAI endpoint | `""` |
 | `llm.azureOpenAI.deploymentName` | Azure deployment name | `""` |
 | `llm.azureOpenAI.secretRef.name` | Secret containing API key | `""` |
+| `llm.anthropic.model` | Anthropic model ID, e.g. `claude-opus-5` (required) | `""` |
+| `llm.anthropic.baseURL` | Override the Anthropic endpoint, e.g. an internal gateway. Include the scheme. Empty uses `https://api.anthropic.com` | `""` |
+| `llm.anthropic.secretRef.name` | Secret containing the Anthropic API key | `""` |
+| `llm.anthropic.secretRef.key` | Key within that secret | `api-key` |
+
+#### Direct Anthropic API
+
+Use this when the API key is yours and you do not want Bedrock or Azure in the
+path. `baseURL` points the agent at an internal gateway, so no traffic needs to
+reach `api.anthropic.com` directly.
+
+```bash
+kubectl create secret generic anthropic-api-key -n nirmata \
+  --from-literal=api-key='<YOUR_ANTHROPIC_API_KEY>'
+```
+
+```yaml
+llm:
+  enabled: true
+  provider: anthropic
+  anthropic:
+    model: claude-opus-5
+    # Omit to use https://api.anthropic.com
+    baseURL: https://ai-gateway.internal
+    secretRef:
+      name: anthropic-api-key
+      key: api-key
+```
+
+The secret must exist before the agent reads it, and the key is loaded when the
+LLM client is constructed rather than watched. After rotating the key, restart
+the agent:
+
+```bash
+kubectl rollout restart deploy/<release>-nirmata-agent -n nirmata
+```
+
+Verify:
+
+```bash
+kubectl get llmconfig -n nirmata -o yaml    # spec.type should be "anthropic"
+kubectl logs -n nirmata deploy/<release>-nirmata-agent | grep -i "LLM client"
+# expect: Created LLM client for provider anthropic with model claude-opus-5
+```
 
 ### Tool Configuration
 

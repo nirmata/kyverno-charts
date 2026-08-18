@@ -9,7 +9,7 @@
       "properties": {
         "provider": {
           "type": "string",
-          "enum": ["bedrock", "azure-openai", "nirmataAI"]
+          "enum": ["bedrock", "azure-openai", "nirmataAI", "anthropic"]
         },
         "bedrock": {
           "type": "object",
@@ -48,6 +48,22 @@
           "additionalProperties": true,
           "properties": {
             "model": { "type": "string" }
+          }
+        },
+        "anthropic": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "model": { "type": "string" },
+            "baseURL": { "type": "string" },
+            "secretRef": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "name": { "type": "string" },
+                "key": { "type": "string" }
+              }
+            }
           }
         }
       }
@@ -129,6 +145,41 @@
         "properties": {
           "llm": {
             "required": ["nirmataAI"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "llm": {
+            "type": "object",
+            "properties": {
+              "provider": { "const": "anthropic" }
+            },
+            "required": ["provider"]
+          }
+        },
+        "required": ["llm"]
+      },
+      "then": {
+        "properties": {
+          "llm": {
+            "required": ["anthropic"],
+            "properties": {
+              "anthropic": {
+                "required": ["model", "secretRef"],
+                "properties": {
+                  "model": { "minLength": 1 },
+                  "secretRef": {
+                    "required": ["name"],
+                    "properties": {
+                      "name": { "minLength": 1 }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
