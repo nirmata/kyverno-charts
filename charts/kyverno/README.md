@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.7.7-rc.6](https://img.shields.io/badge/Version-3.7.7--rc.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.17.2-n4k.nirmata.8](https://img.shields.io/badge/AppVersion-v1.17.2--n4k.nirmata.8-informational?style=flat-square)
+![Version: 3.7.9](https://img.shields.io/badge/Version-3.7.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.17.2-n4k.nirmata.13](https://img.shields.io/badge/AppVersion-v1.17.2--n4k.nirmata.13-informational?style=flat-square)
 
 ## About
 
@@ -1068,7 +1068,7 @@ Kubernetes: `>=1.25.0-0`
 |  | crds | 3.7.0 |
 |  | grafana | 3.7.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.1 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.33 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.34 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers
