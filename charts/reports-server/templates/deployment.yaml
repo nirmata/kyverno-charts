@@ -53,6 +53,9 @@ spec:
             - --servicename={{ include "reports-server.fullname" . }}
             - --servicens={{ $.Release.Namespace }}
             - --storeopenreports={{ .Values.apiServicesManagement.installApiServices.installOpenreportsService }}
+            {{- if .Values.config.noKeepAlive }}
+            - --no-keepalive=true
+            {{- end }}
             - --cert-dir=/tmp
             - --secure-port=4443
             {{- if .Values.metrics.enabled }}
