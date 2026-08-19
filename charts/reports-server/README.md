@@ -1,6 +1,6 @@
 # reports-server
 
-![Version: 0.2.28](https://img.shields.io/badge/Version-0.2.28-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.24](https://img.shields.io/badge/AppVersion-v0.2.24-informational?style=flat-square)
+![Version: 0.2.34](https://img.shields.io/badge/Version-0.2.34-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.31](https://img.shields.io/badge/AppVersion-v0.2.31-informational?style=flat-square)
 
 TODO
 
@@ -73,9 +73,10 @@ helm install reports-server --namespace reports-server --create-namespace report
 | affinity | object | `{}` | Affinity |
 | service.type | string | `"ClusterIP"` | Service type |
 | service.port | int | `443` | Service port |
+| config.noKeepAlive | bool | `false` | Disable HTTP keep-alive so the kube-apiserver cannot pin all traffic to a single reports-server replica. Only useful with replicaCount > 1. Costs a TCP+TLS handshake per request, so leave this off unless you have observed uneven load across replicas. |
 | config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| config.etcd.image.tag | string | `"3.6.9-hardened"` | Image tag |
+| config.etcd.image.tag | string | `"3.6.13-hardened"` | Image tag |
 | config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | config.etcd.enabled | bool | `true` |  |
 | config.etcd.endpoints | string | `nil` |  |
@@ -88,7 +89,7 @@ helm install reports-server --namespace reports-server --create-namespace report
 | config.etcd.autoCompaction.retention | string | `"30m"` | Auto-compaction retention (e.g., 30m for 30 minutes, 1h for 1 hour) |
 | config.etcd.nodeSelector | object | `{}` |  |
 | config.etcd.tolerations | list | `[]` |  |
-| config.etcd.podSecurityContext | object | `{}` | Pod-level security context for etcd pods Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls) |
+| config.etcd.podSecurityContext | object | `{"fsGroup":65532,"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532}` | Pod-level security context for etcd pods Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls) runAsUser/runAsGroup are set explicitly (rather than relying on the image's default user) so kubelet can verify non-root without introspecting the image - otherwise an image with a non-numeric USER (e.g. "nonroot") fails admission with "cannot verify user is non-root". |
 | config.etcd.securityContext | object | See [values.yaml](values.yaml) | Container-level security context for the etcd container |
 | config.db.secretCreation | bool | `false` | If set, a secret will be created with the database connection information. If this is set to true, secretName must be set. |
 | config.db.secretName | string | `""` | If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password` and `db.readReplicaHosts`. |
@@ -121,7 +122,7 @@ helm install reports-server --namespace reports-server --create-namespace report
 | apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
 | jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
 | jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| jobConfigurations.image.tag | string | `"1.35-alpine3.23-dev"` | Image tag Defaults to `latest` if omitted |
+| jobConfigurations.image.tag | string | `"1.36.2-hardened"` | Image tag Defaults to `latest` if omitted |
 | jobConfigurations.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
 | jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
 | jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
