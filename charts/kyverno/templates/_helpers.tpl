@@ -83,6 +83,12 @@ false
 {{- end -}}
 {{- with .globalContext -}}
   {{- $flags = append $flags (print "--maxAPICallResponseLength=" (int .maxApiCallResponseLength)) -}}
+  {{- with .apiCallBlocklist -}}
+    {{- $flags = append $flags (print "--apiCallBlocklist=" .) -}}
+  {{- end -}}
+  {{- with .apiCallAllowlist -}}
+    {{- $flags = append $flags (print "--apiCallAllowlist=" .) -}}
+  {{- end -}}
 {{- end -}}
 {{- with .logging -}}
   {{- $flags = append $flags (print "--loggingFormat=" .format) -}}
