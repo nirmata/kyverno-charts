@@ -141,6 +141,7 @@ spec:
               "deferredLoading"
               "dumpPayload"
               "globalContext"
+              "httpCalls"
               "logging"
               "ttlController"
               "protectManagedResources"
