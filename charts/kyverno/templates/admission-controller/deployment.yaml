@@ -262,6 +262,7 @@ spec:
               "generateMutatingAdmissionPolicy"
               "dumpPatches"
               "globalContext"
+              "httpCalls"
               "logging"
               "omitEvents"
               "policyExceptions"
