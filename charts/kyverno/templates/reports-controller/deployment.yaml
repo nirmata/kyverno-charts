@@ -152,6 +152,7 @@ spec:
               "configMapCaching"
               "deferredLoading"
               "globalContext"
+              "httpCalls"
               "logging"
               "omitEvents"
               "policyExceptions"
