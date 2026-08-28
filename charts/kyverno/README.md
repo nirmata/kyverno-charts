@@ -344,6 +344,11 @@ The chart values are organised per component.
 | features.generateValidatingAdmissionPolicy.enabled | bool | `false` | Enables the feature |
 | features.dumpPatches.enabled | bool | `false` | Enables the feature |
 | features.globalContext.maxApiCallResponseLength | int | `2000000` | Maximum allowed response size from API Calls. A value of 0 bypasses checks (not recommended) |
+| features.globalContext.apiCallTimeout | string | `"30s"` | Timeout for HTTP API calls made by policies. A value of 0s means no timeout. |
+| features.globalContext.apiCallBlocklist | string | `nil` | Comma-separated CIDRs/hostnames that context.apiCall service calls may not reach. Overrides the built-in default blocklist (169.254.0.0/16, fe80::/10, fd00:ec2::254/128, 100.100.100.200/32, 127.0.0.0/8, ::1/128, metadata.google.internal, metadata.internal) when set. Leave unset (null) to keep the secure built-in defaults -- setting an empty string here does not disable the filter, it is simply ignored and the flag is omitted, preserving the built-in defaults. To disable the filter entirely (not recommended), set the environment variable instead, e.g. admissionController.container.extraEnvVars: [{name: FLAG_APICALL_BLOCKLIST, value: ""}] -- and repeat for the background, reports and cleanup controllers, which make apiCall requests too. Does NOT apply to CEL http.Get/Post -- see features.httpCalls.blocklist for that. |
+| features.globalContext.apiCallAllowlist | string | `nil` | Comma-separated URL prefixes (scheme+host[+path]) that context.apiCall service calls are restricted to. When set, only matching URLs are permitted. Leave unset (null) to keep the secure built-in defaults (no allowlist restriction) -- setting an empty string here is ignored and the flag is omitted. Does NOT apply to CEL http.Get/Post -- see features.httpCalls.allowlist for that. |
+| features.httpCalls.blocklist | string | `nil` | Comma-separated CIDRs/hostnames that CEL `http.Get`/`http.Post` calls may not reach. Overrides the built-in default blocklist (169.254.0.0/16, fe80::/10, fd00:ec2::254/128, 100.100.100.200/32, 127.0.0.0/8, ::1/128, metadata.google.internal, metadata.internal) when set. Leave unset (null) to keep the secure built-in defaults -- setting an empty string here does not disable the filter, it is simply ignored and the flag is omitted, preserving the built-in defaults. Does NOT apply to context.apiCall -- see features.globalContext.apiCallBlocklist for that. To disable the filter entirely (not recommended), set the environment variable instead, e.g. admissionController.container.extraEnvVars: [{name: FLAG_HTTP_BLOCKLIST, value: ""}] -- and repeat for the background, reports and cleanup controllers, which evaluate CEL policies too. |
+| features.httpCalls.allowlist | string | `nil` | Comma-separated URL prefixes (scheme+host[+path]) that CEL `http.Get`/`http.Post` calls are restricted to. When set, only matching URLs are permitted. Leave unset (null) to keep the secure built-in defaults (no allowlist restriction) -- setting an empty string here is ignored and the flag is omitted. Does NOT apply to context.apiCall -- see features.globalContext.apiCallAllowlist for that. |
 | features.logging.format | string | `"text"` | Logging format |
 | features.logging.verbosity | int | `2` | Logging verbosity |
 | features.omitEvents.eventTypes | list | `["PolicyApplied","PolicySkipped"]` | Events which should not be emitted (possible values `PolicyViolation`, `PolicyApplied`, `PolicyError`, and `PolicySkipped`) |
@@ -765,6 +770,9 @@ The chart values are organised per component.
 | fullnameOverride | string | `nil` | Override the expanded name of the chart |
 | namespaceOverride | string | `nil` | Override the namespace the chart deploys to |
 | upgrade.fromV2 | bool | `false` | Upgrading from v2 to v3 is not allowed by default, set this to true once changes have been reviewed. |
+| apiCallToken | object | `{"audience":"kyverno-svc.kyverno.io","expirationSeconds":3600}` | Scoped token injected into outbound APICall and CEL http requests. This token carries a custom audience so that if leaked to an external service it cannot be replayed against the Kubernetes API server. |
+| apiCallToken.audience | string | `"kyverno-svc.kyverno.io"` | Audience for the projected token used in outbound requests. Set this to the audience your receiving service validates in the OIDC token's `aud` claim. The default is `kyverno-svc.kyverno.io`, which is a Kyverno-specific audience and prevents the token from being accepted by the Kubernetes API server. |
+| apiCallToken.expirationSeconds | int | `3600` | Token lifetime in seconds for the projected outbound API call token. The default is `3600` (1 hour). The kubelet requests a replacement before the token expires, so lowering this reduces token lifetime while increasing rotation frequency. |
 | imagePullSecrets | object | `{}` | Image pull secrets for image verification policies, this will define the `--imagePullSecrets` argument |
 | existingImagePullSecrets | list | `[]` | Existing Image pull secrets for image verification policies, this will define the `--imagePullSecrets` argument |
 | customLabels | object | `{}` | Additional labels |
@@ -845,7 +853,6 @@ This software is proprietary to Nirmata Inc. and is made available under the ter
 Unauthorized use, reproduction, modification, or distribution of this software, in whole or in part, is strictly prohibited and may result in civil and criminal penalties.
 
 © 2026 Nirmata Inc. All rights reserved.
-
 
 ## Requirements
 
