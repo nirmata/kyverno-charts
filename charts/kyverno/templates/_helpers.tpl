@@ -51,6 +51,9 @@ false
 {{- with .autoUpdateWebhooks -}}
   {{- $flags = append $flags (print "--autoUpdateWebhooks=" .enabled) -}}
 {{- end -}}
+{{- with .excludeBootstrapResources -}}
+  {{- $flags = append $flags (print "--excludeBootstrapResources=" .enabled) -}}
+{{- end -}}
 {{- with .backgroundScan -}}
   {{- $flags = append $flags (print "--backgroundScan=" .enabled) -}}
   {{- $flags = append $flags (print "--backgroundScanWorkers=" .backgroundScanWorkers) -}}
@@ -84,6 +87,7 @@ false
 {{- with .globalContext -}}
   {{- $flags = append $flags (print "--maxAPICallResponseLength=" (int .maxApiCallResponseLength)) -}}
   {{- $flags = append $flags (print "--apiCallTimeout=" .apiCallTimeout) -}}
+  {{- $flags = append $flags (print "--maxGlobalContextEntries=" (int .maxGlobalContextEntries)) -}}
 {{- end -}}
 {{- with .licensing -}}
   {{/* Licensing itself is always on and has no enable flag; only the cadence and
