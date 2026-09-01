@@ -2666,6 +2666,79 @@ entries:
           description: Enable the flag `--generateValidatingAdmissionPolicy` by default in the admission controller.
         - kind: changed
           description: Enable the flag `--validatingAdmissionPolicyReports` by default in the reports controller.
+        - kind: added
+          description: Add support for configuring container lifecycle hooks (e.g. a preStop sleep) on the admission, background, cleanup and reports controllers.
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://kyverno.io/docs
+        - name: Nirmata Enterprise Software License Agreement (EULA)
+          url: https://nirmata.com/eula/
+      artifacthub.io/operator: "false"
+      artifacthub.io/prerelease: "false"
+      nirmata.com/eula: https://nirmata.com/eula/
+    apiVersion: v2
+    appVersion: v1.19.0-n4k.nirmata.1
+    created: "2026-09-01T11:05:19.810066144Z"
+    dependencies:
+    - condition: grafana.enabled
+      name: grafana
+      repository: ""
+      version: 3.9.0
+    - condition: crds.install
+      name: crds
+      repository: ""
+      version: 3.9.0
+    - condition: crds.install
+      name: kyverno-api
+      repository: https://kyverno.github.io/api
+      version: 0.0.1-alpha.2
+    - condition: reports-server.install
+      name: reports-server
+      repository: https://nirmata.github.io/kyverno-charts
+      version: 0.2.35
+    - condition: openreports.installCrds
+      name: openreports
+      repository: https://openreports.github.io/reports-api
+      version: 0.1.0
+    description: Kubernetes Native Policy Management
+    digest: 460b5faf34f2d68fabcb982c7d187f3dc1e3446ffdbd5e5a2b3f12655deb3088
+    home: https://nirmata.com/
+    icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
+    keywords:
+    - kubernetes
+    - nirmata
+    - policy agent
+    - policy
+    - validating webhook
+    - admission controller
+    - mutation
+    - mutate
+    - validate
+    - generate
+    - supply chain
+    - security
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno
+    sources:
+    - https://github.com/nirmata/enterprise-kyverno
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-3.9.0-rc.2/kyverno-3.9.0-rc.2.tgz
+    version: 3.9.0-rc.2
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: fixed
+          description: Ensure spec.template.metadata isn't null
+        - kind: removed
+          description: Remove the `delete` permission for policyexceptions in the admission controller
+        - kind: changed
+          description: Enable the flag `--generateValidatingAdmissionPolicy` by default in the admission controller.
+        - kind: changed
+          description: Enable the flag `--validatingAdmissionPolicyReports` by default in the reports controller.
       artifacthub.io/links: |
         - name: Documentation
           url: https://kyverno.io/docs
@@ -38772,4 +38845,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2026-08-28T16:54:52.36213276Z"
+generated: "2026-09-01T11:05:19.812039169Z"
