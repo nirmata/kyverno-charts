@@ -95,10 +95,6 @@ spec:
       {{- end }}
       serviceAccountName: {{ template "kyverno.cleanup-controller.serviceAccountName" . }}
       automountServiceAccountToken: {{ $automountSAToken }}
-      {{- if and .Values.reportsServer.enabled .Values.reportsServer.waitForReady }}
-      initContainers:
-        {{- include "kyverno.reportsServer.initContainer" . | nindent 8 }}
-      {{- end }}
       containers:
         - name: controller
           image: {{ include "kyverno.cleanup-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.cleanupController.image "defaultTag" .Chart.AppVersion "fipsEnabled" .Values.fipsEnabled) | quote }}
@@ -119,12 +115,15 @@ spec:
             - --caSecretName={{ template "kyverno.cleanup-controller.name" . }}.{{ template "kyverno.namespace" . }}.svc.kyverno-tls-ca
             - --tlsSecretName={{ template "kyverno.cleanup-controller.name" . }}.{{ template "kyverno.namespace" . }}.svc.kyverno-tls-pair
             - --tlsKeyAlgorithm={{ .Values.cleanupController.tlsKeyAlgorithm | default "RSA" }}
-            - --servicePort={{ .Values.cleanupController.service.port }}
-            - --resyncPeriod={{ .Values.cleanupController.resyncPeriod | default .Values.global.resyncPeriod }}
-            - --cleanupServerPort={{ .Values.cleanupController.server.port }}
+            {{- if .Values.cleanupController.certManager.enabled }}
+            - --disableCertManagerController=true
+            {{- end }}
             {{- if .Values.webhooksCleanup.autoDeleteWebhooks.enabled }}
             - --autoDeleteWebhooks
             {{- end }}
+            - --servicePort={{ .Values.cleanupController.service.port }}
+            - --resyncPeriod={{ .Values.cleanupController.resyncPeriod | default .Values.global.resyncPeriod }}
+            - --cleanupServerPort={{ .Values.cleanupController.server.port }}
             {{- if .Values.cleanupController.tracing.enabled }}
             - --enableTracing
             - --tracingAddress={{ .Values.cleanupController.tracing.address }}
@@ -209,6 +208,10 @@ spec:
           {{- with .Values.cleanupController.readinessProbe }}
           readinessProbe:
             {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
+          {{- with .Values.cleanupController.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
             - name: apicall-token

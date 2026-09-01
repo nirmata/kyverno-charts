@@ -163,6 +163,9 @@ spec:
             - --caSecretName={{ template "kyverno.admission-controller.serviceName" . }}.{{ template "kyverno.namespace" . }}.svc.kyverno-tls-ca
             - --tlsSecretName={{ template "kyverno.admission-controller.serviceName" . }}.{{ template "kyverno.namespace" . }}.svc.kyverno-tls-pair
             - --tlsKeyAlgorithm={{ .Values.admissionController.tlsKeyAlgorithm | default "RSA" }}
+            {{- if .Values.admissionController.certManager.enabled }}
+            - --disableCertManagerController=true
+            {{- end }}
             {{- if .Values.backgroundController.enabled }}
             - --backgroundServiceAccountName=system:serviceaccount:{{ include "kyverno.namespace" . }}:{{ include "kyverno.background-controller.serviceAccountName" . }}
             {{- end }}
@@ -188,6 +191,11 @@ spec:
             {{- if not .Values.admissionController.metering.disabled }}
             - --otelConfig={{ .Values.admissionController.metering.config }}
             - --metricsPort={{ .Values.admissionController.metering.port }}
+            {{- if .Values.admissionController.metering.secure }}
+            - --metricsCASecretName={{ template "kyverno.admission-controller.name" . }}.{{ template "kyverno.namespace" . }}.metering.kyverno-tls-ca
+            - --metricsTLSSecretName={{ template "kyverno.admission-controller.name" . }}.{{ template "kyverno.namespace" . }}.metering.kyverno-tls-pair
+            - --metricsKeyAlgorithm={{ .Values.admissionController.metering.tlsKeyAlgorithm | default "RSA" }}
+            {{- end }}
             {{- with .Values.admissionController.metering.collector }}
             - --otelCollector={{ . }}
             {{- end }}
@@ -206,6 +214,7 @@ spec:
               "controllerRuntimeMetrics"
               "deferredLoading"
               "dumpPayload"
+              "excludeBootstrapResources"
               "forceFailurePolicyIgnore"
               "generateValidatingAdmissionPolicy"
               "generateMutatingAdmissionPolicy"
@@ -293,6 +302,10 @@ spec:
           readinessProbe:
             {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
+          {{- with .Values.admissionController.container.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - mountPath: {{ .Values.admissionController.tufRootMountPath }}
               name: sigstore
@@ -343,7 +356,7 @@ spec:
                 path: token
                 expirationSeconds: {{ .Values.apiCallToken.expirationSeconds | default 3600 }}
                 {{- with .Values.apiCallToken.audience }}
-                audience: {{ . | quote }}
+                audience: {{ . }}
                 {{- end }}
       {{- if (include "kyverno.license.enabled" .) }}
       # optional: deleting the license Secret must not block or crash the
@@ -363,8 +376,11 @@ spec:
           defaultMode: 0444
           sources:
             - serviceAccountToken:
-                expirationSeconds: 3607
+                expirationSeconds: {{ .Values.admissionController.rbac.serviceAccount.projectedServiceAccountToken.expirationSeconds | default 3600 }}
                 path: token
+                {{- with .Values.admissionController.rbac.serviceAccount.projectedServiceAccountToken.audience }}
+                audience: {{ . }}
+                {{- end }}
             - configMap:
                 name: kube-root-ca.crt
                 items:

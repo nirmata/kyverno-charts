@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.8.0-rc.1](https://img.shields.io/badge/Version-3.8.0--rc.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.18.0-n4k.nirmata.1-rc.1](https://img.shields.io/badge/AppVersion-v1.18.0--n4k.nirmata.1--rc.1-informational?style=flat-square)
+![Version: 3.9.0-rc.1](https://img.shields.io/badge/Version-3.9.0--rc.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.19.0-n4k.nirmata.1](https://img.shields.io/badge/AppVersion-v1.19.0--n4k.nirmata.1-informational?style=flat-square)
 
 ## About
 
@@ -268,13 +268,14 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 |-----|------|---------|-------------|
 | crds.install | bool | `true` | Whether to have Helm install the Kyverno CRDs, if the CRDs are not installed by Helm, they must be added before policies can be created |
 | crds.reportsServer.enabled | bool | `false` | Kyverno reports-server is used in your cluster |
-| crds.groups.kyverno | object | `{"cleanuppolicies":true,"clustercleanuppolicies":true,"clusterpolicies":true,"globalcontextentries":true,"policies":true,"policyexceptions":true,"updaterequests":true}` | Install CRDs in group `kyverno.io` |
+| crds.groups.kyverno | object | `{"cleanuppolicies":true,"clustercleanuppolicies":true,"clusterpolicies":true,"globalcontextentries":true,"policies":true,"policyexceptions":true,"updaterequests":true}` | Install CRDs in group `kyverno.io`. Note: the legacy policy types in this group (`ClusterPolicy`, `Policy`, `ClusterCleanupPolicy`, `CleanupPolicy`, `PolicyException`) are deprecated and will be removed in a future release, migrate to the `policies.kyverno.io` policy types (see https://kyverno.io/docs/guides/migration-to-cel/). |
 | crds.groups.policies | object | `{"deletingpolicies":true,"generatingpolicies":true,"imagevalidatingpolicies":true,"mutatingpolicies":true,"namespaceddeletingpolicies":true,"namespacedimagevalidatingpolicies":true,"namespacedmutatingpolicies":true,"namespacedvalidatingpolicies":true,"policyexceptions":true,"validatingpolicies":true}` | Install CRDs in group `policies.kyverno.io` |
 | crds.groups.reports | object | `{"clusterephemeralreports":true,"ephemeralreports":true}` | Install CRDs in group `reports.kyverno.io` |
 | crds.groups.wgpolicyk8s | object | `{"clusterpolicyreports":true,"policyreports":true}` | Install CRDs in group `wgpolicyk8s.io` |
 | crds.annotations | object | `{}` | Additional CRDs annotations |
 | crds.customLabels | object | `{}` | Additional CRDs labels |
 | crds.migration.enabled | bool | `true` | Enable CRDs migration using helm post upgrade hook |
+| crds.migration.extraArgs | object | `{}` | Additional CLI flags passed to the migration job |
 | crds.migration.resources | list | `["cleanuppolicies.kyverno.io","clustercleanuppolicies.kyverno.io","clusterpolicies.kyverno.io","globalcontextentries.kyverno.io","policies.kyverno.io","policyexceptions.kyverno.io","updaterequests.kyverno.io","deletingpolicies.policies.kyverno.io","generatingpolicies.policies.kyverno.io","imagevalidatingpolicies.policies.kyverno.io","namespacedimagevalidatingpolicies.policies.kyverno.io","mutatingpolicies.policies.kyverno.io","namespacedmutatingpolicies.policies.kyverno.io","namespaceddeletingpolicies.policies.kyverno.io","namespacedgeneratingpolicies.policies.kyverno.io","namespacedimagevalidatingpolicies.policies.kyverno.io","namespacedmutatingpolicies.policies.kyverno.io","namespacedvalidatingpolicies.policies.kyverno.io","policyexceptions.policies.kyverno.io","validatingpolicies.policies.kyverno.io"]` | Resources to migrate |
 | crds.migration.image.registry | string | `nil` | Image registry |
 | crds.migration.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
@@ -283,7 +284,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | crds.migration.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | crds.migration.imagePullSecrets | list | `[]` | Image pull secrets |
 | crds.migration.podSecurityContext | object | `{}` | Security context for the pod |
-| crds.migration.nodeSelector | object | `{}` | Node labels for pod assignment |
+| crds.migration.nodeSelector | object | `{}` | Node labels for pod assignment. Overrides `global.nodeSelector` when non-empty. When empty, the default is `kubernetes.io/os: linux`. |
 | crds.migration.tolerations | list | `[]` | List of node taints to tolerate |
 | crds.migration.podAntiAffinity | object | `{}` | Pod anti affinity constraints. |
 | crds.migration.podAffinity | object | `{}` | Pod affinity constraints. |
@@ -310,11 +311,6 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | config.licenseState.create | bool | `true` | Create the license state configmap. |
 | config.licenseState.preserve | bool | `true` | Keep the configmap on `helm uninstall`, so that reinstalling into the same namespace does not hand out a fresh trial window. Set to `false` in throwaway environments where an orphaned configmap is the bigger nuisance. |
 | config.licenseState.name | string | `nil` | The configmap name (required if `create` is `false`). |
-| license.create | bool | `false` | Create a Secret from `license.value` for the commercial Nirmata license. |
-| license.name | string | `nil` | Secret name (defaults to `<fullname>-license` when create is true). |
-| license.key | string | `"license"` | Key inside the Secret that holds the license file body. |
-| license.value | string | `nil` | Raw license file content. Required when `create` is true. |
-| license.existingSecret | string | `nil` | Name of an existing Secret that already holds the license file. |
 | config.disableAutoWebhookGeneration | object | `{"enable":false,"webhooks":["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]}` | Disable auto webhook generation. This is useful for environments like AKS where certain webhooks may cause issues. |
 | config.disableAutoWebhookGeneration.enable | bool | `false` | Enable the disableAutoWebhookGeneration feature |
 | config.disableAutoWebhookGeneration.webhooks | list | `["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]` | List of webhooks to disable |
@@ -326,7 +322,6 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | config.excludeClusterRoles | list | `[]` | Exclude roles |
 | config.generateSuccessEvents | bool | `false` | Generate success events. |
 | config.successEventActions | string | "" (empty, all success events are emitted when generateSuccessEvents is true) | Comma-separated list of event actions for which success events should be generated. When set, only success events matching the specified actions are emitted. Requires `generateSuccessEvents` to be `true`. Valid values: "Resource Mutated", "Resource Passed", "Resource Generated", "Resource Cleaned Up". Example: "Resource Mutated" or "Resource Mutated,Resource Generated". |
-| config.generatePolicyEvents | bool | `true` | Generate events on policy objects. When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects. This reduces event noise in multi-tenant environments where policy events may not be needed. |
 | config.maxContextSize | string | 2Mi | Maximum cumulative size of context data during policy evaluation. Supports Kubernetes quantity format (e.g., 100Mi, 2Gi) or plain bytes (e.g., 2097152). Limits memory used by context variables to prevent unbounded growth. Increase if policies legitimately need large context data (e.g., processing large ConfigMaps). Set to 0 to disable the limit (not recommended for production). |
 | config.resourceFilters | list | See [values.yaml](values.yaml) | Resource types to be skipped by the Kyverno policy engine. Make sure to surround each entry in quotes so that it doesn't get parsed as a nested YAML list. These are joined together without spaces, run through `tpl`, and the result is set in the config map. |
 | config.updateRequestThreshold | int | `1000` | Sets the threshold for the total number of UpdateRequests generated for mutateExisitng and generate policies. |
@@ -351,7 +346,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | metricsConfig.namespaces.exclude | list | `[]` | list of namespaces to NOT capture metrics for. |
 | metricsConfig.metricsRefreshInterval | string | `nil` | Rate at which metrics should reset so as to clean up the memory footprint of kyverno metrics, if you might be expecting high memory footprint of Kyverno's metrics. Default: 0, no refresh of metrics. WARNING: This flag is not working since Kyverno 1.8.0 |
 | metricsConfig.bucketBoundaries | list | `[0.005,0.01,0.025,0.05,0.1,0.25,0.5,1,2.5,5,10,15,20,25,30]` | Configures the bucket boundaries for all Histogram metrics, changing this configuration requires restart of the kyverno admission controller |
-| metricsConfig.metricsExposure | map | `{"kyverno_admission_requests_total":{"disabledLabelDimensions":["resource_namespace"]},"kyverno_admission_review_duration_seconds":{"disabledLabelDimensions":["resource_namespace"]},"kyverno_cleanup_controller_deletedobjects_total":{"disabledLabelDimensions":["resource_namespace","policy_namespace"]},"kyverno_generating_policy_execution_duration_seconds":{"disabledLabelDimensions":["resource_namespace","resource_request_operation"]},"kyverno_image_validating_policy_execution_duration_seconds":{"disabledLabelDimensions":["resource_namespace","resource_request_operation"]},"kyverno_mutating_policy_execution_duration_seconds":{"disabledLabelDimensions":["resource_namespace","resource_request_operation"]},"kyverno_policy_execution_duration_seconds":{"disabledLabelDimensions":["resource_namespace","resource_request_operation"]},"kyverno_policy_results_total":{"disabledLabelDimensions":["resource_namespace","policy_namespace"]},"kyverno_policy_rule_info_total":{"disabledLabelDimensions":["resource_namespace","policy_namespace"]},"kyverno_validating_policy_execution_duration_seconds":{"disabledLabelDimensions":["resource_namespace","resource_request_operation"]}}` | Configures the exposure of individual metrics, by default all metrics and all labels are exported, changing this configuration requires restart of the kyverno admission controller |
+| metricsConfig.metricsExposure | map | `{"kyverno_admission_requests_total":{"disabledLabelDimensions":["resource_namespace"]},"kyverno_admission_review_duration_seconds":{"disabledLabelDimensions":["resource_namespace"]},"kyverno_cleanup_controller_deletedobjects_total":{"disabledLabelDimensions":["resource_namespace","policy_namespace"]},"kyverno_generating_policy_execution_duration_seconds":{"disabledLabelDimensions":["resource_namespace","resource_request_operation"]},"kyverno_generating_policy_results_total":{"disabledLabelDimensions":["resource_namespace","policy_namespace"]},"kyverno_image_validating_policy_execution_duration_seconds":{"disabledLabelDimensions":["resource_namespace","resource_request_operation"]},"kyverno_image_validating_policy_results_total":{"disabledLabelDimensions":["resource_namespace","policy_namespace"]},"kyverno_mutating_policy_execution_duration_seconds":{"disabledLabelDimensions":["resource_namespace","resource_request_operation"]},"kyverno_mutating_policy_results_total":{"disabledLabelDimensions":["resource_namespace","policy_namespace"]},"kyverno_policy_execution_duration_seconds":{"disabledLabelDimensions":["resource_namespace","resource_request_operation"]},"kyverno_policy_results_total":{"disabledLabelDimensions":["resource_namespace","policy_namespace"]},"kyverno_policy_rule_info_total":{"disabledLabelDimensions":["resource_namespace","policy_namespace"]},"kyverno_validating_policy_execution_duration_seconds":{"disabledLabelDimensions":["resource_namespace","resource_request_operation"]},"kyverno_validating_policy_results_total":{"disabledLabelDimensions":["resource_namespace","policy_namespace"]}}` | Configures the exposure of individual metrics, by default all metrics and all labels are exported, changing this configuration requires restart of the kyverno admission controller |
 
 ### Features
 
@@ -368,6 +363,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | features.reporting.imageVerify | bool | `true` | Enables the feature |
 | features.reporting.generate | bool | `true` | Enables the feature |
 | features.autoUpdateWebhooks.enabled | bool | `true` | Enables the feature |
+| features.excludeBootstrapResources.enabled | bool | `false` | Excludes cluster bootstrap resources (Node, CertificateSigningRequest) from Fail resource webhooks to avoid a webhook deadlock when the cluster restarts with no Kyverno pods running. Policies targeting these resources are not enforced while enabled. |
 | features.backgroundScan.enabled | bool | `true` | Enables the feature |
 | features.backgroundScan.backgroundScanWorkers | int | `2` | Number of background scan workers |
 | features.backgroundScan.backgroundScanInterval | string | `"1h"` | Background scan interval |
@@ -382,8 +378,9 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | features.dumpPatches.enabled | bool | `false` | Enables the feature |
 | features.globalContext.maxApiCallResponseLength | int | `2000000` | Maximum allowed response size from API Calls. A value of 0 bypasses checks (not recommended) |
 | features.globalContext.apiCallTimeout | string | `"30s"` | Timeout for HTTP API calls made by policies. A value of 0s means no timeout. |
-| features.licensing.evaluationInterval | string | `nil` | How often Nirmata license state is re-evaluated. Clamped to between `1m` and `1h`. Leave unset to use the built-in default of `15m`. Licensing itself is always enabled and cannot be turned off. In FreeTier, FreeExpired and Degraded, CREATE of a new policy at or over the licensed policy cap is refused. Core workload admission is never gated. |
-| features.licensing.licensePath | string | `nil` | Path to a commercial license file inside the admission controller. When `license.create` or `license.existingSecret` is set, defaults to the chart mount path. |
+| features.globalContext.maxGlobalContextEntries | int | `0` | Maximum number of entries in the global context store. A value of 0 means unbounded. |
+| features.licensing.evaluationInterval | string | `nil` | How often Nirmata license state is re-evaluated. Clamped to between `1m` and `1h`. Leave unset to use the built-in default of `15m`.  Licensing itself is always enabled and cannot be turned off. In FreeTier, FreeExpired and Degraded states, CREATE of a new policy that would exceed the licensed policy cap is refused. Core workload admission (validate/mutate/generate) is never gated. Feature-tier gating is not enforced in this release. |
+| features.licensing.licensePath | string | `nil` | Path to a commercial license file inside the admission controller container. Leave unset to use the free-tier community license. When `license.create` or `license.existingSecret` is set, the chart mounts the Secret and defaults this to the mount path unless overridden here. |
 | features.licensing.warnRatio | float | `nil` | Capacity utilization fraction, in (0, 1], at which the license state enters Warning. Leave unset to use the built-in default of `0.9`. Values outside that range fall back to the default. |
 | features.logging.format | string | `"text"` | Logging format |
 | features.logging.verbosity | int | `2` | Logging verbosity |
@@ -454,7 +451,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | admissionController.startupProbe | object | See [values.yaml](values.yaml) | Startup probe. The block is directly forwarded into the deployment, so you can use whatever startupProbes configuration you want. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/ |
 | admissionController.livenessProbe | object | See [values.yaml](values.yaml) | Liveness probe. The block is directly forwarded into the deployment, so you can use whatever livenessProbe configuration you want. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/ |
 | admissionController.readinessProbe | object | See [values.yaml](values.yaml) | Readiness Probe. The block is directly forwarded into the deployment, so you can use whatever readinessProbe configuration you want. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/ |
-| admissionController.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node labels for pod assignment |
+| admissionController.nodeSelector | object | `{}` | Node labels for pod assignment. Overrides `global.nodeSelector` when non-empty. When empty, the default is `kubernetes.io/os: linux`. |
 | admissionController.tolerations | list | `[]` | List of node taints to tolerate |
 | admissionController.antiAffinity.enabled | bool | `true` | Pod antiAffinities toggle. Enabled by default but can be disabled if you want to schedule pods to the same node. |
 | admissionController.podAntiAffinity | object | See [values.yaml](values.yaml) | Pod anti affinity constraints. |
@@ -489,6 +486,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | admissionController.container.resources.limits | object | `{"memory":"384Mi"}` | Pod resource limits |
 | admissionController.container.resources.requests | object | `{"cpu":"100m","memory":"128Mi"}` | Pod resource requests |
 | admissionController.container.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Container security context |
+| admissionController.container.lifecycle | object | `{}` | Container lifecycle hooks (e.g. a preStop sleep for graceful shutdown). The sleep action requires Kubernetes 1.30+. |
 | admissionController.container.extraArgs | object | `{}` | Additional container args. |
 | admissionController.container.extraEnvVars | list | `[]` | Additional container environment variables. |
 | admissionController.extraInitContainers | list | `[]` | Array of extra init containers |
@@ -567,7 +565,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | backgroundController.extraEnvVars | list | `[]` | Additional container environment variables. |
 | backgroundController.resources.limits | object | `{"memory":"128Mi"}` | Pod resource limits |
 | backgroundController.resources.requests | object | `{"cpu":"100m","memory":"64Mi"}` | Pod resource requests |
-| backgroundController.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node labels for pod assignment |
+| backgroundController.nodeSelector | object | `{}` | Node labels for pod assignment. Overrides `global.nodeSelector` when non-empty. When empty, the default is `kubernetes.io/os: linux`. |
 | backgroundController.tolerations | list | `[]` | List of node taints to tolerate |
 | backgroundController.antiAffinity.enabled | bool | `true` | Pod antiAffinities toggle. Enabled by default but can be disabled if you want to schedule pods to the same node. |
 | backgroundController.podAntiAffinity | object | See [values.yaml](values.yaml) | Pod anti affinity constraints. |
@@ -576,6 +574,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | backgroundController.topologySpreadConstraints | list | `[]` | Topology spread constraints. |
 | backgroundController.podSecurityContext | object | `{}` | Security context for the pod |
 | backgroundController.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the containers |
+| backgroundController.lifecycle | object | `{}` | Container lifecycle hooks (e.g. a preStop sleep for graceful shutdown). The sleep action requires Kubernetes 1.30+. |
 | backgroundController.podDisruptionBudget.enabled | bool | `false` | Enable PodDisruptionBudget. Will always be enabled if replicas > 1. This non-declarative behavior should ideally be avoided, but changing it now would be breaking. |
 | backgroundController.podDisruptionBudget.minAvailable | int | `1` | Configures the minimum available pods for disruptions. Cannot be used if `maxUnavailable` is set. |
 | backgroundController.podDisruptionBudget.maxUnavailable | string | `nil` | Configures the maximum unavailable pods for disruptions. Cannot be used if `minAvailable` is set. |
@@ -624,11 +623,12 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | cleanupController.featuresOverride | object | `{}` | Overrides features defined at the root level |
 | cleanupController.enabled | bool | `true` | Enable cleanup controller. |
 | cleanupController.rbac.create | bool | `true` | Create RBAC resources |
-| cleanupController.rbac.createViewRoleBinding | bool | `true` | Create a ClusterRoleBinding to the view ClusterRole |
-| cleanupController.rbac.viewRoleName | string | `"view"` | The view ClusterRole to bind to |
 | cleanupController.rbac.serviceAccount.name | string | `nil` | Service account name |
 | cleanupController.rbac.serviceAccount.annotations | object | `{}` | Annotations for the ServiceAccount |
 | cleanupController.rbac.serviceAccount.automountServiceAccountToken | bool | `true` | Toggle automounting of the ServiceAccount |
+| cleanupController.rbac.serviceAccount.projectedServiceAccountToken | object | `{"audience":"","expirationSeconds":3600}` | Projected service account token configuration (only used when automountServiceAccountToken is false) |
+| cleanupController.rbac.serviceAccount.projectedServiceAccountToken.expirationSeconds | int | `3600` | Token expiration time in seconds. The kubelet will request a new token before the token expires. |
+| cleanupController.rbac.serviceAccount.projectedServiceAccountToken.audience | string | `""` | Audience for the projected service account token. If not set, the token will have no audience restriction. |
 | cleanupController.rbac.coreClusterRole.extraResources | list | See [values.yaml](values.yaml) | Extra resource permissions to add in the core cluster role. This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`. |
 | cleanupController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
 | cleanupController.createSelfSignedCert | bool | `false` | Create self-signed certificates at deployment time. The certificates won't be automatically renewed if this is set to `true`. |
@@ -673,7 +673,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | cleanupController.startupProbe | object | See [values.yaml](values.yaml) | Startup probe. The block is directly forwarded into the deployment, so you can use whatever startupProbes configuration you want. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/ |
 | cleanupController.livenessProbe | object | See [values.yaml](values.yaml) | Liveness probe. The block is directly forwarded into the deployment, so you can use whatever livenessProbe configuration you want. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/ |
 | cleanupController.readinessProbe | object | See [values.yaml](values.yaml) | Readiness Probe. The block is directly forwarded into the deployment, so you can use whatever readinessProbe configuration you want. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/ |
-| cleanupController.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node labels for pod assignment |
+| cleanupController.nodeSelector | object | `{}` | Node labels for pod assignment. Overrides `global.nodeSelector` when non-empty. When empty, the default is `kubernetes.io/os: linux`. |
 | cleanupController.tolerations | list | `[]` | List of node taints to tolerate |
 | cleanupController.antiAffinity.enabled | bool | `true` | Pod antiAffinities toggle. Enabled by default but can be disabled if you want to schedule pods to the same node. |
 | cleanupController.podAntiAffinity | object | See [values.yaml](values.yaml) | Pod anti affinity constraints. |
@@ -682,6 +682,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | cleanupController.topologySpreadConstraints | list | `[]` | Topology spread constraints. |
 | cleanupController.podSecurityContext | object | `{}` | Security context for the pod |
 | cleanupController.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the containers |
+| cleanupController.lifecycle | object | `{}` | Container lifecycle hooks (e.g. a preStop sleep for graceful shutdown). The sleep action requires Kubernetes 1.30+. |
 | cleanupController.podDisruptionBudget.enabled | bool | `false` | Enable PodDisruptionBudget. Will always be enabled if replicas > 1. This non-declarative behavior should ideally be avoided, but changing it now would be breaking. |
 | cleanupController.podDisruptionBudget.minAvailable | int | `1` | Configures the minimum available pods for disruptions. Cannot be used if `maxUnavailable` is set. |
 | cleanupController.podDisruptionBudget.maxUnavailable | string | `nil` | Configures the maximum unavailable pods for disruptions. Cannot be used if `minAvailable` is set. |
@@ -762,7 +763,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reportsController.extraEnvVars | list | `[]` | Additional container environment variables. |
 | reportsController.resources.limits | object | `{"memory":"128Mi"}` | Pod resource limits |
 | reportsController.resources.requests | object | `{"cpu":"100m","memory":"64Mi"}` | Pod resource requests |
-| reportsController.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node labels for pod assignment |
+| reportsController.nodeSelector | object | `{}` | Node labels for pod assignment. Overrides `global.nodeSelector` when non-empty. When empty, the default is `kubernetes.io/os: linux`. |
 | reportsController.tolerations | list | `[]` | List of node taints to tolerate |
 | reportsController.antiAffinity.enabled | bool | `true` | Pod antiAffinities toggle. Enabled by default but can be disabled if you want to schedule pods to the same node. |
 | reportsController.podAntiAffinity | object | See [values.yaml](values.yaml) | Pod anti affinity constraints. |
@@ -771,6 +772,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reportsController.topologySpreadConstraints | list | `[]` | Topology spread constraints. |
 | reportsController.podSecurityContext | object | `{}` | Security context for the pod |
 | reportsController.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the containers |
+| reportsController.lifecycle | object | `{}` | Container lifecycle hooks (e.g. a preStop sleep for graceful shutdown). The sleep action requires Kubernetes 1.30+. |
 | reportsController.podDisruptionBudget.enabled | bool | `false` | Enable PodDisruptionBudget. Will always be enabled if replicas > 1. This non-declarative behavior should ideally be avoided, but changing it now would be breaking. |
 | reportsController.podDisruptionBudget.minAvailable | int | `1` | Configures the minimum available pods for disruptions. Cannot be used if `maxUnavailable` is set. |
 | reportsController.podDisruptionBudget.maxUnavailable | string | `nil` | Configures the maximum unavailable pods for disruptions. Cannot be used if `minAvailable` is set. |
@@ -833,12 +835,12 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | webhooksCleanup.enabled | bool | `true` | Create a helm pre-delete hook to cleanup webhooks. |
 | webhooksCleanup.autoDeleteWebhooks.enabled | bool | `false` | Allow webhooks controller to delete webhooks using finalizers |
 | webhooksCleanup.image.registry | string | `"ghcr.io"` | Image registry |
-| webhooksCleanup.image.repository | string | `"kyverno/readiness-checker"` | Image repository (readiness-checker supports delete-webhooks and scale-deploy) |
+| webhooksCleanup.image.repository | string | `"nirmata/readiness-checker"` | Image repository (readiness-checker supports delete-webhooks and scale-deploy) |
 | webhooksCleanup.image.tag | string | `nil` | Image tag Defaults to `latest` if omitted |
 | webhooksCleanup.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | webhooksCleanup.imagePullSecrets | list | `[]` | Image pull secrets |
 | webhooksCleanup.podSecurityContext | object | `{}` | Security context for the pod |
-| webhooksCleanup.nodeSelector | object | `{}` | Node labels for pod assignment |
+| webhooksCleanup.nodeSelector | object | `{}` | Node labels for pod assignment. Overrides `global.nodeSelector` when non-empty. When empty, the default is `kubernetes.io/os: linux`. |
 | webhooksCleanup.tolerations | list | `[]` | List of node taints to tolerate |
 | webhooksCleanup.podAntiAffinity | object | `{}` | Pod anti affinity constraints. |
 | webhooksCleanup.podAffinity | object | `{}` | Pod affinity constraints. |
@@ -864,7 +866,10 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | test.resources.requests | object | `{"cpu":"10m","memory":"64Mi"}` | Pod resource requests |
 | test.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the test containers |
 | test.automountServiceAccountToken | bool | `true` | Toggle automounting of the ServiceAccount |
-| test.nodeSelector | object | `{}` | Node labels for pod assignment |
+| test.projectedServiceAccountToken | object | `{"audience":"","expirationSeconds":3600}` | Projected service account token configuration (only used when automountServiceAccountToken is false) |
+| test.projectedServiceAccountToken.expirationSeconds | int | `3600` | Token expiration time in seconds. The kubelet will request a new token before the token expires. |
+| test.projectedServiceAccountToken.audience | string | `""` | Audience for the projected service account token. If not set, the token will have no audience restriction. |
+| test.nodeSelector | object | `{}` | Node labels for pod assignment. Overrides `global.nodeSelector` when non-empty. When empty, the default is `kubernetes.io/os: linux`. |
 | test.podAnnotations | object | `{}` | Additional Pod annotations |
 | test.tolerations | list | `[]` | List of node taints to tolerate |
 
@@ -878,7 +883,6 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| fipsEnabled | bool | `false` | Deploy FIPS compliant images of all the components of n4k |
 | global.image.registry | string | `nil` | Global value that allows to set a single image registry across all deployments. When set, it will override any values set under `.image.registry` across the chart. |
 | global.imagePullSecrets | list | `[]` | Global list of Image pull secrets When set, it will override any values set under `imagePullSecrets` under different components across the chart. |
 | global.resyncPeriod | string | `"15m"` | Resync period for informers |
@@ -887,7 +891,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | global.caCertificates.volume | object | `{}` | Global value to set single volume to be mounted for CA certificates for all deployments. Not used when `.Values.global.caCertificates.data` is defined Individual  controller values will override this global value |
 | global.priorityClassName | string | `""` | Global priority class name for pod priority. Non-global values will override the global value. |
 | global.extraEnvVars | list | `[]` | Additional container environment variables to apply to all containers and init containers |
-| global.nodeSelector | object | `{}` | Global node labels for pod assignment. Non-global values will override the global value. |
+| global.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Global node labels for pod assignment, applied to all chart workloads including controller Deployments, hook Jobs, and Helm test Pods. Non-global (controller) values will override the global value when non-empty. The default `kubernetes.io/os: linux` key is always merged into any user-supplied value and cannot be unset by design, because Kyverno images only run on Linux nodes. |
 | global.tolerations | list | `[]` | Global List of node taints to tolerate. Non-global values will override the global value. |
 | nameOverride | string | `nil` | Override the name of the chart |
 | fullnameOverride | string | `nil` | Override the expanded name of the chart |
@@ -902,9 +906,20 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | apiCallToken | object | `{"audience":"kyverno-svc.kyverno.io","expirationSeconds":3600}` | Scoped token injected into outbound APICall and CEL http requests. This token carries a custom audience so that if leaked to an external service it cannot be replayed against the Kubernetes API server. |
 | apiCallToken.audience | string | `"kyverno-svc.kyverno.io"` | Audience for the projected token used in outbound requests. Set this to the audience your receiving service validates in the OIDC token's `aud` claim. The default is `kyverno-svc.kyverno.io`, which is a Kyverno-specific audience and prevents the token from being accepted by the Kubernetes API server. |
 | apiCallToken.expirationSeconds | int | `3600` | Token lifetime in seconds for the projected outbound API call token. The default is `3600` (1 hour). The kubelet requests a replacement before the token expires, so lowering this reduces token lifetime while increasing rotation frequency. |
+| license | object | `{"create":false,"existingSecret":null,"key":"license","name":null,"value":null}` | Nirmata commercial license. When create or existingSecret is set, the admission controller mounts the Secret (optional volume) and validates the license offline. Deleting the Secret does not take pods down: the evaluator falls back to the free-tier community license (FreeTier / FreeExpired). |
+| license.create | bool | `false` | Create a Secret from `license.value`. |
+| license.name | string | `nil` | Secret name (defaults to `<fullname>-license` when create is true). |
+| license.key | string | `"license"` | Key inside the Secret that holds the license file body. |
+| license.value | string | `nil` | Raw license file content. Required when `create` is true. |
+| license.existingSecret | string | `nil` | Name of an existing Secret in the release namespace that already holds the license file. Ignored when `create` is true. |
 | imagePullSecrets | object | `{}` | Image pull secrets for image verification policies, this will define the `--imagePullSecrets` argument |
 | existingImagePullSecrets | list | `[]` | Existing Image pull secrets for image verification policies, this will define the `--imagePullSecrets` argument |
 | customLabels | object | `{}` | Additional labels |
+| prometheusRule.enabled | bool | `false` | Enable PrometheusRule resource creation. Requires prometheus-operator (monitoring.coreos.com/v1 CRD) to be installed — the same prerequisite as serviceMonitor.enabled. The resource is only created when `enabled: true` and `spec` is non-empty. |
+| prometheusRule.namespace | string | `nil` | Namespace to create the PrometheusRule in. If not set, it will be created in the same namespace as the chart. |
+| prometheusRule.additionalAnnotations | object | `{}` | Additional annotations to add to the PrometheusRule. |
+| prometheusRule.additionalLabels | object | `{}` | Additional labels to add to the PrometheusRule. Must match the `ruleSelector` configured on your Prometheus instance (e.g. `release: prometheus` for kube-prometheus-stack). |
+| prometheusRule.spec | list | `[]` | Alert rule groups. Provide your own rules here; the examples below use Kyverno's histogram metrics and can serve as starting points. Thresholds MUST be tuned to your environment's measured baseline — see https://kyverno.io/docs/guides/monitoring/#alerting for guidance. |
 | reports-server.install | bool | `false` |  |
 | reports-server.fipsEnabled | bool | `false` |  |
 | reports-server.nameOverride | string | `""` | Name override |
@@ -959,7 +974,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.service.port | int | `443` | Service port |
 | reports-server.config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| reports-server.config.etcd.image.tag | string | `"3.6.9-hardened"` | Image tag |
+| reports-server.config.etcd.image.tag | string | `"v3.5.18-cve-free"` | Image tag |
 | reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.config.etcd.enabled | bool | `true` |  |
 | reports-server.config.etcd.endpoints | string | `nil` |  |
@@ -972,8 +987,6 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.config.etcd.autoCompaction.retention | string | `"30m"` | Auto-compaction retention (e.g., 30m for 30 minutes, 1h for 1 hour) |
 | reports-server.config.etcd.nodeSelector | object | `{}` |  |
 | reports-server.config.etcd.tolerations | list | `[]` |  |
-| reports-server.config.etcd.podSecurityContext | object | `{}` | Pod-level security context for etcd pods Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls) |
-| reports-server.config.etcd.securityContext | object | See [values.yaml](values.yaml) | Container-level security context for the etcd container |
 | reports-server.config.db.secretCreation | bool | `false` | If set, a secret will be created with the database connection information. If this is set to true, secretName must be set. |
 | reports-server.config.db.secretName | string | `""` | If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password` and `db.readReplicaHosts`. |
 | reports-server.config.db.host | string | `"reports-server-cluster-rw.reports-server"` | Database host |
@@ -993,11 +1006,6 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.config.db.sslkey | string | `""` | Database SSL key |
 | reports-server.config.db.sslcert | string | `""` | Database SSL cert |
 | reports-server.config.db.sslrds | object | `{"mountPath":"/etc/ssl/rds","secretName":""}` | Volume configuration for RDS certificate |
-| reports-server.config.db.connectionPool | object | `{"connMaxIdleTimeSeconds":120,"connMaxLifetimeSeconds":300,"maxIdleConns":5,"maxOpenConns":25}` | Database connection pool configuration (per reports-server pod) These control how many concurrent connections each pod can open. Defaults match the current hardcoded behavior. |
-| reports-server.config.db.connectionPool.maxOpenConns | int | `25` | Maximum number of open connections per pod (sql.DB.SetMaxOpenConns) |
-| reports-server.config.db.connectionPool.maxIdleConns | int | `5` | Maximum number of idle connections per pod (sql.DB.SetMaxIdleConns) |
-| reports-server.config.db.connectionPool.connMaxLifetimeSeconds | int | `300` | Maximum lifetime of a connection in seconds (0 = use default of 300s / 5m) |
-| reports-server.config.db.connectionPool.connMaxIdleTimeSeconds | int | `120` | Maximum idle time of a connection in seconds (0 = use default of 120s / 2m) |
 | reports-server.apiServicesManagement.installApiServices | object | `{"enabled":true,"installEphemeralReportsService":true,"installOpenreportsService":true}` | Install api services in manifest |
 | reports-server.apiServicesManagement.installApiServices.enabled | bool | `true` | Store reports in reports-server |
 | reports-server.apiServicesManagement.installApiServices.installEphemeralReportsService | bool | `true` | Store ephemeral reports in reports-server |
@@ -1005,7 +1013,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
 | reports-server.jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| reports-server.jobConfigurations.image.tag | string | `"1.35-alpine3.23-dev"` | Image tag Defaults to `latest` if omitted |
+| reports-server.jobConfigurations.image.tag | string | `"1.34.0"` | Image tag Defaults to `latest` if omitted |
 | reports-server.jobConfigurations.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | reports-server.jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
@@ -1069,7 +1077,7 @@ Please see https://kyverno.io/docs/installation/#security-vs-operability for mor
 
 ## Source Code
 
-* <https://github.com/nirmata/enterprise-kyverno>
+* <https://github.com/kyverno/kyverno>
 
 ## Requirements
 
@@ -1077,17 +1085,11 @@ Kubernetes: `>=1.25.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
-|  | crds | 3.8.0 |
-|  | grafana | 3.8.0 |
+|  | crds | 3.9.0 |
+|  | grafana | 3.9.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.2 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.34 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.35 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
-
-## Maintainers
-
-| Name | Email | Url |
-| ---- | ------ | --- |
-| Nirmata |  | <https://nirmata.com/> |
 
 ## License
 
