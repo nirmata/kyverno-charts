@@ -138,8 +138,20 @@ nirmata:
   endpoint: "https://nirmata.io"
 
   # Authentication method selection
-  # Options: "serviceAccountToken" or "apiToken"
-  # This determines which authentication method will be used
+  # Options: "serviceAccountToken", "apiToken", or "none"
+  # This determines which authentication method will be used.
+  #
+  # Set to "none" (or leave empty) when no Nirmata platform functionality is
+  # required -- for example when using your own LLM provider (bedrock,
+  # azure-openai, anthropic) together with your own GitHub credentials
+  # (tool.credentials.method "pat" or "app"). No credential is then injected
+  # into the deployment.
+  #
+  # These features require a credential and are unavailable with "none":
+  #   - llm.provider "nirmataAI"
+  #   - tool.credentials.method "nirmata-app"
+  #   - policy exception requests (the "request-exception" PR command)
+  #   - agent tools: email, send_slack_message, list_slack_channels
   auth: "serviceAccountToken"
 
   # Service Account Token configuration
@@ -203,7 +215,13 @@ remediator:
   enabled: false
   name: nirmata-agent
   environment:
-    type: argoHub  # Options: localCluster, argoHub (vcsTarget can be used with any environment type)
+    # Type of environment. One of: localCluster | argoHub | fluxHub
+    # localCluster: remediate the cluster where the controller runs
+    # argoHub: remediate clusters managed by ArgoCD (hub-spoke architecture)
+    # fluxHub: remediate clusters managed by FluxCD (hub-spoke architecture)
+    # VCS sources are NOT an environment type - configure target.vcs below
+    # instead; it works alongside any of the three types above.
+    type: argoHub
   target:
     argoHub:
       clusterNames: []
@@ -215,6 +233,22 @@ remediator:
     #     name: repo-namespace-mapping
     #     namespace: nirmata
     #     key: mapping
+    # Used when environment.type is fluxHub. Set kustomizationSelector and/or
+    # helmReleaseSelector; each accepts names, namespaces, labelSelector, or
+    # allKustomizations/allHelmReleases.
+    # fluxHub:
+    #   fluxNamespace: flux-system
+    #   kustomizationSelector:
+    #     names:
+    #       - my-app
+    #     # namespaces:
+    #     #   - production
+    #     # labelSelector:
+    #     #   matchLabels:
+    #     #     nirmata.io/remediation: "enabled"
+    #     # allKustomizations: true
+    #   # helmReleaseSelector:
+    #   #   allHelmReleases: true
     # vcs:
     #   policies:
     #     - name: pss-restricted
@@ -264,10 +298,13 @@ agent:
 
   # Environment configuration
   environment:
-    # Type of environment
-    # Options: localCluster, argoHub
+    # Type of environment. One of: localCluster | argoHub
     # localCluster: Scan the current cluster where the controller is deployed
     # argoHub: Scan clusters managed by ArgoCD (hub-spoke architecture)
+    # Note: the Agent CRD also accepts fluxHub, but this chart cannot render an
+    # agent.target.fluxHub block yet, so fluxHub would fail CRD validation here.
+    # VCS sources are NOT an environment type - configure target.vcs below
+    # instead; it works alongside either type above.
     type: localCluster
 
   # Target configuration (optional for localCluster, required for argoHub)
