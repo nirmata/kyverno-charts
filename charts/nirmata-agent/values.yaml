@@ -138,8 +138,20 @@ nirmata:
   endpoint: "https://nirmata.io"
 
   # Authentication method selection
-  # Options: "serviceAccountToken" or "apiToken"
-  # This determines which authentication method will be used
+  # Options: "serviceAccountToken", "apiToken", or "none"
+  # This determines which authentication method will be used.
+  #
+  # Set to "none" (or leave empty) when no Nirmata platform functionality is
+  # required -- for example when using your own LLM provider (bedrock,
+  # azure-openai, anthropic) together with your own GitHub credentials
+  # (tool.credentials.method "pat" or "app"). No credential is then injected
+  # into the deployment.
+  #
+  # These features require a credential and are unavailable with "none":
+  #   - llm.provider "nirmataAI"
+  #   - tool.credentials.method "nirmata-app"
+  #   - policy exception requests (the "request-exception" PR command)
+  #   - agent tools: email, send_slack_message, list_slack_channels
   auth: "serviceAccountToken"
 
   # Service Account Token configuration

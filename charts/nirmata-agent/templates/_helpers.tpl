@@ -71,16 +71,32 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+Report whether Nirmata platform credentials are configured.
+An empty nirmata.auth (or "none") means the agent runs without them, which is
+supported when the LLM provider and GitHub credentials are supplied by the user.
+*/}}
+{{- define "go-nirmata-agent.nirmataAuthEnabled" -}}
+{{- $authMethod := .Values.nirmata.auth | default "" -}}
+{{- if and $authMethod (ne $authMethod "none") -}}true{{- end -}}
+{{- end -}}
+
+{{/*
 Validate Nirmata authentication configuration
 This template validates the authentication settings and fails early with clear error messages
 */}}
 {{- define "go-nirmata-agent.validateNirmataAuth" -}}
 {{- $authMethod := .Values.nirmata.auth | default "" -}}
-{{- if not $authMethod -}}
-{{- fail "nirmata.auth is required and must be set to either 'serviceAccountToken' or 'apiToken'" -}}
+{{- if not (include "go-nirmata-agent.nirmataAuthEnabled" .) -}}
+{{- /* No Nirmata credentials. Fail if a feature that requires them is enabled,
+       so the conflict surfaces at install time rather than at runtime. */ -}}
+{{- if and .Values.llm.enabled (eq .Values.llm.provider "nirmataAI") -}}
+{{- fail "llm.provider 'nirmataAI' requires Nirmata credentials, but nirmata.auth is not set. Either set nirmata.auth to 'serviceAccountToken' or 'apiToken', or choose a different llm.provider (bedrock, azure-openai, anthropic)." -}}
 {{- end -}}
-{{- if and (ne $authMethod "serviceAccountToken") (ne $authMethod "apiToken") -}}
-{{- fail (printf "nirmata.auth must be either 'serviceAccountToken' or 'apiToken', got: '%s'" $authMethod) -}}
+{{- if and .Values.tool.enabled (eq .Values.tool.credentials.method "nirmata-app") -}}
+{{- fail "tool.credentials.method 'nirmata-app' requires Nirmata credentials, but nirmata.auth is not set. Either set nirmata.auth to 'serviceAccountToken' or 'apiToken', or use tool.credentials.method 'pat' or 'app' with your own GitHub credentials." -}}
+{{- end -}}
+{{- else if and (ne $authMethod "serviceAccountToken") (ne $authMethod "apiToken") -}}
+{{- fail (printf "nirmata.auth must be 'serviceAccountToken', 'apiToken', or 'none', got: '%s'" $authMethod) -}}
 {{- end -}}
 {{- if eq $authMethod "serviceAccountToken" -}}
 {{- if not .Values.nirmata.serviceAccountTokenSecret -}}
