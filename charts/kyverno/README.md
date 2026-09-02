@@ -981,8 +981,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.config.db.sslrootcert | string | `""` | Database SSL root cert |
 | reports-server.config.db.sslkey | string | `""` | Database SSL key |
 | reports-server.config.db.sslcert | string | `""` | Database SSL cert |
-| reports-server.config.db.sslrds | object | `{"mountPath":"/etc/ssl/rds","secretName":""}` | Volume configuration for an RDS (or other managed Postgres) CA bundle. When `secretName` is set, the chart mounts the named Secret at `mountPath` inside the reports-server pod. Pair with `sslrootcert` pointing at a file under that mountPath to enable TLS verification. |
-| reports-server.config.db.connectionPool | object | `{"connMaxIdleTimeSeconds":120,"connMaxLifetimeSeconds":300,"maxIdleConns":5,"maxOpenConns":25}` | Database connection pool configuration (per reports-server pod). These control how many concurrent PostgreSQL connections each pod opens. Defaults match the storage layer's built-in defaults. |
+| reports-server.config.db.sslrds | object | `{"mountPath":"/etc/ssl/rds","secretName":""}` | Volume configuration for RDS certificate |
+| reports-server.config.db.connectionPool | object | `{"connMaxIdleTimeSeconds":120,"connMaxLifetimeSeconds":300,"maxIdleConns":5,"maxOpenConns":25}` | Database connection pool configuration (per reports-server pod) These control how many concurrent connections each pod can open. Defaults match the current hardcoded behavior. |
 | reports-server.config.db.connectionPool.maxOpenConns | int | `25` | Maximum number of open connections per pod (sql.DB.SetMaxOpenConns) |
 | reports-server.config.db.connectionPool.maxIdleConns | int | `5` | Maximum number of idle connections per pod (sql.DB.SetMaxIdleConns) |
 | reports-server.config.db.connectionPool.connMaxLifetimeSeconds | int | `300` | Maximum lifetime of a connection in seconds (0 = use default of 300s / 5m) |
