@@ -84,6 +84,12 @@ false
 {{- with .globalContext -}}
   {{- $flags = append $flags (print "--maxAPICallResponseLength=" (int .maxApiCallResponseLength)) -}}
   {{- $flags = append $flags (print "--apiCallTimeout=" .apiCallTimeout) -}}
+  {{- with .apiCallBlocklist -}}
+    {{- $flags = append $flags (print "--apiCallBlocklist=" .) -}}
+  {{- end -}}
+  {{- with .apiCallAllowlist -}}
+    {{- $flags = append $flags (print "--apiCallAllowlist=" .) -}}
+  {{- end -}}
 {{- end -}}
 {{- with .licensing -}}
   {{/* Licensing itself is always on and has no enable flag; only the cadence and
