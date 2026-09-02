@@ -73,16 +73,50 @@
       "additionalProperties": true,
       "properties": {
         "endpoint": { "type": "string" },
-        "auth": { 
+        "auth": {
           "type": "string",
-          "enum": ["serviceAccountToken", "apiToken"]
+          "description": "Nirmata platform authentication method. Use \"none\" (or leave empty) when no Nirmata platform functionality is required, e.g. when using your own LLM provider and GitHub credentials.",
+          "enum": ["serviceAccountToken", "apiToken", "none", ""]
         },
         "serviceAccountTokenSecret": { "type": "string" },
         "serviceAccountTokenSecretKey": { "type": "string" },
         "apiTokenSecret": { "type": "string" },
         "apiTokenSecretKey": { "type": "string" }
-      },
-      "required": ["auth"]
+      }
+    },
+    "remediator": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "environment": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Environment type for the Remediator CR. Must stay in sync with the EnvironmentType enum in api/v1alpha1/remediator_types.go.",
+              "enum": ["localCluster", "argoHub", "fluxHub"]
+            }
+          }
+        }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "environment": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Environment type for the Agent CR. Must stay in sync with the EnvironmentType enum in api/v1alpha1/remediator_types.go. fluxHub is accepted by the CRD but is intentionally omitted here: templates/agent.yaml cannot render an agent.target.fluxHub block, so it would fail CRD validation after install.",
+              "enum": ["localCluster", "argoHub"]
+            }
+          }
+        }
+      }
     }
   },
   "allOf": [

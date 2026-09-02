@@ -1,4 +1,10 @@
 {{- if .Values.remediator.enabled }}
+{{- if eq .Values.remediator.environment.type "fluxHub" }}
+  {{- $flux := (.Values.remediator.target | default dict).fluxHub | default dict }}
+  {{- if not (or $flux.kustomizationSelector $flux.helmReleaseSelector) }}
+{{- fail "remediator.target.fluxHub is required when environment type is fluxHub - must specify kustomizationSelector and/or helmReleaseSelector" }}
+  {{- end }}
+{{- end }}
 apiVersion: serviceagents.nirmata.io/v1alpha1
 kind: Remediator
 metadata:
@@ -39,6 +45,21 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     {{- end }}
+    {{- else if eq .Values.remediator.environment.type "fluxHub" }}
+    fluxHub:
+      {{- with .Values.remediator.target.fluxHub }}
+      {{- with .fluxNamespace }}
+      fluxNamespace: {{ . }}
+      {{- end }}
+      {{- with .kustomizationSelector }}
+      kustomizationSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .helmReleaseSelector }}
+      helmReleaseSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- end }}
     {{- end }}
     {{- if .Values.remediator.target.vcs }}
     vcs:

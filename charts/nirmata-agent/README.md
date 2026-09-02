@@ -93,10 +93,31 @@ kubectl logs -n nirmata deploy/<release>-nirmata-agent | grep -i "LLM client"
 |-----------|-------------|---------|
 | `remediator.enabled` | Enable creation of Remediator resource | `false` |
 | `remediator.name` | Remediator resource name | `nirmata-agent` |
-| `remediator.environment.type` | Environment type (localCluster or argoHub) | `argoHub` |
+| `remediator.environment.type` | Environment type (`localCluster`, `argoHub`, or `fluxHub`) | `argoHub` |
 | `remediator.remediation.schedule` | Cron schedule for remediation | `0 */6 * * *` |
 | `remediator.remediation.eventPolling.enabled` | Enable PR event polling | `true` |
 | `remediator.remediation.actions` | List of remediation actions | `[{type: CreatePR}]` |
+
+#### Remediator Target Configuration
+
+**For FluxHub** (required when `remediator.environment.type` is `fluxHub`):
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `remediator.target.fluxHub.fluxNamespace` | Namespace where Flux controllers are installed | `flux-system` |
+| `remediator.target.fluxHub.kustomizationSelector.names` | Kustomization names to target | `[]` |
+| `remediator.target.fluxHub.kustomizationSelector.namespaces` | Hub namespaces to search | `[]` |
+| `remediator.target.fluxHub.kustomizationSelector.labelSelector` | Label selector for Kustomizations | `{}` |
+| `remediator.target.fluxHub.kustomizationSelector.allKustomizations` | Select all Kustomizations in searched namespaces | `false` |
+| `remediator.target.fluxHub.helmReleaseSelector.names` | HelmRelease names to target | `[]` |
+| `remediator.target.fluxHub.helmReleaseSelector.namespaces` | Hub namespaces to search | `[]` |
+| `remediator.target.fluxHub.helmReleaseSelector.labelSelector` | Label selector for HelmReleases | `{}` |
+| `remediator.target.fluxHub.helmReleaseSelector.allHelmReleases` | Select all HelmReleases in searched namespaces | `false` |
+
+At least one of `kustomizationSelector` or `helmReleaseSelector` must be set; both
+may be set to remediate Kustomizations and HelmReleases together. In hub-spoke
+setups each spoke typically has a dedicated namespace on the hub, so
+`namespaces` is the usual way to scope a selector.
 
 ### Agent Configuration
 
@@ -108,7 +129,7 @@ The Agent resource enables autonomous AI-powered operations on your Kubernetes c
 | `agent.name` | Agent resource name | `<release-name>-agent` |
 | `agent.prompt` | **REQUIRED** - Custom instruction defining agent behavior (min 10 chars) | `""` |
 | `agent.tools` | List of additional tool names (email, send_slack_message, etc.) | `[]` |
-| `agent.environment.type` | Environment type (localCluster or argoHub) | `localCluster` |
+| `agent.environment.type` | Environment type (`localCluster` or `argoHub`; `fluxHub` is not yet renderable by this chart) | `localCluster` |
 | `agent.triggers[].schedule.crontab` | Cron expression for execution schedule | `0 */6 * * *` |
 | `agent.llmConfigRef.name` | LLMConfig resource to use | `<release-name>-llm` |
 

@@ -51,6 +51,7 @@ spec:
             {{- if .Values.nirmata.endpoint }}
             - --url={{ .Values.nirmata.endpoint }}
             {{- end }}
+          {{- if include "go-nirmata-agent.nirmataAuthEnabled" . }}
           env:
             {{- if eq .Values.nirmata.auth "serviceAccountToken" }}
             - name: SERVICE_ACCOUNT_TOKEN
@@ -65,6 +66,7 @@ spec:
                   name: {{ .Values.nirmata.apiTokenSecret }}
                   key: {{ .Values.nirmata.apiTokenSecretKey }}
             {{- end }}
+          {{- end }}
           ports:
             - containerPort: {{ .Values.metrics.port }}
               name: metrics
