@@ -1,6 +1,6 @@
 # reports-server
 
-![Version: 0.2.34](https://img.shields.io/badge/Version-0.2.34-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.31](https://img.shields.io/badge/AppVersion-v0.2.31-informational?style=flat-square)
+![Version: 0.2.35](https://img.shields.io/badge/Version-0.2.35-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.32](https://img.shields.io/badge/AppVersion-v0.2.32-informational?style=flat-square)
 
 TODO
 
@@ -40,6 +40,9 @@ helm install reports-server --namespace reports-server --create-namespace report
 | podSecurityContext | object | `{"fsGroup":2000}` | Pod security context |
 | serverVersion | string | `"v1"` | Server version to use (v1 or v2). Defaults to v1 for backward compatibility. v1: Stable implementation (default) v2: Optimized implementation with improved performance |
 | podEnv | object | `{}` | Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env. |
+| logging.format | string | `"text"` | Logging format. Permitted formats: `text`, `json`. |
+| logging.verbosity | int | `0` | Logging verbosity, passed to the container as `--v`. `0` keeps startup, lifecycle and error messages only. Raise to `4` to restore the per-request storage trace logs (high volume - one or more lines per report read/write). |
+| extraArgs | object | `{}` | Extra arguments passed to the container on the command line, as a map of flag name to value. Rendered as `--<key>=<value>`; entries with an empty value are skipped. |
 | securityContext | object | See [values.yaml](values.yaml) | Container security context |
 | livenessProbe | object | `{"failureThreshold":10,"httpGet":{"path":"/livez","port":"https","scheme":"HTTPS"},"initialDelaySeconds":20,"periodSeconds":10}` | Liveness probe |
 | readinessProbe | object | `{"failureThreshold":10,"httpGet":{"path":"/readyz","port":"https","scheme":"HTTPS"},"initialDelaySeconds":30,"periodSeconds":10}` | Readiness probe |
