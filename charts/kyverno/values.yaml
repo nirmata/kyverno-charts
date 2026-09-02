@@ -2638,7 +2638,7 @@ reports-server:
 
     # -- Skip database migration on startup
     skipMigration: false
-    
+
     etcd:
       image:
         # -- Image registry
