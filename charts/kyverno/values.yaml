@@ -2769,17 +2769,17 @@ reports-server:
         secretName: ""
         mountPath: "/etc/ssl/rds"
 
-      # -- Database connection pool configuration (per reports-server pod).
-      # These control how many concurrent PostgreSQL connections each pod opens.
-      # Defaults match the storage layer's built-in defaults.
+      # -- Database connection pool configuration (per reports-server pod)
+      # These control how many concurrent connections each pod can open.
+      # Defaults match the current hardcoded behavior.
       connectionPool:
         # -- Maximum number of open connections per pod (sql.DB.SetMaxOpenConns)
         maxOpenConns: 25
         # -- Maximum number of idle connections per pod (sql.DB.SetMaxIdleConns)
         maxIdleConns: 5
-        # -- Maximum lifetime of a connection in seconds (0 = use storage default of 300s / 5m)
+        # -- Maximum lifetime of a connection in seconds (0 = use default of 300s / 5m)
         connMaxLifetimeSeconds: 300
-        # -- Maximum idle time of a connection in seconds (0 = use storage default of 120s / 2m)
+        # -- Maximum idle time of a connection in seconds (0 = use default of 120s / 2m)
         connMaxIdleTimeSeconds: 120
 
   apiServicesManagement:
