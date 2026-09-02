@@ -61,6 +61,15 @@ spec:
             {{- if .Values.metrics.enabled }}
             - --authorization-always-allow-paths=/metrics
             {{- end }}
+            - --v={{ .Values.logging.verbosity | default 0 }}
+            {{- with .Values.logging.format }}
+            - --logging-format={{ . }}
+            {{- end }}
+            {{- range $key, $value := .Values.extraArgs }}
+            {{- if $value }}
+            - --{{ $key }}={{ $value }}
+            {{- end }}
+            {{- end }}
           env:
             - name: REPORTS_SERVER_VERSION
               value: {{ .Values.serverVersion | quote }}
