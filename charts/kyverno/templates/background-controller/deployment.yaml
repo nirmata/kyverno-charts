@@ -228,6 +228,10 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
+            - name: apicall-token
+              mountPath: /var/run/secrets/kyverno/apicall
+              readOnly: true
+            {{- if or .Values.backgroundController.caCertificates.data .Values.global.caCertificates.data .Values.backgroundController.caCertificates.volume .Values.global.caCertificates.volume }}
             - name: ca-certificates
               mountPath: /etc/ssl/certs/ca-certificates.crt
               {{- if or .Values.backgroundController.caCertificates.data .Values.global.caCertificates.data }}
