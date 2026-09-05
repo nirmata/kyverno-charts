@@ -2639,15 +2639,6 @@ reports-server:
     # -- Skip database migration on startup
     skipMigration: false
 
-    # -- Disable HTTP keep-alive so the kube-apiserver cannot pin all traffic to a
-    # single reports-server replica. Only useful with replicaCount > 1. Costs a
-    # TCP+TLS handshake per request, so leave this off unless you have observed
-    # uneven load across replicas.
-    noKeepAlive: false
-
-    # -- Skip database migration on startup
-    skipMigration: false
-
     etcd:
       image:
         # -- Image registry
