@@ -234,8 +234,11 @@ service:
   port: 443
 
 config:
-  # -- Skip database migration on startup
+  # -- Skip Kubernetes-resource-to-store migration on startup (SQL schema migrations still run).
   skipMigration: false
+
+  # -- Drop the v0.2.x clusterid column. One-way; only after every cluster sharing this database is on 0.3.x.
+  finalizeLegacyClusterId: false
 
   etcd:
     image:

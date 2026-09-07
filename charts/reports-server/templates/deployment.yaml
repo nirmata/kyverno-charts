@@ -59,6 +59,7 @@ spec:
             {{- if .Values.config.skipMigration }}
             - --skipmigration=true
             {{- end }}
+            - --dbfinalizelegacyclusterid={{ .Values.config.finalizeLegacyClusterId | default false }}
             - --cert-dir=/tmp
             - --secure-port=4443
             {{- if .Values.metrics.enabled }}

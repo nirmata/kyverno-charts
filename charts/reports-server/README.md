@@ -77,7 +77,8 @@ helm install reports-server nirmata/reports-server --namespace reports-server --
 | affinity | object | `{}` | Affinity |
 | service.type | string | `"ClusterIP"` | Service type |
 | service.port | int | `443` | Service port |
-| config.skipMigration | bool | `false` | Skip database migration on startup |
+| config.skipMigration | bool | `false` | Skip Kubernetes-resource-to-store migration on startup (SQL schema migrations still run). |
+| config.finalizeLegacyClusterId | bool | `false` | Drop the v0.2.x clusterid column. One-way; only after every cluster sharing this database is on 0.3.x. |
 | config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
 | config.etcd.image.tag | string | `"3.6.9-hardened"` | Image tag |
