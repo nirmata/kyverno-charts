@@ -2410,11 +2410,20 @@ reports-server:
 
   fipsEnabled: false
 
+  postgresql:
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/postgresql
+      tag: 16.1.0-debian-11-r22
+      digest: ""
 
-  # cloudnative-pg:
-  #   crds:
-  #     create: false
+    # -- Deploy postgresql dependency chart
+    enabled: false
 
+    auth:
+      postgresPassword: reports
+
+      database: reportsdb
 
   # -- Name override
   nameOverride: ""
@@ -2630,14 +2639,11 @@ reports-server:
     port: 443
 
   config:
-    # -- Disable HTTP keep-alive so the kube-apiserver cannot pin all traffic to a
-    # single reports-server replica. Only useful with replicaCount > 1. Costs a
-    # TCP+TLS handshake per request, so leave this off unless you have observed
-    # uneven load across replicas.
-    noKeepAlive: false
-
-    # -- Skip database migration on startup
+    # -- Skip Kubernetes-resource-to-store migration on startup (SQL schema migrations still run).
     skipMigration: false
+
+    # -- Drop the v0.2.x clusterid column. One-way; only after every cluster sharing this database is on 0.3.x.
+    finalizeLegacyClusterId: false
 
     etcd:
       image:
@@ -2671,6 +2677,25 @@ reports-server:
       # storage class name (e.g., "fast", "standard", "aws-ebs") to pin the PV.
       storageClassName: ""
 
+      ## Node labels for etcd pod assignment.
+      ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+      nodeSelector: {}
+
+      ## Tolerations for etcd pod assignment.
+      ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+      tolerations: []
+
+      # -- Pod-level security context for etcd pods
+      podSecurityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+
+      # -- Container-level security context for the etcd container
+      securityContext:
+        allowPrivilegeEscalation: false
+
       # Auto-compaction configuration for etcd. Compaction reclaims storage taken
       # by historical revisions; without it, the etcd DB grows unboundedly under
       # write load.
@@ -2681,33 +2706,6 @@ reports-server:
         mode: periodic
         # -- Auto-compaction retention (e.g., 30m for 30 minutes, 1h for 1 hour)
         retention: 30m
-
-      ## @param nodeSelector [object] Node labels for pod assignment
-      ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
-      ##
-      nodeSelector: {}
-
-      ## @param tolerations [array] Tolerations for pod assignment
-      ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-      ##
-      tolerations: []
-
-      # -- Pod-level security context for etcd pods
-      # Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls)
-      # runAsUser/runAsGroup are set explicitly (rather than relying on the image's
-      # default user) so kubelet can verify non-root without introspecting the image -
-      # otherwise an image with a non-numeric USER (e.g. "nonroot") fails admission with
-      # "cannot verify user is non-root".
-      podSecurityContext:
-        runAsNonRoot: true
-        runAsUser: 65532
-        runAsGroup: 65532
-        fsGroup: 65532
-
-      # -- Container-level security context for the etcd container
-      # @default -- See [values.yaml](values.yaml)
-      securityContext:
-        allowPrivilegeEscalation: false
 
     db:
 
@@ -2769,17 +2767,17 @@ reports-server:
         secretName: ""
         mountPath: "/etc/ssl/rds"
 
-      # -- Database connection pool configuration (per reports-server pod)
-      # These control how many concurrent connections each pod can open.
-      # Defaults match the current hardcoded behavior.
+      # -- Database connection pool configuration (per reports-server pod).
+      # These control how many concurrent PostgreSQL connections each pod opens.
+      # Defaults match the storage layer's built-in defaults.
       connectionPool:
         # -- Maximum number of open connections per pod (sql.DB.SetMaxOpenConns)
         maxOpenConns: 25
         # -- Maximum number of idle connections per pod (sql.DB.SetMaxIdleConns)
         maxIdleConns: 5
-        # -- Maximum lifetime of a connection in seconds (0 = use default of 300s / 5m)
+        # -- Maximum lifetime of a connection in seconds (0 = use storage default of 300s / 5m)
         connMaxLifetimeSeconds: 300
-        # -- Maximum idle time of a connection in seconds (0 = use default of 120s / 2m)
+        # -- Maximum idle time of a connection in seconds (0 = use storage default of 120s / 2m)
         connMaxIdleTimeSeconds: 120
 
   apiServicesManagement:
@@ -2805,7 +2803,7 @@ reports-server:
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.36.2-hardened'
+      tag: '1.35-alpine3.23-dev'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: IfNotPresent
