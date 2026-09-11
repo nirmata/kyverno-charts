@@ -2652,7 +2652,7 @@ reports-server:
         # -- Image repository
         repository: nirmata/etcd
         # -- Image tag
-        tag: 3.6.13-hardened
+        tag: 3.6.14-hardened
 
       # -- Image pull secrets for the etcd container image
       imagePullSecrets: []
@@ -2803,7 +2803,7 @@ reports-server:
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.35-alpine3.23-dev'
+      tag: '1.36.3-hardened'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: IfNotPresent
