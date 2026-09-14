@@ -141,14 +141,34 @@ nirmata:
   # Defaults to "api-token"
   apiTokenSecretKey: "api-token"
 
-# ToolConfig for GitHub (used by CreatePR)
+# ToolConfig for the git provider (used by CreatePR)
 tool:
   enabled: true
   name: github-tool
+
+  # Git provider hosting the repositories the agent opens PRs against.
+  # Options: github, gitlab, azure-devops
+  #
+  # Note: this is unrelated to `llm.provider: azure-openai`, which only selects an
+  # LLM backend. This setting controls where the agent pushes code.
   type: github
+
+  # Optional. Overrides the API endpoint for self-hosted git servers
+  # (GitHub Enterprise, self-managed GitLab, Azure DevOps Server).
+  #
+  # For Azure Repos this is the organization- or collection-level URL. It is
+  # normally unnecessary: the organization and project are derived from each
+  # repository URL, so set this only when the API endpoint differs from the
+  # repository URL host.
+  #   baseURL: "https://tfs.corp.example.com/DefaultCollection"
+  baseURL: ""
 
   # Authentication method configuration
   # Choose between "pat" (Personal Access Token) or "app" (GitHub App)
+  #
+  # azure-devops supports "pat" only. The PAT needs the "Code (read & write)"
+  # scope, and "Pull Request Threads (read & write)" if the agent should also
+  # post PR comments.
   credentials:
     method: pat  # Options: "pat" or "app" (recommended: "app" for better security)
 
@@ -169,6 +189,35 @@ tool:
     git:
       pullRequests:
         branchPrefix: remediation-
+
+# ---------------------------------------------------------------------------
+# Azure Repos (Azure DevOps) example
+#
+# tool:
+#   enabled: true
+#   name: azure-tool
+#   type: azure-devops
+#   credentials:
+#     method: pat
+#     pat:
+#       secret:
+#         name: azure-devops-pat   # kubectl create secret generic azure-devops-pat \
+#         key: token               #   --from-literal=token=<PAT> -n <namespace>
+#   defaults:
+#     git:
+#       pullRequests:
+#         branchPrefix: remediation-
+#
+# remediator:
+#   remediation:
+#     actions:
+#       - type: CreatePR
+#         toolRefName: azure-tool
+#
+# Repository URLs may use any Azure Repos form, e.g.
+#   https://dev.azure.com/{org}/{project}/_git/{repo}
+#   https://{org}.visualstudio.com/{project}/_git/{repo}
+# ---------------------------------------------------------------------------
 
 # Remediator CR
 remediator:

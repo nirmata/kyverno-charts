@@ -2,7 +2,7 @@
 apiVersion: serviceagents.nirmata.io/v1alpha1
 kind: ToolConfig
 metadata:
-  name: {{ .Values.tool.name | default (printf "%s-github" (include "go-agent-remediator.name" .)) }}
+  name: {{ include "go-agent-remediator.toolName" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "go-agent-remediator.labels" . | nindent 4 }}
@@ -12,6 +12,9 @@ metadata:
     helm.sh/hook-delete-policy: before-hook-creation
 spec:
   type: {{ .Values.tool.type | quote }}
+  {{- with .Values.tool.baseURL }}
+  baseURL: {{ . | quote }}
+  {{- end }}
   credentials:
     method: {{ .Values.tool.credentials.method | quote }}
     {{- if eq .Values.tool.credentials.method "app" }}
