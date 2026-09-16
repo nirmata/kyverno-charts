@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.7.9](https://img.shields.io/badge/Version-3.7.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.17.2-n4k.nirmata.13](https://img.shields.io/badge/AppVersion-v1.17.2--n4k.nirmata.13-informational?style=flat-square)
+![Version: 3.7.11-rc.2](https://img.shields.io/badge/Version-3.7.11--rc.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.17.2-n4k.nirmata.21](https://img.shields.io/badge/AppVersion-v1.17.2--n4k.nirmata.21-informational?style=flat-square)
 
 ## About
 
@@ -368,7 +368,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | features.generateMutatingAdmissionPolicy.enabled | bool | `false` | Enables the feature |
 | features.dumpPatches.enabled | bool | `false` | Enables the feature |
 | features.globalContext.maxApiCallResponseLength | int | `2000000` | Maximum allowed response size from API Calls. A value of 0 bypasses checks (not recommended) |
-| features.globalContext.apiCallBlocklist | string | `nil` | Comma-separated CIDRs/hostnames that context.apiCall service calls may not reach. Overrides the built-in default blocklist (169.254.0.0/16, fe80::/10, fd00:ec2::254/128, 100.100.100.200/32, 127.0.0.0/8, ::1/128, metadata.google.internal, metadata.internal) when set. Leave unset (null) to keep the secure built-in defaults -- setting an empty string here does not disable the filter, it is simply ignored and the flag is omitted, preserving the built-in defaults. To disable the filter entirely (not recommended), set the environment variable instead, e.g. admissionController.container.extraEnvVars: [{name: FLAG_APICALL_BLOCKLIST, value: ""}] -- and repeat for the background, reports and cleanup controllers, which make apiCall requests too. Does NOT apply to CEL http.Get/Post -- see features.httpCalls.blocklist for that. |
+| features.globalContext.apiCallBlocklist | string | `nil` | Comma-separated CIDRs/hostnames that context.apiCall service calls may not reach. Overrides the built-in default blocklist (169.254.0.0/16, fe80::/10, fd00:ec2::254/128, 100.100.100.200/32, 127.0.0.0/8, ::1/128, metadata.google.internal, metadata.internal) when set. Leave unset (null) to keep the secure built-in defaults -- setting an empty string here does not disable the filter, it is simply ignored and the flag is omitted, preserving the built-in defaults. Does NOT apply to CEL http.Get/Post -- see features.httpCalls.blocklist for that. To disable the filter entirely (not recommended), set the environment variable instead, e.g. admissionController.container.extraEnvVars: [{name: FLAG_APICALL_BLOCKLIST, value: ""}] -- and repeat for the background, reports and cleanup controllers, which make apiCall requests too. |
 | features.globalContext.apiCallAllowlist | string | `nil` | Comma-separated URL prefixes (scheme+host[+path]) that context.apiCall service calls are restricted to. When set, only matching URLs are permitted. Leave unset (null) to keep the secure built-in defaults (no allowlist restriction) -- setting an empty string here is ignored and the flag is omitted. Does NOT apply to CEL http.Get/Post -- see features.httpCalls.allowlist for that. |
 | features.httpCalls.blocklist | string | `nil` | Comma-separated CIDRs/hostnames that CEL `http.Get`/`http.Post` calls may not reach. Overrides the built-in default blocklist (169.254.0.0/16, fe80::/10, fd00:ec2::254/128, 100.100.100.200/32, 127.0.0.0/8, ::1/128, metadata.google.internal, metadata.internal) when set. Leave unset (null) to keep the secure built-in defaults -- setting an empty string here does not disable the filter, it is simply ignored and the flag is omitted, preserving the built-in defaults. Does NOT apply to context.apiCall -- see features.globalContext.apiCallBlocklist for that. To disable the filter entirely (not recommended), set the environment variable instead, e.g. admissionController.container.extraEnvVars: [{name: FLAG_HTTP_BLOCKLIST, value: ""}] -- and repeat for the background, reports and cleanup controllers, which evaluate CEL policies too. |
 | features.httpCalls.allowlist | string | `nil` | Comma-separated URL prefixes (scheme+host[+path]) that CEL `http.Get`/`http.Post` calls are restricted to. When set, only matching URLs are permitted. Leave unset (null) to keep the secure built-in defaults (no allowlist restriction) -- setting an empty string here is ignored and the flag is omitted. Does NOT apply to context.apiCall -- see features.globalContext.apiCallAllowlist for that. |
@@ -943,10 +943,11 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.affinity | object | `{}` | Affinity |
 | reports-server.service.type | string | `"ClusterIP"` | Service type |
 | reports-server.service.port | int | `443` | Service port |
+| reports-server.config.noKeepAlive | bool | `false` | Disable HTTP keep-alive so the kube-apiserver cannot pin all traffic to a single reports-server replica. Only useful with replicaCount > 1. Costs a TCP+TLS handshake per request, so leave this off unless you have observed uneven load across replicas. |
 | reports-server.config.skipMigration | bool | `false` | Skip database migration on startup |
 | reports-server.config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| reports-server.config.etcd.image.tag | string | `"3.6.13-hardened"` | Image tag |
+| reports-server.config.etcd.image.tag | string | `"3.6.14-hardened"` | Image tag |
 | reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.config.etcd.enabled | bool | `true` |  |
 | reports-server.config.etcd.endpoints | string | `nil` |  |
@@ -995,7 +996,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
 | reports-server.jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| reports-server.jobConfigurations.image.tag | string | `"1.36.2-hardened"` | Image tag Defaults to `latest` if omitted |
+| reports-server.jobConfigurations.image.tag | string | `"1.36.3-hardened"` | Image tag Defaults to `latest` if omitted |
 | reports-server.jobConfigurations.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
 | reports-server.jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
@@ -1072,7 +1073,7 @@ Kubernetes: `>=1.25.0-0`
 |  | crds | 3.7.0 |
 |  | grafana | 3.7.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.1 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.34 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.37 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers
