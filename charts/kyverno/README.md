@@ -884,13 +884,6 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | customLabels | object | `{}` | Additional labels |
 | reports-server.install | bool | `false` |  |
 | reports-server.fipsEnabled | bool | `false` |  |
-| reports-server.postgresql.image.registry | string | `"docker.io"` |  |
-| reports-server.postgresql.image.repository | string | `"bitnamilegacy/postgresql"` |  |
-| reports-server.postgresql.image.tag | string | `"16.1.0-debian-11-r22"` |  |
-| reports-server.postgresql.image.digest | string | `""` |  |
-| reports-server.postgresql.enabled | bool | `false` | Deploy postgresql dependency chart |
-| reports-server.postgresql.auth.postgresPassword | string | `"reports"` |  |
-| reports-server.postgresql.auth.database | string | `"reportsdb"` |  |
 | reports-server.nameOverride | string | `""` | Name override |
 | reports-server.fullnameOverride | string | `""` | Full name override |
 | reports-server.replicaCount | int | `1` | Number of pod replicas |
@@ -907,6 +900,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.podAnnotations | object | `{}` | Pod annotations |
 | reports-server.commonLabels | object | `{}` | Labels to add to resources managed by the chart |
 | reports-server.podSecurityContext | object | `{"fsGroup":2000}` | Pod security context |
+| reports-server.serverVersion | string | `"v1"` | Server version to use (v1 or v2). Defaults to v1 for backward compatibility. v1: Stable implementation (default) v2: Optimized implementation with improved performance |
 | reports-server.podEnv | object | `{}` | Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env. |
 | reports-server.securityContext | object | See [values.yaml](values.yaml) | Container security context |
 | reports-server.livenessProbe | object | `{"failureThreshold":10,"httpGet":{"path":"/livez","port":"https","scheme":"HTTPS"},"initialDelaySeconds":20,"periodSeconds":10}` | Liveness probe |
@@ -925,15 +919,13 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.metrics.grafanaDashboard.namespace | string | `""` | Namespace to create the ConfigMap in (defaults to release namespace) |
 | reports-server.metrics.grafanaDashboard.labels | object | See values.yaml | Labels to add to the ConfigMap (for Grafana sidecar discovery) |
 | reports-server.metrics.grafanaDashboard.annotations | object | `{}` | Annotations to add to the ConfigMap |
-| reports-server.resources.limits | string | `nil` | Container resource limits |
-| reports-server.resources.requests | string | `nil` | Container resource requests |
+| reports-server.resources.limits | object | `{"memory":"128Mi"}` | Container resource limits |
+| reports-server.resources.requests | object | `{"cpu":"100m","memory":"64Mi"}` | Container resource requests |
 | reports-server.autoscaling.enabled | bool | `false` | Enable autoscaling |
 | reports-server.autoscaling.minReplicas | int | `1` | Min number of replicas |
 | reports-server.autoscaling.maxReplicas | int | `100` | Max number of replicas |
-| reports-server.autoscaling.targetCPUUtilizationPercentage | int | `80` | Target CPU utilisation percentage |
-| reports-server.autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Target memory utilization percentage |
-| reports-server.autoscaling.metrics | list | `[]` | Configures custom HPA metrics Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ |
-| reports-server.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. |
+| reports-server.autoscaling.targetCPUUtilizationPercentage | int | `80` | Target CPU utilisation |
+| reports-server.autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Target Memory utilisation |
 | reports-server.pdb | object | `{"enabled":true,"maxUnavailable":"50%","minAvailable":null}` | Using a PDB is highly recommended for highly available deployments. Defaults to enabled. The default configuration doesn't prevent disruption when using a single replica |
 | reports-server.pdb.enabled | bool | `true` | Enable PodDisruptionBudget |
 | reports-server.pdb.minAvailable | string | `nil` | minAvailable pods for PDB, cannot be used together with maxUnavailable |
@@ -953,10 +945,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.config.etcd.endpoints | string | `nil` |  |
 | reports-server.config.etcd.insecure | bool | `true` |  |
 | reports-server.config.etcd.storage | string | `"2Gi"` |  |
+| reports-server.config.etcd.storageClassName | string | `""` | Storage class name for etcd PVC - Leave empty to use the default storage class - Set to a specific storage class name (e.g., "fast", "standard", "aws-ebs") |
 | reports-server.config.etcd.quotaBackendBytes | int | `1932735283` |  |
-| reports-server.config.etcd.storageClassName | string | `""` | Storage class name for etcd PVC. Leave empty to use the cluster's default storage class. Set to a specific storage class name (e.g., "fast", "standard", "aws-ebs") to pin the PV. |
-| reports-server.config.etcd.nodeSelector | object | `{}` |  |
-| reports-server.config.etcd.tolerations | list | `[]` |  |
 | reports-server.config.etcd.autoCompaction.enabled | bool | `true` | Enable auto-compaction for etcd |
 | reports-server.config.etcd.autoCompaction.mode | string | `"periodic"` | Auto-compaction mode (periodic or revision) |
 | reports-server.config.etcd.autoCompaction.retention | string | `"30m"` | Auto-compaction retention (e.g., 30m for 30 minutes, 1h for 1 hour) |
@@ -965,18 +955,18 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.config.etcd.podSecurityContext | object | `{"fsGroup":65532,"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532}` | Pod-level security context for etcd pods Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls) runAsUser/runAsGroup are set explicitly (rather than relying on the image's default user) so kubelet can verify non-root without introspecting the image - otherwise an image with a non-numeric USER (e.g. "nonroot") fails admission with "cannot verify user is non-root". |
 | reports-server.config.etcd.securityContext | object | See [values.yaml](values.yaml) | Container-level security context for the etcd container |
 | reports-server.config.db.secretCreation | bool | `false` | If set, a secret will be created with the database connection information. If this is set to true, secretName must be set. |
-| reports-server.config.db.secretName | string | `""` | If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password`, and `db.readReplicaHosts`. |
-| reports-server.config.db.host | string | `""` | Database host |
+| reports-server.config.db.secretName | string | `""` | If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password` and `db.readReplicaHosts`. |
+| reports-server.config.db.host | string | `"reports-server-cluster-rw.reports-server"` | Database host |
 | reports-server.config.db.hostSecretKeyName | string | `"host"` | The database host will be read from this `key` in the specified Secret, when `db.secretName` is set. |
-| reports-server.config.db.readReplicaHosts | string | `""` | Database read replica hosts. Comma-separated list of hostnames; reads are routed to a random replica with fallback to the primary. |
+| reports-server.config.db.readReplicaHosts | string | `""` | Database read replica hosts |
 | reports-server.config.db.readReplicaHostsSecretKeyName | string | `"readReplicaHosts"` | The database read replica hosts will be read from this `key` in the specified Secret, when `db.secretName` is set. |
-| reports-server.config.db.port | int | `5432` | Database port |
+| reports-server.config.db.port | string | `nil` | Database port |
 | reports-server.config.db.portSecretKeyName | string | `"port"` | The database port will be read from this `key` in the specified Secret, when `db.secretName` is set. |
 | reports-server.config.db.name | string | `"reportsdb"` | Database name |
 | reports-server.config.db.dbNameSecretKeyName | string | `"dbname"` | The database name will be read from this `key` in the specified Secret, when `db.secretName` is set. |
-| reports-server.config.db.user | string | `"postgres"` | Database user |
+| reports-server.config.db.user | string | `"app"` | Database user |
 | reports-server.config.db.userSecretKeyName | string | `"username"` | The database username will be read from this `key` in the specified Secret, when `db.secretName` is set. |
-| reports-server.config.db.password | string | `"reports"` | Database password |
+| reports-server.config.db.password | string | `"password"` | Database password |
 | reports-server.config.db.passwordSecretKeyName | string | `"password"` | The database password will be read from this `key` in the specified Secret, when `db.secretName` is set. |
 | reports-server.config.db.sslmode | string | `"disable"` | Database SSL |
 | reports-server.config.db.sslrootcert | string | `""` | Database SSL root cert |

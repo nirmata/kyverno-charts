@@ -2407,7 +2407,6 @@ reports-server:
   # @ignored
   templating:
     enabled: false
-
   fipsEnabled: false
 
 
@@ -2464,6 +2463,11 @@ reports-server:
   podSecurityContext:
     fsGroup: 2000
 
+  # -- Server version to use (v1 or v2). Defaults to v1 for backward compatibility.
+  # v1: Stable implementation (default)
+  # v2: Optimized implementation with improved performance
+  serverVersion: v1
+
   # -- Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env.
   podEnv: {}
 
@@ -2472,7 +2476,7 @@ reports-server:
   securityContext:
     capabilities:
       drop:
-        - ALL
+      - ALL
     readOnlyRootFilesystem: true
     runAsNonRoot: true
     runAsUser: 1000
@@ -2561,13 +2565,11 @@ reports-server:
   resources:
     # -- Container resource limits
     limits:
-    # cpu: 100m
-    # memory: 128Mi
-
+      memory: 128Mi
     # -- Container resource requests
     requests:
-    # cpu: 100m
-    # memory: 128Mi
+      cpu: 100m
+      memory: 64Mi
 
   autoscaling:
     # -- Enable autoscaling
@@ -2579,30 +2581,31 @@ reports-server:
     # -- Max number of replicas
     maxReplicas: 100
 
-    # -- Target CPU utilisation percentage
+    # -- Target CPU utilisation
     targetCPUUtilizationPercentage: 80
 
-    # -- Target memory utilization percentage
+    # -- Target Memory utilisation
     targetMemoryUtilizationPercentage: ~
 
-    # -- Configures custom HPA metrics
-    # Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-    metrics: []
-
-    # -- Configures the scaling behavior of the target in both Up and Down directions.
-    behavior: {}
-    # scaleDown:
-    #  stabilizationWindowSeconds: 300
-    #  policies:
-    #    - type: Pods
-    #      value: 1
-    #      periodSeconds: 180
-    # scaleUp:
-    #   stabilizationWindowSeconds: 300
-    #   policies:
+    # -- HPA behavior configuration (optional)
+    # behavior:
+    #   scaleDown:
+    #     stabilizationWindowSeconds: 300
+    #     policies:
+    #     - type: Percent
+    #       value: 100
+    #       periodSeconds: 15
+    #   scaleUp:
+    #     stabilizationWindowSeconds: 0
+    #     policies:
+    #     - type: Percent
+    #       value: 100
+    #       periodSeconds: 15
     #     - type: Pods
-    #       value: 2
-    #       periodSeconds: 60
+    #       value: 4
+    #       periodSeconds: 15
+    #     selectPolicy: Max
+
 
   # -- Using a PDB is highly recommended for highly available deployments. Defaults to enabled. The default configuration doesn't prevent disruption when using a single replica
   pdb:
@@ -2630,11 +2633,6 @@ reports-server:
     port: 443
 
   config:
-    # -- Skip Kubernetes-resource-to-store migration on startup (SQL schema migrations still run).
-    skipMigration: false
-
-    # -- Drop the v0.2.x clusterid column. One-way; only after every cluster sharing this database is on 0.3.x.
-    finalizeLegacyClusterId: false
 
     # -- Disable HTTP keep-alive so the kube-apiserver cannot pin all traffic to a
     # single reports-server replica. Only useful with replicaCount > 1. Costs a
@@ -2654,51 +2652,30 @@ reports-server:
         # -- Image tag
         tag: 3.6.14-hardened
 
-      # -- Image pull secrets for the etcd container image
+      # -- Image pull secrets
       imagePullSecrets: []
 
       enabled: true
       endpoints: ~
       insecure: true
-
-      # PVC storage size for etcd persistence (e.g., "2Gi", "5Gi"). This sizes
-      # the persistent volume claim, not the etcd DB quota.
-      # NOTE: keep this 10-20% greater than `quotaBackendBytes` so etcd has
-      # filesystem headroom above its logical DB quota.
+      # PVC Storage configuration for etcd persistence:
+      # - Default: If not specified, the chart will allocate 2Gi of storage.
+      # - Override: Set a custom storage size (e.g., "2Gi", "5Gi") as needed.
+      # - NOTE: keep this **10‑20 % greater** than `quotaBackendBytes`
+      # This value defines the size of the persistent volume claim (PVC) for etcd.
       storage: 2Gi
 
-      # Quota for etcd's internal database (BoltDB) in bytes. Limits the logical
-      # size of the etcd DB file, not the PVC. Format: plain integer bytes
-      # (no Ki/Mi/Gi suffix). Default ~1.8GiB pairs with the 2Gi PVC default.
-      quotaBackendBytes: 1932735283
-
-      # -- Storage class name for etcd PVC.
-      # Leave empty to use the cluster's default storage class. Set to a specific
-      # storage class name (e.g., "fast", "standard", "aws-ebs") to pin the PV.
+      # -- Storage class name for etcd PVC
+      # - Leave empty to use the default storage class
+      # - Set to a specific storage class name (e.g., "fast", "standard", "aws-ebs")
       storageClassName: ""
 
-      ## Node labels for etcd pod assignment.
-      ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
-      nodeSelector: {}
+    # Quota for etcd's internal database (BoltDB) **in bytes**
+    # - What it limits: the logical size of the etcd DB file, *not* the PVC.
+    # - Format: plain integer bytes (no Ki/Mi/Gi suffix).
+      quotaBackendBytes: 1932735283
 
-      ## Tolerations for etcd pod assignment.
-      ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-      tolerations: []
-
-      # -- Pod-level security context for etcd pods
-      podSecurityContext:
-        runAsNonRoot: true
-        runAsUser: 65532
-        runAsGroup: 65532
-        fsGroup: 65532
-
-      # -- Container-level security context for the etcd container
-      securityContext:
-        allowPrivilegeEscalation: false
-
-      # Auto-compaction configuration for etcd. Compaction reclaims storage taken
-      # by historical revisions; without it, the etcd DB grows unboundedly under
-      # write load.
+      # Auto-compaction configuration for etcd
       autoCompaction:
         # -- Enable auto-compaction for etcd
         enabled: true
@@ -2739,21 +2716,23 @@ reports-server:
       # -- If set, a secret will be created with the database connection information. If this is set to true, secretName must be set.
       secretCreation: false
 
-      # -- If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password`, and `db.readReplicaHosts`.
+      # -- If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password` and `db.readReplicaHosts`.
       secretName: ""
 
       # -- Database host
-      host: ""
+      host: reports-server-cluster-rw.reports-server
+
       # -- The database host will be read from this `key` in the specified Secret, when `db.secretName` is set.
       hostSecretKeyName: "host"
 
-      # -- Database read replica hosts. Comma-separated list of hostnames; reads are routed to a random replica with fallback to the primary.
+      # -- Database read replica hosts
       readReplicaHosts: ""
+
       # -- The database read replica hosts will be read from this `key` in the specified Secret, when `db.secretName` is set.
-      readReplicaHostsSecretKeyName: "readReplicaHosts"
+      readReplicaHostsSecretKeyName: readReplicaHosts
 
       # -- Database port
-      port: 5432
+      port:
       # -- The database port will be read from this `key` in the specified Secret, when `db.secretName` is set.
       portSecretKeyName: "port"
 
@@ -2763,13 +2742,13 @@ reports-server:
       dbNameSecretKeyName: "dbname"
 
       # -- Database user
-      user: postgres
+      user: app
 
       # -- The database username will be read from this `key` in the specified Secret, when `db.secretName` is set.
       userSecretKeyName: "username"
 
       # -- Database password
-      password: reports
+      password: password
 
       # -- The database password will be read from this `key` in the specified Secret, when `db.secretName` is set.
       passwordSecretKeyName: "password"
@@ -2786,10 +2765,7 @@ reports-server:
       # -- Database SSL cert
       sslcert: ""
 
-      # -- Volume configuration for an RDS (or other managed Postgres) CA bundle.
-      # When `secretName` is set, the chart mounts the named Secret at `mountPath`
-      # inside the reports-server pod. Pair with `sslrootcert` pointing at a file
-      # under that mountPath to enable TLS verification.
+      # -- Volume configuration for RDS certificate
       sslrds:
         secretName: ""
         mountPath: "/etc/ssl/rds"
@@ -2814,15 +2790,21 @@ reports-server:
 
     # -- Install api services in manifest
     installApiServices:
+
       # -- Store reports in reports-server
       enabled: true
 
       # -- Store ephemeral reports in reports-server
       installEphemeralReportsService: true
-
       # -- Store open reports in reports-server
       installOpenreportsService: true
 
+    migrateReportsServer:
+      # -- Create api services only when reports-server is ready and migration is guaranteed
+      enabled: false
+
+
+  jobConfigurations:
     image:
       # -- (string) Image registry
       registry: ghcr.io
