@@ -136,8 +136,7 @@
               "type": "string",
               "enum": [
                 "pat",
-                "app",
-                "nirmata-app"
+                "app"
               ]
             }
           }

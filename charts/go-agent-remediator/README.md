@@ -28,7 +28,7 @@ Selects where the agent opens pull requests.
 | `tool.type` | Git provider: `github`, `gitlab`, or `azure-devops` | `github` |
 | `tool.name` | ToolConfig name. Derived as `remediator-agent-<tool.type>` when unset | `""` |
 | `tool.baseURL` | API endpoint override for self-hosted servers (GitHub Enterprise, self-managed GitLab, Azure DevOps Server) | `""` |
-| `tool.credentials.method` | `pat`, `app`, or `nirmata-app`. `azure-devops` supports `pat` only | `pat` |
+| `tool.credentials.method` | `pat` or `app`. `azure-devops` supports `pat` only | `pat` |
 | `tool.tls.caBundleSecretRef.name` / `.key` | Secret holding a PEM CA bundle to trust when reaching the git server | unset |
 | `tool.tls.caBundleSecretRef.namespace` | Namespace of that secret | release namespace |
 | `tool.tls.insecureSkipVerify` | Disable TLS verification. Not recommended — prefer `caBundleSecretRef` | unset |

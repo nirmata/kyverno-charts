@@ -39,11 +39,8 @@ spec:
     {{- else }}
     {{- fail "tool.credentials.pat must be configured when method is 'pat'" }}
     {{- end }}
-    {{- else if eq .Values.tool.credentials.method "nirmata-app" }}
-    {{- /* nirmata-app: the controller sources the app credentials itself.
-           The ToolConfig CRD's CEL rule requires neither `pat` nor `app` here. */}}
     {{- else }}
-    {{- fail "tool.credentials.method must be one of 'pat', 'app' or 'nirmata-app'" }}
+    {{- fail "tool.credentials.method must be either 'pat' or 'app'" }}
     {{- end }}
   {{- with .Values.tool.tls }}
   tls:

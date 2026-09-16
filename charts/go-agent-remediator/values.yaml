@@ -169,14 +169,13 @@ tool:
   baseURL: ""
 
   # Authentication method configuration
-  # Choose between "pat" (Personal Access Token), "app" (GitHub App) or
-  # "nirmata-app" (credentials supplied by the Nirmata platform, no secret here)
+  # Choose between "pat" (Personal Access Token) or "app" (GitHub App)
   #
   # azure-devops supports "pat" only. The PAT needs the "Code (read & write)"
   # scope, and "Pull Request Threads (read & write)" if the agent should also
   # post PR comments.
   credentials:
-    method: pat  # Options: "pat", "app" or "nirmata-app" (recommended: "app" for better security)
+    method: pat  # Options: "pat" or "app" (recommended: "app" for better security)
 
     # app:
     #   appId: ""  # Set this to your GitHub App ID
