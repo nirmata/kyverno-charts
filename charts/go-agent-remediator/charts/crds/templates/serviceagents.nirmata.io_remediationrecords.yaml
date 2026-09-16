@@ -20,6 +20,9 @@ spec:
     - jsonPath: .spec.collectorId
       name: Collector
       type: string
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
     - jsonPath: .status.totalResources
       name: Resources
       type: integer
@@ -64,7 +67,8 @@ spec:
                 description: CollectorTarget references the target this record tracks
                 properties:
                   argoHub:
-                    description: ArgoHubTarget holds cluster-based targeting configuration
+                    description: ArgoHubTarget holds ArgoCD hub cluster targeting
+                      configuration
                     properties:
                       appSelector:
                         description: |-
@@ -143,6 +147,161 @@ spec:
                         items:
                           type: string
                         type: array
+                    type: object
+                  fluxHub:
+                    description: FluxHubTarget holds FluxCD hub cluster targeting
+                      configuration
+                    properties:
+                      fluxNamespace:
+                        default: flux-system
+                        description: |-
+                          FluxNamespace is the namespace where Flux controllers are installed.
+                          Used for reference and logging only; defaults to "flux-system".
+                        type: string
+                      helmReleaseSelector:
+                        description: |-
+                          HelmReleaseSelector defines which Flux HelmReleases to target.
+                          If not specified, no HelmReleases will be selected.
+                          Can be configured alongside KustomizationSelector to remediate both types.
+                        properties:
+                          allHelmReleases:
+                            description: |-
+                              AllHelmReleases selects all HelmReleases found in the searched namespaces.
+                              When true, Names and LabelSelector are ignored.
+                            type: boolean
+                          labelSelector:
+                            description: LabelSelector selects HelmReleases by their
+                              labels.
+                            properties:
+                              matchExpressions:
+                                description: matchExpressions is a list of label selector
+                                  requirements. The requirements are ANDed.
+                                items:
+                                  description: |-
+                                    A label selector requirement is a selector that contains values, a key, and an operator that
+                                    relates the key and values.
+                                  properties:
+                                    key:
+                                      description: key is the label key that the selector
+                                        applies to.
+                                      type: string
+                                    operator:
+                                      description: |-
+                                        operator represents a key's relationship to a set of values.
+                                        Valid operators are In, NotIn, Exists and DoesNotExist.
+                                      type: string
+                                    values:
+                                      description: |-
+                                        values is an array of string values. If the operator is In or NotIn,
+                                        the values array must be non-empty. If the operator is Exists or DoesNotExist,
+                                        the values array must be empty. This array is replaced during a strategic
+                                        merge patch.
+                                      items:
+                                        type: string
+                                      type: array
+                                      x-kubernetes-list-type: atomic
+                                  required:
+                                  - key
+                                  - operator
+                                  type: object
+                                type: array
+                                x-kubernetes-list-type: atomic
+                              matchLabels:
+                                additionalProperties:
+                                  type: string
+                                description: |-
+                                  matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+                                  map is equivalent to an element of matchExpressions, whose key field is "key", the
+                                  operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                type: object
+                            type: object
+                            x-kubernetes-map-type: atomic
+                          names:
+                            description: Names is a list of specific HelmRelease names
+                              to select.
+                            items:
+                              type: string
+                            type: array
+                          namespaces:
+                            description: |-
+                              Namespaces restricts which namespaces are searched for HelmReleases.
+                              When empty, all namespaces are searched.
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      kustomizationSelector:
+                        description: |-
+                          KustomizationSelector defines which Flux Kustomizations to target.
+                          If not specified, no Kustomizations will be selected.
+                        properties:
+                          allKustomizations:
+                            description: |-
+                              AllKustomizations selects all Kustomizations found in the searched namespaces.
+                              When true, Names and LabelSelector are ignored.
+                            type: boolean
+                          labelSelector:
+                            description: LabelSelector selects Kustomizations by their
+                              labels.
+                            properties:
+                              matchExpressions:
+                                description: matchExpressions is a list of label selector
+                                  requirements. The requirements are ANDed.
+                                items:
+                                  description: |-
+                                    A label selector requirement is a selector that contains values, a key, and an operator that
+                                    relates the key and values.
+                                  properties:
+                                    key:
+                                      description: key is the label key that the selector
+                                        applies to.
+                                      type: string
+                                    operator:
+                                      description: |-
+                                        operator represents a key's relationship to a set of values.
+                                        Valid operators are In, NotIn, Exists and DoesNotExist.
+                                      type: string
+                                    values:
+                                      description: |-
+                                        values is an array of string values. If the operator is In or NotIn,
+                                        the values array must be non-empty. If the operator is Exists or DoesNotExist,
+                                        the values array must be empty. This array is replaced during a strategic
+                                        merge patch.
+                                      items:
+                                        type: string
+                                      type: array
+                                      x-kubernetes-list-type: atomic
+                                  required:
+                                  - key
+                                  - operator
+                                  type: object
+                                type: array
+                                x-kubernetes-list-type: atomic
+                              matchLabels:
+                                additionalProperties:
+                                  type: string
+                                description: |-
+                                  matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+                                  map is equivalent to an element of matchExpressions, whose key field is "key", the
+                                  operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                type: object
+                            type: object
+                            x-kubernetes-map-type: atomic
+                          names:
+                            description: Names is a list of specific Kustomization
+                              names to select.
+                            items:
+                              type: string
+                            type: array
+                          namespaces:
+                            description: |-
+                              Namespaces restricts which namespaces are searched for Kustomizations.
+                              In hub-driven setups each spoke typically has a dedicated namespace on the hub
+                              (e.g. "production", "staging"). When empty, all namespaces are searched.
+                            items:
+                              type: string
+                            type: array
+                        type: object
                     type: object
                   localCluster:
                     description: LocalClusterTarget holds local cluster-based targeting
@@ -247,8 +406,40 @@ spec:
                 x-kubernetes-validations:
                 - message: localCluster and argoHub cannot both be set
                   rule: '!(has(self.localCluster) && has(self.argoHub))'
+                - message: localCluster and fluxHub cannot both be set
+                  rule: '!(has(self.localCluster) && has(self.fluxHub))'
+                - message: argoHub and fluxHub cannot both be set
+                  rule: '!(has(self.argoHub) && has(self.fluxHub))'
               remediatorRef:
-                description: RemediatorRef references the parent Remediator name
+                description: |-
+                  RemediatorRef references the parent Remediator resource.
+                  Carries the name, namespace, and UID of the owning Remediator so that
+                  external consumers (e.g. policies-service) can resolve the parent agent
+                  directly by UID without a name-based lookup.
+                properties:
+                  name:
+                    description: Name is the name of the parent Remediator.
+                    type: string
+                  namespace:
+                    description: Namespace is the namespace of the parent Remediator.
+                    type: string
+                  uid:
+                    description: UID is the unique identifier of the parent Remediator.
+                    type: string
+                required:
+                - name
+                type: object
+              scheduledAt:
+                description: |-
+                  ScheduledAt is the cron tick time that triggered the run that created this record.
+                  Populated from the parent agent's Status.LastScheduleTime.
+                format: date-time
+                type: string
+              triggerSource:
+                description: TriggerSource describes what caused this run.
+                enum:
+                - schedule
+                - manual
                 type: string
             required:
             - collectorId
@@ -259,6 +450,12 @@ spec:
               lastUpdateTime:
                 description: LastUpdateTime is when this record was last updated
                 format: date-time
+                type: string
+              phase:
+                description: |-
+                  Phase is the lifecycle phase of the current (or most recent) reconcile run.
+                  Set to Running at the start of each collector's processing, then updated to
+                  Succeeded, Failed, or Skipped at completion.
                 type: string
               resourceStates:
                 additionalProperties:
@@ -280,6 +477,10 @@ spec:
                                 description: IssueInfo contains information about
                                   a single issue.
                                 properties:
+                                  conversationId:
+                                    description: ConversationID is the LLM conversation
+                                      ID for the remediation that produced this issue.
+                                    type: string
                                   createdAt:
                                     description: CreatedAt is when the issue was created
                                     format: date-time
@@ -319,6 +520,10 @@ spec:
                                     description: CommitSHA is the commit SHA of the
                                       PR
                                     type: string
+                                  conversationId:
+                                    description: ConversationID is the LLM conversation
+                                      ID for the remediation that produced this PR.
+                                    type: string
                                   createdAt:
                                     description: CreatedAt is when the PR was created
                                     format: date-time
@@ -334,11 +539,54 @@ spec:
                                       of the last comment processed on this PR
                                     format: int64
                                     type: integer
+                                  mergedAt:
+                                    description: MergedAt is when the PR was merged
+                                      (nil if not merged yet)
+                                    format: date-time
+                                    type: string
                                   policies:
                                     description: Policies is the list of policies
                                       this PR addresses
                                     items:
                                       type: string
+                                    type: array
+                                  policyExceptions:
+                                    description: |-
+                                      PolicyExceptions tracks Policy Exception Requests created via @nirmatabot request-exception
+                                      for policies that were excepted from this PR instead of being fixed
+                                    items:
+                                      description: |-
+                                        PolicyExceptionInfo tracks a Policy Exception Request created via @nirmatabot request-exception.
+                                        It records the NCH PER name, the policies covered, and the requested duration.
+                                      properties:
+                                        createdAt:
+                                          description: CreatedAt is when the exception
+                                            request was submitted to NCH
+                                          format: date-time
+                                          type: string
+                                        duration:
+                                          description: Duration is the requested exception
+                                            duration in NCH TTL format (e.g., "720h");
+                                            empty means permanent
+                                          type: string
+                                        perName:
+                                          description: PERName is the Nirmata Control
+                                            Hub Policy Exception Request name/identifier
+                                          type: string
+                                        policies:
+                                          description: Policies is the list of policy
+                                            names covered by this exception request
+                                          items:
+                                            type: string
+                                          type: array
+                                        state:
+                                          description: State is the last known PER
+                                            state (e.g., "pendingApproval")
+                                          type: string
+                                      required:
+                                      - perName
+                                      - policies
+                                      type: object
                                     type: array
                                   prNumber:
                                     description: PRNumber is the pull request number
@@ -347,6 +595,10 @@ spec:
                                     description: PRURL is the URL of the created pull
                                       request
                                     type: string
+                                  state:
+                                    description: 'State tracks the current PR state:
+                                      "open", "merged", "closed"'
+                                    type: string
                                 type: object
                               type: array
                           type: object
@@ -354,6 +606,10 @@ spec:
                           description: JiraTicketAction contains metadata about a
                             Jira ticket action taken
                           properties:
+                            conversationId:
+                              description: ConversationID is the LLM conversation
+                                ID for the remediation that produced this ticket.
+                              type: string
                             ticketKey:
                               description: TicketKey is the Jira ticket key (e.g.,
                                 "PROJ-123")
@@ -403,6 +659,14 @@ spec:
                   ResourceStates maps resource keys to their remediation state
                   Key format: "namespace/kind/name" or "kind/name" for cluster-scoped resources
                 type: object
+              runId:
+                description: |-
+                  RunID is a UUID generated once per Reconcile() call.
+                  It groups all RemediationRecord updates from a single reconcile loop so that
+                  policies-service can correlate run history with individual outcomes (agent_outcome rows).
+                  Run-level metrics (violationsFound, actionsExecuted, etc.) are sourced from
+                  Remediator.Status.LastRunSummary which already carries them — not duplicated here.
+                type: string
               totalResources:
                 description: TotalResources is the total number of resources tracked
                 format: int32

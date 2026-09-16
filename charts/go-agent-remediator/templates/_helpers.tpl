@@ -98,3 +98,16 @@ This template validates the authentication settings and fails early with clear e
 {{- end -}}
 {{- end -}}
 {{- end -}}
+{{/*
+ToolConfig name.
+
+Falls back to "<release>-<provider>" when tool.name is unset, so the generated name
+reflects the configured provider instead of always saying "github".
+*/}}
+{{- define "go-agent-remediator.toolName" -}}
+{{- if .Values.tool.name -}}
+{{- .Values.tool.name -}}
+{{- else -}}
+{{- printf "%s-%s" (include "go-agent-remediator.name" .) (.Values.tool.type | default "github") -}}
+{{- end -}}
+{{- end }}
