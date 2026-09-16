@@ -141,6 +141,35 @@
               ]
             }
           }
+        },
+        "tls": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Optional TLS settings for reaching the git server; rendered into ToolConfig spec.tls.",
+          "properties": {
+            "caBundleSecretRef": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "name",
+                "key"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              }
+            },
+            "insecureSkipVerify": {
+              "type": "boolean"
+            }
+          }
         }
       }
     }

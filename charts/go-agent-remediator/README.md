@@ -26,9 +26,21 @@ Selects where the agent opens pull requests.
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `tool.type` | Git provider: `github`, `gitlab`, or `azure-devops` | `github` |
-| `tool.name` | ToolConfig name. Defaults to `<release>-<tool.type>` when unset | `github-tool` |
+| `tool.name` | ToolConfig name. Derived as `remediator-agent-<tool.type>` when unset | `""` |
 | `tool.baseURL` | API endpoint override for self-hosted servers (GitHub Enterprise, self-managed GitLab, Azure DevOps Server) | `""` |
 | `tool.credentials.method` | `pat`, `app`, or `nirmata-app`. `azure-devops` supports `pat` only | `pat` |
+| `tool.tls.caBundleSecretRef.name` / `.key` | Secret holding a PEM CA bundle to trust when reaching the git server | unset |
+| `tool.tls.caBundleSecretRef.namespace` | Namespace of that secret | release namespace |
+| `tool.tls.insecureSkipVerify` | Disable TLS verification. Not recommended — prefer `caBundleSecretRef` | unset |
+
+The ToolConfig name is used for both the generated ToolConfig and the
+`toolRef` / `gitCredentials` references in the Remediator, so they cannot drift.
+Leaving `tool.name` empty is recommended; set it explicitly only to pin an
+existing name.
+
+> **Upgrading:** this chart previously defaulted `tool.name` to `github-tool`.
+> With the default now empty, a GitHub install renders `remediator-agent-github`
+> instead. Set `tool.name: github-tool` to keep the old name.
 
 > `tool.type` is unrelated to `llm.provider: azure-openai`, which only selects an
 > LLM backend. `tool.type` controls where the agent pushes code.
@@ -49,7 +61,6 @@ kubectl create secret generic azure-devops-pat \
 ```yaml
 tool:
   enabled: true
-  name: azure-tool
   type: azure-devops
   credentials:
     method: pat
@@ -61,13 +72,10 @@ tool:
     git:
       pullRequests:
         branchPrefix: remediation-
-
-remediator:
-  remediation:
-    actions:
-      - type: CreatePR
-        toolRefName: azure-tool
 ```
+
+This creates a ToolConfig named `remediator-agent-azure-devops`; the default
+`CreatePR` action references it automatically, so no `toolRefName` is needed.
 
 Repository URLs may use any Azure Repos form; the organization and project are
 derived from the URL, so no extra configuration is needed:
@@ -86,8 +94,27 @@ tool:
   baseURL: https://tfs.corp.example.com/DefaultCollection
 ```
 
-If the server uses a private CA, supply it via `spec.tls.caBundleSecretRef` on the
-ToolConfig.
+If the server uses a private CA, point the chart at a secret holding the PEM
+bundle — the chart renders it into the ToolConfig's `spec.tls`:
+
+```bash
+kubectl create secret generic corp-ca-bundle \
+  --from-file=ca.crt=./corp-ca.pem -n <namespace>
+```
+
+```yaml
+tool:
+  type: azure-devops
+  baseURL: https://tfs.corp.example.com/DefaultCollection
+  tls:
+    caBundleSecretRef:
+      name: corp-ca-bundle
+      key: ca.crt
+```
+
+Configure this through chart values rather than editing the ToolConfig directly:
+the ToolConfig is (re)created by a `post-install,post-upgrade` hook, so a manual
+patch is discarded on the next upgrade.
 
 #### Azure Repos limitations
 

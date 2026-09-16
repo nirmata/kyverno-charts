@@ -32,6 +32,7 @@ spec:
             - |
               set +e
               echo "Deleting CRDs (ignore errors)"
+              kubectl delete crd agents.serviceagents.nirmata.io || true
               kubectl delete crd llmconfigs.serviceagents.nirmata.io || true
               kubectl delete crd toolconfigs.serviceagents.nirmata.io || true
               kubectl delete crd remediators.serviceagents.nirmata.io || true

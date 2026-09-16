@@ -39,9 +39,26 @@ spec:
     {{- else }}
     {{- fail "tool.credentials.pat must be configured when method is 'pat'" }}
     {{- end }}
+    {{- else if eq .Values.tool.credentials.method "nirmata-app" }}
+    {{- /* nirmata-app: the controller sources the app credentials itself.
+           The ToolConfig CRD's CEL rule requires neither `pat` nor `app` here. */}}
     {{- else }}
-    {{- fail "tool.credentials.method must be either 'pat' or 'app'" }}
+    {{- fail "tool.credentials.method must be one of 'pat', 'app' or 'nirmata-app'" }}
     {{- end }}
+  {{- with .Values.tool.tls }}
+  tls:
+    {{- with .caBundleSecretRef }}
+    caBundleSecretRef:
+      name: {{ .name | quote }}
+      key: {{ .key | quote }}
+      {{- with .namespace }}
+      namespace: {{ . | quote }}
+      {{- end }}
+    {{- end }}
+    {{- if hasKey . "insecureSkipVerify" }}
+    insecureSkipVerify: {{ .insecureSkipVerify }}
+    {{- end }}
+  {{- end }}
   defaults:
     {{- if .Values.tool.defaults.git }}
     git:

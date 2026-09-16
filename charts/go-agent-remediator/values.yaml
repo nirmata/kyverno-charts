@@ -144,7 +144,12 @@ nirmata:
 # ToolConfig for the git provider (used by CreatePR)
 tool:
   enabled: true
-  name: github-tool
+
+  # ToolConfig name. Leave empty to derive it from the provider
+  # ("remediator-agent-<tool.type>", e.g. remediator-agent-azure-devops).
+  # Set it explicitly to pin a name (e.g. "github-tool" for installs made
+  # before provider-aware naming existed).
+  name: ""
 
   # Git provider hosting the repositories the agent opens PRs against.
   # Options: github, gitlab, azure-devops
@@ -164,13 +169,14 @@ tool:
   baseURL: ""
 
   # Authentication method configuration
-  # Choose between "pat" (Personal Access Token) or "app" (GitHub App)
+  # Choose between "pat" (Personal Access Token), "app" (GitHub App) or
+  # "nirmata-app" (credentials supplied by the Nirmata platform, no secret here)
   #
   # azure-devops supports "pat" only. The PAT needs the "Code (read & write)"
   # scope, and "Pull Request Threads (read & write)" if the agent should also
   # post PR comments.
   credentials:
-    method: pat  # Options: "pat" or "app" (recommended: "app" for better security)
+    method: pat  # Options: "pat", "app" or "nirmata-app" (recommended: "app" for better security)
 
     # app:
     #   appId: ""  # Set this to your GitHub App ID
@@ -185,6 +191,19 @@ tool:
         name: "github-token"
         key: "token"
 
+  # Optional TLS settings for reaching the git server. Use this when the server
+  # presents a certificate signed by a corporate/private CA that is not in the
+  # container's trust store (e.g. Azure DevOps Server behind a TLS-intercepting
+  # proxy). Rendered into the ToolConfig's spec.tls.
+  #
+  # tls:
+  #   caBundleSecretRef:
+  #     name: corp-ca-bundle   # kubectl create secret generic corp-ca-bundle \
+  #     key: ca.crt            #   --from-file=ca.crt=./corp-ca.pem -n <namespace>
+  #     # namespace: ""        # Optional; defaults to the release namespace
+  #   # insecureSkipVerify: false  # NOT recommended; prefer caBundleSecretRef
+  tls: {}
+
   defaults:
     git:
       pullRequests:
@@ -195,7 +214,6 @@ tool:
 #
 # tool:
 #   enabled: true
-#   name: azure-tool
 #   type: azure-devops
 #   credentials:
 #     method: pat
@@ -208,11 +226,8 @@ tool:
 #       pullRequests:
 #         branchPrefix: remediation-
 #
-# remediator:
-#   remediation:
-#     actions:
-#       - type: CreatePR
-#         toolRefName: azure-tool
+# The ToolConfig is then named "remediator-agent-azure-devops", and the default
+# CreatePR action references it automatically — no toolRefName needed.
 #
 # Repository URLs may use any Azure Repos form, e.g.
 #   https://dev.azure.com/{org}/{project}/_git/{repo}
@@ -255,5 +270,7 @@ remediator:
       enabled: true
       # intervalMinutes: 5  # Optional: polling interval in minutes (default: 5)
     actions:
+      # toolRefName is optional: when unset the action points at the
+      # ToolConfig this chart creates (see tool.name above), so the ref can
+      # never drift from the provider.
       - type: CreatePR
-        toolRefName: github-tool
