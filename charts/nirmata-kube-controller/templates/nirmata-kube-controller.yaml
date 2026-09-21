@@ -372,6 +372,7 @@ data:
     toolconfigs.v1alpha1.serviceagents.nirmata.io
     remediationrecords.v1alpha1.serviceagents.nirmata.io
     awsaccountconfigs.v1alpha1.nirmata.io
+    ottoflow/policyreports.v1alpha2.wgpolicyk8s.io
   IgnoreEvents: Normal.PolicyPlaceHolder.*
   FilterPatches: |-
     /metadata/resourceVersion
