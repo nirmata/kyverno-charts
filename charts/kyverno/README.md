@@ -299,7 +299,7 @@ The chart values are organised per component.
 | config.generatePolicyEvents | bool | `true` | Generate events on policy objects. When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects. This reduces event noise in multi-tenant environments where policy events may not be needed. |
 | config.resourceFilters | list | See [values.yaml](values.yaml) | Resource types to be skipped by the Kyverno policy engine. Make sure to surround each entry in quotes so that it doesn't get parsed as a nested YAML list. These are joined together without spaces, run through `tpl`, and the result is set in the config map. |
 | config.updateRequestThreshold | int | `1000` | Sets the threshold for the total number of UpdateRequests generated for mutateExisitng and generate policies. |
-| config.webhooks | list | `[{"namespaceSelector":{"matchExpressions":[{"key":"kubernetes.io/metadata.name","operator":"NotIn","values":["kube-system"]}]}}]` | Defines the `namespaceSelector` in the webhook configurations. Note that it takes a list of `namespaceSelector` and/or `objectSelector` in the JSON format, and only the first element will be forwarded to the webhook configurations. The Kyverno namespace is excluded if `excludeKyvernoNamespace` is `true` (default) |
+| config.webhooks | object | `{"namespaceSelector":{"matchExpressions":[{"key":"kubernetes.io/metadata.name","operator":"NotIn","values":["kube-system"]}]}}` | Defines the `namespaceSelector`/`objectSelector` in the webhook configurations. The Kyverno namespace is excluded if `excludeKyvernoNamespace` is `true` (default) |
 | config.webhookAnnotations | object | `{"admissions.enforcer/disabled":"true"}` | Defines annotations to set on webhook configurations. |
 | config.disableAutoWebhookGeneration | object | `{"enable":false,"webhooks":null}` | Disable generation and management of webhooks by kyverno |
 | config.webhookLabels | object | `{}` | Defines labels to set on webhook configurations. |
@@ -409,8 +409,9 @@ The chart values are organised per component.
 | admissionController.caCertificates.data | string | `nil` | CA certificates to use with Kyverno deployments This value is expected to be one large string of CA certificates |
 | admissionController.caCertificates.volume | object | `{}` | Volume to be mounted for CA certificates Not used when `.Values.admissionController.caCertificates.data` is defined |
 | admissionController.imagePullSecrets | list | `[]` | Image pull secrets |
-| admissionController.initContainer.image.registry | string | `"ghcr.io"` | Image registry |
-| admissionController.initContainer.image.repository | string | `"kyverno/kyvernopre"` | Image repository |
+| admissionController.initContainer.image.registry | string | `nil` | Image registry |
+| admissionController.initContainer.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| admissionController.initContainer.image.repository | string | `"nirmata/kyvernopre"` | Image repository |
 | admissionController.initContainer.image.tag | string | `nil` | Image tag If missing, defaults to image.tag |
 | admissionController.initContainer.image.pullPolicy | string | `nil` | Image pull policy If missing, defaults to image.pullPolicy |
 | admissionController.initContainer.resources.limits | object | `{"cpu":"100m","memory":"256Mi"}` | Pod resource limits |
@@ -418,8 +419,9 @@ The chart values are organised per component.
 | admissionController.initContainer.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Container security context |
 | admissionController.initContainer.extraArgs | object | `{}` | Additional container args. |
 | admissionController.initContainer.extraEnvVars | list | `[]` | Additional container environment variables. |
-| admissionController.container.image.registry | string | `"ghcr.io"` | Image registry |
-| admissionController.container.image.repository | string | `"kyverno/kyverno"` | Image repository |
+| admissionController.container.image.registry | string | `nil` | Image registry |
+| admissionController.container.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| admissionController.container.image.repository | string | `"nirmata/kyverno"` | Image repository |
 | admissionController.container.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | admissionController.container.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | admissionController.container.resources.limits | object | `{"memory":"384Mi"}` | Pod resource limits |
@@ -476,8 +478,9 @@ The chart values are organised per component.
 | backgroundController.rbac.serviceAccount.annotations | object | `{}` | Annotations for the ServiceAccount |
 | backgroundController.rbac.coreClusterRole.extraResources | list | See [values.yaml](values.yaml) | Extra resource permissions to add in the core cluster role. This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`. |
 | backgroundController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
-| backgroundController.image.registry | string | `"ghcr.io"` | Image registry |
-| backgroundController.image.repository | string | `"kyverno/background-controller"` | Image repository |
+| backgroundController.image.registry | string | `nil` | Image registry |
+| backgroundController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| backgroundController.image.repository | string | `"nirmata/background-controller"` | Image repository |
 | backgroundController.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | backgroundController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | backgroundController.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -635,8 +638,9 @@ The chart values are organised per component.
 | reportsController.rbac.serviceAccount.annotations | object | `{}` | Annotations for the ServiceAccount |
 | reportsController.rbac.coreClusterRole.extraResources | list | See [values.yaml](values.yaml) | Extra resource permissions to add in the core cluster role. This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`. |
 | reportsController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
-| reportsController.image.registry | string | `"ghcr.io"` | Image registry |
-| reportsController.image.repository | string | `"kyverno/reports-controller"` | Image repository |
+| reportsController.image.registry | string | `nil` | Image registry |
+| reportsController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| reportsController.image.repository | string | `"nirmata/reports-controller"` | Image repository |
 | reportsController.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | reportsController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | reportsController.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -984,22 +988,6 @@ This software is proprietary to Nirmata Inc. and is made available under the ter
 Unauthorized use, reproduction, modification, or distribution of this software, in whole or in part, is strictly prohibited and may result in civil and criminal penalties.
 
 © 2026 Nirmata Inc. All rights reserved.
-
-
-## Requirements
-
-Kubernetes: `>=1.25.0-0`
-
-| Repository | Name | Version |
-|------------|------|---------|
-|  | crds | 3.3.6 |
-|  | grafana | 3.3.6 |
-
-## Maintainers
-
-| Name | Email | Url |
-| ---- | ------ | --- |
-| Nirmata |  | <https://kyverno.io/> |
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.11.0](https://github.com/norwoodj/helm-docs/releases/v1.11.0)
