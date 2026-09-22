@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.3.52](https://img.shields.io/badge/Version-3.3.52-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.13.6-n4k.nirmata.29](https://img.shields.io/badge/AppVersion-v1.13.6--n4k.nirmata.29-informational?style=flat-square)
+![Version: 3.3.54-rc.1](https://img.shields.io/badge/Version-3.3.54--rc.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.13.6-n4k.nirmata.31](https://img.shields.io/badge/AppVersion-v1.13.6--n4k.nirmata.31-informational?style=flat-square)
 
 ## About
 
@@ -723,7 +723,7 @@ The chart values are organised per component.
 | webhooksCleanup.autoDeleteWebhooks.enabled | bool | `false` | Allow webhooks controller to delete webhooks using finalizers |
 | webhooksCleanup.image.registry | string | `"ghcr.io"` | Image registry |
 | webhooksCleanup.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| webhooksCleanup.image.tag | string | `"1.35.5-multiarch.1"` | Image tag Defaults to `latest` if omitted |
+| webhooksCleanup.image.tag | string | `"1.36.3-hardened"` | Image tag Defaults to `latest` if omitted |
 | webhooksCleanup.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | webhooksCleanup.imagePullSecrets | list | `[]` | Image pull secrets |
 | webhooksCleanup.podSecurityContext | object | `{}` | Security context for the pod |
@@ -762,7 +762,7 @@ The chart values are organised per component.
 |-----|------|---------|-------------|
 | global.image.registry | string | `nil` | Global value that allows to set a single image registry across all deployments. When set, it will override any values set under `.image.registry` across the chart. |
 | global.imagePullSecrets | list | `[]` | Global list of Image pull secrets When set, it will override any values set under `imagePullSecrets` under different components across the chart. |
-| global.kubectlImage | string | `"ghcr.io/nirmata/kubectl:1.35.5-multiarch.1"` |  |
+| global.kubectlImage | string | `"ghcr.io/nirmata/kubectl:1.36.3-hardened"` |  |
 | global.resyncPeriod | string | `"15m"` | Resync period for informers |
 | global.caCertificates.data | string | `nil` | Global CA certificates to use with Kyverno deployments This value is expected to be one large string of CA certificates Individual controller values will override this global value |
 | global.caCertificates.volume | object | `{}` | Global value to set single volume to be mounted for CA certificates for all deployments. Not used when `.Values.global.caCertificates.data` is defined Individual  controller values will override this global value |
@@ -783,7 +783,7 @@ The chart values are organised per component.
 | policyReportsCleanup.enabled | bool | `true` | Create a helm post-upgrade hook to cleanup the old policy reports. |
 | policyReportsCleanup.image.registry | string | `"ghcr.io"` | Image registry |
 | policyReportsCleanup.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| policyReportsCleanup.image.tag | string | `"1.35.5-multiarch.1"` | Image tag Defaults to `latest` if omitted |
+| policyReportsCleanup.image.tag | string | `"1.36.3-hardened"` | Image tag Defaults to `latest` if omitted |
 | policyReportsCleanup.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | policyReportsCleanup.imagePullSecrets | list | `[]` | Image pull secrets |
 | policyReportsCleanup.podSecurityContext | object | `{}` | Security context for the pod |
@@ -849,7 +849,7 @@ The chart values are organised per component.
 | reports-server.service.port | int | `443` | Service port |
 | reports-server.config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| reports-server.config.etcd.image.tag | string | `"3.6.12-hardened"` | Image tag |
+| reports-server.config.etcd.image.tag | string | `"3.6.14-hardened"` | Image tag |
 | reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.config.etcd.enabled | bool | `true` |  |
 | reports-server.config.etcd.endpoints | string | `nil` |  |
@@ -895,7 +895,7 @@ The chart values are organised per component.
 | reports-server.apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
 | reports-server.jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| reports-server.jobConfigurations.image.tag | string | `"1.35.5-multiarch.1"` | Image tag Defaults to `latest` if omitted |
+| reports-server.jobConfigurations.image.tag | string | `"1.36.3-hardened"` | Image tag Defaults to `latest` if omitted |
 | reports-server.jobConfigurations.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
 | reports-server.jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
@@ -969,7 +969,7 @@ Kubernetes: `>=1.22.0-0`
 |------------|------|---------|
 |  | crds | 3.3.6 |
 |  | grafana | 3.3.6 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.31 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.37 |
 
 ## Maintainers
 
