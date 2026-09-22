@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.3.52](https://img.shields.io/badge/Version-3.3.52-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.13.6-n4k.nirmata.29](https://img.shields.io/badge/AppVersion-v1.13.6--n4k.nirmata.29-informational?style=flat-square)
+![Version: 3.3.54-rc.1](https://img.shields.io/badge/Version-3.3.54--rc.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.13.6-n4k.nirmata.31](https://img.shields.io/badge/AppVersion-v1.13.6--n4k.nirmata.31-informational?style=flat-square)
 
 ## About
 
@@ -299,7 +299,7 @@ The chart values are organised per component.
 | config.generatePolicyEvents | bool | `true` | Generate events on policy objects. When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects. This reduces event noise in multi-tenant environments where policy events may not be needed. |
 | config.resourceFilters | list | See [values.yaml](values.yaml) | Resource types to be skipped by the Kyverno policy engine. Make sure to surround each entry in quotes so that it doesn't get parsed as a nested YAML list. These are joined together without spaces, run through `tpl`, and the result is set in the config map. |
 | config.updateRequestThreshold | int | `1000` | Sets the threshold for the total number of UpdateRequests generated for mutateExisitng and generate policies. |
-| config.webhooks | list | `[{"namespaceSelector":{"matchExpressions":[{"key":"kubernetes.io/metadata.name","operator":"NotIn","values":["kube-system"]}]}}]` | Defines the `namespaceSelector` in the webhook configurations. Note that it takes a list of `namespaceSelector` and/or `objectSelector` in the JSON format, and only the first element will be forwarded to the webhook configurations. The Kyverno namespace is excluded if `excludeKyvernoNamespace` is `true` (default) |
+| config.webhooks | object | `{"namespaceSelector":{"matchExpressions":[{"key":"kubernetes.io/metadata.name","operator":"NotIn","values":["kube-system"]}]}}` | Defines the `namespaceSelector`/`objectSelector` in the webhook configurations. The Kyverno namespace is excluded if `excludeKyvernoNamespace` is `true` (default) |
 | config.webhookAnnotations | object | `{"admissions.enforcer/disabled":"true"}` | Defines annotations to set on webhook configurations. |
 | config.disableAutoWebhookGeneration | object | `{"enable":false,"webhooks":null}` | Disable generation and management of webhooks by kyverno |
 | config.webhookLabels | object | `{}` | Defines labels to set on webhook configurations. |
@@ -409,8 +409,9 @@ The chart values are organised per component.
 | admissionController.caCertificates.data | string | `nil` | CA certificates to use with Kyverno deployments This value is expected to be one large string of CA certificates |
 | admissionController.caCertificates.volume | object | `{}` | Volume to be mounted for CA certificates Not used when `.Values.admissionController.caCertificates.data` is defined |
 | admissionController.imagePullSecrets | list | `[]` | Image pull secrets |
-| admissionController.initContainer.image.registry | string | `"ghcr.io"` | Image registry |
-| admissionController.initContainer.image.repository | string | `"kyverno/kyvernopre"` | Image repository |
+| admissionController.initContainer.image.registry | string | `nil` | Image registry |
+| admissionController.initContainer.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| admissionController.initContainer.image.repository | string | `"nirmata/kyvernopre"` | Image repository |
 | admissionController.initContainer.image.tag | string | `nil` | Image tag If missing, defaults to image.tag |
 | admissionController.initContainer.image.pullPolicy | string | `nil` | Image pull policy If missing, defaults to image.pullPolicy |
 | admissionController.initContainer.resources.limits | object | `{"cpu":"100m","memory":"256Mi"}` | Pod resource limits |
@@ -418,8 +419,9 @@ The chart values are organised per component.
 | admissionController.initContainer.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Container security context |
 | admissionController.initContainer.extraArgs | object | `{}` | Additional container args. |
 | admissionController.initContainer.extraEnvVars | list | `[]` | Additional container environment variables. |
-| admissionController.container.image.registry | string | `"ghcr.io"` | Image registry |
-| admissionController.container.image.repository | string | `"kyverno/kyverno"` | Image repository |
+| admissionController.container.image.registry | string | `nil` | Image registry |
+| admissionController.container.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| admissionController.container.image.repository | string | `"nirmata/kyverno"` | Image repository |
 | admissionController.container.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | admissionController.container.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | admissionController.container.resources.limits | object | `{"memory":"384Mi"}` | Pod resource limits |
@@ -476,8 +478,9 @@ The chart values are organised per component.
 | backgroundController.rbac.serviceAccount.annotations | object | `{}` | Annotations for the ServiceAccount |
 | backgroundController.rbac.coreClusterRole.extraResources | list | See [values.yaml](values.yaml) | Extra resource permissions to add in the core cluster role. This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`. |
 | backgroundController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
-| backgroundController.image.registry | string | `"ghcr.io"` | Image registry |
-| backgroundController.image.repository | string | `"kyverno/background-controller"` | Image repository |
+| backgroundController.image.registry | string | `nil` | Image registry |
+| backgroundController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| backgroundController.image.repository | string | `"nirmata/background-controller"` | Image repository |
 | backgroundController.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | backgroundController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | backgroundController.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -635,8 +638,9 @@ The chart values are organised per component.
 | reportsController.rbac.serviceAccount.annotations | object | `{}` | Annotations for the ServiceAccount |
 | reportsController.rbac.coreClusterRole.extraResources | list | See [values.yaml](values.yaml) | Extra resource permissions to add in the core cluster role. This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`. |
 | reportsController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
-| reportsController.image.registry | string | `"ghcr.io"` | Image registry |
-| reportsController.image.repository | string | `"kyverno/reports-controller"` | Image repository |
+| reportsController.image.registry | string | `nil` | Image registry |
+| reportsController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
+| reportsController.image.repository | string | `"nirmata/reports-controller"` | Image repository |
 | reportsController.image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | reportsController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | reportsController.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -723,7 +727,7 @@ The chart values are organised per component.
 | webhooksCleanup.autoDeleteWebhooks.enabled | bool | `false` | Allow webhooks controller to delete webhooks using finalizers |
 | webhooksCleanup.image.registry | string | `"ghcr.io"` | Image registry |
 | webhooksCleanup.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| webhooksCleanup.image.tag | string | `"1.35.5-multiarch.1"` | Image tag Defaults to `latest` if omitted |
+| webhooksCleanup.image.tag | string | `"1.36.3-hardened"` | Image tag Defaults to `latest` if omitted |
 | webhooksCleanup.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | webhooksCleanup.imagePullSecrets | list | `[]` | Image pull secrets |
 | webhooksCleanup.podSecurityContext | object | `{}` | Security context for the pod |
@@ -762,7 +766,7 @@ The chart values are organised per component.
 |-----|------|---------|-------------|
 | global.image.registry | string | `nil` | Global value that allows to set a single image registry across all deployments. When set, it will override any values set under `.image.registry` across the chart. |
 | global.imagePullSecrets | list | `[]` | Global list of Image pull secrets When set, it will override any values set under `imagePullSecrets` under different components across the chart. |
-| global.kubectlImage | string | `"ghcr.io/nirmata/kubectl:1.35.5-multiarch.1"` |  |
+| global.kubectlImage | string | `"ghcr.io/nirmata/kubectl:1.36.3-hardened"` |  |
 | global.resyncPeriod | string | `"15m"` | Resync period for informers |
 | global.caCertificates.data | string | `nil` | Global CA certificates to use with Kyverno deployments This value is expected to be one large string of CA certificates Individual controller values will override this global value |
 | global.caCertificates.volume | object | `{}` | Global value to set single volume to be mounted for CA certificates for all deployments. Not used when `.Values.global.caCertificates.data` is defined Individual  controller values will override this global value |
@@ -783,7 +787,7 @@ The chart values are organised per component.
 | policyReportsCleanup.enabled | bool | `true` | Create a helm post-upgrade hook to cleanup the old policy reports. |
 | policyReportsCleanup.image.registry | string | `"ghcr.io"` | Image registry |
 | policyReportsCleanup.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| policyReportsCleanup.image.tag | string | `"1.35.5-multiarch.1"` | Image tag Defaults to `latest` if omitted |
+| policyReportsCleanup.image.tag | string | `"1.36.3-hardened"` | Image tag Defaults to `latest` if omitted |
 | policyReportsCleanup.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | policyReportsCleanup.imagePullSecrets | list | `[]` | Image pull secrets |
 | policyReportsCleanup.podSecurityContext | object | `{}` | Security context for the pod |
@@ -849,7 +853,7 @@ The chart values are organised per component.
 | reports-server.service.port | int | `443` | Service port |
 | reports-server.config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| reports-server.config.etcd.image.tag | string | `"3.6.12-hardened"` | Image tag |
+| reports-server.config.etcd.image.tag | string | `"3.6.14-hardened"` | Image tag |
 | reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.config.etcd.enabled | bool | `true` |  |
 | reports-server.config.etcd.endpoints | string | `nil` |  |
@@ -895,7 +899,7 @@ The chart values are organised per component.
 | reports-server.apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
 | reports-server.jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| reports-server.jobConfigurations.image.tag | string | `"1.35.5-multiarch.1"` | Image tag Defaults to `latest` if omitted |
+| reports-server.jobConfigurations.image.tag | string | `"1.36.3-hardened"` | Image tag Defaults to `latest` if omitted |
 | reports-server.jobConfigurations.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
 | reports-server.jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
@@ -969,7 +973,7 @@ Kubernetes: `>=1.22.0-0`
 |------------|------|---------|
 |  | crds | 3.3.6 |
 |  | grafana | 3.3.6 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.31 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.37 |
 
 ## Maintainers
 
@@ -984,22 +988,6 @@ This software is proprietary to Nirmata Inc. and is made available under the ter
 Unauthorized use, reproduction, modification, or distribution of this software, in whole or in part, is strictly prohibited and may result in civil and criminal penalties.
 
 © 2026 Nirmata Inc. All rights reserved.
-
-
-## Requirements
-
-Kubernetes: `>=1.25.0-0`
-
-| Repository | Name | Version |
-|------------|------|---------|
-|  | crds | 3.3.6 |
-|  | grafana | 3.3.6 |
-
-## Maintainers
-
-| Name | Email | Url |
-| ---- | ------ | --- |
-| Nirmata |  | <https://kyverno.io/> |
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.11.0](https://github.com/norwoodj/helm-docs/releases/v1.11.0)

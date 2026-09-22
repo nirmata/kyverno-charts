@@ -15,7 +15,7 @@ global:
   # When set, it will override any values set under `imagePullSecrets` under different components across the chart.
   imagePullSecrets: []
 
-  kubectlImage: "ghcr.io/nirmata/kubectl:1.35.5-multiarch.1"
+  kubectlImage: "ghcr.io/nirmata/kubectl:1.36.3-hardened"
 
   # -- Resync period for informers
   resyncPeriod: 15m
@@ -529,7 +529,7 @@ webhooksCleanup:
     repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.35.5-multiarch.1'
+    tag: '1.36.3-hardened'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -586,7 +586,7 @@ policyReportsCleanup:
     repository: nirmata/kubectl
     # -- Image tag
     # Defaults to `latest` if omitted
-    tag: '1.35.5-multiarch.1'
+    tag: '1.36.3-hardened'
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
@@ -2339,7 +2339,7 @@ reports-server:
         # -- Image repository
         repository: nirmata/etcd
         # -- Image tag
-        tag: 3.6.12-hardened
+        tag: 3.6.14-hardened
 
       # -- Image pull secrets
       imagePullSecrets: []
@@ -2453,6 +2453,19 @@ reports-server:
         secretName: ""
         mountPath: "/etc/ssl/rds"
 
+      # -- Database connection pool configuration (per reports-server pod)
+      # These control how many concurrent connections each pod can open.
+      # Defaults match the current hardcoded behavior.
+      connectionPool:
+        # -- Maximum number of open connections per pod (sql.DB.SetMaxOpenConns)
+        maxOpenConns: 25
+        # -- Maximum number of idle connections per pod (sql.DB.SetMaxIdleConns)
+        maxIdleConns: 5
+        # -- Maximum lifetime of a connection in seconds (0 = use default of 300s / 5m)
+        connMaxLifetimeSeconds: 300
+        # -- Maximum idle time of a connection in seconds (0 = use default of 120s / 2m)
+        connMaxIdleTimeSeconds: 120
+
   apiServicesManagement:
     # -- Install api services in manifest
     installApiServices:
@@ -2478,7 +2491,7 @@ reports-server:
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.35.5-multiarch.1'
+      tag: '1.36.3-hardened'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: IfNotPresent
