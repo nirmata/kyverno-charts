@@ -78,7 +78,7 @@ spec:
       name: {{ include "go-agent-remediator.name" . }}-llm
       namespace: {{ .Release.Namespace }}
     gitCredentials:
-      name: {{ .Values.tool.name | default (printf "%s-github" (include "go-agent-remediator.name" .)) }}
+      name: {{ include "go-agent-remediator.toolName" . }}
       namespace: {{ .Release.Namespace }}
     eventPolling:
       enabled: {{ if .Values.remediator.remediation.eventPolling }}{{ .Values.remediator.remediation.eventPolling.enabled | default true }}{{ else }}true{{ end }}
@@ -90,7 +90,7 @@ spec:
       - type: {{ .type }}
         {{- if or (eq .type "CreatePR") (eq .type "DryRun") }}
         toolRef:
-          name: {{ .toolRefName | default $.Values.tool.name | default (printf "%s-github" (include "go-agent-remediator.name" $)) }}
+          name: {{ .toolRefName | default (include "go-agent-remediator.toolName" $) }}
           namespace: {{ $.Release.Namespace }}
         {{- end }}
       {{- end }}

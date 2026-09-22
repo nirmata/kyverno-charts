@@ -9,20 +9,32 @@
       "properties": {
         "provider": {
           "type": "string",
-          "enum": ["bedrock", "azure-openai", "nirmataAI"]
+          "enum": [
+            "bedrock",
+            "azure-openai",
+            "nirmataAI"
+          ]
         },
         "bedrock": {
           "type": "object",
           "additionalProperties": true,
           "properties": {
-            "model": { "type": "string" },
-            "region": { "type": "string" },
+            "model": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            },
             "secretRef": {
               "type": "object",
               "additionalProperties": true,
               "properties": {
-                "name": { "type": "string" },
-                "key": { "type": "string" }
+                "name": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -31,14 +43,22 @@
           "type": "object",
           "additionalProperties": true,
           "properties": {
-            "endpoint": { "type": "string" },
-            "deploymentName": { "type": "string" },
+            "endpoint": {
+              "type": "string"
+            },
+            "deploymentName": {
+              "type": "string"
+            },
             "secretRef": {
               "type": "object",
               "additionalProperties": true,
               "properties": {
-                "name": { "type": "string" },
-                "key": { "type": "string" }
+                "name": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -47,7 +67,9 @@
           "type": "object",
           "additionalProperties": true,
           "properties": {
-            "model": { "type": "string" }
+            "model": {
+              "type": "string"
+            }
           }
         }
       }
@@ -56,17 +78,99 @@
       "type": "object",
       "additionalProperties": true,
       "properties": {
-        "endpoint": { "type": "string" },
-        "auth": { 
-          "type": "string",
-          "enum": ["serviceAccountToken", "apiToken"]
+        "endpoint": {
+          "type": "string"
         },
-        "serviceAccountTokenSecret": { "type": "string" },
-        "serviceAccountTokenSecretKey": { "type": "string" },
-        "apiTokenSecret": { "type": "string" },
-        "apiTokenSecretKey": { "type": "string" }
+        "auth": {
+          "type": "string",
+          "enum": [
+            "serviceAccountToken",
+            "apiToken"
+          ]
+        },
+        "serviceAccountTokenSecret": {
+          "type": "string"
+        },
+        "serviceAccountTokenSecretKey": {
+          "type": "string"
+        },
+        "apiTokenSecret": {
+          "type": "string"
+        },
+        "apiTokenSecretKey": {
+          "type": "string"
+        }
       },
-      "required": ["auth"]
+      "required": [
+        "auth"
+      ]
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "github",
+            "gitlab",
+            "azure-devops"
+          ],
+          "description": "Git provider hosting the repositories the agent opens PRs against. Unrelated to llm.provider."
+        },
+        "baseURL": {
+          "type": "string",
+          "description": "Optional API endpoint override for self-hosted git servers (GitHub Enterprise, self-managed GitLab, Azure DevOps Server)."
+        },
+        "credentials": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": [
+                "pat",
+                "app"
+              ]
+            }
+          }
+        },
+        "tls": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Optional TLS settings for reaching the git server; rendered into ToolConfig spec.tls.",
+          "properties": {
+            "caBundleSecretRef": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "name",
+                "key"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              }
+            },
+            "insecureSkipVerify": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
     }
   },
   "allOf": [
@@ -76,17 +180,25 @@
           "llm": {
             "type": "object",
             "properties": {
-              "provider": { "const": "bedrock" }
+              "provider": {
+                "const": "bedrock"
+              }
             },
-            "required": ["provider"]
+            "required": [
+              "provider"
+            ]
           }
         },
-        "required": ["llm"]
+        "required": [
+          "llm"
+        ]
       },
       "then": {
         "properties": {
           "llm": {
-            "required": ["bedrock"]
+            "required": [
+              "bedrock"
+            ]
           }
         }
       }
@@ -97,17 +209,25 @@
           "llm": {
             "type": "object",
             "properties": {
-              "provider": { "const": "azure-openai" }
+              "provider": {
+                "const": "azure-openai"
+              }
             },
-            "required": ["provider"]
+            "required": [
+              "provider"
+            ]
           }
         },
-        "required": ["llm"]
+        "required": [
+          "llm"
+        ]
       },
       "then": {
         "properties": {
           "llm": {
-            "required": ["azureOpenAI"]
+            "required": [
+              "azureOpenAI"
+            ]
           }
         }
       }
@@ -118,17 +238,25 @@
           "llm": {
             "type": "object",
             "properties": {
-              "provider": { "const": "nirmataAI" }
+              "provider": {
+                "const": "nirmataAI"
+              }
             },
-            "required": ["provider"]
+            "required": [
+              "provider"
+            ]
           }
         },
-        "required": ["llm"]
+        "required": [
+          "llm"
+        ]
       },
       "then": {
         "properties": {
           "llm": {
-            "required": ["nirmataAI"]
+            "required": [
+              "nirmataAI"
+            ]
           }
         }
       }
@@ -139,18 +267,24 @@
           "llm": {
             "type": "object",
             "properties": {
-              "provider": { "const": "nirmataAI" }
+              "provider": {
+                "const": "nirmataAI"
+              }
             },
-            "required": ["provider"]
+            "required": [
+              "provider"
+            ]
           }
         },
-        "required": ["llm"]
+        "required": [
+          "llm"
+        ]
       },
       "then": {
-        "properties": { 
-          "nirmata": { 
+        "properties": {
+          "nirmata": {
             "description": "Nirmata configuration for command-line flags. These values are used to set flags (--service-account-token-secret or --api-token-secret, --url) and are not part of LLMConfig. The auth field determines which credential type to use."
-          } 
+          }
         }
       }
     },
@@ -160,25 +294,34 @@
           "nirmata": {
             "type": "object",
             "properties": {
-              "auth": { "const": "serviceAccountToken" }
+              "auth": {
+                "const": "serviceAccountToken"
+              }
             },
-            "required": ["auth"]
+            "required": [
+              "auth"
+            ]
           }
         },
-        "required": ["nirmata"]
+        "required": [
+          "nirmata"
+        ]
       },
       "then": {
         "properties": {
           "nirmata": {
-            "required": ["serviceAccountTokenSecret", "serviceAccountTokenSecretKey"],
+            "required": [
+              "serviceAccountTokenSecret",
+              "serviceAccountTokenSecretKey"
+            ],
             "properties": {
-              "serviceAccountTokenSecret": { 
+              "serviceAccountTokenSecret": {
                 "type": "string",
-                "minLength": 1 
+                "minLength": 1
               },
-              "serviceAccountTokenSecretKey": { 
+              "serviceAccountTokenSecretKey": {
                 "type": "string",
-                "minLength": 1 
+                "minLength": 1
               }
             }
           }
@@ -191,25 +334,70 @@
           "nirmata": {
             "type": "object",
             "properties": {
-              "auth": { "const": "apiToken" }
+              "auth": {
+                "const": "apiToken"
+              }
             },
-            "required": ["auth"]
+            "required": [
+              "auth"
+            ]
           }
         },
-        "required": ["nirmata"]
+        "required": [
+          "nirmata"
+        ]
       },
       "then": {
         "properties": {
           "nirmata": {
-            "required": ["apiTokenSecret", "apiTokenSecretKey"],
+            "required": [
+              "apiTokenSecret",
+              "apiTokenSecretKey"
+            ],
             "properties": {
-              "apiTokenSecret": { 
+              "apiTokenSecret": {
                 "type": "string",
-                "minLength": 1 
+                "minLength": 1
               },
-              "apiTokenSecretKey": { 
+              "apiTokenSecretKey": {
                 "type": "string",
-                "minLength": 1 
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "azure-devops"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        },
+        "required": [
+          "tool"
+        ]
+      },
+      "then": {
+        "properties": {
+          "tool": {
+            "properties": {
+              "credentials": {
+                "properties": {
+                  "method": {
+                    "const": "pat",
+                    "description": "azure-devops supports only PAT authentication"
+                  }
+                }
               }
             }
           }
@@ -218,5 +406,3 @@
     }
   ]
 }
-
-
