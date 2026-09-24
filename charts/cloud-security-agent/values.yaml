@@ -1,0 +1,62 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/nirmata/drift-agent
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Resource limits for the manager container
+# Maximum number of concurrent tofu plan operations across all DriftWatchConfigs.
+# Each scan uses ~500Mi-700Mi (tofu binary + AWS provider plugin).
+# Rule of thumb: memory limit >= maxConcurrentScans * 700Mi + 200Mi headroom.
+#   1 scan  → 900Mi-1Gi
+#   2 scans → 1.6Gi-1.8Gi  (default)
+#   3 scans → 2.3Gi-2.5Gi
+maxConcurrentScans: 2
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1600Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# Leader election — recommended for production
+leaderElection: true
+
+# Namespace where the agent runs
+namespace: drift-agent
+
+# Workspace PVC — mounts at workspace.mountPath inside the manager container.
+# The PVC provides persistent storage for OpenTofu workspace clones and the
+# .terraform/ provider cache. Without a PVC, the workspace is stored in
+# emptyDir and re-cloned on every pod restart (slow first scan).
+workspace:
+  # mountPath is where the PVC (or emptyDir) is mounted in the container.
+  # DriftWatchConfig.spec.tofu.workspaceCacheDir must be a subdirectory
+  # of this path (e.g. /var/cache/drift-agent/prod-aws).
+  mountPath: /var/cache/drift-agent
+
+  # pvcName: if set, mounts an existing PersistentVolumeClaim at mountPath.
+  # Leave empty to use emptyDir (data lost on restart).
+  pvcName: ""
+
+  # storageClassName / size are used when pvcName is empty and
+  # workspace.createPVC is true to provision a new PVC automatically.
+  createPVC: false
+  storageClassName: ""
+  size: 10Gi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
