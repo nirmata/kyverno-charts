@@ -116,6 +116,13 @@ resources:
 autoscaling:
   enabled: false
 
+# -- Default node selector applied to every pod this chart creates (operator Deployment,
+# pre-delete cleanup Job, helm test Pod). Keeps them off Windows nodes in mixed-OS clusters.
+# Keys in `nodeSelector` override these; set to `null` to disable the default.
+defaultNodeSelector:
+  kubernetes.io/os: linux
+
+# -- Additional node selector for all pods this chart creates, merged over `defaultNodeSelector`.
 nodeSelector: {}
 
 tolerations: []

@@ -87,6 +87,19 @@ Create secret to access container registry
 {{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.image.pullSecrets.registry (printf "%s:%s" .Values.image.pullSecrets.username .Values.image.pullSecrets.password | b64enc) | b64enc }}
 {{- end }}
 
+{{/*
+Pod nodeSelector: .Values.nodeSelector merged over .Values.defaultNodeSelector
+(user-supplied keys win). defaultNodeSelector pins pods to Linux nodes so they
+never land on Windows workers in mixed-OS clusters.
+*/}}
+{{- define "enterprise-kyverno.nodeSelector" -}}
+{{- $selector := merge (deepCopy (.Values.nodeSelector | default dict)) (deepCopy (.Values.defaultNodeSelector | default dict)) -}}
+{{- with $selector }}
+nodeSelector:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end -}}
+
 {{- define "enterprise-kyverno.managecerts" -}}
 {{- if eq .Values.certManager "operator" -}}
     {{- true -}}
