@@ -4,20 +4,40 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  name: remediators.serviceagents.nirmata.io
+  name: agents.serviceagents.nirmata.io
 spec:
   group: serviceagents.nirmata.io
   names:
-    kind: Remediator
-    listKind: RemediatorList
-    plural: remediators
-    singular: remediator
+    kind: Agent
+    listKind: AgentList
+    plural: agents
+    shortNames:
+    - sa
+    - agent
+    singular: agent
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.environment.type
+      name: Environment
+      type: string
+    - jsonPath: .spec.triggers[0].schedule.crontab
+      name: Schedule
+      type: string
+    - jsonPath: .spec.llmConfigRef.name
+      name: LLM
+      priority: 1
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Remediator is the Schema for the remediators API.
+        description: |-
+          Agent is the Schema for the agents API
+          Agent enables platform engineers to define custom autonomous agents that execute
+          prompts with skills and tools on a scheduled basis
         properties:
           apiVersion:
             description: |-
@@ -37,11 +57,14 @@ spec:
           metadata:
             type: object
           spec:
-            description: RemediatorSpec defines the desired state of Remediator.
+            description: |-
+              AgentSpec defines the desired state of Agent
+              Agent allows platform engineers to define custom autonomous agents with prompts and tools
             properties:
               environment:
-                description: Environment defines the environment configuration for
-                  the remediator
+                description: |-
+                  Environment defines the environment configuration for the agent
+                  Reused from existing Remediator CRD
                 properties:
                   type:
                     description: Type determines the environment type
@@ -53,187 +76,40 @@ spec:
                 required:
                 - type
                 type: object
-              remediation:
-                description: Remediation defines the remediation configuration
+              llmConfigRef:
+                description: |-
+                  LLMConfigRef defines a reference to a LLMConfig resource
+                  Reused from Remediator CRD
                 properties:
-                  actions:
-                    description: Actions defines what actions to take during remediation
-                    items:
-                      description: Action defines what action to take during remediation
-                      properties:
-                        confidence:
-                          description: |-
-                            Confidence defines the confidence levels that trigger this action
-                            These values are determined by the LLM during remediation analysis
-                            Valid values are: "high", "low"
-                          items:
-                            enum:
-                            - high
-                            - low
-                            type: string
-                          type: array
-                        toolRef:
-                          description: ToolRef defines the reference to the tool configuration
-                          properties:
-                            apiVersion:
-                              default: serviceagents.nirmata.io/v1alpha1
-                              description: APIVersion is the API version of the referenced
-                                object
-                              type: string
-                            kind:
-                              default: ToolConfig
-                              description: Kind is the kind of the referenced object
-                              type: string
-                            name:
-                              description: Name is the name of the tool configuration
-                              type: string
-                            namespace:
-                              description: Namespace is the namespace of the tool
-                                configuration
-                              type: string
-                          required:
-                          - name
-                          type: object
-                        type:
-                          description: Type defines the type of action to perform
-                          type: string
-                      required:
-                      - toolRef
-                      - type
-                      type: object
-                    type: array
-                  eventPolling:
-                    description: EventPolling defines configuration for polling Git
-                      PR events
-                    properties:
-                      enabled:
-                        default: true
-                        description: Enabled determines whether event polling is enabled
-                        type: boolean
-                      intervalMinutes:
-                        default: 5
-                        description: IntervalMinutes defines the polling interval
-                          in minutes
-                        minimum: 1
-                        type: integer
-                    type: object
-                  filters:
-                    description: Filters defines what should be filtered for remediation
-                    properties:
-                      policySelector:
-                        description: PolicySelector defines policy-based filtering
-                        properties:
-                          matchSeverity:
-                            description: MatchSeverity defines severity levels to
-                              match
-                            items:
-                              type: string
-                            type: array
-                        required:
-                        - matchSeverity
-                        type: object
-                    required:
-                    - policySelector
-                    type: object
-                  gitCredentials:
-                    description: GitCredentials defines a reference to a ToolConfig
-                      resource for git credentials
-                    properties:
-                      apiVersion:
-                        default: serviceagents.nirmata.io/v1alpha1
-                        description: APIVersion is the API version of the referenced
-                          object
-                        type: string
-                      kind:
-                        default: ToolConfig
-                        description: Kind is the kind of the referenced object
-                        type: string
-                      name:
-                        description: Name is the name of the tool configuration
-                        type: string
-                      namespace:
-                        description: Namespace is the namespace of the tool configuration
-                        type: string
-                    required:
-                    - name
-                    type: object
-                  llmConfigRef:
-                    description: |-
-                      LLMConfigRef defines a reference to a LLMConfig resource.
-                      Required when remediationMode is "ai"; ignored in "prescriptive" mode.
-                    properties:
-                      apiVersion:
-                        default: serviceagents.nirmata.io/v1alpha1
-                        description: APIVersion is the API version of the referenced
-                          object
-                        type: string
-                      kind:
-                        default: LLMConfig
-                        description: Kind is the kind of the referenced object
-                        type: string
-                      name:
-                        description: Name is the name of the provider configuration
-                        type: string
-                      namespace:
-                        description: Namespace is the namespace of the provider configuration
-                        type: string
-                    required:
-                    - name
-                    type: object
-                  remediationMode:
-                    default: ai
-                    description: |-
-                      RemediationMode selects how remediation plans are generated.
-                        - "ai":           uses an LLM to generate remediation diffs (requires llmConfigRef).
-                        - "prescriptive": computes fixes deterministically without any LLM
-                                           (currently scoped to resource-optimization policies).
-                    enum:
-                    - ai
-                    - prescriptive
+                  apiVersion:
+                    default: serviceagents.nirmata.io/v1alpha1
+                    description: APIVersion is the API version of the referenced object
                     type: string
-                  resourceOptimization:
-                    description: |-
-                      ResourceOptimization configures prescriptive (non-LLM) resource-optimization
-                      remediation. Only consulted when remediationMode is "prescriptive".
-                    properties:
-                      policyCategories:
-                        default:
-                        - Resource Management
-                        description: |-
-                          PolicyCategories lists the values of the standard Kyverno annotation
-                          "policies.kyverno.io/category" that mark a policy as in-scope for
-                          prescriptive resource-optimization remediation. A violation is only
-                          remediated when its policy's category is in this list. No new labels
-                          are introduced on workloads or policies.
-                        items:
-                          type: string
-                        type: array
-                    type: object
-                  triggers:
-                    description: Triggers defines when remediation should be triggered
-                    items:
-                      description: Trigger defines when remediation should be triggered
-                      properties:
-                        schedule:
-                          description: Schedule defines a cron-based schedule trigger
-                          properties:
-                            crontab:
-                              description: Crontab defines the cron expression for
-                                scheduling
-                              type: string
-                          required:
-                          - crontab
-                          type: object
-                      type: object
-                    type: array
+                  kind:
+                    default: LLMConfig
+                    description: Kind is the kind of the referenced object
+                    type: string
+                  name:
+                    description: Name is the name of the provider configuration
+                    type: string
+                  namespace:
+                    description: Namespace is the namespace of the provider configuration
+                    type: string
                 required:
-                - actions
-                - triggers
+                - name
                 type: object
+              prompt:
+                description: |-
+                  Prompt is the custom instruction that defines the agent's behavior and task
+                  This is the primary directive that tells the agent what to accomplish
+                  Example: "Scan my cluster and send the policy report as an email"
+                minLength: 10
+                type: string
               target:
                 description: |-
-                  Target defines the target configuration for remediation
-                  Optional when LocalCluster is true (will use current cluster)
+                  Target defines the target configuration for the agent
+                  Optional when environment type is localCluster (will use current cluster)
+                  Required when environment type is argoHub
                 properties:
                   argoHub:
                     description: ArgoHubTarget holds ArgoCD hub cluster targeting
@@ -579,47 +455,50 @@ spec:
                   rule: '!(has(self.localCluster) && has(self.fluxHub))'
                 - message: argoHub and fluxHub cannot both be set
                   rule: '!(has(self.argoHub) && has(self.fluxHub))'
+              tools:
+                description: |-
+                  Tools defines the list of tool names available to the agent for executing tasks
+                  Supported tools: email, send_slack_message, list_slack_channels
+                  Default tools (Kubernetes operations, scanning, etc.) are always available and don't need to be specified
+                items:
+                  description: AgentToolName represents a supported tool name for
+                    the Agent
+                  enum:
+                  - email
+                  - send_slack_message
+                  - list_slack_channels
+                  type: string
+                type: array
+              triggers:
+                description: |-
+                  Triggers defines when the agent should be executed
+                  Reused from Remediator CRD
+                items:
+                  description: Trigger defines when remediation should be triggered
+                  properties:
+                    schedule:
+                      description: Schedule defines a cron-based schedule trigger
+                      properties:
+                        crontab:
+                          description: Crontab defines the cron expression for scheduling
+                          type: string
+                      required:
+                      - crontab
+                      type: object
+                  type: object
+                type: array
             required:
             - environment
-            - remediation
+            - llmConfigRef
+            - prompt
+            - triggers
             type: object
             x-kubernetes-validations:
             - message: target is required when environment type is not localCluster
               rule: self.environment.type == 'localCluster' || has(self.target)
-            - message: target is required when environment type is argoHub
-              rule: 'self.environment.type == ''argoHub'' ? has(self.target) : true'
-            - message: target is required when environment type is fluxHub
-              rule: 'self.environment.type == ''fluxHub'' ? has(self.target) : true'
-            - message: llmConfigRef is required when remediationMode is 'ai'
-              rule: self.remediation.remediationMode != 'ai' || has(self.remediation.llmConfigRef)
           status:
-            description: RemediatorStatus defines the observed state of Remediator.
+            description: AgentStatus defines the observed state of Agent
             properties:
-              conditions:
-                description: Conditions track the workflow steps of the remediator
-                items:
-                  description: RemediatorCondition defines a condition for the remediator
-                  properties:
-                    collectorId:
-                      type: string
-                    lastTransitionTime:
-                      format: date-time
-                      type: string
-                    message:
-                      type: string
-                    status:
-                      description: ConditionStatus represents the status of a condition
-                      type: string
-                    type:
-                      description: ConditionType represents the type of condition
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - status
-                  - type
-                  type: object
-                type: array
               controllerHealth:
                 description: |-
                   ControllerHealth contains the health status of the nirmata-agent controller
@@ -654,24 +533,12 @@ spec:
                       "Warning", "Unhealthy")
                     type: string
                 type: object
-              currentRunId:
-                description: |-
-                  CurrentRunID is the UUID generated at the start of the current (or most recent) Reconcile() call.
-                  policies-service reads this field from Remediator events to create an agent_run row in PostgreSQL,
-                  which enables run history tracking including runs that never touch a RemediationRecord
-                  (e.g. auth failures that occur before any collector is processed).
-                type: string
               lastRunSummary:
                 description: LastRunSummary contains details about the most recent
-                  remediation run
+                  agent execution
                 properties:
-                  actionsExecuted:
-                    description: ActionsExecuted is the number of actions that were
-                      executed
-                    format: int32
-                    type: integer
                   endTime:
-                    description: EndTime is when the remediation run completed
+                    description: EndTime is when the agent execution completed
                     format: date-time
                     type: string
                   errors:
@@ -683,37 +550,27 @@ spec:
                   message:
                     description: Message provides details about the run outcome
                     type: string
-                  remediationPlans:
-                    description: RemediationPlans is the number of remediation plans
-                      generated
-                    format: int32
-                    type: integer
                   startTime:
-                    description: StartTime is when the remediation run started
+                    description: StartTime is when the agent execution started
                     format: date-time
                     type: string
                   status:
                     description: Status indicates whether the last run succeeded or
                       failed
                     type: string
-                  targetsProcessed:
-                    description: TargetsProcessed is the number of targets that were
-                      processed
-                    format: int32
-                    type: integer
-                  violationsFound:
-                    description: ViolationsFound is the total number of violations
-                      discovered
+                  toolCallsExecuted:
+                    description: ToolCallsExecuted is the number of tool calls made
+                      during execution
                     format: int32
                     type: integer
                 type: object
               lastScheduleTime:
-                description: LastScheduleTime is the last time a remediation was scheduled
+                description: LastScheduleTime is the last time the agent was scheduled
                   to run
                 format: date-time
                 type: string
               lastSuccessfulTime:
-                description: LastSuccessfulTime is the last time a remediation run
+                description: LastSuccessfulTime is the last time an agent execution
                   completed successfully
                 format: date-time
                 type: string
@@ -722,15 +579,13 @@ spec:
                   state
                 type: string
               nextScheduledTime:
-                description: NextScheduledTime is when the next remediation run is
+                description: NextScheduledTime is when the next agent execution is
                   scheduled
                 format: date-time
                 type: string
               phase:
                 description: Phase represents the current operational phase of the
-                  remediator
-                type: string
-              triggerSource:
+                  agent
                 type: string
             type: object
         type: object
