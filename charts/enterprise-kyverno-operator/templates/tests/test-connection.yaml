@@ -8,6 +8,7 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
+  {{- include "enterprise-kyverno.nodeSelector" . | nindent 2 }}
   containers:
     - name: wget
       image: busybox
