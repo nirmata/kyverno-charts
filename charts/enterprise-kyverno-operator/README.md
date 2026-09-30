@@ -212,7 +212,8 @@ syncPolicy:
 | resources | map | `{}` | Container resources (e.g., limits/requests) |
 | envVars | list | `[]` | Extra environment variables for operator container |
 | autoscaling.enabled | bool | `false` | If true, external HPA can manage replicas |
-| nodeSelector | map | `{}` | Pod nodeSelector |
+| defaultNodeSelector | map | `{"kubernetes.io/os": "linux"}` | Default nodeSelector for all chart pods (operator, pre-delete Job, test Pod); `nodeSelector` keys override it, `null` disables it |
+| nodeSelector | map | `{}` | Pod nodeSelector, merged over `defaultNodeSelector` |
 | tolerations | list | `[]` | Pod tolerations |
 | affinity | map | `{}` | Pod affinity |
 | cloudPlatform | string | `""` | Optional platform hint (e.g., `eks`) |
