@@ -4,6 +4,12 @@
 
 Kyverno extension service for Notation and the AWS signer
 
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| Nirmata | <support@nirmata.com> | <https://nirmata.com/> |
+
 ## Values
 
 | Key | Type | Default | Description |
