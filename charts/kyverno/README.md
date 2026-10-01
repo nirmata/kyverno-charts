@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.9.0-rc.1](https://img.shields.io/badge/Version-3.9.0--rc.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.19.0-n4k.nirmata.1](https://img.shields.io/badge/AppVersion-v1.19.0--n4k.nirmata.1-informational?style=flat-square)
+![Version: 3.9.0-rc.2](https://img.shields.io/badge/Version-3.9.0--rc.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.19.0-n4k.nirmata.1](https://img.shields.io/badge/AppVersion-v1.19.0--n4k.nirmata.1-informational?style=flat-square)
 
 ## About
 
@@ -314,6 +314,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | config.disableAutoWebhookGeneration | object | `{"enable":false,"webhooks":["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]}` | Disable auto webhook generation. This is useful for environments like AKS where certain webhooks may cause issues. |
 | config.disableAutoWebhookGeneration.enable | bool | `false` | Enable the disableAutoWebhookGeneration feature |
 | config.disableAutoWebhookGeneration.webhooks | list | `["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]` | List of webhooks to disable |
+| config.generatePolicyEvents | bool | `true` | Generate events on policy objects. When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects. This reduces event noise in multi-tenant environments where policy events may not be needed. |
 | config.enableDefaultRegistryMutation | bool | `true` | Enable registry mutation for container images. Enabled by default. |
 | config.defaultRegistry | string | `"docker.io"` | The registry hostname used for the image mutation. |
 | config.excludeGroups | list | `["system:nodes"]` | Exclude groups |
@@ -739,7 +740,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reportsController.rbac.serviceAccount.annotations | object | `{}` | Annotations for the ServiceAccount |
 | reportsController.rbac.serviceAccount.automountServiceAccountToken | bool | `true` | Toggle automounting of the ServiceAccount |
 | reportsController.rbac.coreClusterRole.extraResources | list | See [values.yaml](values.yaml) | Extra resource permissions to add in the core cluster role. This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`. |
-| reportsController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
+| reportsController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role (granted get/list/watch). Required for background-scan/PolicyReport coverage of custom workload CRDs (e.g. Argo Rollout, JobSet) referenced by a CEL policy's `spec.autogen.podControllers.controllers` - Kyverno cannot self-grant RBAC for arbitrary CRDs, so list/watch access for each such CRD must be added here. |
 | reportsController.image.registry | string | `nil` | Image registry |
 | reportsController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
 | reportsController.image.repository | string | `"nirmata/reports-controller"` | Image repository |
@@ -1077,7 +1078,7 @@ Please see https://kyverno.io/docs/installation/#security-vs-operability for mor
 
 ## Source Code
 
-* <https://github.com/kyverno/kyverno>
+* <https://github.com/nirmata/enterprise-kyverno>
 
 ## Requirements
 
@@ -1090,6 +1091,12 @@ Kubernetes: `>=1.25.0-0`
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.2 |
 | https://nirmata.github.io/kyverno-charts | reports-server | 0.2.35 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
+
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| Nirmata |  | <https://nirmata.com/> |
 
 ## License
 
