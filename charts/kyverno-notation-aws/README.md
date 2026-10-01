@@ -1,6 +1,6 @@
 # kyverno-notation-aws
 
-![Version: 2.0.0-rc.2](https://img.shields.io/badge/Version-2.0.0--rc.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.0.0-rc.2](https://img.shields.io/badge/AppVersion-v2.0.0--rc.2-informational?style=flat-square)
+![Version: 2.0.0-rc.3](https://img.shields.io/badge/Version-2.0.0--rc.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.0.0-rc.3](https://img.shields.io/badge/AppVersion-v2.0.0--rc.3-informational?style=flat-square)
 
 Kyverno extension service for Notation and the AWS signer
 
@@ -28,6 +28,7 @@ Kyverno extension service for Notation and the AWS signer
 | deployment.imagePullSecrets | object | `{}` | Image pull secrets in case IRSA isn't configured, this will define the `--imagePullSecrets` argument |
 | deployment.allowInsecureRegistry | bool | `false` | Allow insecure registry specifies whether to allow insecure connections to registries. Not recommended. |
 | deployment.maxSignatureAttempts | int | `30` | Max signature attempts specifies the maximum number of signature envelopes that will be processed for verification |
+| deployment.tokenAudiences | string | `"kyverno-svc.kyverno.io"` | Comma-separated audiences a caller's token must be intended for, passed to TokenReview. Must match the audience the caller mints its token with. Kyverno 1.18-n4k projects `apiCallToken` with a custom audience so the token cannot be replayed against the Kubernetes API server — which also means the API server rejects it, so leaving this empty makes every request fail with "Token is not authorized". The default matches that chart's `apiCallToken.audience` default; change both together if you change either. |
 | serviceAccount.enabled | bool | `true` |  |
 | serviceAccount.name | string | `nil` | The ServiceAccount name |
 | serviceAccount.annotations | object | `{}` | Annotations for the ServiceAccount |

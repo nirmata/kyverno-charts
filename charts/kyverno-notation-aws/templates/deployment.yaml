@@ -37,6 +37,9 @@ spec:
           - --pluginConfigMap={{ template "kyverno-notation-aws.configMap" . }}
           - --allowInsecureRegistry={{ .Values.deployment.allowInsecureRegistry }}
           - --maxSignatureAttempts={{ .Values.deployment.maxSignatureAttempts }}
+          {{- with .Values.deployment.tokenAudiences }}
+          - --tokenAudiences={{ . }}
+          {{- end }}
           {{- if .Values.deployment.imagePullSecrets }}
           - --imagePullSecrets={{ keys .Values.deployment.imagePullSecrets | join "," }}
           {{- end }}

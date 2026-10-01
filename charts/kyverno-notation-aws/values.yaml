@@ -59,6 +59,15 @@ deployment:
   # -- Max signature attempts specifies the maximum number of signature envelopes that will be processed for verification
   maxSignatureAttempts: 30
 
+  # -- (string) Comma-separated audiences a caller's token must be intended for,
+  # passed to TokenReview. Must match the audience the caller mints its token with.
+  # Kyverno 1.18-n4k projects `apiCallToken` with a custom audience so the token
+  # cannot be replayed against the Kubernetes API server — which also means the API
+  # server rejects it, so leaving this empty makes every request fail with
+  # "Token is not authorized". The default matches that chart's
+  # `apiCallToken.audience` default; change both together if you change either.
+  tokenAudiences: kyverno-svc.kyverno.io
+
 # Service account configuration
 serviceAccount:
   enabled: true
