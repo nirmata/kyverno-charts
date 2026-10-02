@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nirmata Enterprise Kyverno Charts</title>
+<meta name="description" content="Official Helm charts for Nirmata Enterprise for Kyverno (N4K): hardened, OSS-compatible Kyverno with backported CVE fixes and 18 months of patch support.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1E345D; --blue:#2E5596; --cyan:#71CFEB; --coral:#FF5859; --silver:#D4DCE5;
+  --bg:#ffffff; --bg-soft:#F4F7FA; --muted:#5A6B85; --card:#ffffff; --code-bg:#0F1E38; --code-ink:#E6EEF8;
+  --border:#D4DCE5;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#E6EEF8; --blue:#8FB3F0; --bg:#0D1830; --bg-soft:#13213F; --muted:#A3B3CC; --card:#16264A; --border:#26395F; --code-bg:#08111F;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#E6EEF8; --blue:#8FB3F0; --bg:#0D1830; --bg-soft:#13213F; --muted:#A3B3CC; --card:#16264A; --border:#26395F; --code-bg:#08111F;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 "Open Sans",Ubuntu,Arial,sans-serif}
+a{color:var(--blue)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header.top{background:#1E345D;color:#fff}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.brand{font-weight:700;letter-spacing:.2px;color:#fff;text-decoration:none}
+.brand span{color:var(--cyan)}
+nav a{color:#D4DCE5;text-decoration:none;font-size:14px;margin-left:20px}
+nav a:hover{color:#fff}
+.hero{background:linear-gradient(160deg,#1E345D 0%,#2E5596 100%);color:#fff;padding:64px 0 72px}
+.eyebrow{text-transform:uppercase;font-size:13px;font-weight:600;letter-spacing:1.4px;color:var(--cyan)}
+.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.15;margin:10px 0 14px;font-weight:700;max-width:760px}
+.hero p.lede{font-size:18px;color:#D4DCE5;max-width:680px;margin:0 0 24px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.badge{border:1px solid rgba(113,207,235,.5);color:#fff;border-radius:999px;padding:4px 12px;font-size:13px}
+.cta{display:inline-block;background:var(--coral);color:#fff;text-decoration:none;font-weight:600;padding:12px 22px;border-radius:6px;font-size:15px}
+.hero .links{margin-top:16px;font-size:14px}
+.hero .links a{color:var(--cyan);margin-right:18px}
+section{padding:56px 0}
+section.soft{background:var(--bg-soft)}
+h2{font-size:28px;margin:0 0 8px;font-weight:700}
+.sub{color:var(--muted);margin:0 0 28px;max-width:720px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px}
+.stat b{display:block;font-size:30px;color:var(--blue)}
+.stat span{font-size:14px;color:var(--muted)}
+.src{font-size:12px;color:var(--muted);margin-top:10px}
+.charts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.chart{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;display:flex;flex-direction:column}
+.chart h3{margin:0 0 4px;font-size:18px}
+.chart code.name{font:500 13px "JetBrains Mono",monospace;color:var(--muted)}
+.chart p{font-size:14px;color:var(--muted);flex:1}
+.tag{display:inline-block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;border-radius:4px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.tag.new{background:#E6F7FC;color:#1E345D}
+.tag.ga{background:#EEF4FB;color:#2E5596}
+.chart .meta{font-size:13px;margin-top:8px}
+.chart .meta a{margin-right:14px}
+pre{background:var(--code-bg);color:var(--code-ink);border-radius:10px;padding:18px 20px;overflow-x:auto;font:400 14px/1.7 "JetBrains Mono",monospace;margin:0 0 14px}
+pre .c{color:#7F93B3}
+.note{background:#E6F7FC;border-left:4px solid var(--cyan);color:#1E345D;padding:12px 16px;border-radius:4px;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:15px;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--border)}
+th{background:var(--bg-soft);font-weight:600}
+td.e{color:var(--blue);font-weight:600}
+.oss{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:center}
+.oss .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px}
+footer{background:#1E345D;color:#D4DCE5;padding:28px 0;font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+footer a{color:#fff;text-decoration:none;margin-right:16px}
+@media (max-width:820px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .charts{grid-template-columns:1fr}
+  .oss{grid-template-columns:1fr}
+  nav{display:none}
+}
+</style>
+<!-- Start of HubSpot Embed Code -->
+<script type="text/javascript" id="hs-script-loader" async defer src="//js-na2.hs-scripts.com/2138693.js"></script>
+<!-- End of HubSpot Embed Code -->
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#">nirmata <span>/ kyverno-charts</span></a>
+    <nav>
+      <a href="#charts">Charts</a>
+      <a href="#install">Install</a>
+      <a href="#compare">Compare</a>
+      <a href="https://docs.nirmata.io/docs/release-notes/n4k/">Release notes</a>
+      <a href="https://github.com/nirmata/kyverno-charts">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Nirmata Enterprise for Kyverno</div>
+    <h1>Hardened Kyverno. Your admission controller can't have CVEs.</h1>
+    <p class="lede">Every change to your cluster passes through Kyverno. These are the official Helm charts for Nirmata Enterprise for Kyverno (N4K): drop-in, OSS-compatible Kyverno with backported CVE fixes for every supported release.</p>
+    <div class="badges">
+      <span class="badge">Created Kyverno</span>
+      <span class="badge">OSS-compatible, no fork</span>
+      <span class="badge">18 months patch support</span>
+      <span class="badge">24/7 enterprise support</span>
+    </div>
+    <a class="cta" href="https://nirmata.com/nirmata-enterprise-for-kyverno/#n4k-quote-form">Get a quote</a>
+    <div class="links">
+      <a href="https://nirmata.com/request-a-demo/?product=n4k">Talk to a Kyverno maintainer →</a>
+      <a href="https://nirmata.com/kyverno-cve-tracker/">See every CVE →</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Why teams run N4K</h2>
+    <p class="sub">If you are not on the latest upstream minor, upstream is not patching your Kyverno. N4K backports fixes to every supported release, often the same day.</p>
+    <div class="stats">
+      <div class="stat"><b>56</b><span>CVEs fixed in 2026</span></div>
+      <div class="stat"><b>10</b><span>rated Critical</span></div>
+      <div class="stat"><b>96</b><span>fixes shipped across older releases</span></div>
+      <div class="stat"><b>18 mo</b><span>patch support per release</span></div>
+    </div>
+    <div class="src">Source: <a href="https://docs.nirmata.io/docs/release-notes/n4k/">N4K release notes</a>, v1.13–v1.18, Jan–Sep 2026.</div>
+  </div>
+</section>
+
+<section class="soft" id="charts">
+  <div class="wrap">
+    <h2>Supported Helm charts</h2>
+    <p class="sub">Each chart is published in this repository and supported by Nirmata.</p>
+    <div class="charts">
+      <div class="chart">
+        <h3>Enterprise Kyverno <span class="tag ga">Supported</span></h3>
+        <code class="name">nirmata/kyverno · 3.8.3 (v1.18.0-n4k)</code>
+        <p>Hardened Kyverno policy engine with backported CVE fixes, Kubernetes compatibility testing, and FIPS builds.</p>
+        <div class="meta"><a href="https://github.com/nirmata/kyverno-charts/blob/main/charts/kyverno/README.md">Install guide</a><a href="https://docs.nirmata.io/docs/release-notes/n4k/">Release notes</a></div>
+      </div>
+      <div class="chart">
+        <h3>Notation Adapter <span class="tag new">New</span></h3>
+        <code class="name">nirmata/kyverno-notation-aws · 2.0.0</code>
+        <p>Kyverno extension service that verifies container image signatures with Notation and the AWS Signer.</p>
+        <div class="meta"><a href="https://github.com/nirmata/kyverno-charts/blob/main/charts/kyverno-notation-aws/README.md">Install guide</a></div>
+      </div>
+      <div class="chart">
+        <h3>Kube-bench Adapter <span class="tag ga">Supported</span></h3>
+        <code class="name">nirmata/kube-bench-adapter · v1.2.9</code>
+        <p>Runs CIS Kubernetes benchmark checks on a schedule with kube-bench and publishes the results as cluster policy reports.</p>
+        <div class="meta"><a href="https://github.com/nirmata/kyverno-charts/blob/main/charts/kube-bench-adapter/README.md">Install guide</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Install</h2>
+    <p class="sub">Add the repository, then install the charts you need.</p>
+<pre><span class="c"># Add the Nirmata chart repository</span>
+helm repo add nirmata https://nirmata.github.io/kyverno-charts/
+helm repo update
+
+<span class="c"># Enterprise Kyverno</span>
+helm install kyverno nirmata/kyverno -n kyverno --create-namespace
+
+<span class="c"># Notation adapter (AWS Signer)</span>
+helm install kyverno-notation-aws nirmata/kyverno-notation-aws -n kyverno-notation-aws --create-namespace
+
+<span class="c"># Kube-bench adapter (CIS benchmark reports)</span>
+helm install kube-bench-adapter nirmata/kube-bench-adapter -n kube-bench --create-namespace</pre>
+    <div class="note">💡 A Nirmata license is required to pull N4K images. <a href="https://nirmata.com/nirmata-enterprise-for-kyverno/#n4k-quote-form">Request access</a> or email <a href="mailto:support@nirmata.com">support@nirmata.com</a>.</div>
+  </div>
+</section>
+
+<section class="soft" id="compare">
+  <div class="wrap">
+    <h2>Upstream Kyverno vs Nirmata Enterprise for Kyverno</h2>
+    <p class="sub">Same Kyverno, same policies and tooling, with the support window production clusters need.</p>
+    <table>
+      <thead><tr><th></th><th>Upstream Kyverno</th><th>Nirmata Enterprise</th></tr></thead>
+      <tbody>
+        <tr><td>CVE fixes</td><td>Latest minor only</td><td class="e">Every supported release</td></tr>
+        <tr><td>Patch window</td><td>About 3 months</td><td class="e">18 months</td></tr>
+        <tr><td>Engine backports</td><td>No</td><td class="e">Yes, by the maintainers</td></tr>
+        <tr><td>Support</td><td>Community Slack and GitHub</td><td class="e">24/7 with SLAs for CVEs</td></tr>
+        <tr><td>Policies</td><td colspan="2">Same Kyverno, OSS-compatible</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap oss">
+    <div>
+      <h2>Built on open source Kyverno</h2>
+      <p class="sub" style="margin-bottom:0">N4K is not a fork. Nirmata created Kyverno and continues to maintain it as a CNCF project. Your existing policies, CLI, and tooling work unchanged.</p>
+    </div>
+    <div class="card">
+      <a href="https://kyverno.io/"><b>kyverno.io</b></a> — open source project, docs, and policy library<br>
+      <a href="https://github.com/kyverno/kyverno">github.com/kyverno/kyverno</a> — source code
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© Nirmata, Inc. · <a href="mailto:support@nirmata.com">support@nirmata.com</a></div>
+    <div>
+      <a href="https://nirmata.com/nirmata-enterprise-for-kyverno/">Enterprise Kyverno</a>
+      <a href="https://nirmata.com/pricing/">Pricing</a>
+      <a href="https://nirmata.com/contact-us/">Contact</a>
+      <a href="https://kyverno.io/">Kyverno OSS</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
