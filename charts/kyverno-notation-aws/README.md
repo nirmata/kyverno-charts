@@ -20,7 +20,7 @@ Kyverno extension service for Notation and the AWS signer
 | namespaceOverride | string | `nil` | Override the namespace the chart deploys to |
 | image.defaultRegistry | string | `"ghcr.io"` | Image registry |
 | image.registry | string | `nil` |  |
-| image.repository | string | `"nirmata/kyverno-notation-aws"` | Image repository |
+| image.repository | string | `"nirmata/enterprise-kyverno-notation-aws"` | Image repository |
 | image.tag | string | `nil` | Image tag Defaults to appVersion in Chart.yaml if omitted |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | crds.install | bool | `true` | Whether to have Helm install the Kyverno Notation AWS CRDs. |
