@@ -1,0 +1,60 @@
+# Daily snapshot of GitHub Release download counts for every chart.
+#
+# GitHub only keeps a cumulative download_count per release asset, so this job
+# records a snapshot each day and derives per-day deltas from consecutive runs.
+# Snapshots are committed to the orphan `download-stats` branch:
+#   daily/<date>.csv  per-asset cumulative counts
+#   summary.csv       per-chart totals and day-over-day delta
+#
+# Counts are anonymous: GitHub does not expose who downloaded an asset.
+
+name: Release Download Stats
+
+on:
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-download-stats
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout scripts
+        uses: actions/checkout@v4
+        with:
+          path: src
+          sparse-checkout: .github/scripts
+
+      - name: Checkout stats branch
+        run: |
+          if git ls-remote --exit-code --heads "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" download-stats >/dev/null; then
+            git clone --quiet --depth 1 --branch download-stats "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" stats
+          else
+            git init --quiet stats
+            git -C stats checkout --quiet --orphan download-stats
+            git -C stats remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Collect download counts
+        run: python3 src/.github/scripts/release_download_stats.py stats >> "$GITHUB_STEP_SUMMARY"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Commit snapshot
+        working-directory: stats
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit --quiet -m "Download stats snapshot $(date -u +%F)"
+          git push --quiet origin download-stats
