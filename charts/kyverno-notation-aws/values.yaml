@@ -15,7 +15,7 @@ image:
   registry: ~
 
   # -- (string) Image repository
-  repository: nirmata/kyverno-notation-aws
+  repository: nirmata/enterprise-kyverno-notation-aws
 
   # -- (string) Image tag
   # Defaults to appVersion in Chart.yaml if omitted
