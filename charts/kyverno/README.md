@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.8.0-rc.1](https://img.shields.io/badge/Version-3.8.0--rc.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.18.0-n4k.nirmata.1-rc.1](https://img.shields.io/badge/AppVersion-v1.18.0--n4k.nirmata.1--rc.1-informational?style=flat-square)
+![Version: 3.8.4-rc.2](https://img.shields.io/badge/Version-3.8.4--rc.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.18.0-n4k.nirmata.6](https://img.shields.io/badge/AppVersion-v1.18.0--n4k.nirmata.6-informational?style=flat-square)
 
 ## About
 
@@ -384,8 +384,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | features.globalContext.apiCallTimeout | string | `"30s"` | Timeout for HTTP API calls made by policies. A value of 0s means no timeout. |
 | features.globalContext.apiCallBlocklist | string | `nil` | Comma-separated CIDRs/hostnames that context.apiCall service calls may not reach. Overrides the built-in default blocklist (169.254.0.0/16, fe80::/10, fd00:ec2::254/128, 100.100.100.200/32, 127.0.0.0/8, ::1/128, metadata.google.internal, metadata.internal) when set. Leave unset (null) to keep the secure built-in defaults -- setting an empty string here does not disable the filter, it is simply ignored and the flag is omitted, preserving the built-in defaults. CEL http.Get/Post is gated separately by the httpBlocklist flag, whose defaults are deliberately wider. To disable the filter entirely (not recommended), set the environment variable instead, e.g. admissionController.container.extraEnvVars: [{name: FLAG_APICALL_BLOCKLIST, value: ""}] -- and repeat for the background, reports and cleanup controllers, which make apiCall requests too. |
 | features.globalContext.apiCallAllowlist | string | `nil` | Comma-separated URL prefixes (scheme+host[+path]) that context.apiCall service calls are restricted to. When set, only matching URLs are permitted. Leave unset (null) to keep the secure built-in defaults (no allowlist restriction) -- setting an empty string here is ignored and the flag is omitted. CEL http.Get/Post is gated separately by the httpAllowlist flag. |
-| features.licensing.evaluationInterval | string | `nil` | How often Nirmata license state is re-evaluated. Clamped to between `1m` and `1h`. Leave unset to use the built-in default of `15m`. Licensing itself is always enabled and cannot be turned off. In FreeTier, FreeExpired and Degraded, CREATE of a new policy at or over the licensed policy cap is refused. Core workload admission is never gated. |
-| features.licensing.licensePath | string | `nil` | Path to a commercial license file inside the admission controller. When `license.create` or `license.existingSecret` is set, defaults to the chart mount path. |
+| features.licensing.evaluationInterval | string | `nil` | How often Nirmata license state is re-evaluated. Clamped to between `1m` and `1h`. Leave unset to use the built-in default of `15m`.  Licensing itself is always enabled and cannot be turned off. In FreeTier, FreeExpired and Degraded states, CREATE of a new policy that would exceed the licensed policy cap is refused. Core workload admission (validate/mutate/generate) is never gated. Feature-tier gating is not enforced in this release. |
+| features.licensing.licensePath | string | `nil` | Path to a commercial license file inside the admission controller container. Leave unset to use the free-tier community license. When `license.create` or `license.existingSecret` is set, the chart mounts the Secret and defaults this to the mount path unless overridden here. |
 | features.licensing.warnRatio | float | `nil` | Capacity utilization fraction, in (0, 1], at which the license state enters Warning. Leave unset to use the built-in default of `0.9`. Values outside that range fall back to the default. |
 | features.logging.format | string | `"text"` | Logging format |
 | features.logging.verbosity | int | `2` | Logging verbosity |
@@ -1019,6 +1019,10 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.jobConfigurations.podAnnotations | object | `{}` | Pod annotations. |
 | reports-server.jobConfigurations.nodeAffinity | object | `{}` | Node affinity constraints. |
 | reports-server.jobConfigurations.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the hook containers |
+| kyverno-notation-aws.install | bool | `false` | Enable the kyverno-notation-aws subchart |
+| kyverno-notation-aws.fullnameOverride | string | `"kyverno-notation-aws"` | Keep the subchart's fullname stable regardless of release name, so its Service name (and therefore the URL customers reference from policies) does not change. |
+| kyverno-notation-aws.region | string | `"us-west-2"` | AWS region used by the notation-aws image verification service |
+| kyverno-notation-aws.license.existingSecret | string | `"kyverno-license"` | Name of the N4K license Secret to mount. This must match `kyverno.license.secretName` (see templates/config/license-helpers.tpl), which defaults to "<fullname>-license" and is release-name-scoped: it resolves to "kyverno-license" only when the release is named "kyverno" (the default) and `license.create` is left at its default. If you override the release name, or the top-level `license.name` / `license.existingSecret` values, you must update this value to match, otherwise kyverno-notation-aws mounts a Secret that does not exist (or the wrong one) and stays unlicensed. |
 
 ## TLS Configuration
 
@@ -1082,6 +1086,7 @@ Kubernetes: `>=1.25.0-0`
 |  | crds | 3.8.0 |
 |  | grafana | 3.8.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.2 |
+| https://nirmata.github.io/kyverno-charts | kyverno-notation-aws | 2.0.0-rc.3 |
 | https://nirmata.github.io/kyverno-charts | reports-server | 0.2.34 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
