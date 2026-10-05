@@ -72,9 +72,12 @@ otelAgent:
 kubeController:
   # imageTag is the tag or version of the nirmata-kube-controller image. If added, it will override the  .Chart.AppVersion
   imageTag: ""
-  # customCACert contains the custom CA certificate data in base64 encoded format
+  # customCACert contains the custom CA certificate(s) as raw PEM text (not base64 encoded), e.g.
+  #   --set-file kubeController.customCACert=ca.crt
   customCACert: ""
   # customCaConfigMap specifies an existing ConfigMap containing CA certificate. If provided, this will be used instead of creating a new ConfigMap from customCACert
+  # When customCACert or customCaConfigMap is set, the CA is added to the certificates the controller trusts for its
+  # Nirmata connections (tunnel, events, metrics), e.g. for a TLS-intercepting corporate proxy. The ConfigMap must have a ca.crt key.
   customCaConfigMap: ""
   # insecure enables insecure communication with the Nirmata service (skips TLS verification)
   insecure: false
@@ -159,11 +162,16 @@ readWriteMode: false
 # isNpmOnly determines whether the nirmata-kube-controller is only for NPM.
 isNpmOnly: false
 
-# proxy contains configuration for proxy settings if the KubeController needs to communicate through a proxy.
+# proxy contains configuration for proxy settings if the KubeController and the otel-agent need to communicate through a proxy.
+# The otel-agent scrapes Kyverno and the kubelets in-cluster, so noProxy must cover in-cluster addresses (see below).
 proxy:
  # httpProxy is the HTTP proxy URL.
   httpProxy: ""
  # httpsProxy is the HTTPS proxy URL.
   httpsProxy: ""
  # noProxy is a comma-separated list of domains or IP addresses that should bypass the proxy.
+ # Each of httpProxy, httpsProxy and noProxy is applied independently. All Nirmata traffic is wss/https,
+ # so httpsProxy is the one that matters. When a proxy is set, noProxy must include the cluster's service
+ # CIDR, pod CIDR and in-cluster domains (for example "10.96.0.0/12,10.244.0.0/16,.svc,.cluster.local"),
+ # otherwise Kubernetes API calls are sent to the proxy.
   noProxy: ""
