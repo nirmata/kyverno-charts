@@ -490,6 +490,9 @@ spec:
         - {{ .Values.clusterOnboardingToken }}
         {{- if .Values.kubeController.insecure }}
         - -insecure
+        {{- else if or .Values.kubeController.customCACert .Values.kubeController.customCaConfigMap }}
+        - -tlscert
+        - /etc/ssl/certs/ca.crt
         {{- end }}
         {{- if .Values.isNpmOnly }}
         - -gatewayUrl
@@ -498,14 +501,7 @@ spec:
         env:
         - name: URL
           value: {{ default "wss://nirmata.io/tunnels" .Values.nirmataURL }}
-        {{- if and .Values.proxy.httpProxy .Values.proxy.httpsProxy .Values.proxy.noProxy }}
-        - name: HTTP_PROXY
-          value: {{ .Values.proxy.httpProxy }}
-        - name: HTTPS_PROXY
-          value: {{ .Values.proxy.httpsProxy }}
-        - name: NO_PROXY
-          value: {{ .Values.proxy.noProxy }}
-        {{- end }}
+        {{- with include "controller.proxyEnv" . }}{{ . | trim | nindent 8 }}{{- end }}
         image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/nirmata-kube-controller:{{ .Values.kubeController.imageTag | default .Chart.AppVersion }}"
         imagePullPolicy: Always
         livenessProbe:
@@ -707,6 +703,9 @@ spec:
       - name: otel-agent
         args:
         - --config=/etc/otel/config.yaml
+        {{- with include "controller.proxyEnv" . }}
+        env:{{ . | trim | nindent 8 }}
+        {{- end }}
         image: "{{ .Values.global.imageRegistry }}/{{ .Values.global.imageRepository }}/otel-collector:{{ .Values.otelAgent.imageTag }}"
         resources:
           limits:
