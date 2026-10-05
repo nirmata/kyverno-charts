@@ -31386,6 +31386,25 @@ entries:
     version: v0.1.0
   kyverno-notation-aws:
   - apiVersion: v2
+    appVersion: v2.0.0-rc.4
+    created: "2026-10-05T01:56:34.366300361Z"
+    description: Kyverno extension service for Notation and the AWS signer
+    digest: 3827d423c36d7c342ef28a8f7c663213a8e6f573f6f4e599aef81707cb743ec0
+    keywords:
+    - kubernetes
+    - nirmata
+    - AWS signer
+    - notation
+    maintainers:
+    - email: support@nirmata.com
+      name: Nirmata
+      url: https://nirmata.com/
+    name: kyverno-notation-aws
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/kyverno-notation-aws-2.0.0-rc.4/kyverno-notation-aws-2.0.0-rc.4.tgz
+    version: 2.0.0-rc.4
+  - apiVersion: v2
     appVersion: v2.0.0-rc.3
     created: "2026-10-01T14:51:00.865478874Z"
     description: Kyverno extension service for Notation and the AWS signer
@@ -40373,4 +40392,4 @@ entries:
     urls:
     - https://github.com/nirmata/kyverno-charts/releases/download/venafi-adapter-v0.1.2/venafi-adapter-v0.1.2.tgz
     version: v0.1.2
-generated: "2026-10-01T15:56:37.845726388Z"
+generated: "2026-10-05T01:56:34.369093939Z"
