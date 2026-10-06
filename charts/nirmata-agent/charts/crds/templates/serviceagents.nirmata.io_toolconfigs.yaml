@@ -39,6 +39,19 @@ spec:
           spec:
             description: ToolConfigSpec defines the desired state of ToolConfig.
             properties:
+              baseURL:
+                description: |-
+                  BaseURL overrides the API base URL of a self-hosted GitLab instance
+                  (for example "https://gitlab.example.internal"). Only supported when type is "gitlab".
+                  Optional: when empty, the base URL is derived from each repository URL
+                  (scheme://host[:port]), which is correct for gitlab.com and for self-hosted GitLab
+                  served at the host root. Set it explicitly when GitLab is served under a URL path
+                  prefix (for example "https://host/gitlab") or when the API host differs from the
+                  repository host. Must be an http(s) URL with a host; userinfo, query strings and
+                  fragments are not allowed.
+                maxLength: 2048
+                pattern: ^https?://[^/\s?#@]+(/[^\s?#]*)?$
+                type: string
               credentials:
                 description: |-
                   Credentials defines how the agent authenticates to the provider
@@ -205,6 +218,9 @@ spec:
             - credentials
             - type
             type: object
+            x-kubernetes-validations:
+            - message: baseURL is only supported when type is 'gitlab'
+              rule: '!has(self.baseURL) || self.type == ''gitlab'''
           status:
             description: ToolConfigStatus defines the observed state of ToolConfig.
             type: object
