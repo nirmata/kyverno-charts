@@ -41,14 +41,20 @@ spec:
             properties:
               baseURL:
                 description: |-
-                  BaseURL overrides the API endpoint for self-hosted git servers
-                  (GitHub Enterprise, self-managed GitLab, Azure DevOps Server).
-
-                  For Azure Repos this is the organization- or collection-level URL, e.g.
-                  "https://dev.azure.com/myorg" or "https://tfs.corp.example.com/DefaultCollection".
-                  It is normally unnecessary: the organization and project are derived from each
-                  repository URL, so set this only when the API endpoint differs from the
-                  repository URL host.
+                  BaseURL overrides the API base URL of a self-hosted GitLab instance
+                  (for example "https://gitlab.example.internal") or of Azure DevOps.
+                  Only supported when type is "gitlab" or "azure-devops".
+                  Optional: when empty, the base URL is derived from each repository URL
+                  (scheme://host[:port]), which is correct for gitlab.com and for self-hosted GitLab
+                  served at the host root. Set it explicitly when GitLab is served under a URL path
+                  prefix (for example "https://host/gitlab") or when the API host differs from the
+                  repository host. Must be an http(s) URL with a host; userinfo, query strings and
+                  fragments are not allowed.
+                  For azure-devops it is the organization- or collection-level URL (for example
+                  "https://dev.azure.com/myorg" or "https://tfs.corp.example.com/DefaultCollection");
+                  when empty, the organization or collection is derived from each repository URL.
+                maxLength: 2048
+                pattern: ^https?://[^/\s?#@]+(/[^\s?#]*)?$
                 type: string
               credentials:
                 description: |-
@@ -217,6 +223,9 @@ spec:
             - credentials
             - type
             type: object
+            x-kubernetes-validations:
+            - message: baseURL is only supported when type is 'gitlab' or 'azure-devops'
+              rule: '!has(self.baseURL) || self.type in [''gitlab'', ''azure-devops'']'
           status:
             description: ToolConfigStatus defines the observed state of ToolConfig.
             type: object

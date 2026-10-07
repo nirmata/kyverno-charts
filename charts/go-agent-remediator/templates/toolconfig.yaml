@@ -13,6 +13,9 @@ metadata:
 spec:
   type: {{ .Values.tool.type | quote }}
   {{- with .Values.tool.baseURL }}
+  {{- if not (has $.Values.tool.type (list "gitlab" "azure-devops")) }}
+  {{- fail (printf "tool.baseURL is only supported when tool.type is gitlab or azure-devops (got %q)" $.Values.tool.type) }}
+  {{- end }}
   baseURL: {{ . | quote }}
   {{- end }}
   credentials:

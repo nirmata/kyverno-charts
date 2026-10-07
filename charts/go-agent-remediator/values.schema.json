@@ -159,7 +159,9 @@
         },
         "baseURL": {
           "type": "string",
-          "description": "Optional API endpoint override for self-hosted git servers (GitHub Enterprise, self-managed GitLab, Azure DevOps Server)."
+          "description": "Optional API endpoint override for self-managed GitLab or Azure DevOps Server. Only supported when tool.type is gitlab or azure-devops.",
+          "maxLength": 2048,
+          "pattern": "^$|^https?://[^/\\s?#@]+(/[^\\s?#]*)?$"
         },
         "credentials": {
           "type": "object",

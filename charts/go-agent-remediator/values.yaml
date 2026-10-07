@@ -160,8 +160,9 @@ tool:
   # LLM backend. This setting controls where the agent pushes code.
   type: github
 
-  # Optional. Overrides the API endpoint for self-hosted git servers
-  # (GitHub Enterprise, self-managed GitLab, Azure DevOps Server).
+  # Optional. Overrides the API endpoint for a self-managed GitLab instance or
+  # an Azure DevOps Server collection. Only supported when type is "gitlab" or
+  # "azure-devops"; the ToolConfig CRD rejects it for "github".
   #
   # For Azure Repos this is the organization- or collection-level URL. It is
   # normally unnecessary: the organization and project are derived from each
