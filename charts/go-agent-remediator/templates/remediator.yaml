@@ -10,6 +10,10 @@ metadata:
     helm.sh/hook: post-install,post-upgrade
     helm.sh/hook-weight: "5"
     helm.sh/hook-delete-policy: before-hook-creation
+{{- $envType := .Values.remediator.environment.type }}
+{{- if not (has $envType (list "localCluster" "argoHub")) }}
+{{- fail (printf "remediator.environment.type=%q is not supported by this chart; supported values are localCluster and argoHub (fluxHub is accepted by the CRD but not yet rendered by this chart)" $envType) }}
+{{- end }}
 spec:
   environment:
     type: {{ .Values.remediator.environment.type }}

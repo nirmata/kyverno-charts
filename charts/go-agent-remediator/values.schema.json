@@ -3,6 +3,39 @@
   "type": "object",
   "additionalProperties": true,
   "properties": {
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string",
+          "description": "Image tag override. Defaults to the chart appVersion when empty."
+        },
+        "pullPolicy": {
+          "type": "string"
+        }
+      }
+    },
+    "remediator": {
+      "type": "object",
+      "properties": {
+        "environment": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "localCluster",
+                "argoHub"
+              ],
+              "description": "Remediator environment. fluxHub is accepted by the CRD but not yet rendered by this chart."
+            }
+          }
+        }
+      }
+    },
     "llm": {
       "type": "object",
       "additionalProperties": true,

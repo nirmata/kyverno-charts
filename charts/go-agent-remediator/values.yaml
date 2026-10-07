@@ -7,6 +7,8 @@ replicaCount: 1
 
 image:
   repository: reg.nirmata.io/nirmata/go-agent-remediator
+  # Overrides the image tag. Defaults to the chart appVersion when empty.
+  tag: ""
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -238,7 +240,7 @@ remediator:
   enabled: false
   name: remediator-agent
   environment:
-    type: argoHub  # Options: localCluster, argoHub (vcsTarget can be used with any environment type)
+    type: argoHub  # Options: localCluster, argoHub (fluxHub not yet supported by this chart; vcsTarget can be used with any environment type)
   target:
     argoHub:
       clusterNames: []

@@ -101,7 +101,7 @@ This template validates the authentication settings and fails early with clear e
 {{/*
 ToolConfig name.
 
-Falls back to "<release>-<provider>" when tool.name is unset, so the generated name
+Falls back to "<chart name>-<provider>" (e.g. remediator-agent-github) when tool.name is unset, so the generated name
 reflects the configured provider instead of always saying "github".
 */}}
 {{- define "go-agent-remediator.toolName" -}}
