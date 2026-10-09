@@ -978,6 +978,10 @@ features:
   registryClient:
     # -- Allow insecure registry
     allowInsecure: false
+    # -- Registry egress policy for admission, background, and reports controllers: audit permits private addresses and logs requests enforce would block; enforce requires an allowlist entry. Both modes always block metadata and other unsafe addresses.
+    privateRegistryEgressMode: audit
+    # -- Exact registry hostnames, IP addresses, or CIDRs permitted to reach private addresses in enforce mode. Entries must be non-empty strings. Metadata and other unsafe addresses remain blocked.
+    privateRegistryAllowlist: []
     # -- Enable registry client helpers
     credentialHelpers:
     - default
@@ -2315,12 +2319,19 @@ reportsController:
       extraResources: []
 
     clusterRole:
-      # -- Extra resource permissions to add in the cluster role
+      # -- Extra resource permissions to add in the cluster role (granted get/list/watch).
+      # Required for background-scan/PolicyReport coverage of custom workload CRDs (e.g. Argo Rollout,
+      # JobSet) referenced by a CEL policy's `spec.autogen.podControllers.controllers` - Kyverno cannot
+      # self-grant RBAC for arbitrary CRDs, so list/watch access for each such CRD must be added here.
       extraResources: []
       # - apiGroups:
       #     - ''
       #   resources:
       #     - pods
+      # - apiGroups:
+      #     - argoproj.io
+      #   resources:
+      #     - rollouts
 
   image:
     # -- Image registry
@@ -2846,7 +2857,7 @@ reports-server:
         # -- Image repository
         repository: nirmata/etcd
         # -- Image tag
-        tag: v3.5.18-cve-free
+        tag: 3.6.14-hardened
 
       # -- Image pull secrets
       imagePullSecrets: []
@@ -2974,7 +2985,7 @@ reports-server:
       repository: nirmata/kubectl
       # -- Image tag
       # Defaults to `latest` if omitted
-      tag: '1.34.0'
+      tag: '1.36.3-hardened'
       # -- (string) Image pull policy
       # Defaults to image.pullPolicy if omitted
       pullPolicy: ~
@@ -3019,3 +3030,33 @@ reports-server:
           - ALL
       seccompProfile:
         type: RuntimeDefault
+
+# kyverno-notation-aws is vendored as a disabled-by-default subchart, following
+# the same pattern as reports-server above. When enabled it deploys into the
+# Kyverno release namespace and mounts the same N4K license Secret as the
+# admission controller, so a single license covers both.
+kyverno-notation-aws:
+
+  # -- Enable the kyverno-notation-aws subchart
+  install: false
+
+  # -- Keep the subchart's fullname stable regardless of release name, so its
+  # Service name (and therefore the URL customers reference from policies)
+  # does not change.
+  fullnameOverride: kyverno-notation-aws
+
+  # -- AWS region used by the notation-aws image verification service
+  region: us-west-2
+
+  license:
+    # -- (string) Name of the N4K license Secret to mount.
+    # This must match `kyverno.license.secretName` (see
+    # templates/config/license-helpers.tpl), which defaults to
+    # "<fullname>-license" and is release-name-scoped: it resolves to
+    # "kyverno-license" only when the release is named "kyverno" (the
+    # default) and `license.create` is left at its default. If you override
+    # the release name, or the top-level `license.name` /
+    # `license.existingSecret` values, you must update this value to match,
+    # otherwise kyverno-notation-aws mounts a Secret that does not exist (or
+    # the wrong one) and stays unlicensed.
+    existingSecret: kyverno-license
