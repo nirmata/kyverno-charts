@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.6.8](https://img.shields.io/badge/Version-3.6.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.16.3-n4k.nirmata.2](https://img.shields.io/badge/AppVersion-v1.16.3--n4k.nirmata.2-informational?style=flat-square)
+![Version: 3.6.23](https://img.shields.io/badge/Version-3.6.23-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.16.3-n4k.nirmata.17](https://img.shields.io/badge/AppVersion-v1.16.3--n4k.nirmata.17-informational?style=flat-square)
 
 ## About
 
@@ -311,7 +311,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | config.excludeClusterRoles | list | `[]` | Exclude roles |
 | config.generateSuccessEvents | bool | `false` | Generate success events. |
 | config.maxContextSize | string | 2Mi | Maximum cumulative size of context data during policy evaluation. Supports Kubernetes quantity format (e.g., 100Mi, 2Gi) or plain bytes (e.g., 2097152). Limits memory used by context variables to prevent unbounded growth. Increase if policies legitimately need large context data (e.g., processing large ConfigMaps). Set to 0 to disable the limit (not recommended for production). |
-| config.maxContextSize | string | 2Mi | Maximum cumulative size of context data during policy evaluation. Supports Kubernetes quantity format (e.g., 100Mi, 2Gi) or plain bytes (e.g., 2097152). Limits memory used by context variables to prevent unbounded growth. Increase if policies legitimately need large context data (e.g., processing large ConfigMaps). Set to 0 to disable the limit (not recommended for production). |
+| config.generatePolicyEvents | bool | `true` | Generate events on policy objects. When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects. This reduces event noise in multi-tenant environments where policy events may not be needed. |
 | config.resourceFilters | list | See [values.yaml](values.yaml) | Resource types to be skipped by the Kyverno policy engine. Make sure to surround each entry in quotes so that it doesn't get parsed as a nested YAML list. These are joined together without spaces, run through `tpl`, and the result is set in the config map. |
 | config.updateRequestThreshold | int | `1000` | Sets the threshold for the total number of UpdateRequests generated for mutateExisitng and generate policies. |
 | config.webhooks | object | `{"namespaceSelector":{"matchExpressions":[{"key":"kubernetes.io/metadata.name","operator":"NotIn","values":["kube-system"]}]}}` | Defines the `namespaceSelector`/`objectSelector` in the webhook configurations. The Kyverno namespace is excluded if `excludeKyvernoNamespace` is `true` (default) |
@@ -366,7 +366,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | features.generateMutatingAdmissionPolicy.enabled | bool | `false` | Enables the feature |
 | features.dumpPatches.enabled | bool | `false` | Enables the feature |
 | features.globalContext.maxApiCallResponseLength | int | `2000000` | Maximum allowed response size from API Calls. A value of 0 bypasses checks (not recommended) |
-| features.globalContext.apiCallBlocklist | string | `nil` | Comma-separated CIDRs/hostnames that context.apiCall service calls may not reach. Overrides the built-in default blocklist (169.254.0.0/16, fe80::/10, fd00:ec2::254/128, 100.100.100.200/32, 127.0.0.0/8, ::1/128, metadata.google.internal, metadata.internal) when set. Leave unset (null) to keep the secure built-in defaults -- setting an empty string here does not disable the filter, it is simply ignored and the flag is omitted, preserving the built-in defaults. To disable the filter entirely (not recommended), set the environment variable instead, e.g. admissionController.container.extraEnvVars: [{name: FLAG_APICALL_BLOCKLIST, value: ""}] -- and repeat for the background, reports and cleanup controllers, which make apiCall requests too. Does NOT apply to CEL http.Get/Post -- see features.httpCalls.blocklist for that. |
+| features.globalContext.apiCallBlocklist | string | `nil` | Comma-separated CIDRs/hostnames that context.apiCall service calls may not reach. Overrides the built-in default blocklist (169.254.0.0/16, fe80::/10, fd00:ec2::254/128, 100.100.100.200/32, 127.0.0.0/8, ::1/128, metadata.google.internal, metadata.internal) when set. Leave unset (null) to keep the secure built-in defaults -- setting an empty string here does not disable the filter, it is simply ignored and the flag is omitted, preserving the built-in defaults. Does NOT apply to CEL http.Get/Post -- see features.httpCalls.blocklist for that. To disable the filter entirely (not recommended), set the environment variable instead, e.g. admissionController.container.extraEnvVars: [{name: FLAG_APICALL_BLOCKLIST, value: ""}] -- and repeat for the background, reports and cleanup controllers, which make apiCall requests too. |
 | features.globalContext.apiCallAllowlist | string | `nil` | Comma-separated URL prefixes (scheme+host[+path]) that context.apiCall service calls are restricted to. When set, only matching URLs are permitted. Leave unset (null) to keep the secure built-in defaults (no allowlist restriction) -- setting an empty string here is ignored and the flag is omitted. Does NOT apply to CEL http.Get/Post -- see features.httpCalls.allowlist for that. |
 | features.httpCalls.blocklist | string | `nil` | Comma-separated CIDRs/hostnames that CEL `http.Get`/`http.Post` calls may not reach. Overrides the built-in default blocklist (169.254.0.0/16, fe80::/10, fd00:ec2::254/128, 100.100.100.200/32, 127.0.0.0/8, ::1/128, metadata.google.internal, metadata.internal) when set. Leave unset (null) to keep the secure built-in defaults -- setting an empty string here does not disable the filter, it is simply ignored and the flag is omitted, preserving the built-in defaults. Does NOT apply to context.apiCall -- see features.globalContext.apiCallBlocklist for that. To disable the filter entirely (not recommended), set the environment variable instead, e.g. admissionController.container.extraEnvVars: [{name: FLAG_HTTP_BLOCKLIST, value: ""}] -- and repeat for the background, reports and cleanup controllers, which evaluate CEL policies too. |
 | features.httpCalls.allowlist | string | `nil` | Comma-separated URL prefixes (scheme+host[+path]) that CEL `http.Get`/`http.Post` calls are restricted to. When set, only matching URLs are permitted. Leave unset (null) to keep the secure built-in defaults (no allowlist restriction) -- setting an empty string here is ignored and the flag is omitted. Does NOT apply to context.apiCall -- see features.globalContext.apiCallAllowlist for that. |
@@ -776,7 +776,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | webhooksCleanup.autoDeleteWebhooks.enabled | bool | `false` | Allow webhooks controller to delete webhooks using finalizers |
 | webhooksCleanup.image.registry | string | `"reg.nirmata.io"` | Image registry |
 | webhooksCleanup.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| webhooksCleanup.image.tag | string | `"1.35.0"` | Image tag Defaults to `latest` if omitted |
+| webhooksCleanup.image.tag | string | `"1.35-alpine3.23-dev"` | Image tag Defaults to `latest` if omitted |
 | webhooksCleanup.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | webhooksCleanup.imagePullSecrets | list | `[]` | Image pull secrets |
 | webhooksCleanup.podSecurityContext | object | `{}` | Security context for the pod |
@@ -822,7 +822,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 |-----|------|---------|-------------|
 | global.image.registry | string | `nil` | Global value that allows to set a single image registry across all deployments. When set, it will override any values set under `.image.registry` across the chart. |
 | global.imagePullSecrets | list | `[]` | Global list of Image pull secrets When set, it will override any values set under `imagePullSecrets` under different components across the chart. |
-| global.kubectlImage | string | `"ghcr.io/nirmata/kubectl:1.35.0"` |  |
+| global.kubectlImage | string | `"ghcr.io/nirmata/kubectl:1.35-alpine3.23-dev"` |  |
 | global.resyncPeriod | string | `"15m"` | Resync period for informers |
 | global.crdWatcher | bool | `false` | Enable/Disable custom resource watcher to invalidate cache |
 | global.caCertificates.data | string | `nil` | Global CA certificates to use with Kyverno deployments This value is expected to be one large string of CA certificates Individual controller values will override this global value |
@@ -898,7 +898,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.service.port | int | `443` | Service port |
 | reports-server.config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| reports-server.config.etcd.image.tag | string | `"v3.5.18-cve-free"` | Image tag |
+| reports-server.config.etcd.image.tag | string | `"3.6.13-hardened"` | Image tag |
 | reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.config.etcd.enabled | bool | `true` |  |
 | reports-server.config.etcd.endpoints | string | `nil` |  |
@@ -911,6 +911,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.config.etcd.autoCompaction.retention | string | `"30m"` | Auto-compaction retention (e.g., 30m for 30 minutes, 1h for 1 hour) |
 | reports-server.config.etcd.nodeSelector | object | `{}` |  |
 | reports-server.config.etcd.tolerations | list | `[]` |  |
+| reports-server.config.etcd.podSecurityContext | object | `{"fsGroup":65532,"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532}` | Pod-level security context for etcd pods Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls) runAsUser/runAsGroup are set explicitly (rather than relying on the image's default user) so kubelet can verify non-root without introspecting the image - otherwise an image with a non-numeric USER (e.g. "nonroot") fails admission with "cannot verify user is non-root". |
+| reports-server.config.etcd.securityContext | object | See [values.yaml](values.yaml) | Container-level security context for the etcd container |
 | reports-server.config.db.secretCreation | bool | `false` | If set, a secret will be created with the database connection information. If this is set to true, secretName must be set. |
 | reports-server.config.db.secretName | string | `""` | If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password` and `db.readReplicaHosts`. |
 | reports-server.config.db.host | string | `"reports-server-cluster-rw.reports-server"` | Database host |
@@ -930,6 +932,11 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.config.db.sslkey | string | `""` | Database SSL key |
 | reports-server.config.db.sslcert | string | `""` | Database SSL cert |
 | reports-server.config.db.sslrds | object | `{"mountPath":"/etc/ssl/rds","secretName":""}` | Volume configuration for RDS certificate |
+| reports-server.config.db.connectionPool | object | `{"connMaxIdleTimeSeconds":120,"connMaxLifetimeSeconds":300,"maxIdleConns":5,"maxOpenConns":25}` | Database connection pool configuration (per reports-server pod) These control how many concurrent connections each pod can open. Defaults match the current hardcoded behavior. |
+| reports-server.config.db.connectionPool.maxOpenConns | int | `25` | Maximum number of open connections per pod (sql.DB.SetMaxOpenConns) |
+| reports-server.config.db.connectionPool.maxIdleConns | int | `5` | Maximum number of idle connections per pod (sql.DB.SetMaxIdleConns) |
+| reports-server.config.db.connectionPool.connMaxLifetimeSeconds | int | `300` | Maximum lifetime of a connection in seconds (0 = use default of 300s / 5m) |
+| reports-server.config.db.connectionPool.connMaxIdleTimeSeconds | int | `120` | Maximum idle time of a connection in seconds (0 = use default of 120s / 2m) |
 | reports-server.apiServicesManagement.installApiServices | object | `{"enabled":true,"installEphemeralReportsService":true,"installOpenreportsService":true}` | Install api services in manifest |
 | reports-server.apiServicesManagement.installApiServices.enabled | bool | `true` | Store reports in reports-server |
 | reports-server.apiServicesManagement.installApiServices.installEphemeralReportsService | bool | `true` | Store ephemeral reports in reports-server |
@@ -937,8 +944,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
 | reports-server.jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| reports-server.jobConfigurations.image.tag | string | `"1.35.0"` | Image tag Defaults to `latest` if omitted |
-| reports-server.jobConfigurations.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
+| reports-server.jobConfigurations.image.tag | string | `"1.36.2-hardened"` | Image tag Defaults to `latest` if omitted |
+| reports-server.jobConfigurations.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
 | reports-server.jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
 | reports-server.jobConfigurations.nodeSelector | object | `{}` | Node labels for pod assignment |
@@ -1003,15 +1010,6 @@ Please see https://kyverno.io/docs/installation/#security-vs-operability for mor
 
 * <https://github.com/nirmata/enterprise-kyverno>
 
-
-## License
-
-This software is proprietary to Nirmata Inc. and is made available under the terms of the [Nirmata Enterprise Software License Agreement](https://nirmata.com/eula/). By downloading, installing, or using this software, you acknowledge that you have read and understood, and agree to be bound by, all terms and conditions of that Agreement. If you do not agree, do not download, install, or use this software.
-
-Unauthorized use, reproduction, modification, or distribution of this software, in whole or in part, is strictly prohibited and may result in civil and criminal penalties.
-
-© 2026 Nirmata Inc. All rights reserved.
-
 ## Requirements
 
 Kubernetes: `>=1.25.0-0`
@@ -1020,7 +1018,7 @@ Kubernetes: `>=1.25.0-0`
 |------------|------|---------|
 |  | crds | 3.6.3 |
 |  | grafana | 3.6.3 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.20 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.33 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers
@@ -1028,4 +1026,12 @@ Kubernetes: `>=1.25.0-0`
 | Name | Email | Url |
 | ---- | ------ | --- |
 | Nirmata |  | <https://nirmata.com/> |
+
+## License
+
+This software is proprietary to Nirmata Inc. and is made available under the terms of the [Nirmata Enterprise Software License Agreement](https://nirmata.com/eula/). By downloading, installing, or using this software, you acknowledge that you have read and understood, and agree to be bound by, all terms and conditions of that Agreement. If you do not agree, do not download, install, or use this software.
+
+Unauthorized use, reproduction, modification, or distribution of this software, in whole or in part, is strictly prohibited and may result in civil and criminal penalties.
+
+© 2026 Nirmata Inc. All rights reserved.
 
