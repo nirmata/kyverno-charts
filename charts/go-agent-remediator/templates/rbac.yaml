@@ -13,6 +13,9 @@ rules:
 - apiGroups:
   - serviceagents.nirmata.io
   resources:
+  - agents
+  - agents/status
+  - agents/finalizers
   - remediators
   - remediators/status
   - remediators/finalizers
