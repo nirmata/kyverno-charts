@@ -60,6 +60,10 @@ spec:
     - jsonPath: .status.conditions[?(@.type == "Ready")].message
       name: MESSAGE
       type: string
+    deprecated: true
+    deprecationWarning: kyverno.io/v1 Policy is deprecated and will be removed in
+      a future release; migrate to NamespacedValidatingPolicy and the other namespaced
+      policy types (policies.kyverno.io), see https://kyverno.io/docs/guides/migration-to-cel/
     name: v1
     schema:
       openAPIV3Schema:
@@ -357,7 +361,10 @@ spec:
                                   secrets:
                                     description: |-
                                       Secrets specifies a list of secrets that are provided for credentials.
-                                      Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                      Secrets can be specified as a name or namespace/name. In imageRegistry
+                                      contexts and verifyImages rules on a namespaced Policy, references are
+                                      confined to the policy namespace and bare names resolve there.
+                                      Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                       imagePullSecrets from the resource namespace are also used.
                                     items:
                                       type: string
@@ -1398,7 +1405,10 @@ spec:
                                             secrets:
                                               description: |-
                                                 Secrets specifies a list of secrets that are provided for credentials.
-                                                Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                contexts and verifyImages rules on a namespaced Policy, references are
+                                                confined to the policy namespace and bare names resolve there.
+                                                Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                 imagePullSecrets from the resource namespace are also used.
                                               items:
                                                 type: string
@@ -1611,6 +1621,17 @@ spec:
                       additionalProperties:
                         items:
                           properties:
+                            filter:
+                              description: |-
+                                Filter is an optional value to match against 'key' during wildcard array expansion.
+                                When set, only array elements where the field named by 'key' equals this value
+                                are extracted as image references. Requires 'key' to be set.
+                                This is useful when a wildcard path expands an array containing both image and
+                                non-image elements, and only specific elements should be treated as images.
+                                Filter applies at the terminal wildcard only; intermediate wildcards in nested
+                                paths are expanded without filtering.
+                                Filter only applies to wildcard expansion over arrays, not maps.
+                              type: string
                             jmesPath:
                               description: |-
                                 JMESPath is an optional JMESPath expression to apply to the image value.
@@ -2484,7 +2505,10 @@ spec:
                                             secrets:
                                               description: |-
                                                 Secrets specifies a list of secrets that are provided for credentials.
-                                                Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                contexts and verifyImages rules on a namespaced Policy, references are
+                                                confined to the policy namespace and bare names resolve there.
+                                                Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                 imagePullSecrets from the resource namespace are also used.
                                               items:
                                                 type: string
@@ -2868,7 +2892,10 @@ spec:
                                             secrets:
                                               description: |-
                                                 Secrets specifies a list of secrets that are provided for credentials.
-                                                Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                contexts and verifyImages rules on a namespaced Policy, references are
+                                                confined to the policy namespace and bare names resolve there.
+                                                Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                 imagePullSecrets from the resource namespace are also used.
                                               items:
                                                 type: string
@@ -3627,7 +3654,10 @@ spec:
                                             secrets:
                                               description: |-
                                                 Secrets specifies a list of secrets that are provided for credentials.
-                                                Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                contexts and verifyImages rules on a namespaced Policy, references are
+                                                confined to the policy namespace and bare names resolve there.
+                                                Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                 imagePullSecrets from the resource namespace are also used.
                                               items:
                                                 type: string
@@ -4969,7 +4999,10 @@ spec:
                               secrets:
                                 description: |-
                                   Secrets specifies a list of secrets that are provided for credentials.
-                                  Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                  Secrets can be specified as a name or namespace/name. In imageRegistry
+                                  contexts and verifyImages rules on a namespaced Policy, references are
+                                  confined to the policy namespace and bare names resolve there.
+                                  Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                   imagePullSecrets from the resource namespace are also used.
                                 items:
                                   type: string
@@ -5449,7 +5482,10 @@ spec:
                                       secrets:
                                         description: |-
                                           Secrets specifies a list of secrets that are provided for credentials.
-                                          Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                          Secrets can be specified as a name or namespace/name. In imageRegistry
+                                          contexts and verifyImages rules on a namespaced Policy, references are
+                                          confined to the policy namespace and bare names resolve there.
+                                          Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                           imagePullSecrets from the resource namespace are also used.
                                         items:
                                           type: string
@@ -6501,7 +6537,10 @@ spec:
                                                 secrets:
                                                   description: |-
                                                     Secrets specifies a list of secrets that are provided for credentials.
-                                                    Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                    Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                    contexts and verifyImages rules on a namespaced Policy, references are
+                                                    confined to the policy namespace and bare names resolve there.
+                                                    Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                     imagePullSecrets from the resource namespace are also used.
                                                   items:
                                                     type: string
@@ -6718,6 +6757,17 @@ spec:
                           additionalProperties:
                             items:
                               properties:
+                                filter:
+                                  description: |-
+                                    Filter is an optional value to match against 'key' during wildcard array expansion.
+                                    When set, only array elements where the field named by 'key' equals this value
+                                    are extracted as image references. Requires 'key' to be set.
+                                    This is useful when a wildcard path expands an array containing both image and
+                                    non-image elements, and only specific elements should be treated as images.
+                                    Filter applies at the terminal wildcard only; intermediate wildcards in nested
+                                    paths are expanded without filtering.
+                                    Filter only applies to wildcard expansion over arrays, not maps.
+                                  type: string
                                 jmesPath:
                                   description: |-
                                     JMESPath is an optional JMESPath expression to apply to the image value.
@@ -7599,7 +7649,10 @@ spec:
                                                 secrets:
                                                   description: |-
                                                     Secrets specifies a list of secrets that are provided for credentials.
-                                                    Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                    Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                    contexts and verifyImages rules on a namespaced Policy, references are
+                                                    confined to the policy namespace and bare names resolve there.
+                                                    Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                     imagePullSecrets from the resource namespace are also used.
                                                   items:
                                                     type: string
@@ -7992,7 +8045,10 @@ spec:
                                                 secrets:
                                                   description: |-
                                                     Secrets specifies a list of secrets that are provided for credentials.
-                                                    Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                    Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                    contexts and verifyImages rules on a namespaced Policy, references are
+                                                    confined to the policy namespace and bare names resolve there.
+                                                    Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                     imagePullSecrets from the resource namespace are also used.
                                                   items:
                                                     type: string
@@ -8763,7 +8819,10 @@ spec:
                                                 secrets:
                                                   description: |-
                                                     Secrets specifies a list of secrets that are provided for credentials.
-                                                    Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                    Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                    contexts and verifyImages rules on a namespaced Policy, references are
+                                                    confined to the policy namespace and bare names resolve there.
+                                                    Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                     imagePullSecrets from the resource namespace are also used.
                                                   items:
                                                     type: string
@@ -10129,7 +10188,10 @@ spec:
                                   secrets:
                                     description: |-
                                       Secrets specifies a list of secrets that are provided for credentials.
-                                      Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                      Secrets can be specified as a name or namespace/name. In imageRegistry
+                                      contexts and verifyImages rules on a namespaced Policy, references are
+                                      confined to the policy namespace and bare names resolve there.
+                                      Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                       imagePullSecrets from the resource namespace are also used.
                                     items:
                                       type: string
@@ -10365,6 +10427,10 @@ spec:
     - jsonPath: .status.conditions[?(@.type == "Ready")].message
       name: MESSAGE
       type: string
+    deprecated: true
+    deprecationWarning: kyverno.io/v2beta1 Policy is deprecated and will be removed
+      in a future release; migrate to NamespacedValidatingPolicy and the other namespaced
+      policy types (policies.kyverno.io), see https://kyverno.io/docs/guides/migration-to-cel/
     name: v2beta1
     schema:
       openAPIV3Schema:
@@ -10662,7 +10728,10 @@ spec:
                                   secrets:
                                     description: |-
                                       Secrets specifies a list of secrets that are provided for credentials.
-                                      Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                      Secrets can be specified as a name or namespace/name. In imageRegistry
+                                      contexts and verifyImages rules on a namespaced Policy, references are
+                                      confined to the policy namespace and bare names resolve there.
+                                      Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                       imagePullSecrets from the resource namespace are also used.
                                     items:
                                       type: string
@@ -11497,7 +11566,10 @@ spec:
                                             secrets:
                                               description: |-
                                                 Secrets specifies a list of secrets that are provided for credentials.
-                                                Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                contexts and verifyImages rules on a namespaced Policy, references are
+                                                confined to the policy namespace and bare names resolve there.
+                                                Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                 imagePullSecrets from the resource namespace are also used.
                                               items:
                                                 type: string
@@ -11710,6 +11782,17 @@ spec:
                       additionalProperties:
                         items:
                           properties:
+                            filter:
+                              description: |-
+                                Filter is an optional value to match against 'key' during wildcard array expansion.
+                                When set, only array elements where the field named by 'key' equals this value
+                                are extracted as image references. Requires 'key' to be set.
+                                This is useful when a wildcard path expands an array containing both image and
+                                non-image elements, and only specific elements should be treated as images.
+                                Filter applies at the terminal wildcard only; intermediate wildcards in nested
+                                paths are expanded without filtering.
+                                Filter only applies to wildcard expansion over arrays, not maps.
+                              type: string
                             jmesPath:
                               description: |-
                                 JMESPath is an optional JMESPath expression to apply to the image value.
@@ -12377,7 +12460,10 @@ spec:
                                             secrets:
                                               description: |-
                                                 Secrets specifies a list of secrets that are provided for credentials.
-                                                Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                contexts and verifyImages rules on a namespaced Policy, references are
+                                                confined to the policy namespace and bare names resolve there.
+                                                Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                 imagePullSecrets from the resource namespace are also used.
                                               items:
                                                 type: string
@@ -12761,7 +12847,10 @@ spec:
                                             secrets:
                                               description: |-
                                                 Secrets specifies a list of secrets that are provided for credentials.
-                                                Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                contexts and verifyImages rules on a namespaced Policy, references are
+                                                confined to the policy namespace and bare names resolve there.
+                                                Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                 imagePullSecrets from the resource namespace are also used.
                                               items:
                                                 type: string
@@ -13691,7 +13780,10 @@ spec:
                                             secrets:
                                               description: |-
                                                 Secrets specifies a list of secrets that are provided for credentials.
-                                                Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                contexts and verifyImages rules on a namespaced Policy, references are
+                                                confined to the policy namespace and bare names resolve there.
+                                                Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                 imagePullSecrets from the resource namespace are also used.
                                               items:
                                                 type: string
@@ -15014,7 +15106,10 @@ spec:
                               secrets:
                                 description: |-
                                   Secrets specifies a list of secrets that are provided for credentials.
-                                  Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                  Secrets can be specified as a name or namespace/name. In imageRegistry
+                                  contexts and verifyImages rules on a namespaced Policy, references are
+                                  confined to the policy namespace and bare names resolve there.
+                                  Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                   imagePullSecrets from the resource namespace are also used.
                                 items:
                                   type: string
@@ -15481,7 +15576,10 @@ spec:
                                       secrets:
                                         description: |-
                                           Secrets specifies a list of secrets that are provided for credentials.
-                                          Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                          Secrets can be specified as a name or namespace/name. In imageRegistry
+                                          contexts and verifyImages rules on a namespaced Policy, references are
+                                          confined to the policy namespace and bare names resolve there.
+                                          Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                           imagePullSecrets from the resource namespace are also used.
                                         items:
                                           type: string
@@ -16533,7 +16631,10 @@ spec:
                                                 secrets:
                                                   description: |-
                                                     Secrets specifies a list of secrets that are provided for credentials.
-                                                    Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                    Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                    contexts and verifyImages rules on a namespaced Policy, references are
+                                                    confined to the policy namespace and bare names resolve there.
+                                                    Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                     imagePullSecrets from the resource namespace are also used.
                                                   items:
                                                     type: string
@@ -16750,6 +16851,17 @@ spec:
                           additionalProperties:
                             items:
                               properties:
+                                filter:
+                                  description: |-
+                                    Filter is an optional value to match against 'key' during wildcard array expansion.
+                                    When set, only array elements where the field named by 'key' equals this value
+                                    are extracted as image references. Requires 'key' to be set.
+                                    This is useful when a wildcard path expands an array containing both image and
+                                    non-image elements, and only specific elements should be treated as images.
+                                    Filter applies at the terminal wildcard only; intermediate wildcards in nested
+                                    paths are expanded without filtering.
+                                    Filter only applies to wildcard expansion over arrays, not maps.
+                                  type: string
                                 jmesPath:
                                   description: |-
                                     JMESPath is an optional JMESPath expression to apply to the image value.
@@ -17631,7 +17743,10 @@ spec:
                                                 secrets:
                                                   description: |-
                                                     Secrets specifies a list of secrets that are provided for credentials.
-                                                    Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                    Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                    contexts and verifyImages rules on a namespaced Policy, references are
+                                                    confined to the policy namespace and bare names resolve there.
+                                                    Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                     imagePullSecrets from the resource namespace are also used.
                                                   items:
                                                     type: string
@@ -18024,7 +18139,10 @@ spec:
                                                 secrets:
                                                   description: |-
                                                     Secrets specifies a list of secrets that are provided for credentials.
-                                                    Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                    Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                    contexts and verifyImages rules on a namespaced Policy, references are
+                                                    confined to the policy namespace and bare names resolve there.
+                                                    Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                     imagePullSecrets from the resource namespace are also used.
                                                   items:
                                                     type: string
@@ -18795,7 +18913,10 @@ spec:
                                                 secrets:
                                                   description: |-
                                                     Secrets specifies a list of secrets that are provided for credentials.
-                                                    Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                                    Secrets can be specified as a name or namespace/name. In imageRegistry
+                                                    contexts and verifyImages rules on a namespaced Policy, references are
+                                                    confined to the policy namespace and bare names resolve there.
+                                                    Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                                     imagePullSecrets from the resource namespace are also used.
                                                   items:
                                                     type: string
@@ -20161,7 +20282,10 @@ spec:
                                   secrets:
                                     description: |-
                                       Secrets specifies a list of secrets that are provided for credentials.
-                                      Secrets can be specified as a name (Kyverno namespace) or namespace/name.
+                                      Secrets can be specified as a name or namespace/name. In imageRegistry
+                                      contexts and verifyImages rules on a namespaced Policy, references are
+                                      confined to the policy namespace and bare names resolve there.
+                                      Cluster-scoped policies resolve bare names in the Kyverno namespace.
                                       imagePullSecrets from the resource namespace are also used.
                                     items:
                                       type: string
