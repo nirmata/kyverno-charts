@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.9.0-rc.1](https://img.shields.io/badge/Version-3.9.0--rc.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.19.0-n4k.nirmata.1](https://img.shields.io/badge/AppVersion-v1.19.0--n4k.nirmata.1-informational?style=flat-square)
+![Version: 3.9.0-rc.3](https://img.shields.io/badge/Version-3.9.0--rc.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.19.0-n4k.nirmata.1](https://img.shields.io/badge/AppVersion-v1.19.0--n4k.nirmata.1-informational?style=flat-square)
 
 ## About
 
@@ -314,6 +314,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | config.disableAutoWebhookGeneration | object | `{"enable":false,"webhooks":["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]}` | Disable auto webhook generation. This is useful for environments like AKS where certain webhooks may cause issues. |
 | config.disableAutoWebhookGeneration.enable | bool | `false` | Enable the disableAutoWebhookGeneration feature |
 | config.disableAutoWebhookGeneration.webhooks | list | `["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]` | List of webhooks to disable |
+| config.generatePolicyEvents | bool | `true` | Generate events on policy objects. When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects. This reduces event noise in multi-tenant environments where policy events may not be needed. |
 | config.enableDefaultRegistryMutation | bool | `true` | Enable registry mutation for container images. Enabled by default. |
 | config.defaultRegistry | string | `"docker.io"` | The registry hostname used for the image mutation. |
 | config.excludeGroups | list | `["system:nodes"]` | Exclude groups |
@@ -389,6 +390,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | features.policyExceptions.namespace | string | `""` | Restrict policy exceptions to a single namespace Set to "*" to allow exceptions in all namespaces |
 | features.protectManagedResources.enabled | bool | `false` | Enables the feature |
 | features.registryClient.allowInsecure | bool | `false` | Allow insecure registry |
+| features.registryClient.privateRegistryEgressMode | string | `"audit"` | Registry egress policy for admission, background, and reports controllers: audit permits private addresses and logs requests enforce would block; enforce requires an allowlist entry. Both modes always block metadata and other unsafe addresses. |
+| features.registryClient.privateRegistryAllowlist | list | `[]` | Exact registry hostnames, IP addresses, or CIDRs permitted to reach private addresses in enforce mode. Entries must be non-empty strings. Metadata and other unsafe addresses remain blocked. |
 | features.registryClient.credentialHelpers | list | `["default","google","amazon","azure","github"]` | Enable registry client helpers |
 | features.ttlController.reconciliationInterval | string | `"1m"` | Reconciliation interval for the label based cleanup manager |
 | features.tuf.enabled | bool | `false` | Enables the feature |
@@ -739,7 +742,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reportsController.rbac.serviceAccount.annotations | object | `{}` | Annotations for the ServiceAccount |
 | reportsController.rbac.serviceAccount.automountServiceAccountToken | bool | `true` | Toggle automounting of the ServiceAccount |
 | reportsController.rbac.coreClusterRole.extraResources | list | See [values.yaml](values.yaml) | Extra resource permissions to add in the core cluster role. This was introduced to avoid breaking change in the chart but should ideally be moved in `clusterRole.extraResources`. |
-| reportsController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role |
+| reportsController.rbac.clusterRole.extraResources | list | `[]` | Extra resource permissions to add in the cluster role (granted get/list/watch). Required for background-scan/PolicyReport coverage of custom workload CRDs (e.g. Argo Rollout, JobSet) referenced by a CEL policy's `spec.autogen.podControllers.controllers` - Kyverno cannot self-grant RBAC for arbitrary CRDs, so list/watch access for each such CRD must be added here. |
 | reportsController.image.registry | string | `nil` | Image registry |
 | reportsController.image.defaultRegistry | string | `"reg.nirmata.io"` |  |
 | reportsController.image.repository | string | `"nirmata/reports-controller"` | Image repository |
@@ -1025,6 +1028,26 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.jobConfigurations.podAnnotations | object | `{}` | Pod annotations. |
 | reports-server.jobConfigurations.nodeAffinity | object | `{}` | Node affinity constraints. |
 | reports-server.jobConfigurations.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the hook containers |
+| kyverno-notation-aws.install | bool | `false` | Enable the kyverno-notation-aws subchart |
+| kyverno-notation-aws.fullnameOverride | string | `"kyverno-notation-aws"` | Keep the subchart's fullname stable regardless of release name, so its Service name (and therefore the URL customers reference from policies) does not change. |
+| kyverno-notation-aws.region | string | `"us-west-2"` | AWS region used by the notation-aws image verification service |
+| kyverno-notation-aws.license.existingSecret | string | `"kyverno-license"` | Name of the N4K license Secret to mount. This must match `kyverno.license.secretName` (see templates/config/license-helpers.tpl), which defaults to "<fullname>-license" and is release-name-scoped: it resolves to "kyverno-license" only when the release is named "kyverno" (the default) and `license.create` is left at its default. If you override the release name, or the top-level `license.name` / `license.existingSecret` values, you must update this value to match, otherwise kyverno-notation-aws mounts a Secret that does not exist (or the wrong one) and stays unlicensed. |
+
+## Registry egress policy
+
+Registry clients in admission, background, and reports controllers default to
+`features.registryClient.privateRegistryEgressMode: audit`. Cleanup does not use a
+registry client and receives no registry egress flags.
+Private registry destinations remain reachable during upgrades, while requests that
+would be blocked in `enforce` mode are logged at verbosity 2. Metadata, link-local,
+loopback, unspecified, multicast, and broadcast addresses are blocked in both modes.
+
+Before enabling `enforce`, add the exact hostnames, IP addresses, or CIDRs for your
+private registries and token services to `features.registryClient.privateRegistryAllowlist`.
+Use an empty list (`[]`) when no entries are needed; empty list elements are rejected.
+An allowlist entry never bypasses the address categories that are always blocked.
+See the [registry egress configuration and migration guide](../../docs/user/registry-egress.md)
+for rollout examples and proxy behavior.
 
 ## TLS Configuration
 
@@ -1077,7 +1100,7 @@ Please see https://kyverno.io/docs/installation/#security-vs-operability for mor
 
 ## Source Code
 
-* <https://github.com/kyverno/kyverno>
+* <https://github.com/nirmata/enterprise-kyverno>
 
 ## Requirements
 
@@ -1088,8 +1111,15 @@ Kubernetes: `>=1.25.0-0`
 |  | crds | 3.9.0 |
 |  | grafana | 3.9.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.2 |
+| https://nirmata.github.io/kyverno-charts | kyverno-notation-aws | 2.0.0 |
 | https://nirmata.github.io/kyverno-charts | reports-server | 0.2.35 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
+
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| Nirmata |  | <https://nirmata.com/> |
 
 ## License
 
