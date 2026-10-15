@@ -669,6 +669,9 @@ data:
         tls:
           insecure_skip_verify: true
         {{- end }}
+        {{- with include "controller.otelExternalLabels" . }}
+        {{- . | nindent 8 }}
+        {{- end }}
     service:
       pipelines:
         metrics:
