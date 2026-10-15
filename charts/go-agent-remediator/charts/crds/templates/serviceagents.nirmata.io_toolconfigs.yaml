@@ -39,6 +39,23 @@ spec:
           spec:
             description: ToolConfigSpec defines the desired state of ToolConfig.
             properties:
+              baseURL:
+                description: |-
+                  BaseURL overrides the API base URL of a self-hosted GitLab instance
+                  (for example "https://gitlab.example.internal") or of Azure DevOps.
+                  Only supported when type is "gitlab" or "azure-devops".
+                  Optional: when empty, the base URL is derived from each repository URL
+                  (scheme://host[:port]), which is correct for gitlab.com and for self-hosted GitLab
+                  served at the host root. Set it explicitly when GitLab is served under a URL path
+                  prefix (for example "https://host/gitlab") or when the API host differs from the
+                  repository host. Must be an http(s) URL with a host; userinfo, query strings and
+                  fragments are not allowed.
+                  For azure-devops it is the organization- or collection-level URL (for example
+                  "https://dev.azure.com/myorg" or "https://tfs.corp.example.com/DefaultCollection");
+                  when empty, the organization or collection is derived from each repository URL.
+                maxLength: 2048
+                pattern: ^https?://[^/\s?#@]+(/[^\s?#]*)?$
+                type: string
               credentials:
                 description: |-
                   Credentials defines how the agent authenticates to the provider
@@ -86,6 +103,7 @@ spec:
                     enum:
                     - pat
                     - app
+                    - nirmata-app
                     type: string
                   pat:
                     description: |-
@@ -119,7 +137,8 @@ spec:
                 - message: exactly one authentication method must be specified based
                     on the method field
                   rule: (self.method == 'pat' && has(self.pat) && !has(self.app))
-                    || (self.method == 'app' && has(self.app) && !has(self.pat))
+                    || (self.method == 'app' && has(self.app) && !has(self.pat)) ||
+                    (self.method == 'nirmata-app' && !has(self.pat) && !has(self.app))
               defaults:
                 description: Defaults defines the default values for PRs/commits the
                   agent will create
@@ -162,16 +181,51 @@ spec:
                         type: object
                     type: object
                 type: object
+              tls:
+                description: |-
+                  TLS defines optional TLS configuration for connections to the git provider.
+                  Use this when the git server uses certificates signed by a corporate/private CA
+                  (e.g. a TLS-intercepting proxy) that is not in the system trust store.
+                properties:
+                  caBundleSecretRef:
+                    description: |-
+                      CABundleSecretRef references a Secret containing PEM-encoded CA certificates
+                      to trust when connecting to the git server. The Secret key should contain
+                      the concatenated PEM bundle.
+                    properties:
+                      key:
+                        description: Key is the key within the secret
+                        type: string
+                      name:
+                        description: Name is the name of the secret
+                        type: string
+                      namespace:
+                        description: Namespace is the namespace of the secret
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  insecureSkipVerify:
+                    description: |-
+                      InsecureSkipVerify disables TLS certificate verification entirely.
+                      This is NOT recommended for production — use CABundleSecretRef instead.
+                    type: boolean
+                type: object
               type:
                 description: Type defines the tool/provider type
                 enum:
                 - github
                 - gitlab
+                - azure-devops
                 type: string
             required:
             - credentials
             - type
             type: object
+            x-kubernetes-validations:
+            - message: baseURL is only supported when type is 'gitlab' or 'azure-devops'
+              rule: '!has(self.baseURL) || self.type in [''gitlab'', ''azure-devops'']'
           status:
             description: ToolConfigStatus defines the observed state of ToolConfig.
             type: object

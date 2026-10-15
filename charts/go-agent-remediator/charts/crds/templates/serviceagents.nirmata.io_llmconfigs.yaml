@@ -39,6 +39,43 @@ spec:
           spec:
             description: LLMConfigSpec defines the desired state of LLMConfig
             properties:
+              anthropic:
+                description: Anthropic defines configuration for the direct Anthropic
+                  API provider
+                properties:
+                  apiKeySecretRef:
+                    description: ApiKeySecretRef defines the reference to a secret
+                      containing the Anthropic API key
+                    properties:
+                      key:
+                        description: Key is the key within the secret
+                        type: string
+                      name:
+                        description: Name is the name of the secret
+                        type: string
+                      namespace:
+                        description: Namespace is the namespace of the secret
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  baseURL:
+                    description: |-
+                      BaseURL overrides the Anthropic API endpoint. Set this when the API is
+                      fronted by an internal gateway or proxy. Must include the scheme, for
+                      example "https://ai-gateway.internal". Defaults to https://api.anthropic.com
+                    type: string
+                  model:
+                    description: |-
+                      Model defines the Anthropic model to use, for example "claude-opus-5".
+                      Required: there is no default, so that the configured model is always
+                      explicit and does not drift when dependencies are upgraded.
+                    type: string
+                required:
+                - apiKeySecretRef
+                - model
+                type: object
               azureOpenAI:
                 description: AzureOpenAI defines configuration for Azure OpenAI provider
                 properties:
@@ -118,8 +155,12 @@ spec:
                 - model
                 type: object
               type:
-                description: Type defines the type of provider (e.g., "bedrock", "azure-openai",
-                  "nirmata")
+                description: Type defines the type of provider.
+                enum:
+                - bedrock
+                - azure-openai
+                - nirmataAI
+                - anthropic
                 type: string
             required:
             - type
