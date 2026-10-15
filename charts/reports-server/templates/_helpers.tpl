@@ -87,6 +87,31 @@ value: {{ default (printf "%s-postgresql.%s" $.Release.Name $.Release.Namespace 
 {{- end }}
 {{- end }}
 
+{{/*
+Quote a value for use as a YAML scalar, rendering a nil value as an empty string.
+
+A bare `value: {{ .Values.x | quote }}` renders as `value:` (YAML null) when
+`.Values.x` is nil, because sprig's `quote` skips nil arguments. GitOps tools
+that apply with server-side apply (GKE Config Sync, Argo CD with ServerSideApply)
+turn every null in the rendered manifest into `{}`, which the API server then
+rejects, so no rendered field may be null (nirmata/enterprise-kyverno#1090).
+
+Only nil is coerced. Every non-nil value, including falsy ones such as `0`,
+`false` and `""`, is rendered exactly as `{{ . | quote }}` would, so this helper
+changes nothing for any value that was already set. (`default "" .` would not
+be safe here: `default` also replaces `0` and `false`, silently turning
+`password: 0` into `""`.)
+
+Usage: `value: {{ include "reports-server.quoteOrEmpty" .Values.config.db.port }}`
+*/}}
+{{- define "reports-server.quoteOrEmpty" -}}
+{{- if kindIs "invalid" . -}}
+""
+{{- else -}}
+{{ . | quote }}
+{{- end -}}
+{{- end }}
+
 {{- define "reports-server.dbReadReplicaHosts" -}}
 {{- if .Values.config.db.secretName -}}
 valueFrom:
@@ -94,7 +119,7 @@ valueFrom:
     key: {{ .Values.config.db.readReplicaHostsSecretKeyName }}
     name: {{ .Values.config.db.secretName }}
 {{- else -}}
-value: {{ .Values.config.db.readReplicaHosts | quote }}
+value: {{ include "reports-server.quoteOrEmpty" .Values.config.db.readReplicaHosts }}
 {{- end }}
 {{- end }}
 
@@ -105,7 +130,7 @@ valueFrom:
     key: {{ .Values.config.db.portSecretKeyName }}
     name: {{ .Values.config.db.secretName }}
 {{- else -}}
-value: {{ .Values.config.db.port | quote }}
+value: {{ include "reports-server.quoteOrEmpty" .Values.config.db.port }}
 {{- end }}
 {{- end }}
 
@@ -116,7 +141,7 @@ valueFrom:
     key: {{ .Values.config.db.dbNameSecretKeyName }}
     name: {{ .Values.config.db.secretName }}
 {{- else -}}
-value: {{ .Values.config.db.name | quote }}
+value: {{ include "reports-server.quoteOrEmpty" .Values.config.db.name }}
 {{- end }}
 {{- end }}
 
@@ -127,7 +152,7 @@ valueFrom:
     key: {{ .Values.config.db.userSecretKeyName }}
     name: {{ .Values.config.db.secretName }}
 {{- else -}}
-value: {{ .Values.config.db.user | quote }}
+value: {{ include "reports-server.quoteOrEmpty" .Values.config.db.user }}
 {{- end }}
 {{- end }}
 
@@ -138,7 +163,7 @@ valueFrom:
     key: {{ .Values.config.db.passwordSecretKeyName }}
     name: {{ .Values.config.db.secretName }}
 {{- else -}}
-value: {{ .Values.config.db.password | quote }}
+value: {{ include "reports-server.quoteOrEmpty" .Values.config.db.password }}
 {{- end }}
 {{- end }}
 
