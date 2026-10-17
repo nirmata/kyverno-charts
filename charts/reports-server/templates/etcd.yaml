@@ -172,21 +172,13 @@ spec:
         volumeMounts:
         - name: etcd-data
           mountPath: /data
-        # - name: etcd-client-tls
-        #   mountPath: "/etc/etcd/certs/client"
-        #   readOnly: true
-        # - name: etcd-server-tls
-        #   mountPath: "/etc/etcd/certs/server"
-        #   readOnly: true
+        {{- with .Values.config.etcd.volumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.config.etcd.volumes }}
       volumes:
-      # - name: etcd-client-tls
-      #   secret:
-      #     secretName: etcd-client-tls
-      #     optional: false
-      # - name: etcd-server-tls
-      #   secret:
-      #     secretName: etcd-server-tls
-      #     optional: false
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
   volumeClaimTemplates:
   - metadata:
       name: etcd-data
