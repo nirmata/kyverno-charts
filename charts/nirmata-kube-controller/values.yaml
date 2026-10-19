@@ -110,6 +110,19 @@ cluster:
 # name used for cluster by nch (Default: kubesystem namespace ID)
   name: ""
 
+# id and tenantId are a FALLBACK for the cluster identity written to the otel-agent-config
+# ConfigMap (exporters.prometheusremotewrite.external_labels.{clusterId,tenantId}).
+# Leave both empty normally: on `helm upgrade` the chart preserves the IDs the controller
+# registered by reading the live ConfigMap with Helm `lookup`, and that live identity always
+# wins over these values. They are rendered only when the live ConfigMap has no complete
+# identity: a fresh install, or renderers without cluster access (`helm template`, Argo CD)
+# where `lookup` returns nothing.
+# They must be set together (setting only one fails the render).
+# GitOps note: without `lookup` these values are exactly what gets rendered, so update or
+# remove them after re-onboarding a cluster, otherwise the stale IDs are re-applied.
+  id: ""
+  tenantId: ""
+
 # type of the cluster categorised by nch. (Default value is "default-policy-manager-type")
   type: default-policy-manager-type
 
