@@ -71,6 +71,23 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+ToolConfig name. When tool.name is empty it defaults to <name>-<tool.type>, so
+the historical "nirmata-agent-github" default is preserved for GitHub while
+other providers (gitlab) get a matching, provider-neutral suffix.
+*/}}
+{{- define "go-nirmata-agent.toolName" -}}
+{{- .Values.tool.name | default (printf "%s-%s" (include "go-nirmata-agent.name" .) (.Values.tool.type | default "github")) }}
+{{- end }}
+
+{{/*
+Remediation mode of the Remediator CR ("ai" or "prescriptive"); defaults to "ai"
+to match the CRD default.
+*/}}
+{{- define "go-nirmata-agent.remediationMode" -}}
+{{- ((.Values.remediator | default dict).remediation | default dict).remediationMode | default "ai" }}
+{{- end }}
+
+{{/*
 Report whether Nirmata platform credentials are configured.
 An empty nirmata.auth (or "none") means the agent runs without them, which is
 supported when the LLM provider and GitHub credentials are supplied by the user.
