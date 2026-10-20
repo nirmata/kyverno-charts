@@ -313,6 +313,12 @@ config:
     securityContext:
       allowPrivilegeEscalation: false
 
+    # -- Extra volumes for the etcd pod (e.g. TLS secrets)
+    volumes: []
+
+    # -- Extra volumeMounts for the etcd container
+    volumeMounts: []
+
   db:
 
     # -- If set, a secret will be created with the database connection information. If this is set to true, secretName must be set.
