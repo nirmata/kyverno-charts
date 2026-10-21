@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.7.13](https://img.shields.io/badge/Version-3.7.13-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.17.2-n4k.nirmata.23](https://img.shields.io/badge/AppVersion-v1.17.2--n4k.nirmata.23-informational?style=flat-square)
+![Version: 3.7.14](https://img.shields.io/badge/Version-3.7.14-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.17.2-n4k.nirmata.23](https://img.shields.io/badge/AppVersion-v1.17.2--n4k.nirmata.23-informational?style=flat-square)
 
 ## About
 
@@ -939,7 +939,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.config.skipMigration | bool | `false` | Skip database migration on startup |
 | reports-server.config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| reports-server.config.etcd.image.tag | string | `"3.6.14-hardened"` | Image tag |
+| reports-server.config.etcd.image.tag | string | `"3.6.15-hardened"` | Image tag |
 | reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.config.etcd.enabled | bool | `true` |  |
 | reports-server.config.etcd.endpoints | string | `nil` |  |
@@ -986,7 +986,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
 | reports-server.jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| reports-server.jobConfigurations.image.tag | string | `"1.36.3-hardened"` | Image tag Defaults to `latest` if omitted |
+| reports-server.jobConfigurations.image.tag | string | `"1.36.5-hardened"` | Image tag Defaults to `latest` if omitted |
 | reports-server.jobConfigurations.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
 | reports-server.jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
@@ -1063,7 +1063,7 @@ Kubernetes: `>=1.25.0-0`
 |  | crds | 3.7.0 |
 |  | grafana | 3.7.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.1 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.37 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.38 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers
