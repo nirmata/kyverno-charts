@@ -6,12 +6,6 @@ on:
       - main
       - release-*
 
-# chart-releaser pushes the index to the shared gh-pages branch, so runs from
-# different release branches must not overlap.
-concurrency:
-  group: release-charts
-  cancel-in-progress: false
-
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -52,10 +46,6 @@ jobs:
       - name: Run chart-releaser
         id: releaser
         uses: helm/chart-releaser-action@v1.6.0
-        with:
-          # Without this a re-run dies on "tag_name already_exists" before it
-          # reaches the index step, so a lost index write can never be recovered.
-          skip_existing: true
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
