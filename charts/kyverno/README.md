@@ -310,11 +310,6 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | config.licenseState.create | bool | `true` | Create the license state configmap. |
 | config.licenseState.preserve | bool | `true` | Keep the configmap on `helm uninstall`, so that reinstalling into the same namespace does not hand out a fresh trial window. Set to `false` in throwaway environments where an orphaned configmap is the bigger nuisance. |
 | config.licenseState.name | string | `nil` | The configmap name (required if `create` is `false`). |
-| license.create | bool | `false` | Create a Secret from `license.value` for the commercial Nirmata license. |
-| license.name | string | `nil` | Secret name (defaults to `<fullname>-license` when create is true). |
-| license.key | string | `"license"` | Key inside the Secret that holds the license file body. |
-| license.value | string | `nil` | Raw license file content. Required when `create` is true. |
-| license.existingSecret | string | `nil` | Name of an existing Secret that already holds the license file. |
 | config.disableAutoWebhookGeneration | object | `{"enable":false,"webhooks":["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]}` | Disable auto webhook generation. This is useful for environments like AKS where certain webhooks may cause issues. |
 | config.disableAutoWebhookGeneration.enable | bool | `false` | Enable the disableAutoWebhookGeneration feature |
 | config.disableAutoWebhookGeneration.webhooks | list | `["kyverno-policy-validating-webhook-cfg","kyverno-exception-validating-webhook-cfg"]` | List of webhooks to disable |
@@ -835,7 +830,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | webhooksCleanup.enabled | bool | `true` | Create a helm pre-delete hook to cleanup webhooks. |
 | webhooksCleanup.autoDeleteWebhooks.enabled | bool | `false` | Allow webhooks controller to delete webhooks using finalizers |
 | webhooksCleanup.image.registry | string | `"ghcr.io"` | Image registry |
-| webhooksCleanup.image.repository | string | `"kyverno/readiness-checker"` | Image repository (readiness-checker supports delete-webhooks and scale-deploy) |
+| webhooksCleanup.image.repository | string | `"nirmata/readiness-checker"` | Image repository (readiness-checker supports delete-webhooks and scale-deploy) |
 | webhooksCleanup.image.tag | string | `nil` | Image tag Defaults to `latest` if omitted |
 | webhooksCleanup.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | webhooksCleanup.imagePullSecrets | list | `[]` | Image pull secrets |
@@ -904,6 +899,12 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | apiCallToken | object | `{"audience":"kyverno-svc.kyverno.io","expirationSeconds":3600}` | Scoped token injected into outbound APICall and CEL http requests. This token carries a custom audience so that if leaked to an external service it cannot be replayed against the Kubernetes API server. |
 | apiCallToken.audience | string | `"kyverno-svc.kyverno.io"` | Audience for the projected token used in outbound requests. Set this to the audience your receiving service validates in the OIDC token's `aud` claim. The default is `kyverno-svc.kyverno.io`, which is a Kyverno-specific audience and prevents the token from being accepted by the Kubernetes API server. |
 | apiCallToken.expirationSeconds | int | `3600` | Token lifetime in seconds for the projected outbound API call token. The default is `3600` (1 hour). The kubelet requests a replacement before the token expires, so lowering this reduces token lifetime while increasing rotation frequency. |
+| license | object | `{"create":false,"existingSecret":null,"key":"license","name":null,"value":null}` | Nirmata commercial license. When create or existingSecret is set, the admission controller mounts the Secret (optional volume) and validates the license offline. Deleting the Secret does not take pods down: the evaluator falls back to the free-tier community license (FreeTier / FreeExpired). |
+| license.create | bool | `false` | Create a Secret from `license.value`. |
+| license.name | string | `nil` | Secret name (defaults to `<fullname>-license` when create is true). |
+| license.key | string | `"license"` | Key inside the Secret that holds the license file body. |
+| license.value | string | `nil` | Raw license file content. Required when `create` is true. |
+| license.existingSecret | string | `nil` | Name of an existing Secret in the release namespace that already holds the license file. Ignored when `create` is true. |
 | imagePullSecrets | object | `{}` | Image pull secrets for image verification policies, this will define the `--imagePullSecrets` argument |
 | existingImagePullSecrets | list | `[]` | Existing Image pull secrets for image verification policies, this will define the `--imagePullSecrets` argument |
 | customLabels | object | `{}` | Additional labels |
