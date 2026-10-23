@@ -1,6 +1,6 @@
 # reports-server
 
-![Version: 0.2.39](https://img.shields.io/badge/Version-0.2.39-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.36](https://img.shields.io/badge/AppVersion-v0.2.36-informational?style=flat-square)
+![Version: 0.2.40](https://img.shields.io/badge/Version-0.2.40-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.2.37](https://img.shields.io/badge/AppVersion-v0.2.37-informational?style=flat-square)
 
 TODO
 
@@ -120,25 +120,10 @@ helm install reports-server --namespace reports-server --create-namespace report
 | config.db.connectionPool.maxIdleConns | int | `5` | Maximum number of idle connections per pod (sql.DB.SetMaxIdleConns) |
 | config.db.connectionPool.connMaxLifetimeSeconds | int | `300` | Maximum lifetime of a connection in seconds (0 = use default of 300s / 5m) |
 | config.db.connectionPool.connMaxIdleTimeSeconds | int | `120` | Maximum idle time of a connection in seconds (0 = use default of 120s / 2m) |
-| apiServicesManagement.installApiServices | object | `{"enabled":true,"installEphemeralReportsService":true,"installOpenreportsService":true}` | Install api services in manifest |
+| apiServicesManagement.installApiServices | object | `{"enabled":true,"installEphemeralReportsService":true,"installOpenreportsService":true}` | The server registers the api services itself and anchors them to the chart's ClusterRole, so they are garbage collected on uninstall. These toggle which API groups it serves. |
 | apiServicesManagement.installApiServices.enabled | bool | `true` | Store reports in reports-server |
 | apiServicesManagement.installApiServices.installEphemeralReportsService | bool | `true` | Store ephemeral reports in reports-server |
 | apiServicesManagement.installApiServices.installOpenreportsService | bool | `true` | Store open reports in reports-server |
-| apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
-| jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
-| jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| jobConfigurations.image.tag | string | `"1.36.2-hardened"` | Image tag Defaults to `latest` if omitted |
-| jobConfigurations.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
-| jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
-| jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
-| jobConfigurations.nodeSelector | object | `{}` | Node labels for pod assignment |
-| jobConfigurations.tolerations | list | `[]` | List of node taints to tolerate |
-| jobConfigurations.podAntiAffinity | object | `{}` | Pod anti affinity constraints. |
-| jobConfigurations.podAffinity | object | `{}` | Pod affinity constraints. |
-| jobConfigurations.podLabels | object | `{}` | Pod labels. |
-| jobConfigurations.podAnnotations | object | `{}` | Pod annotations. |
-| jobConfigurations.nodeAffinity | object | `{}` | Node affinity constraints. |
-| jobConfigurations.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the hook containers |
 
 ## Source Code
 
