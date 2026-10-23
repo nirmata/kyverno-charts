@@ -866,11 +866,13 @@ The chart values are organised per component.
 | reports-server.config.etcd.endpoints | string | `nil` |  |
 | reports-server.config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| reports-server.config.etcd.image.tag | string | `"v3.5.18-cve-free"` | Image tag |
+| reports-server.config.etcd.image.tag | string | `"3.6.15-hardened"` | Image tag |
 | reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.config.etcd.insecure | bool | `true` |  |
 | reports-server.config.etcd.nodeSelector | object | `{}` |  |
+| reports-server.config.etcd.podSecurityContext | object | `{"fsGroup":65532,"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532}` | Pod-level security context for etcd pods Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls) runAsUser/runAsGroup are set explicitly (rather than relying on the image's default user) so kubelet can verify non-root without introspecting the image - otherwise an image with a non-numeric USER (e.g. "nonroot") fails admission with "cannot verify user is non-root". |
 | reports-server.config.etcd.quotaBackendBytes | int | `1932735283` |  |
+| reports-server.config.etcd.securityContext | object | See [values.yaml](values.yaml) | Container-level security context for the etcd container |
 | reports-server.config.etcd.storage | string | `"2Gi"` |  |
 | reports-server.config.etcd.tolerations | list | `[]` |  |
 | reports-server.fipsEnabled | bool | `false` |  |
