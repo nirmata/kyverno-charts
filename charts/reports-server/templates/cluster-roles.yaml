@@ -57,14 +57,6 @@ rules:
     - v1beta1.wgpolicyk8s.io
     - v1alpha1.wgpolicyk8s.io
 - apiGroups:
-    - coordination.k8s.io
-  resources:
-    - leases
-  verbs:
-    - create
-    - get
-    - update
-- apiGroups:
     - rbac.authorization.k8s.io
   resources:
     - clusterroles

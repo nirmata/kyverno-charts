@@ -28,6 +28,14 @@ rules:
     - pods
   verbs:
     - get
+- apiGroups:
+    - coordination.k8s.io
+  resources:
+    - leases
+  verbs:
+    - create
+    - get
+    - update
     - list
     - watch
 ---

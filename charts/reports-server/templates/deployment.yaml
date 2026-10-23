@@ -85,7 +85,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: HEADLESS_SERVICE
-              value: {{ include "reports-server.fullname" . }}-headless.{{ $.Release.Namespace }}.svc.cluster.local
+              value: {{ include "reports-server.headlessServiceName" . }}.{{ $.Release.Namespace }}.svc
             - name: GOMEMLIMIT
               valueFrom:
                 resourceFieldRef:
