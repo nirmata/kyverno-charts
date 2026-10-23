@@ -2,15 +2,13 @@
 # the null scan in .hack/check-chart-render.sh (and `ct lint`) covers them:
 # metrics + ServiceMonitor + PrometheusRule + Grafana dashboard ConfigMap
 # (+ compliance), HPA (with memory target and behavior), PodDisruptionBudget
-# (minAvailable branch), the post-install migrate hook Job, the API services,
-# the database Secret, and every scheduling/security knob that is a `with`.
-# Intended to render the grafana ConfigMap and the migrate Job under plain
-# `helm template` (the Job is hidden when `templating.enabled=true`).
+# (minAvailable branch), the API services, the database Secret, and every
+# scheduling/security knob that is a `with`. Intended to render the grafana
+# ConfigMap under plain `helm template`.
 #
 # Deliberately LEFT EMPTY so the null scan exercises their empty branches (a
 # regression there renders a bare key, i.e. a YAML null, enterprise-kyverno#1090):
 #   metrics.grafanaDashboard.annotations      (ConfigMap `metadata.annotations`)
-#   jobConfigurations.podLabels / podAnnotations (migrate Job `spec.template.metadata`)
 # The non-empty variants are asserted by .hack/check-chart-render.sh using --set.
 # Lint-only: the monitoring.coreos.com CRDs and the referenced Secrets/PVC
 # classes do not exist, so never `ct install` with this file.
@@ -108,41 +106,3 @@ apiServicesManagement:
     runAsNonRoot: true
   installApiServices:
     enabled: true
-  migrateReportsServer:
-    enabled: true
-jobConfigurations:
-  imagePullSecrets:
-    - name: regcred
-  podSecurityContext:
-    runAsNonRoot: true
-  nodeSelector:
-    kubernetes.io/os: linux
-  tolerations:
-    - key: dedicated
-      operator: Equal
-      value: reports
-      effect: NoSchedule
-  podAntiAffinity:
-    preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 1
-        podAffinityTerm:
-          topologyKey: kubernetes.io/hostname
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/name: reports-server
-  podAffinity:
-    preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 1
-        podAffinityTerm:
-          topologyKey: kubernetes.io/hostname
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/name: reports-server
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/arch
-              operator: In
-              values:
-                - amd64
