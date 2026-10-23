@@ -124,21 +124,7 @@ helm install reports-server --namespace reports-server --create-namespace report
 | apiServicesManagement.installApiServices.enabled | bool | `true` | Store reports in reports-server |
 | apiServicesManagement.installApiServices.installEphemeralReportsService | bool | `true` | Store ephemeral reports in reports-server |
 | apiServicesManagement.installApiServices.installOpenreportsService | bool | `true` | Store open reports in reports-server |
-| apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
-| jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
-| jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| jobConfigurations.image.tag | string | `"1.36.2-hardened"` | Image tag Defaults to `latest` if omitted |
-| jobConfigurations.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy Defaults to image.pullPolicy if omitted |
-| jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
-| jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
-| jobConfigurations.nodeSelector | object | `{}` | Node labels for pod assignment |
-| jobConfigurations.tolerations | list | `[]` | List of node taints to tolerate |
-| jobConfigurations.podAntiAffinity | object | `{}` | Pod anti affinity constraints. |
-| jobConfigurations.podAffinity | object | `{}` | Pod affinity constraints. |
-| jobConfigurations.podLabels | object | `{}` | Pod labels. |
-| jobConfigurations.podAnnotations | object | `{}` | Pod annotations. |
-| jobConfigurations.nodeAffinity | object | `{}` | Node affinity constraints. |
-| jobConfigurations.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the hook containers |
+| apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Let the server register the api services itself instead of the chart, for clusters where pre-existing api services block helm from adopting them |
 
 ## Source Code
 
