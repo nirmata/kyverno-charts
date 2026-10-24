@@ -1005,21 +1005,6 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.apiServicesManagement.installApiServices.enabled | bool | `true` | Store reports in reports-server |
 | reports-server.apiServicesManagement.installApiServices.installEphemeralReportsService | bool | `true` | Store ephemeral reports in reports-server |
 | reports-server.apiServicesManagement.installApiServices.installOpenreportsService | bool | `true` | Store open reports in reports-server |
-| reports-server.apiServicesManagement.migrateReportsServer.enabled | bool | `false` | Create api services only when reports-server is ready and migration is guaranteed |
-| reports-server.jobConfigurations.image.registry | string | `"ghcr.io"` | Image registry |
-| reports-server.jobConfigurations.image.repository | string | `"nirmata/kubectl"` | Image repository |
-| reports-server.jobConfigurations.image.tag | string | `"1.36.5-hardened"` | Image tag Defaults to `latest` if omitted |
-| reports-server.jobConfigurations.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
-| reports-server.jobConfigurations.imagePullSecrets | list | `[]` | Image pull secrets |
-| reports-server.jobConfigurations.podSecurityContext | object | `{}` | Security context for the pod |
-| reports-server.jobConfigurations.nodeSelector | object | `{}` | Node labels for pod assignment |
-| reports-server.jobConfigurations.tolerations | list | `[]` | List of node taints to tolerate |
-| reports-server.jobConfigurations.podAntiAffinity | object | `{}` | Pod anti affinity constraints. |
-| reports-server.jobConfigurations.podAffinity | object | `{}` | Pod affinity constraints. |
-| reports-server.jobConfigurations.podLabels | object | `{}` | Pod labels. |
-| reports-server.jobConfigurations.podAnnotations | object | `{}` | Pod annotations. |
-| reports-server.jobConfigurations.nodeAffinity | object | `{}` | Node affinity constraints. |
-| reports-server.jobConfigurations.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the hook containers |
 | kyverno-notation-aws.install | bool | `false` | Enable the kyverno-notation-aws subchart |
 | kyverno-notation-aws.fullnameOverride | string | `"kyverno-notation-aws"` | Keep the subchart's fullname stable regardless of release name, so its Service name (and therefore the URL customers reference from policies) does not change. |
 | kyverno-notation-aws.region | string | `"us-west-2"` | AWS region used by the notation-aws image verification service |
@@ -1088,7 +1073,7 @@ Kubernetes: `>=1.25.0-0`
 |  | grafana | 3.8.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.2 |
 | https://nirmata.github.io/kyverno-charts | kyverno-notation-aws | 2.0.0 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.39 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.40 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers
