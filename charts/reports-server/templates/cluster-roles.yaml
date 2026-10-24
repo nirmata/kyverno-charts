@@ -57,6 +57,14 @@ rules:
     - v1beta1.wgpolicyk8s.io
     - v1alpha1.wgpolicyk8s.io
 - apiGroups:
+    - rbac.authorization.k8s.io
+  resources:
+    - clusterroles
+  verbs:
+    - get
+  resourceNames:
+    - {{ include "reports-server.fullname" . }}
+- apiGroups:
     - wgpolicyk8s.io
   resources:
     - policyreports

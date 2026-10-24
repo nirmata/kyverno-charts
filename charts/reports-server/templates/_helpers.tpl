@@ -24,6 +24,14 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 {{/*
+Headless service name. The suffix has to fit inside the 63 character limit a
+Service name allows, so the fullname is truncated before it is appended.
+*/}}
+{{- define "reports-server.headlessServiceName" -}}
+{{- printf "%s-headless" (include "reports-server.fullname" . | trunc 54 | trimSuffix "-") -}}
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "reports-server.chart" -}}
