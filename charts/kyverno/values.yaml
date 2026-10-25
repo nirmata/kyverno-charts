@@ -2868,65 +2868,6 @@ reports-server:
       # -- Store open reports in reports-server
       installOpenreportsService: true
 
-    migrateReportsServer:
-      # -- Create api services only when reports-server is ready and migration is guaranteed
-      enabled: false
-
-
-  jobConfigurations:
-    image:
-      # -- (string) Image registry
-      registry: ghcr.io
-      # -- Image repository
-      repository: nirmata/kubectl
-      # -- Image tag
-      # Defaults to `latest` if omitted
-      tag: '1.36.5-hardened'
-      # -- (string) Image pull policy
-      # Defaults to image.pullPolicy if omitted
-      pullPolicy: ~
-
-    # -- Image pull secrets
-    imagePullSecrets: []
-
-    # -- Security context for the pod
-    podSecurityContext: {}
-
-    # -- Node labels for pod assignment
-    nodeSelector: {}
-
-    # -- List of node taints to tolerate
-    tolerations: []
-
-    # -- Pod anti affinity constraints.
-    podAntiAffinity: {}
-
-    # -- Pod affinity constraints.
-    podAffinity: {}
-
-    # -- Pod labels.
-    podLabels: {}
-
-    # -- Pod annotations.
-    podAnnotations: {}
-
-    # -- Node affinity constraints.
-    nodeAffinity: {}
-
-    # -- Security context for the hook containers
-    securityContext:
-      runAsUser: 65534
-      runAsGroup: 65534
-      runAsNonRoot: true
-      privileged: false
-      allowPrivilegeEscalation: false
-      readOnlyRootFilesystem: true
-      capabilities:
-        drop:
-          - ALL
-      seccompProfile:
-        type: RuntimeDefault
-
 # kyverno-notation-aws is vendored as a disabled-by-default subchart, following
 # the same pattern as reports-server above. When enabled it deploys into the
 # Kyverno release namespace and mounts the same N4K license Secret as the
