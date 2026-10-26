@@ -614,10 +614,10 @@ test:
     # -- (string) Image registry
     registry: ghcr.io
     # -- Image repository
-    repository: kyverno/readiness-checker
+    repository: nirmata/readiness-checker
     # -- Image tag
-    # Defaults to `latest` if omitted
-    tag: 'v0.1.0'
+    # Defaults to the chart appVersion if omitted
+    tag: ~
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~

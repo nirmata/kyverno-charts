@@ -853,8 +853,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 |-----|------|---------|-------------|
 | test.sleep | int | `20` | Sleep time before running test |
 | test.image.registry | string | `"ghcr.io"` | Image registry |
-| test.image.repository | string | `"kyverno/readiness-checker"` | Image repository |
-| test.image.tag | string | `"v0.1.0"` | Image tag Defaults to `latest` if omitted |
+| test.image.repository | string | `"nirmata/readiness-checker"` | Image repository |
+| test.image.tag | string | `nil` | Image tag Defaults to the chart appVersion if omitted |
 | test.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | test.imagePullSecrets | list | `[]` | Image pull secrets |
 | test.resources.limits | object | `{"cpu":"100m","memory":"256Mi"}` | Pod resource limits |
