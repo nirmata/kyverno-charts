@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.7.16](https://img.shields.io/badge/Version-3.7.16-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.17.2-n4k.nirmata.24](https://img.shields.io/badge/AppVersion-v1.17.2--n4k.nirmata.24-informational?style=flat-square)
+![Version: 3.7.17](https://img.shields.io/badge/Version-3.7.17-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.17.2-n4k.nirmata.24](https://img.shields.io/badge/AppVersion-v1.17.2--n4k.nirmata.24-informational?style=flat-square)
 
 ## About
 
@@ -833,9 +833,9 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | test.sleep | int | `20` | Sleep time before running test |
-| test.image.registry | string | `"bitnami"` | Image registry |
-| test.image.repository | string | `"kubectl"` | Image repository |
-| test.image.tag | string | `"latest"` | Image tag Defaults to `latest` if omitted |
+| test.image.registry | string | `"ghcr.io"` | Image registry |
+| test.image.repository | string | `"nirmata/readiness-checker"` | Image repository (the test pods run readiness-checker subcommands) |
+| test.image.tag | string | `nil` | Image tag Defaults to the chart appVersion if omitted |
 | test.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | test.imagePullSecrets | list | `[]` | Image pull secrets |
 | test.resources.limits | object | `{"cpu":"100m","memory":"256Mi"}` | Pod resource limits |
@@ -1048,7 +1048,7 @@ Kubernetes: `>=1.25.0-0`
 |  | crds | 3.7.0 |
 |  | grafana | 3.7.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.1 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.40 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.41 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers
