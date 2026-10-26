@@ -559,12 +559,12 @@ test:
 
   image:
     # -- (string) Image registry
-    registry: bitnami
-    # -- Image repository
-    repository: kubectl
+    registry: ghcr.io
+    # -- Image repository (the test pods run readiness-checker subcommands)
+    repository: nirmata/readiness-checker
     # -- Image tag
-    # Defaults to `latest` if omitted
-    tag: latest
+    # Defaults to the chart appVersion if omitted
+    tag: ~
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
     pullPolicy: ~
