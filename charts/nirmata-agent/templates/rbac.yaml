@@ -41,6 +41,32 @@ rules:
   - list
   - watch
 
+# Flux resources - for FluxHub mode (pkg/flux discovery)
+- apiGroups:
+  - kustomize.toolkit.fluxcd.io
+  resources:
+  - kustomizations
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - helm.toolkit.fluxcd.io
+  resources:
+  - helmreleases
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - gitrepositories
+  verbs:
+  - get
+  - list
+  - watch
+
 # Kyverno policies (kyverno.io API group)
 - apiGroups:
   - kyverno.io
