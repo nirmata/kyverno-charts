@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.9.2](https://img.shields.io/badge/Version-3.9.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.19.0-n4k.nirmata.3](https://img.shields.io/badge/AppVersion-v1.19.0--n4k.nirmata.3-informational?style=flat-square)
+![Version: 3.9.3](https://img.shields.io/badge/Version-3.9.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.19.0-n4k.nirmata.3](https://img.shields.io/badge/AppVersion-v1.19.0--n4k.nirmata.3-informational?style=flat-square)
 
 ## About
 
@@ -861,8 +861,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 |-----|------|---------|-------------|
 | test.sleep | int | `20` | Sleep time before running test |
 | test.image.registry | string | `"ghcr.io"` | Image registry |
-| test.image.repository | string | `"kyverno/readiness-checker"` | Image repository |
-| test.image.tag | string | `"v0.1.0"` | Image tag Defaults to `latest` if omitted |
+| test.image.repository | string | `"nirmata/readiness-checker"` | Image repository |
+| test.image.tag | string | `nil` | Image tag Defaults to the chart appVersion if omitted |
 | test.image.pullPolicy | string | `nil` | Image pull policy Defaults to image.pullPolicy if omitted |
 | test.imagePullSecrets | list | `[]` | Image pull secrets |
 | test.resources.limits | object | `{"cpu":"100m","memory":"256Mi"}` | Pod resource limits |
@@ -1097,7 +1097,7 @@ Kubernetes: `>=1.25.0-0`
 |  | grafana | 3.9.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.2 |
 | https://nirmata.github.io/kyverno-charts | kyverno-notation-aws | 2.0.0 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.40 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.41 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers
