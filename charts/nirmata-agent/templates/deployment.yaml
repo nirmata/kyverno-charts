@@ -51,19 +51,42 @@ spec:
             {{- if .Values.nirmata.endpoint }}
             - --url={{ .Values.nirmata.endpoint }}
             {{- end }}
-          {{- if include "go-nirmata-agent.nirmataAuthEnabled" . }}
+            {{- if and .Values.logging.format (ne .Values.logging.format "text") }}
+            - --log-format={{ .Values.logging.format }}
+            {{- end }}
+            {{- if .Values.tracing.enabled }}
+            - --tracing-enabled
+            {{- end }}
+          {{- $tracingEnv := and .Values.tracing.enabled (or .Values.tracing.endpoint .Values.tracing.insecure .Values.tracing.serviceName) }}
+          {{- if or (include "go-nirmata-agent.nirmataAuthEnabled" .) $tracingEnv }}
           env:
+            {{- if $tracingEnv }}
+            {{- with .Values.tracing.endpoint }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ . | quote }}
+            {{- end }}
+            {{- if .Values.tracing.insecure }}
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              value: "true"
+            {{- end }}
+            {{- /* Only when set: the agent defaults service.name itself, and an always-set
+                   OTEL_SERVICE_NAME would override OTEL_RESOURCE_ATTRIBUTES. */}}
+            {{- with .Values.tracing.serviceName }}
+            - name: OTEL_SERVICE_NAME
+              value: {{ . | quote }}
+            {{- end }}
+            {{- end }}
             {{- if eq .Values.nirmata.auth "serviceAccountToken" }}
             - name: SERVICE_ACCOUNT_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.nirmata.serviceAccountTokenSecret }}
+                  name: {{ include "go-nirmata-agent.serviceAccountTokenSecretName" . }}
                   key: {{ .Values.nirmata.serviceAccountTokenSecretKey }}
             {{- else if eq .Values.nirmata.auth "apiToken" }}
             - name: API_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.nirmata.apiTokenSecret }}
+                  name: {{ include "go-nirmata-agent.apiTokenSecretName" . }}
                   key: {{ .Values.nirmata.apiTokenSecretKey }}
             {{- end }}
           {{- end }}

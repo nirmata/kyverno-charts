@@ -1,0 +1,19 @@
+# Agent CR on an Argo hub with optional NCH tools.
+agent:
+  enabled: true
+  name: compliance-agent
+  prompt: Scan my clusters every 6 hours for policy violations and email a summary.
+  tools:
+    - email
+    - send_slack_message
+  environment:
+    type: argoHub
+  target:
+    argoHub:
+      clusterNames:
+        - prod-cluster-1
+      appSelector:
+        allApps: true
+  triggers:
+    - schedule:
+        crontab: "0 9 * * MON"

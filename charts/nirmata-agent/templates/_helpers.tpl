@@ -71,6 +71,23 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+ToolConfig name. When tool.name is empty it defaults to <name>-<tool.type>, so
+the historical "nirmata-agent-github" default is preserved for GitHub while
+other providers (gitlab) get a matching, provider-neutral suffix.
+*/}}
+{{- define "go-nirmata-agent.toolName" -}}
+{{- .Values.tool.name | default (printf "%s-%s" (include "go-nirmata-agent.name" .) (.Values.tool.type | default "github")) }}
+{{- end }}
+
+{{/*
+Remediation mode of the Remediator CR ("ai" or "prescriptive"); defaults to "ai"
+to match the CRD default.
+*/}}
+{{- define "go-nirmata-agent.remediationMode" -}}
+{{- ((.Values.remediator | default dict).remediation | default dict).remediationMode | default "ai" }}
+{{- end }}
+
+{{/*
 Report whether Nirmata platform credentials are configured.
 An empty nirmata.auth (or "none") means the agent runs without them, which is
 supported when the LLM provider and GitHub credentials are supplied by the user.
@@ -99,18 +116,102 @@ This template validates the authentication settings and fails early with clear e
 {{- fail (printf "nirmata.auth must be 'serviceAccountToken', 'apiToken', or 'none', got: '%s'" $authMethod) -}}
 {{- end -}}
 {{- if eq $authMethod "serviceAccountToken" -}}
-{{- if not .Values.nirmata.serviceAccountTokenSecret -}}
-{{- fail "nirmata.serviceAccountTokenSecret is required when auth is 'serviceAccountToken'. Please provide the name of the Kubernetes secret containing your service account token in the same namespace as the deployment." -}}
+{{- if not (include "go-nirmata-agent.serviceAccountTokenSecretName" .) -}}
+{{- fail "nirmata.serviceAccountTokenSecret (or an inline nirmata.serviceAccountToken) is required when auth is 'serviceAccountToken'. Please provide the name of the Kubernetes secret containing your service account token in the same namespace as the deployment." -}}
 {{- end -}}
 {{- if not .Values.nirmata.serviceAccountTokenSecretKey -}}
 {{- fail "nirmata.serviceAccountTokenSecretKey is required when auth is 'serviceAccountToken'" -}}
 {{- end -}}
 {{- else if eq $authMethod "apiToken" -}}
-{{- if not .Values.nirmata.apiTokenSecret -}}
-{{- fail "nirmata.apiTokenSecret is required when auth is 'apiToken'. Please provide the name of the Kubernetes secret containing your API token in the same namespace as the deployment." -}}
+{{- if not (include "go-nirmata-agent.apiTokenSecretName" .) -}}
+{{- fail "nirmata.apiTokenSecret (or an inline nirmata.apiToken) is required when auth is 'apiToken'. Please provide the name of the Kubernetes secret containing your API token in the same namespace as the deployment." -}}
 {{- end -}}
 {{- if not .Values.nirmata.apiTokenSecretKey -}}
 {{- fail "nirmata.apiTokenSecretKey is required when auth is 'apiToken'" -}}
 {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Inline credentials (opt-in, see templates/secrets.yaml). Each "...SecretName"
+helper returns the Secret a consumer (Deployment env, ToolConfig, LLMConfig)
+references: the user-supplied secret name when set, otherwise the name of the
+Secret generated from the inline value, otherwise "". Without inline values the
+result equals the existing secret-name value, so existing installs render
+unchanged.
+*/}}
+{{- define "go-nirmata-agent.serviceAccountTokenSecretName" -}}
+{{- if .Values.nirmata.serviceAccountTokenSecret -}}
+{{- .Values.nirmata.serviceAccountTokenSecret -}}
+{{- else if .Values.nirmata.serviceAccountToken -}}
+nirmata-service-account-token
+{{- end -}}
+{{- end -}}
+
+{{- define "go-nirmata-agent.apiTokenSecretName" -}}
+{{- if .Values.nirmata.apiTokenSecret -}}
+{{- .Values.nirmata.apiTokenSecret -}}
+{{- else if .Values.nirmata.apiToken -}}
+nirmata-api-token
+{{- end -}}
+{{- end -}}
+
+{{- define "go-nirmata-agent.patSecretName" -}}
+{{- $pat := .Values.tool.credentials.pat | default dict -}}
+{{- $ref := $pat.secret | default dict -}}
+{{- if $ref.name -}}
+{{- $ref.name -}}
+{{- else if $pat.token -}}
+{{- include "go-nirmata-agent.name" . }}-git-token
+{{- end -}}
+{{- end -}}
+
+{{- define "go-nirmata-agent.patSecretKey" -}}
+{{- $pat := .Values.tool.credentials.pat | default dict -}}
+{{- ($pat.secret | default dict).key | default "token" -}}
+{{- end -}}
+
+{{- define "go-nirmata-agent.appPrivateKeySecretName" -}}
+{{- $app := .Values.tool.credentials.app | default dict -}}
+{{- $ref := $app.privateKeySecret | default dict -}}
+{{- if $ref.name -}}
+{{- $ref.name -}}
+{{- else if $app.privateKey -}}
+{{- include "go-nirmata-agent.name" . }}-github-app
+{{- end -}}
+{{- end -}}
+
+{{- define "go-nirmata-agent.appPrivateKeySecretKey" -}}
+{{- $app := .Values.tool.credentials.app | default dict -}}
+{{- ($app.privateKeySecret | default dict).key | default "private-key.pem" -}}
+{{- end -}}
+
+{{- define "go-nirmata-agent.bedrockSecretName" -}}
+{{- $b := .Values.llm.bedrock | default dict -}}
+{{- $ref := $b.secretRef | default dict -}}
+{{- if $ref.name -}}
+{{- $ref.name -}}
+{{- else if or $b.accessKeyId $b.secretAccessKey -}}
+{{- include "go-nirmata-agent.name" . }}-bedrock-credentials
+{{- end -}}
+{{- end -}}
+
+{{- define "go-nirmata-agent.azureOpenAISecretName" -}}
+{{- $a := .Values.llm.azureOpenAI | default dict -}}
+{{- $ref := $a.secretRef | default dict -}}
+{{- if $ref.name -}}
+{{- $ref.name -}}
+{{- else if $a.apiKey -}}
+{{- include "go-nirmata-agent.name" . }}-azure-openai
+{{- end -}}
+{{- end -}}
+
+{{- define "go-nirmata-agent.anthropicSecretName" -}}
+{{- $a := .Values.llm.anthropic | default dict -}}
+{{- $ref := $a.secretRef | default dict -}}
+{{- if $ref.name -}}
+{{- $ref.name -}}
+{{- else if $a.apiKey -}}
+{{- include "go-nirmata-agent.name" . }}-anthropic
 {{- end -}}
 {{- end -}}
