@@ -1,0 +1,14 @@
+# JSON logs and OTLP tracing. No Nirmata credentials, so the container env block is
+# rendered for tracing alone.
+nirmata:
+  auth: none
+llm:
+  enabled: false
+tool:
+  enabled: false
+logging:
+  format: json
+tracing:
+  enabled: true
+  endpoint: http://otel-collector.observability:4317
+  insecure: true

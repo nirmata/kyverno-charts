@@ -105,6 +105,57 @@ spec:
                   Example: "Scan my cluster and send the policy report as an email"
                 minLength: 10
                 type: string
+              skills:
+                description: |-
+                  Skills are reusable instruction blocks added to the agent's system prompt, for example
+                  a runbook, a report format or organization conventions. Each skill is read from an
+                  inline string or from a ConfigMap key in the Agent's namespace at the start of every run.
+                items:
+                  description: |-
+                    AgentSkill is a named block of instructions added to the agent's system prompt.
+                    Exactly one of instructions or configMapRef must be set.
+                  properties:
+                    configMapRef:
+                      description: ConfigMapRef reads the skill content from a key
+                        of a ConfigMap in the Agent's namespace.
+                      properties:
+                        key:
+                          description: Key is the key within the ConfigMap's data
+                            that holds the skill content
+                          minLength: 1
+                          type: string
+                        name:
+                          description: Name is the name of the ConfigMap
+                          minLength: 1
+                          type: string
+                      required:
+                      - key
+                      - name
+                      type: object
+                    instructions:
+                      description: Instructions is the inline skill content (plain
+                        text or Markdown).
+                      maxLength: 32768
+                      minLength: 1
+                      type: string
+                    name:
+                      description: Name identifies the skill in the system prompt.
+                        Must be unique within the Agent.
+                      maxLength: 63
+                      minLength: 1
+                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                      type: string
+                  required:
+                  - name
+                  type: object
+                  x-kubernetes-validations:
+                  - message: exactly one of instructions or configMapRef must be set
+                    rule: has(self.instructions) != has(self.configMapRef)
+                maxItems: 20
+                type: array
+                x-kubernetes-list-map-keys:
+                - name
+                x-kubernetes-list-type: map
               target:
                 description: |-
                   Target defines the target configuration for the agent
