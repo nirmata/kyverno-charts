@@ -168,6 +168,27 @@ clusterOnboardingToken: ""
 #   policySets:
 #     enabled: false
 
+# kyvernoCleanup configures RBAC for Kyverno's cleanup controller, which deletes resources carrying
+# a `cleanup.kyverno.io/ttl` label once the TTL expires.
+kyvernoCleanup:
+  policyExceptionRbac:
+    # enabled grants the Kyverno cleanup controller get/list/watch/delete on policyexceptions,
+    # one rule per PolicyException API group (today kyverno.io and policies.kyverno.io), so it can
+    # remove the TTL-labelled PolicyExceptions created by Nirmata. The groups are NOT configured
+    # here: they come from the `controller.policyExceptionKinds` helper in templates/_helpers.tpl,
+    # the single list that also drives the readonly and write roles and the controller's watch
+    # list (see the README section "Helm chart: policy exception RBAC and watch list").
+    # Kyverno's own cleanup role (enterprise-kyverno v1.15 - v1.19) has no
+    # policyexceptions rights on kyverno.io, and get/list/patch/update/watch but no `delete` on
+    # policies.kyverno.io policyexceptions. Its TTL manager needs watch, list and delete
+    # (SelfSubjectAccessReview) and skips resources lacking them.
+    # The role is labelled `rbac.kyverno.io/aggregate-to-cleanup-controller: "true"`, which Kyverno
+    # aggregates into the cleanup controller's ClusterRole (no binding, no ServiceAccount name or
+    # namespace needed). It is rendered only when the policy-exceptions feature is on
+    # (features.policyExceptions.enabled, which defaults to readWriteMode). It has no effect if
+    # Kyverno is installed with cleanupController.rbac.create=false.
+    enabled: true
+
 # readWriteMode determines whether the nirmata-kube-controller operates in read-write mode or read-only mode.
 # When set to `true`, the controller can make changes to the CR. When `false`, it operates in a read-only manner.
 readWriteMode: false
