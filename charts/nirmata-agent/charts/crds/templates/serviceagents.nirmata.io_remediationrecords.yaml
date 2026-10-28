@@ -620,6 +620,12 @@ spec:
                               type: string
                           type: object
                       type: object
+                    clusterScoped:
+                      description: |-
+                        ClusterScoped is true when the resource is cluster-scoped (remediated from a
+                        ClusterPolicyReport). PR comment commands (split-pr, request-exception) rebuild the
+                        plan from the record, so they read it to keep the PR's cluster-scoped presentation.
+                      type: boolean
                     lastActionTime:
                       description: LastActionTime is when the last remediation action
                         was taken
