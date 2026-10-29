@@ -1,6 +1,6 @@
 {{- if .Values.backgroundController.enabled -}}
 {{- if not .Values.templating.debug -}}
-{{- $automountSAToken := .Values.admissionController.rbac.serviceAccount.automountServiceAccountToken -}}
+{{- $automountSAToken := .Values.backgroundController.rbac.serviceAccount.automountServiceAccountToken -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -229,7 +229,6 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if or .Values.backgroundController.caCertificates.data .Values.global.caCertificates.data .Values.backgroundController.caCertificates.volume .Values.global.caCertificates.volume (not $automountSAToken)}}
           volumeMounts:
             - name: ca-certificates
               mountPath: /etc/ssl/certs/ca-certificates.crt
@@ -241,9 +240,17 @@ spec:
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               readOnly: true
             {{- end }}
-          {{- end }}
-      {{- if or .Values.backgroundController.caCertificates.data .Values.global.caCertificates.data .Values.backgroundController.caCertificates.volume .Values.global.caCertificates.volume (not $automountSAToken)}}
       volumes:
+      - name: apicall-token
+        projected:
+          defaultMode: 0444
+          sources:
+            - serviceAccountToken:
+                path: token
+                expirationSeconds: {{ .Values.apiCallToken.expirationSeconds | default 3600 }}
+                {{- with .Values.apiCallToken.audience }}
+                audience: {{ . | quote }}
+                {{- end }}
       {{- if or .Values.backgroundController.caCertificates.data .Values.global.caCertificates.data }}
       - name: ca-certificates
         configMap:

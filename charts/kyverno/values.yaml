@@ -219,6 +219,21 @@ crds:
       # -- Toggle automounting of the ServiceAccount
       automountServiceAccountToken: true
 
+# -- Scoped token injected into outbound APICall and CEL HTTP requests.
+# This token carries a custom audience so that if leaked to an external service
+# it cannot be replayed against the Kubernetes API server.
+apiCallToken:
+  # -- Audience for the projected token used in outbound requests.
+  # Set this to the audience your receiving service validates in the OIDC token's
+  # `aud` claim. The default is `kyverno-svc.kyverno.io`, which is a Kyverno-specific
+  # audience and prevents the token from being accepted by the Kubernetes API server.
+  audience: "kyverno-svc.kyverno.io"
+  # -- Token lifetime in seconds for the projected outbound API call token.
+  # The default is `3600` (1 hour). The kubelet requests a replacement before the
+  # token expires, so lowering this reduces token lifetime while increasing rotation
+  # frequency.
+  expirationSeconds: 3600
+
 # Configuration
 config:
 
@@ -2511,6 +2526,23 @@ reports-server:
       ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
       ##
       tolerations: []
+
+      # -- Pod-level security context for etcd pods
+      # Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls)
+      # runAsUser/runAsGroup are set explicitly (rather than relying on the image's
+      # default user) so kubelet can verify non-root without introspecting the image -
+      # otherwise an image with a non-numeric USER (e.g. "nonroot") fails admission with
+      # "cannot verify user is non-root".
+      podSecurityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+
+      # -- Container-level security context for the etcd container
+      # @default -- See [values.yaml](values.yaml)
+      securityContext:
+        allowPrivilegeEscalation: false
 
     db:
 
