@@ -1,0 +1,17 @@
+# Direct Anthropic API through an internal gateway, without Nirmata credentials.
+nirmata:
+  auth: none
+llm:
+  provider: anthropic
+  anthropic:
+    model: claude-sonnet-5
+    baseURL: https://ai-gateway.internal
+    secretRef:
+      name: anthropic-api-key
+tool:
+  credentials:
+    method: pat
+    pat:
+      secret:
+        name: github-token
+        key: token
