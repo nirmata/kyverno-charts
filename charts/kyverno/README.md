@@ -439,7 +439,7 @@ The chart values are organised per component.
 | admissionController.podDisruptionBudget.enabled | bool | `false` | Enable PodDisruptionBudget. Will always be enabled if replicas > 1. This non-declarative behavior should ideally be avoided, but changing it now would be breaking. |
 | admissionController.podDisruptionBudget.maxUnavailable | string | `nil` | Configures the maximum unavailable pods for disruptions. Cannot be used if `minAvailable` is set. |
 | admissionController.podDisruptionBudget.minAvailable | int | `1` | Configures the minimum available pods for disruptions. Cannot be used if `maxUnavailable` is set. |
-| admissionController.podDisruptionBudget.unhealthyPodEvictionPolicy | string | `nil` | Unhealty pod eviction policy to be used. Possible values are `IfHealthyBudget` or `AlwaysAllow`. |
+| admissionController.podDisruptionBudget.unhealthyPodEvictionPolicy | string | `nil` | Unhealthy pod eviction policy to be used. Possible values are `IfHealthyBudget` or `AlwaysAllow`. |
 | admissionController.podLabels | object | `{}` | Additional labels to add to each pod |
 | admissionController.podSecurityContext | object | `{}` | Security context for the pod |
 | admissionController.priorityClassName | string | `""` | Optional priority class |
@@ -529,7 +529,7 @@ The chart values are organised per component.
 | backgroundController.podDisruptionBudget.enabled | bool | `false` | Enable PodDisruptionBudget. Will always be enabled if replicas > 1. This non-declarative behavior should ideally be avoided, but changing it now would be breaking. |
 | backgroundController.podDisruptionBudget.maxUnavailable | string | `nil` | Configures the maximum unavailable pods for disruptions. Cannot be used if `minAvailable` is set. |
 | backgroundController.podDisruptionBudget.minAvailable | int | `1` | Configures the minimum available pods for disruptions. Cannot be used if `maxUnavailable` is set. |
-| backgroundController.podDisruptionBudget.unhealthyPodEvictionPolicy | string | `nil` | Unhealty pod eviction policy to be used. Possible values are `IfHealthyBudget` or `AlwaysAllow`. |
+| backgroundController.podDisruptionBudget.unhealthyPodEvictionPolicy | string | `nil` | Unhealthy pod eviction policy to be used. Possible values are `IfHealthyBudget` or `AlwaysAllow`. |
 | backgroundController.podLabels | object | `{}` | Additional labels to add to each pod |
 | backgroundController.podSecurityContext | object | `{}` | Security context for the pod |
 | backgroundController.priorityClassName | string | `""` | Optional priority class |
@@ -612,7 +612,7 @@ The chart values are organised per component.
 | cleanupController.podDisruptionBudget.enabled | bool | `false` | Enable PodDisruptionBudget. Will always be enabled if replicas > 1. This non-declarative behavior should ideally be avoided, but changing it now would be breaking. |
 | cleanupController.podDisruptionBudget.maxUnavailable | string | `nil` | Configures the maximum unavailable pods for disruptions. Cannot be used if `minAvailable` is set. |
 | cleanupController.podDisruptionBudget.minAvailable | int | `1` | Configures the minimum available pods for disruptions. Cannot be used if `maxUnavailable` is set. |
-| cleanupController.podDisruptionBudget.unhealthyPodEvictionPolicy | string | `nil` | Unhealty pod eviction policy to be used. Possible values are `IfHealthyBudget` or `AlwaysAllow`. |
+| cleanupController.podDisruptionBudget.unhealthyPodEvictionPolicy | string | `nil` | Unhealthy pod eviction policy to be used. Possible values are `IfHealthyBudget` or `AlwaysAllow`. |
 | cleanupController.podLabels | object | `{}` | Additional labels to add to each pod |
 | cleanupController.podSecurityContext | object | `{}` | Security context for the pod |
 | cleanupController.priorityClassName | string | `""` | Optional priority class |
@@ -701,7 +701,7 @@ The chart values are organised per component.
 | reportsController.podDisruptionBudget.enabled | bool | `false` | Enable PodDisruptionBudget. Will always be enabled if replicas > 1. This non-declarative behavior should ideally be avoided, but changing it now would be breaking. |
 | reportsController.podDisruptionBudget.maxUnavailable | string | `nil` | Configures the maximum unavailable pods for disruptions. Cannot be used if `minAvailable` is set. |
 | reportsController.podDisruptionBudget.minAvailable | int | `1` | Configures the minimum available pods for disruptions. Cannot be used if `maxUnavailable` is set. |
-| reportsController.podDisruptionBudget.unhealthyPodEvictionPolicy | string | `nil` | Unhealty pod eviction policy to be used. Possible values are `IfHealthyBudget` or `AlwaysAllow`. |
+| reportsController.podDisruptionBudget.unhealthyPodEvictionPolicy | string | `nil` | Unhealthy pod eviction policy to be used. Possible values are `IfHealthyBudget` or `AlwaysAllow`. |
 | reportsController.podLabels | object | `{}` | Additional labels to add to each pod |
 | reportsController.podSecurityContext | object | `{}` | Security context for the pod |
 | reportsController.priorityClassName | string | `""` | Optional priority class |
@@ -808,6 +808,9 @@ The chart values are organised per component.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| apiCallToken | object | `{"audience":"kyverno-svc.kyverno.io","expirationSeconds":3600}` | Scoped token injected into outbound APICall and CEL HTTP requests. This token carries a custom audience so that if leaked to an external service it cannot be replayed against the Kubernetes API server. |
+| apiCallToken.audience | string | `"kyverno-svc.kyverno.io"` | Audience for the projected token used in outbound requests. Set this to the audience your receiving service validates in the OIDC token's `aud` claim. The default is `kyverno-svc.kyverno.io`, which is a Kyverno-specific audience and prevents the token from being accepted by the Kubernetes API server. |
+| apiCallToken.expirationSeconds | int | `3600` | Token lifetime in seconds for the projected outbound API call token. The default is `3600` (1 hour). The kubelet requests a replacement before the token expires, so lowering this reduces token lifetime while increasing rotation frequency. |
 | customLabels | object | `{}` | Additional labels |
 | existingImagePullSecrets | list | `[]` | Existing Image pull secrets for image verification policies, this will define the `--imagePullSecrets` argument |
 | fipsEnabled | bool | `false` | Deploy FIPS compliant images of all the components of n4k |
@@ -866,11 +869,13 @@ The chart values are organised per component.
 | reports-server.config.etcd.endpoints | string | `nil` |  |
 | reports-server.config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| reports-server.config.etcd.image.tag | string | `"v3.5.18-cve-free"` | Image tag |
+| reports-server.config.etcd.image.tag | string | `"3.6.15-hardened"` | Image tag |
 | reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.config.etcd.insecure | bool | `true` |  |
 | reports-server.config.etcd.nodeSelector | object | `{}` |  |
+| reports-server.config.etcd.podSecurityContext | object | `{"fsGroup":65532,"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532}` | Pod-level security context for etcd pods Applies to all containers in the pod (e.g. fsGroup, runAsUser, sysctls) runAsUser/runAsGroup are set explicitly (rather than relying on the image's default user) so kubelet can verify non-root without introspecting the image - otherwise an image with a non-numeric USER (e.g. "nonroot") fails admission with "cannot verify user is non-root". |
 | reports-server.config.etcd.quotaBackendBytes | int | `1932735283` |  |
+| reports-server.config.etcd.securityContext | object | See [values.yaml](values.yaml) | Container-level security context for the etcd container |
 | reports-server.config.etcd.storage | string | `"2Gi"` |  |
 | reports-server.config.etcd.tolerations | list | `[]` |  |
 | reports-server.fipsEnabled | bool | `false` |  |
