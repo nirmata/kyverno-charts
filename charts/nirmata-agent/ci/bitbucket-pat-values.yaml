@@ -1,0 +1,16 @@
+# Bitbucket Cloud, app-password auth with separate REST API and git usernames.
+tool:
+  name: ""
+  type: bitbucket
+  credentials:
+    method: pat
+    pat:
+      secret:
+        name: bitbucket-credentials
+        key: app-password
+      usernameSecret:
+        name: bitbucket-credentials
+        key: username
+      gitUsernameSecret:
+        name: bitbucket-credentials
+        key: git-username

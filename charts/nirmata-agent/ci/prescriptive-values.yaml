@@ -1,0 +1,26 @@
+# Remediator in prescriptive mode: no LLM, no llmConfigRef, custom policy categories.
+llm:
+  enabled: false
+remediator:
+  enabled: true
+  environment:
+    type: localCluster
+  target:
+    localCluster:
+      repoNamespaceMappingRef:
+        name: repo-namespace-mapping
+        key: mapping
+  remediation:
+    remediationMode: prescriptive
+    resourceOptimization:
+      policyCategories:
+        - Resource Management
+        - Best Practices
+    eventPolling:
+      enabled: true
+      intervalMinutes: 10
+      allowedUsers:
+        - alice
+        - bob
+    actions:
+      - type: CreatePR

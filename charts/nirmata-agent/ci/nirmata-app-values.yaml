@@ -1,0 +1,14 @@
+# Nirmata-managed GitHub App with API token auth instead of a service account token.
+nirmata:
+  auth: apiToken
+  apiTokenSecret: nirmata-api-token
+  apiTokenSecretKey: api-token
+tool:
+  credentials:
+    method: nirmata-app
+  defaults:
+    git:
+      pullRequests:
+        branchPrefix: nirmata-fix-
+        titleTemplate: "fix: {{ .PolicyName }}"
+        systemLabels: [remediatorName, branch]
