@@ -1,0 +1,43 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "cloud-security-agent.fullname" . }}-manager-role
+  labels:
+    {{- include "cloud-security-agent.labels" . | nindent 4 }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create", "patch"]
+- apiGroups: ["drift.nirmata.io"]
+  resources: ["driftwatchconfigs"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["drift.nirmata.io"]
+  resources: ["driftwatchconfigs/status"]
+  verbs: ["get", "patch", "update"]
+- apiGroups: ["drift.nirmata.io"]
+  resources: ["driftrecords"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["drift.nirmata.io"]
+  resources: ["driftrecords/status"]
+  verbs: ["get", "patch", "update"]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "cloud-security-agent.fullname" . }}-manager-rolebinding
+  labels:
+    {{- include "cloud-security-agent.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "cloud-security-agent.fullname" . }}-manager-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "cloud-security-agent.serviceAccountName" . }}
+  namespace: {{ .Values.namespace }}
