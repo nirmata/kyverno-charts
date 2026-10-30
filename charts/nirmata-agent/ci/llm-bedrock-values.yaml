@@ -1,0 +1,9 @@
+# AWS Bedrock with a credentials Secret.
+llm:
+  provider: bedrock
+  bedrock:
+    model: anthropic.claude-sonnet
+    region: us-east-1
+    secretRef:
+      name: aws-credentials
+      key: aws_access_key_id

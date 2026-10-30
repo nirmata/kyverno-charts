@@ -106,6 +106,15 @@ spec:
                     description: EventPolling defines configuration for polling Git
                       PR events
                     properties:
+                      allowedUsers:
+                        description: |-
+                          AllowedUsers lists the Git usernames (GitHub logins, GitLab usernames) allowed
+                          to run @nirmatabot PR comment commands (split-pr, request-exception). Matching
+                          is case-insensitive. Commands from other authors are ignored. When empty or
+                          unset, every commenter is allowed and the agent logs a warning on each poll.
+                        items:
+                          type: string
+                        type: array
                       enabled:
                         default: true
                         description: Enabled determines whether event polling is enabled

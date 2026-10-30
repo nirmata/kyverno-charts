@@ -1,0 +1,17 @@
+# Custom GitHub App credentials with an explicit installation ID; no Nirmata auth.
+nirmata:
+  auth: none
+llm:
+  provider: bedrock
+  bedrock:
+    model: anthropic.claude-sonnet
+    region: us-west-2
+tool:
+  credentials:
+    method: app
+    app:
+      appId: 123456
+      installationId: 7890123
+      privateKeySecret:
+        name: github-app-private-key
+        key: private-key.pem
