@@ -194,6 +194,7 @@ syncPolicy:
 | image.pullSecrets.registry | string | `ghcr.io` | Registry hostname used in pull secret |
 | image.pullSecrets.username | string | `nil` | Registry username for pull secret |
 | image.pullSecrets.password | string | `nil` | Registry password for pull secret |
+| imagePullSecrets | list | `[]` | Existing pull secrets to attach to the operator pod spec, used when `image.pullSecrets.create` is false |
 | rbac.create | bool | `true` | Create RBAC resources |
 | rbac.operatorHasAdminPerms | bool | `false` | Use cluster-admin for operator RBAC |
 | rbac.serviceAccount.create | bool | `true` | Create service account |

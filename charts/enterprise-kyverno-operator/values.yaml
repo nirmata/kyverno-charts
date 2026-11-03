@@ -30,6 +30,12 @@ image:
     username:
     password:
 
+# -- Existing image pull secrets to attach to the operator pod spec.
+# Use this when the secret already exists in the namespace and
+# `image.pullSecrets.create` is false.
+imagePullSecrets: []
+# - name: my-existing-secret
+
 
 rbac:
   create: true

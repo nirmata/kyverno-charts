@@ -25,9 +25,14 @@ spec:
         app: {{ template "enterprise-kyverno.name" . }}-operator
 {{ include "enterprise-kyverno.labels" . | indent 8 }}
     spec:
+      {{- if or .Values.image.pullSecrets.create .Values.imagePullSecrets }}
+      imagePullSecrets:
       {{- if .Values.image.pullSecrets.create }}
-      imagePullSecrets: 
       - name: {{ .Values.image.pullSecrets.name }}
+      {{- end }}
+      {{- if .Values.imagePullSecrets }}
+      {{- toYaml .Values.imagePullSecrets | nindent 6 }}
+      {{- end }}
       {{- end }}
       serviceAccountName: {{ template "enterprise-kyverno.rbac.serviceAccountName" . }}
       {{- include "enterprise-kyverno.nodeSelector" . | nindent 6 }}
