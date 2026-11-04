@@ -17,6 +17,12 @@
           "properties": {
             "model": { "type": "string" },
             "region": { "type": "string" },
+            "accessKeyId": {
+              "type": "string",
+              "description": "Inline AWS access key ID. When set (with secretAccessKey), the chart creates a Secret and credentialsSecretRef defaults to it."
+            },
+            "secretAccessKey": { "type": "string", "description": "Inline AWS secret access key; set together with accessKeyId." },
+            "sessionToken": { "type": "string", "description": "Optional inline AWS session token." },
             "secretRef": {
               "type": "object",
               "additionalProperties": true,
@@ -33,6 +39,10 @@
           "properties": {
             "endpoint": { "type": "string" },
             "deploymentName": { "type": "string" },
+            "apiKey": {
+              "type": "string",
+              "description": "Inline Azure OpenAI API key. When set, the chart creates a Secret and apiKeySecretRef defaults to it."
+            },
             "secretRef": {
               "type": "object",
               "additionalProperties": true,
@@ -56,6 +66,10 @@
           "properties": {
             "model": { "type": "string" },
             "baseURL": { "type": "string" },
+            "apiKey": {
+              "type": "string",
+              "description": "Inline Anthropic API key. When set, the chart creates a Secret and apiKeySecretRef defaults to it."
+            },
             "secretRef": {
               "type": "object",
               "additionalProperties": true,
@@ -66,6 +80,30 @@
             }
           }
         }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "format": {
+          "type": "string",
+          "description": "Log output format: text (default) or json.",
+          "enum": ["text", "json"]
+        }
+      }
+    },
+    "tracing": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "endpoint": {
+          "type": "string",
+          "description": "OTLP gRPC endpoint, set as OTEL_EXPORTER_OTLP_ENDPOINT."
+        },
+        "insecure": { "type": "boolean" },
+        "serviceName": { "type": "string" }
       }
     },
     "nirmata": {
@@ -80,8 +118,120 @@
         },
         "serviceAccountTokenSecret": { "type": "string" },
         "serviceAccountTokenSecretKey": { "type": "string" },
+        "serviceAccountToken": {
+          "type": "string",
+          "description": "Inline Nirmata service account token. When set with auth serviceAccountToken, the chart creates the Secret named by serviceAccountTokenSecret."
+        },
         "apiTokenSecret": { "type": "string" },
-        "apiTokenSecretKey": { "type": "string" }
+        "apiTokenSecretKey": { "type": "string" },
+        "apiToken": {
+          "type": "string",
+          "description": "Inline Nirmata API token. When set with auth apiToken, the chart creates a Secret (apiTokenSecret, default nirmata-api-token)."
+        }
+      }
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "description": "Git provider type for the ToolConfig CR. Must stay in sync with the spec.type enum in api/v1alpha1/toolconfig_types.go.",
+          "enum": ["github", "gitlab", "azure-devops", "bitbucket"]
+        },
+        "baseURL": {
+          "type": "string",
+          "description": "API base URL override: a self-hosted GitLab instance, or the Azure DevOps organization/collection URL. Only supported when tool.type is gitlab or azure-devops."
+        },
+        "tls": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "insecureSkipVerify": { "type": "boolean" },
+            "caBundleSecretRef": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "name": { "type": "string" },
+                "key": { "type": "string" }
+              }
+            }
+          }
+        },
+        "defaults": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "git": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "pullRequests": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "systemLabels": {
+                      "type": "array",
+                      "maxItems": 20,
+                      "description": "PR labels computed per PR. Unset applies remediatorName, clusterName, namespace and branch; [] disables them.",
+                      "items": {
+                        "type": "string",
+                        "enum": ["branch", "clusterName", "appName", "namespace", "remediatorName"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "credentials": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": ["nirmata-app", "app", "pat"]
+            },
+            "pat": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "description": "Inline GitHub PAT or GitLab access token. When set, the chart creates a Secret and tokenSecretRef defaults to it."
+                },
+                "secret": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "name": { "type": "string" },
+                    "key": { "type": "string" }
+                  }
+                }
+              }
+            },
+            "app": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "privateKey": {
+                  "type": "string",
+                  "description": "Inline PEM GitHub App private key (use --set-file). When set, the chart creates a Secret and privateKeySecretRef defaults to it."
+                },
+                "privateKeySecret": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "name": { "type": "string" },
+                    "key": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "remediator": {
@@ -96,6 +246,46 @@
               "type": "string",
               "description": "Environment type for the Remediator CR. Must stay in sync with the EnvironmentType enum in api/v1alpha1/remediator_types.go.",
               "enum": ["localCluster", "argoHub", "fluxHub"]
+            }
+          }
+        },
+        "remediation": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "remediationMode": {
+              "type": "string",
+              "description": "How remediation plans are generated. Must stay in sync with the RemediationMode enum in api/v1alpha1/remediator_types.go. llmConfigRef is only rendered for ai.",
+              "enum": ["ai", "prescriptive", ""]
+            },
+            "llmConfigRef": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "name": { "type": "string" },
+                "namespace": { "type": "string" }
+              }
+            },
+            "resourceOptimization": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "policyCategories": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
+            },
+            "eventPolling": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "allowedUsers": {
+                  "type": "array",
+                  "description": "Git usernames allowed to run @nirmatabot PR comment commands (case-insensitive). Empty allows every commenter.",
+                  "items": { "type": "string" }
+                }
+              }
             }
           }
         }
@@ -202,16 +392,29 @@
             "required": ["anthropic"],
             "properties": {
               "anthropic": {
-                "required": ["model", "secretRef"],
+                "required": ["model"],
                 "properties": {
-                  "model": { "minLength": 1 },
-                  "secretRef": {
-                    "required": ["name"],
+                  "model": { "minLength": 1 }
+                },
+                "anyOf": [
+                  {
+                    "required": ["secretRef"],
                     "properties": {
-                      "name": { "minLength": 1 }
+                      "secretRef": {
+                        "required": ["name"],
+                        "properties": {
+                          "name": { "minLength": 1 }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "required": ["apiKey"],
+                    "properties": {
+                      "apiKey": { "minLength": 1 }
                     }
                   }
-                }
+                ]
               }
             }
           }
@@ -255,17 +458,23 @@
       "then": {
         "properties": {
           "nirmata": {
-            "required": ["serviceAccountTokenSecret", "serviceAccountTokenSecretKey"],
+            "required": ["serviceAccountTokenSecretKey"],
             "properties": {
-              "serviceAccountTokenSecret": { 
+              "serviceAccountTokenSecretKey": {
                 "type": "string",
-                "minLength": 1 
-              },
-              "serviceAccountTokenSecretKey": { 
-                "type": "string",
-                "minLength": 1 
+                "minLength": 1
               }
-            }
+            },
+            "anyOf": [
+              {
+                "required": ["serviceAccountTokenSecret"],
+                "properties": { "serviceAccountTokenSecret": { "type": "string", "minLength": 1 } }
+              },
+              {
+                "required": ["serviceAccountToken"],
+                "properties": { "serviceAccountToken": { "type": "string", "minLength": 1 } }
+              }
+            ]
           }
         }
       }
@@ -286,17 +495,23 @@
       "then": {
         "properties": {
           "nirmata": {
-            "required": ["apiTokenSecret", "apiTokenSecretKey"],
+            "required": ["apiTokenSecretKey"],
             "properties": {
-              "apiTokenSecret": { 
+              "apiTokenSecretKey": {
                 "type": "string",
-                "minLength": 1 
-              },
-              "apiTokenSecretKey": { 
-                "type": "string",
-                "minLength": 1 
+                "minLength": 1
               }
-            }
+            },
+            "anyOf": [
+              {
+                "required": ["apiTokenSecret"],
+                "properties": { "apiTokenSecret": { "type": "string", "minLength": 1 } }
+              },
+              {
+                "required": ["apiToken"],
+                "properties": { "apiToken": { "type": "string", "minLength": 1 } }
+              }
+            ]
           }
         }
       }
