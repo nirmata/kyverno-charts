@@ -40624,6 +40624,31 @@ entries:
         - name: EULA
           url: https://nirmata.com/eula/
     apiVersion: v2
+    appVersion: v0.2.38
+    created: "2026-11-04T10:48:57.000000000Z"
+    digest: 26c2ba874da474fccedc331ea41c275247e6f53e1de2229065b46e68e6ff3744
+    home: https://nirmata.com/
+    keywords:
+    - kubernetes
+    - policy reports storage
+    - postgresql
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - email: support@nirmata.com
+      name: Nirmata
+      url: https://nirmata.com/
+    name: reports-server
+    sources:
+    - https://github.com/nirmata/reports-server
+    type: application
+    urls:
+    - https://github.com/nirmata/kyverno-charts/releases/download/reports-server-0.2.42/reports-server-0.2.42.tgz
+    version: 0.2.42
+  - annotations:
+      artifacthub.io/links: |
+        - name: EULA
+          url: https://nirmata.com/eula/
+    apiVersion: v2
     appVersion: v0.2.37
     created: "2026-10-26T05:22:46.489109917Z"
     digest: 900f3c86590ed55e20e6a46c1a73d4a1ab491d3c229c8c90d747cfc0ebbfabd5
