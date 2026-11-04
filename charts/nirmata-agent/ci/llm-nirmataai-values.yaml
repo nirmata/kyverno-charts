@@ -1,0 +1,5 @@
+# Nirmata AI with an explicit model.
+llm:
+  provider: nirmataAI
+  nirmataAI:
+    model: default
