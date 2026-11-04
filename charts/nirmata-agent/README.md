@@ -81,10 +81,14 @@ kubectl logs -n nirmata deploy/<release>-nirmata-agent | grep -i "LLM client"
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `tool.enabled` | Enable creation of ToolConfig resource | `true` |
-| `tool.name` | Tool name | `github-tool` |
-| `tool.type` | Tool type (currently only github) | `github` |
-| `tool.credentials.method` | Auth method (pat or app) | `pat` |
-| `tool.credentials.pat.secret.name` | Secret containing GitHub PAT | `github-token` |
+| `tool.name` | ToolConfig name. Empty defaults to `nirmata-agent-<tool.type>` (`nirmata-agent-github` / `nirmata-agent-gitlab`) | `github-tool` |
+| `tool.type` | Git provider (`github`, `gitlab`, or `azure-devops`; `azure-devops` requires `tool.credentials.method: pat`) | `github` |
+| `tool.baseURL` | API base URL of a self-hosted GitLab served under a path prefix or on a different host than the repos, or the Azure DevOps organization/collection URL (`gitlab` and `azure-devops` only). Empty derives it from each repository URL | `""` |
+| `tool.tls.caBundleSecretRef.name` | Secret (release namespace) holding a PEM CA bundle to trust for git clone and API calls | `""` |
+| `tool.tls.caBundleSecretRef.key` | Key within that Secret | `ca.crt` |
+| `tool.tls.insecureSkipVerify` | Disable TLS verification entirely (not for production) | `false` |
+| `tool.credentials.method` | Auth method (`nirmata-app`, `app` or `pat`; `app` is GitHub only) | `nirmata-app` |
+| `tool.credentials.pat.secret.name` | Secret containing the GitHub PAT or GitLab access token | `github-token` |
 | `tool.credentials.app.appId` | GitHub App ID | `""` |
 
 ### Remediator Configuration
@@ -94,9 +98,61 @@ kubectl logs -n nirmata deploy/<release>-nirmata-agent | grep -i "LLM client"
 | `remediator.enabled` | Enable creation of Remediator resource | `false` |
 | `remediator.name` | Remediator resource name | `nirmata-agent` |
 | `remediator.environment.type` | Environment type (`localCluster`, `argoHub`, or `fluxHub`) | `argoHub` |
+| `remediator.remediation.remediationMode` | `ai` (LLM-generated fixes) or `prescriptive` (deterministic resource right-sizing, no LLM) | `ai` |
+| `remediator.remediation.llmConfigRef.name` | LLMConfig used in `ai` mode; not rendered in `prescriptive` mode | `<release-name>-llm` |
+| `remediator.remediation.llmConfigRef.namespace` | Namespace of that LLMConfig | release namespace |
+| `remediator.remediation.resourceOptimization.policyCategories` | `prescriptive` only: `policies.kyverno.io/category` values that are in scope | CRD default (`["Resource Management"]`) |
 | `remediator.remediation.schedule` | Cron schedule for remediation | `0 */6 * * *` |
 | `remediator.remediation.eventPolling.enabled` | Enable PR event polling | `true` |
-| `remediator.remediation.actions` | List of remediation actions | `[{type: CreatePR}]` |
+| `remediator.remediation.actions` | List of remediation actions. `toolRefName` defaults to the chart's ToolConfig | `[{type: CreatePR}]` |
+
+#### Prescriptive mode (no LLM)
+
+`remediationMode: prescriptive` right-sizes container resources from VPA
+recommendations and policy bounds without calling an LLM, so no LLMConfig is
+needed and `llmConfigRef` is omitted from the rendered Remediator. Set
+`llm.enabled=false` to skip the LLMConfig entirely. A self-hosted GitLab with a
+private CA is supported through `tool.tls`. This example runs standalone, without
+Nirmata Control Hub credentials (`nirmata.auth: none`):
+
+```yaml
+nirmata:
+  auth: none
+
+llm:
+  enabled: false
+
+tool:
+  enabled: true
+  name: ""            # -> nirmata-agent-gitlab
+  type: gitlab
+  baseURL: ""         # only when GitLab is served under a path prefix
+  tls:
+    caBundleSecretRef:
+      name: gitlab-ca  # Secret in the release namespace, key ca.crt
+  credentials:
+    method: pat
+    pat:
+      secret:
+        name: gitlab-token
+        key: token
+
+remediator:
+  enabled: true
+  environment:
+    type: fluxHub
+  target:
+    fluxHub:
+      kustomizationSelector:
+        allKustomizations: true
+  remediation:
+    remediationMode: prescriptive
+    resourceOptimization:
+      policyCategories:
+        - "Resource Optimization"
+    actions:
+      - type: CreatePR
+```
 
 #### Remediator Target Configuration
 
