@@ -178,7 +178,12 @@ nirmata:
 tool:
   enabled: true
   name: github-tool
-  type: github
+  type: github  # Options: github, gitlab, azure-devops (azure-devops requires credentials.method: pat)
+  # Optional API base URL override, only for type gitlab or azure-devops (rejected
+  # for github): self-managed GitLab served under a path prefix or on a different API
+  # host, or the Azure DevOps organization/collection URL (e.g. Azure DevOps Server).
+  # Usually unnecessary: when empty it is derived from each repository URL.
+  # baseURL: ""
 
   # Authentication method configuration
   # Choose between:

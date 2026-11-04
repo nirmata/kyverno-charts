@@ -12,6 +12,9 @@ metadata:
     helm.sh/hook-delete-policy: before-hook-creation
 spec:
   type: {{ .Values.tool.type | quote }}
+  {{- with .Values.tool.baseURL }}
+  baseURL: {{ . | quote }}
+  {{- end }}
   credentials:
     method: {{ .Values.tool.credentials.method | quote }}
     {{- if eq .Values.tool.credentials.method "app" }}
