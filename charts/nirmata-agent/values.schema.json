@@ -68,6 +68,30 @@
         }
       }
     },
+    "logging": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "format": {
+          "type": "string",
+          "description": "Log output format: text (default) or json.",
+          "enum": ["text", "json"]
+        }
+      }
+    },
+    "tracing": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "endpoint": {
+          "type": "string",
+          "description": "OTLP gRPC endpoint, set as OTEL_EXPORTER_OTLP_ENDPOINT."
+        },
+        "insecure": { "type": "boolean" },
+        "serviceName": { "type": "string" }
+      }
+    },
     "nirmata": {
       "type": "object",
       "additionalProperties": true,
@@ -84,6 +108,47 @@
         "apiTokenSecretKey": { "type": "string" }
       }
     },
+    "tool": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "description": "Git provider type for the ToolConfig CR. Must stay in sync with the spec.type enum in api/v1alpha1/toolconfig_types.go.",
+          "enum": ["github", "gitlab", "azure-devops"]
+        },
+        "baseURL": {
+          "type": "string",
+          "description": "API base URL override: a self-hosted GitLab instance, or the Azure DevOps organization/collection URL. Only supported when tool.type is gitlab or azure-devops."
+        },
+        "tls": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "insecureSkipVerify": { "type": "boolean" },
+            "caBundleSecretRef": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "name": { "type": "string" },
+                "key": { "type": "string" }
+              }
+            }
+          }
+        },
+        "credentials": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": ["nirmata-app", "app", "pat"]
+            }
+          }
+        }
+      }
+    },
     "remediator": {
       "type": "object",
       "additionalProperties": true,
@@ -96,6 +161,35 @@
               "type": "string",
               "description": "Environment type for the Remediator CR. Must stay in sync with the EnvironmentType enum in api/v1alpha1/remediator_types.go.",
               "enum": ["localCluster", "argoHub", "fluxHub"]
+            }
+          }
+        },
+        "remediation": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "remediationMode": {
+              "type": "string",
+              "description": "How remediation plans are generated. Must stay in sync with the RemediationMode enum in api/v1alpha1/remediator_types.go. llmConfigRef is only rendered for ai.",
+              "enum": ["ai", "prescriptive", ""]
+            },
+            "llmConfigRef": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "name": { "type": "string" },
+                "namespace": { "type": "string" }
+              }
+            },
+            "resourceOptimization": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "policyCategories": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
             }
           }
         }
