@@ -2,7 +2,7 @@ apiVersion: v2
 name: nirmata-agent
 description: A Helm chart for Nirmata Service Agents
 type: application
-version: v0.2.10
+version: v0.2.11-rc.10
 appVersion: "v0.2.10"
 keywords:
   - kubernetes

@@ -16,9 +16,10 @@ spec:
   bedrock:
     model: {{ .Values.llm.bedrock.model | quote }}
     region: {{ .Values.llm.bedrock.region | quote }}
-    {{- if .Values.llm.bedrock.secretRef.name }}
+    {{- $bedrockSecret := include "go-nirmata-agent.bedrockSecretName" . }}
+    {{- if $bedrockSecret }}
     credentialsSecretRef:
-      name: {{ .Values.llm.bedrock.secretRef.name | quote }}
+      name: {{ $bedrockSecret | quote }}
       {{- if .Values.llm.bedrock.secretRef.key }}
       key: {{ .Values.llm.bedrock.secretRef.key | quote }}
       {{- end }}
@@ -28,7 +29,7 @@ spec:
     endpoint: {{ .Values.llm.azureOpenAI.endpoint | quote }}
     deploymentName: {{ .Values.llm.azureOpenAI.deploymentName | quote }}
     apiKeySecretRef:
-      name: {{ .Values.llm.azureOpenAI.secretRef.name | quote }}
+      name: {{ include "go-nirmata-agent.azureOpenAISecretName" . | quote }}
       key: {{ .Values.llm.azureOpenAI.secretRef.key | default "api-key" | quote }}
   {{- else if eq .Values.llm.provider "nirmataAI" }}
   nirmataAI:
@@ -40,7 +41,7 @@ spec:
     baseURL: {{ .Values.llm.anthropic.baseURL | quote }}
     {{- end }}
     apiKeySecretRef:
-      name: {{ required "llm.anthropic.secretRef.name is required when llm.provider is \"anthropic\"" .Values.llm.anthropic.secretRef.name | quote }}
+      name: {{ required "llm.anthropic.secretRef.name (or an inline llm.anthropic.apiKey) is required when llm.provider is \"anthropic\"" (include "go-nirmata-agent.anthropicSecretName" .) | quote }}
       key: {{ .Values.llm.anthropic.secretRef.key | default "api-key" | quote }}
   {{- else }}
   {{- fail (printf "llm.provider %q is not supported. Valid values: nirmataAI, bedrock, azure-openai, anthropic" .Values.llm.provider) }}
