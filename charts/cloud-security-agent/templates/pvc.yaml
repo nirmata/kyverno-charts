@@ -1,0 +1,18 @@
+{{- if and .Values.workspace.createPVC (not .Values.workspace.pvcName) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "cloud-security-agent.fullname" . }}-workspace
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "cloud-security-agent.labels" . | nindent 4 }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  {{- if .Values.workspace.storageClassName }}
+  storageClassName: {{ .Values.workspace.storageClassName }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.workspace.size }}
+{{- end }}
