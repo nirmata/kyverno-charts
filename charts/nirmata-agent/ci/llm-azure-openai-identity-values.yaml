@@ -1,0 +1,20 @@
+# Azure OpenAI behind an in-cluster gateway with workload identity; http is
+# allowed only because the hosts are in-cluster Services.
+# API preview: needs a Service Agent release with identity runtime support.
+llm:
+  provider: azure-openai
+  azureOpenAI:
+    endpoint: http://llm-gateway.llm.svc.cluster.local:8080/openai
+    deploymentName: gpt-4o
+  identity:
+    enabled: true
+    tokenURL: http://idp.auth.svc.cluster.local/oauth2/token
+    clientIDSecretRef:
+      name: llm-gw
+      key: id
+    clientSecretSecretRef:
+      name: llm-gw
+      key: secret
+    boundOrigins:
+      - http://llm-gateway.llm.svc.cluster.local:8080
+    allowInClusterHTTP: true

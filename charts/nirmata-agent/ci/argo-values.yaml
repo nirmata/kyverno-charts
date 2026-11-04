@@ -1,0 +1,35 @@
+# Remediator targeting ArgoCD-managed clusters, plus VCS sources and audit logging.
+logging:
+  enableAudit: true
+remediator:
+  enabled: true
+  environment:
+    type: argoHub
+  target:
+    argoHub:
+      clusterNames:
+        - prod-cluster-1
+      clusterServerUrls:
+        - https://prod-cluster.example.com
+      appSelector:
+        labelSelector:
+          matchLabels:
+            environment: production
+    vcs:
+      policies:
+        - name: pss-restricted
+          repo: https://github.com/nirmata/kyverno-policies
+          path: pod-security/restricted
+          ref: main
+      resources:
+        - name: nginx-deployment
+          repo: https://github.com/nirmata/demo-remediator
+          path: apps/nginx
+          ref: main
+          policyRefs:
+            - pss-restricted
+  remediation:
+    actions:
+      - type: CreatePR
+      - type: DryRun
+        toolRefName: dryrun-tool

@@ -42,13 +42,17 @@ spec:
               baseURL:
                 description: |-
                   BaseURL overrides the API base URL of a self-hosted GitLab instance
-                  (for example "https://gitlab.example.internal"). Only supported when type is "gitlab".
+                  (for example "https://gitlab.example.internal") or of Azure DevOps.
+                  Only supported when type is "gitlab" or "azure-devops".
                   Optional: when empty, the base URL is derived from each repository URL
                   (scheme://host[:port]), which is correct for gitlab.com and for self-hosted GitLab
                   served at the host root. Set it explicitly when GitLab is served under a URL path
                   prefix (for example "https://host/gitlab") or when the API host differs from the
                   repository host. Must be an http(s) URL with a host; userinfo, query strings and
                   fragments are not allowed.
+                  For azure-devops it is the organization- or collection-level URL (for example
+                  "https://dev.azure.com/myorg" or "https://tfs.corp.example.com/DefaultCollection");
+                  when empty, the organization or collection is derived from each repository URL.
                 maxLength: 2048
                 pattern: ^https?://[^/\s?#@]+(/[^\s?#]*)?$
                 type: string
@@ -106,9 +110,50 @@ spec:
                       PAT-based authentication using Personal Access Token
                       Required when method == "pat"
                     properties:
+                      gitUsernameSecretRef:
+                        description: |-
+                          GitUsernameSecretRef points to a Secret key containing the Bitbucket account username
+                          used for git HTTPS clone operations. Bitbucket Classic App Passwords require the account
+                          username (e.g. "nsagark"), while the REST API v2 requires the email address
+                          (e.g. "user@example.com") on Atlassian-managed accounts. When these two differ, set
+                          UsernameSecretRef to the email and GitUsernameSecretRef to the account username.
+                          If omitted, UsernameSecretRef is used for both REST API and git operations.
+                        properties:
+                          key:
+                            description: Key is the key within the secret
+                            type: string
+                          name:
+                            description: Name is the name of the secret
+                            type: string
+                          namespace:
+                            description: Namespace is the namespace of the secret
+                            type: string
+                        required:
+                        - key
+                        - name
+                        type: object
                       tokenSecretRef:
                         description: TokenSecretRef points to a Secret key containing
-                          the PAT token
+                          the PAT token (or app-password for Bitbucket)
+                        properties:
+                          key:
+                            description: Key is the key within the secret
+                            type: string
+                          name:
+                            description: Name is the name of the secret
+                            type: string
+                          namespace:
+                            description: Namespace is the namespace of the secret
+                            type: string
+                        required:
+                        - key
+                        - name
+                        type: object
+                      usernameSecretRef:
+                        description: |-
+                          UsernameSecretRef points to a Secret key containing the username.
+                          Required only for Bitbucket, which uses username + app-password authentication.
+                          For GitHub and GitLab the token alone is sufficient.
                         properties:
                           key:
                             description: Key is the key within the secret
@@ -163,9 +208,12 @@ spec:
                           systemLabels:
                             description: |-
                               SystemLabels are dynamic labels with values computed at runtime
-                              Supported values: branch, clusterName, appName, namespace
-                              System labels follow the format "key:value" (e.g., "cluster:prod-cluster")
-                              Labels are only applied if data is available in the remediation context
+                              Supported values: branch, clusterName, appName, namespace, remediatorName
+                              System labels follow the format "key:value" (e.g., "cluster:prod-cluster",
+                              "remediator:my-remediator")
+                              Labels are only applied if data is available in the remediation context.
+                              When unset, remediatorName, clusterName, namespace and branch are applied;
+                              set an empty list to disable system labels.
                             items:
                               type: string
                             maxItems: 20
@@ -213,14 +261,16 @@ spec:
                 enum:
                 - github
                 - gitlab
+                - azure-devops
+                - bitbucket
                 type: string
             required:
             - credentials
             - type
             type: object
             x-kubernetes-validations:
-            - message: baseURL is only supported when type is 'gitlab'
-              rule: '!has(self.baseURL) || self.type == ''gitlab'''
+            - message: baseURL is only supported when type is 'gitlab' or 'azure-devops'
+              rule: '!has(self.baseURL) || self.type in [''gitlab'', ''azure-devops'']'
           status:
             description: ToolConfigStatus defines the observed state of ToolConfig.
             type: object
