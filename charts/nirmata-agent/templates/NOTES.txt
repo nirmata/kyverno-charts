@@ -20,11 +20,11 @@
 🚀 Next Steps:
 {{- if .Values.llm.enabled }}
    ✓ LLMConfig created: {{ include "go-nirmata-agent.name" . }}-llm
-{{- else }}
+{{- else if ne (include "go-nirmata-agent.remediationMode" .) "prescriptive" }}
    1. Configure LLMConfig for your AI provider
 {{- end }}
 {{- if .Values.tool.enabled }}
-   ✓ ToolConfig created: {{ .Values.tool.name | default (printf "%s-github" (include "go-nirmata-agent.name" .)) }}
+   ✓ ToolConfig created: {{ include "go-nirmata-agent.toolName" . }}
 {{- else }}
    2. Set up ToolConfig for Git provider authentication
 {{- end }}
