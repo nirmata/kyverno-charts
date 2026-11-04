@@ -1,0 +1,8 @@
+# Azure OpenAI; secretRef.key falls back to the default "api-key".
+llm:
+  provider: azure-openai
+  azureOpenAI:
+    endpoint: https://my-resource.openai.azure.com
+    deploymentName: gpt-4o
+    secretRef:
+      name: azure-openai-key
