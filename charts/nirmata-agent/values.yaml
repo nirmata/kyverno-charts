@@ -86,6 +86,23 @@ logging:
   verbosity: 0
   # Enable audit logging (if true, overrides verbosity=0 to ensure audit logs are visible)
   enableAudit: false
+  # Log output format: "text" (human-readable, the default) or "json" (one JSON object
+  # per line, including klog output, for log collectors such as the OpenTelemetry Collector)
+  format: text
+
+# OpenTelemetry tracing. Spans cover each Remediator run, collector, plan generation and
+# action execution, and are exported over OTLP gRPC. The standard OTEL_* environment
+# variables also work (see docs/observability.md).
+tracing:
+  # Export traces. When false, tracing stays off unless OTEL_EXPORTER_OTLP_ENDPOINT is set.
+  enabled: false
+  # OTLP gRPC endpoint (sets OTEL_EXPORTER_OTLP_ENDPOINT), e.g.
+  # http://otel-collector.observability:4317. Empty uses the exporter default (localhost:4317).
+  endpoint: ""
+  # Connect without TLS (sets OTEL_EXPORTER_OTLP_INSECURE=true).
+  insecure: false
+  # service.name resource attribute (sets OTEL_SERVICE_NAME). Empty uses go-nirmata-agent.
+  serviceName: ""
 
 nodeSelector: {}
 tolerations: []
@@ -101,6 +118,24 @@ metrics:
     type: ClusterIP
     port: 8443
 
+# Inline credentials (optional, single-command install)
+# -----------------------------------------------------
+# Every credential below can be supplied either as a reference to an existing
+# Secret (the *secretRef / *Secret values) or inline (serviceAccountToken,
+# apiToken, apiKey, accessKeyId/secretAccessKey, pat.token, app.privateKey).
+# When an inline value is set, the chart creates the Secret and points the
+# consumer at it; the existing secret-name value, if set, becomes the generated
+# Secret's name. Nothing is created when inline values are empty.
+#
+# SECURITY: inline values are stored in the Helm release (a Secret in the
+# release namespace) and in your shell history or values files. Prefer
+# pre-created Secrets or an external secret manager (External Secrets Operator,
+# Sealed Secrets, Vault) for production, and pass inline values with
+# --set / --set-file rather than committing them to a values file. A generated
+# Secret is deleted on helm uninstall, and installing one whose name already
+# exists (e.g. a manually created nirmata-service-account-token) fails until the
+# existing Secret is removed or a different name is chosen.
+
 # LLM provider configuration for creating an LLMConfig CR
 llm:
   enabled: true
@@ -108,6 +143,12 @@ llm:
   bedrock:
     model: ""
     region: ""
+    # Inline AWS credentials (optional). Set both to create
+    # nirmata-agent-bedrock-credentials (or secretRef.name, if set).
+    # Leave empty for Pod Identity / IRSA or a pre-created Secret.
+    accessKeyId: ""
+    secretAccessKey: ""
+    sessionToken: ""
     secretRef:
       name: ""
       # Optional for some auth methods
@@ -115,6 +156,9 @@ llm:
   azureOpenAI:
     endpoint: ""
     deploymentName: ""
+    # Inline API key (optional). Creates nirmata-agent-azure-openai
+    # (or secretRef.name, if set) under secretRef.key.
+    apiKey: ""
     secretRef:
       name: ""
       # Defaults to standard header key
@@ -129,6 +173,9 @@ llm:
     # Optional. Include the scheme, e.g. https://ai-gateway.internal
     # Leave empty to use https://api.anthropic.com
     baseURL: ""
+    # Inline API key (optional). Creates nirmata-agent-anthropic
+    # (or secretRef.name, if set) under secretRef.key.
+    apiKey: ""
     secretRef:
       name: ""
       key: "api-key"
@@ -158,33 +205,69 @@ nirmata:
   # Used when auth is set to "serviceAccountToken"
   # The secret must be in the same namespace as the deployment
   # Create manually: kubectl create secret generic nirmata-service-account-token --from-literal=service-account-token=YOUR_TOKEN -n <namespace>
+  # or set serviceAccountToken below to have the chart create it.
   serviceAccountTokenSecret: "nirmata-service-account-token"
 
   # Key within the secret containing Nirmata service account token
   # Defaults to "service-account-token"
   serviceAccountTokenSecretKey: "service-account-token"
 
+  # Inline service account token (optional). When set and auth is
+  # "serviceAccountToken", the chart creates serviceAccountTokenSecret.
+  serviceAccountToken: ""
+
   # API Token configuration
   # Used when auth is set to "apiToken"
   # The secret must be in the same namespace as the deployment
   # Create manually: kubectl create secret generic nirmata-api-token --from-literal=api-token=YOUR_API_TOKEN -n <namespace>
+  # or set apiToken below to have the chart create it.
   apiTokenSecret: ""
 
   # Key within the secret containing Nirmata API token
   # Defaults to "api-token"
   apiTokenSecretKey: "api-token"
 
-# ToolConfig for GitHub (used by CreatePR)
+  # Inline API token (optional). When set and auth is "apiToken", the chart
+  # creates apiTokenSecret (default name: nirmata-api-token).
+  apiToken: ""
+
+# ToolConfig for the git provider (used by CreatePR / DryRun and for cloning)
 tool:
   enabled: true
+  # ToolConfig name. Leave empty to default to nirmata-agent-<type>
+  # (nirmata-agent-github or nirmata-agent-gitlab).
   name: github-tool
+  # Git provider. One of: github | gitlab | azure-devops | bitbucket
+  # (azure-devops and bitbucket require credentials.method: pat; bitbucket also
+  # requires credentials.pat.usernameSecret)
   type: github
+
+  # Optional API base URL override, only for tool.type gitlab or azure-devops
+  # (rejected for github). By default it is derived from each repository URL,
+  # which is correct for gitlab.com and for GitLab served at the host root. Set it
+  # when GitLab is served under a URL path prefix (e.g.
+  # https://gitlab.example.internal/gitlab), when the API host differs from the
+  # repository host, or to the Azure DevOps organization/collection URL (e.g.
+  # Azure DevOps Server).
+  baseURL: ""
+
+  # TLS settings for connections to the git provider (git clone and API calls).
+  # Use caBundleSecretRef when the server certificate is signed by a private or
+  # corporate CA. The Secret must live in the release namespace and hold a
+  # PEM-encoded CA bundle under `key`.
+  tls:
+    # Disables certificate verification entirely. Not recommended for production.
+    insecureSkipVerify: false
+    caBundleSecretRef:
+      name: ""
+      key: "ca.crt"
 
   # Authentication method configuration
   # Choose between:
   #   - "nirmata-app" (default & recommended): Uses Nirmata-managed GitHub App with existing credentials
-  #   - "app": Custom GitHub App authentication with private key
-  #   - "pat": Personal Access Token (simplest for testing)
+  #   - "app": Custom GitHub App authentication with private key (github only)
+  #   - "pat": Personal / project access token (github, gitlab, azure-devops), or a
+  #            Bitbucket app-password plus usernameSecret (simplest for testing)
   credentials:
     method: nirmata-app  # Options: "nirmata-app" (default), "app", or "pat"
 
@@ -198,17 +281,37 @@ tool:
     #   privateKeySecret:
     #     name: "github-app-private-key"
     #     key: "private-key.pem"
+    #   # Or supply the PEM key inline and let the chart create the Secret
+    #   # (nirmata-agent-github-app unless privateKeySecret.name is set):
+    #   #   --set-file tool.credentials.app.privateKey=./private-key.pem
+    #   privateKey: ""
 
     # PAT configuration (uncomment and use when method: pat)
     # pat:
     #   secret:
     #     name: "github-token"
     #     key: "token"
+    #   # Or supply the token inline and let the chart create the Secret
+    #   # (nirmata-agent-git-token unless secret.name is set):
+    #   token: ""
+    #   # Bitbucket only: username for REST API calls (the account email on
+    #   # Atlassian-managed accounts). Required when tool.type is bitbucket.
+    #   usernameSecret:
+    #     name: "bitbucket-credentials"
+    #     key: "username"
+    #   # Bitbucket only, optional: account username for git HTTPS clone, when it
+    #   # differs from usernameSecret. Defaults to usernameSecret.
+    #   gitUsernameSecret:
+    #     name: "bitbucket-credentials"
+    #     key: "git-username"
 
   defaults:
     git:
       pullRequests:
         branchPrefix: remediation-
+        # PR labels computed per PR: branch, clusterName, appName, namespace, remediatorName.
+        # Unset: remediatorName, clusterName, namespace and branch. [] turns them off.
+        # systemLabels: []
 
 # Remediator CR
 remediator:
@@ -263,13 +366,35 @@ remediator:
     #       policyRefs:
     #         - pss-restricted
   remediation:
+    # How remediation plans are generated. One of:
+    #   ai:           an LLM generates the fix (requires an LLMConfig; see llmConfigRef)
+    #   prescriptive: deterministic resource right-sizing from VPA recommendations
+    #                 and policy bounds; no LLM and no LLMConfig are needed
+    remediationMode: ai
+
+    # LLMConfig used in ai mode. Ignored (and not rendered) in prescriptive mode.
+    llmConfigRef:
+      # Defaults to nirmata-agent-llm, the LLMConfig this chart creates when llm.enabled=true
+      name: ""
+      # Defaults to the release namespace
+      namespace: ""
+
+    # Prescriptive mode only: policies whose policies.kyverno.io/category
+    # annotation is in this list are remediated. Omit to use the CRD default
+    # ("Resource Management").
+    # resourceOptimization:
+    #   policyCategories:
+    #     - "Resource Management"
+
     schedule: "0 */6 * * *"
     eventPolling:
       enabled: true
       # intervalMinutes: 5  # Optional: polling interval in minutes (default: 5)
     actions:
       - type: CreatePR
-        toolRefName: github-tool
+        # toolRefName defaults to the ToolConfig created by this chart
+        # (tool.name, or nirmata-agent-<tool.type> when tool.name is empty)
+        # toolRefName: github-tool
 
 # Agent Configuration
 # Deploy a custom Agent resource for autonomous operations
