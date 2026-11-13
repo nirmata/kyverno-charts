@@ -2,7 +2,7 @@
 
 Kubernetes Native Policy Management
 
-![Version: 3.8.7](https://img.shields.io/badge/Version-3.8.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.18.0-n4k.nirmata.8](https://img.shields.io/badge/AppVersion-v1.18.0--n4k.nirmata.8-informational?style=flat-square)
+![Version: 3.8.8](https://img.shields.io/badge/Version-3.8.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.18.0-n4k.nirmata.9](https://img.shields.io/badge/AppVersion-v1.18.0--n4k.nirmata.9-informational?style=flat-square)
 
 ## About
 
@@ -962,7 +962,7 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | reports-server.service.port | int | `443` | Service port |
 | reports-server.config.etcd.image.registry | string | `"ghcr.io"` | Image registry |
 | reports-server.config.etcd.image.repository | string | `"nirmata/etcd"` | Image repository |
-| reports-server.config.etcd.image.tag | string | `"3.6.15-hardened"` | Image tag |
+| reports-server.config.etcd.image.tag | string | `"3.6.16-hardened"` | Image tag |
 | reports-server.config.etcd.imagePullSecrets | list | `[]` | Image pull secrets |
 | reports-server.config.etcd.enabled | bool | `true` |  |
 | reports-server.config.etcd.endpoints | string | `nil` |  |
@@ -1073,7 +1073,7 @@ Kubernetes: `>=1.25.0-0`
 |  | grafana | 3.8.0 |
 | https://kyverno.github.io/api | kyverno-api | 0.0.1-alpha.2 |
 | https://nirmata.github.io/kyverno-charts | kyverno-notation-aws | 2.0.0 |
-| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.41 |
+| https://nirmata.github.io/kyverno-charts | reports-server | 0.2.43 |
 | https://openreports.github.io/reports-api | openreports | 0.1.0 |
 
 ## Maintainers
