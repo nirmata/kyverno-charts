@@ -8,6 +8,25 @@
 {{- $policySets := get $features "policySets" | default dict }}
 {{- $psEnabled := hasKey $policySets "enabled" | ternary $policySets.enabled $readWriteMode }}
 
+{{- /*
+  kyvernoCleanup.policyExceptionRbac.enabled (default true) controls the ClusterRole that lets the
+  Kyverno cleanup controller delete TTL-labelled PolicyExceptions (see the ClusterRole below).
+  A missing/null kyvernoCleanup or policyExceptionRbac block (e.g. `--set kyvernoCleanup=null`)
+  falls back to the default (true) instead of failing the render.
+*/}}
+{{- $kyvernoCleanup := .Values.kyvernoCleanup | default dict }}
+{{- $cleanupPolexRbac := get $kyvernoCleanup "policyExceptionRbac" | default dict }}
+{{- $cleanupPolexRbacEnabled := hasKey $cleanupPolexRbac "enabled" | ternary $cleanupPolexRbac.enabled true }}
+
+{{- /*
+  $polexKinds: the PolicyException kinds (API group + watched versions) from the
+  `controller.policyExceptionKinds` helper in _helpers.tpl, the single source of truth. It is
+  looped below in four places: the readonly role, the policy-exceptions write role, the Kyverno
+  cleanup role and the WatchedResources list of the config ConfigMap. To add or change a kind,
+  edit the helper, not these loops.
+*/}}
+{{- $polexKinds := include "controller.policyExceptionKinds" . | fromYamlArray }}
+
 {{- if and .Values.kubeController.customCACert (not .Values.kubeController.customCaConfigMap) }}
 ---
 apiVersion: v1
@@ -78,7 +97,6 @@ rules:
   - policies/status
   - clusterpolicies
   - clusterpolicies/status
-  - policyexceptions
   - cleanuppolicies
   - clustercleanuppolicies
   - generaterequests
@@ -109,12 +127,23 @@ rules:
   - namespaceddeletingpolicies/status
   - namespacedimagevalidatingpolicies
   - namespacedimagevalidatingpolicies/status
+  verbs:
+  - get
+  - list
+  - watch
+# PolicyExceptions: one read rule per API group, generated from the
+# `controller.policyExceptionKinds` helper (single source of truth shared with the write role,
+# the Kyverno cleanup role and the WatchedResources list). Edit the helper, not this loop.
+{{- range $polexKinds }}
+- apiGroups: [{{ .group | quote }}]
+  resources:
   - policyexceptions
   - policyexceptions/status
   verbs:
   - get
   - list
   - watch
+{{- end }}
 - apiGroups: ["wgpolicyk8s.io"]
   resources:
   - policyreports
@@ -222,15 +251,10 @@ kind: ClusterRole
 metadata:
   name: nirmata:policy-exceptions
 rules:
-- apiGroups: ["kyverno.io"]
-  resources:
-  - policyexceptions
-  verbs:
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups: ["policies.kyverno.io"]
+# One write rule per PolicyException API group, generated from the
+# `controller.policyExceptionKinds` helper (see _helpers.tpl).
+{{- range $polexKinds }}
+- apiGroups: [{{ .group | quote }}]
   resources:
   - policyexceptions
   - policyexceptions/status
@@ -239,6 +263,7 @@ rules:
   - update
   - patch
   - delete
+{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -252,6 +277,51 @@ subjects:
 - kind: ServiceAccount
   name: nirmata
   namespace: {{ .Values.namespace }}
+{{- if $cleanupPolexRbacEnabled }}
+---
+# Lets the Kyverno cleanup controller delete the PolicyExceptions Nirmata creates.
+#
+# Why: the controller stamps the PolicyExceptions it creates (kyverno.io v2/v2beta1 and
+# policies.kyverno.io v1beta1) with a `cleanup.kyverno.io/ttl` label. Kyverno's cleanup
+# controller only deletes a TTL-labelled resource if ITS ServiceAccount may `delete` it:
+# its TTL manager checks `watch`, `list` and `delete` via SelfSubjectAccessReview and skips
+# resources lacking any of them (pkg/controllers/ttl/utils.go `HasResourcePermissions`).
+# The Kyverno chart (enterprise-kyverno v1.15 - v1.19, templates/cleanup-controller/clusterrole.yaml)
+# gives it no policyexceptions rights on kyverno.io, and only get/list/patch/update/watch (no
+# `delete`) on policies.kyverno.io policyexceptions, so expired exceptions would never be
+# removed (CS-3887).
+#
+# How: Kyverno builds the cleanup controller's ClusterRole with an `aggregationRule` that
+# selects every ClusterRole labelled `rbac.kyverno.io/aggregate-to-cleanup-controller: "true"`.
+# Labelling this role is therefore enough: no ClusterRoleBinding is needed, and it keeps
+# working whatever Kyverno's release name or namespace is. If Kyverno is installed with
+# `cleanupController.rbac.create=false` the aggregating role does not exist and this label
+# has no effect; grant the cleanup controller these rules yourself in that case.
+#
+# Only rendered together with the policy-exceptions feature (the role above), because that is
+# the only thing that creates PolicyExceptions. Disable with
+# `--set kyvernoCleanup.policyExceptionRbac.enabled=false`.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nirmata:kyverno-cleanup-policy-exceptions
+  labels:
+    rbac.kyverno.io/aggregate-to-cleanup-controller: "true"
+rules:
+# One rule per PolicyException API group, generated from the `controller.policyExceptionKinds`
+# helper (see _helpers.tpl) so a new kind is covered here too. The TTL manager needs exactly
+# get/list/watch/delete on the resource, no status subresource.
+{{- range $polexKinds }}
+- apiGroups: [{{ .group | quote }}]
+  resources:
+  - policyexceptions
+  verbs:
+  - get
+  - list
+  - watch
+  - delete
+{{- end }}
+{{- end }}
 {{- end }}
 {{- if $psEnabled }}
 ---
@@ -388,8 +458,11 @@ data:
     namespacedgeneratingpolicies.v1.policies.kyverno.io
     namespaceddeletingpolicies.v1.policies.kyverno.io
     namespacedimagevalidatingpolicies.v1.policies.kyverno.io
-    policyexceptions.v2beta1.kyverno.io
-    policyexceptions.v2.kyverno.io
+    {{- /* PolicyException kinds: one line per watched version of each group in the
+           controller.policyExceptionKinds helper. Default renders v2beta1 and v2 of kyverno.io. */}}
+    {{- range $polexKinds }}{{ $group := .group }}{{ range .watchVersions }}
+    policyexceptions.{{ . }}.{{ $group }}
+    {{- end }}{{ end }}
     clusterconfigs.v1alpha1.nirmata.io
     policysets.v1alpha1.security.nirmata.io
     kyvernoconfigs.v1alpha1.security.nirmata.io
