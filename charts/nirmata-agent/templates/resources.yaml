@@ -1,0 +1,111 @@
+{{- /*
+The agent's custom resources (ToolConfig, LLMConfig, Agent, Remediator) cannot be ordinary
+release objects: their CRDs are templates of this release (the crds subchart), and Helm
+resolves every kind before it creates anything, so a fresh install would fail. They used to
+be post-install/post-upgrade hooks, but Helm deletes and recreates a hook on every upgrade:
+the Remediator got a new UID, the garbage collector deleted the RemediationRecords it owns,
+and the upgraded agent opened duplicate PRs (#660).
+
+Instead, the rendered CRs go into this ConfigMap (a release object, updated before the
+post-* hooks run) and a post-install/post-upgrade Job runs the agent image with
+--apply-manifests, which creates missing CRs and updates existing ones in place, keeping
+their UID and status (internal/chartapply). File names order the apply: referenced
+configs first, the Remediator last.
+*/}}
+{{- $manifests := dict }}
+{{- range $file, $tpl := dict "10-toolconfig.yaml" "toolconfig" "20-llmconfig.yaml" "llmconfig" "30-agent.yaml" "agent" "40-remediator.yaml" "remediator" }}
+  {{- $m := include (printf "go-nirmata-agent.manifest.%s" $tpl) $ | trim }}
+  {{- if $m }}
+    {{- $_ := set $manifests $file $m }}
+  {{- end }}
+{{- end }}
+{{- if $manifests }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "go-nirmata-agent.fullname" . }}-resources
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-nirmata-agent.labels" . | nindent 4 }}
+data:
+  {{- range $file, $m := $manifests }}
+  {{ $file }}: |
+    {{- $m | nindent 4 }}
+  {{- end }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  {{- /* The Job controller copies the name into a pod label (max 63 characters). */}}
+  name: {{ include "go-nirmata-agent.fullname" . | trunc 47 | trimSuffix "-" }}-apply-resources
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-nirmata-agent.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "5"
+    # The Job (not the CRs) is recreated per release; a failed one is kept for its logs.
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        # Not the Deployment's selector labels: the Service and the controller's pod
+        # selectors must not match this pod.
+        app.kubernetes.io/name: {{ include "go-nirmata-agent.name" . }}-apply-resources
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ include "go-nirmata-agent.serviceAccountName" . }}
+      restartPolicy: Never
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: apply-resources
+          # The agent image itself: the release already depends on it, so the apply needs
+          # no extra image.
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --apply-manifests=/manifests
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65532
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 32Mi
+          volumeMounts:
+            - name: manifests
+              mountPath: /manifests
+              readOnly: true
+      volumes:
+        - name: manifests
+          configMap:
+            name: {{ include "go-nirmata-agent.fullname" . }}-resources
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

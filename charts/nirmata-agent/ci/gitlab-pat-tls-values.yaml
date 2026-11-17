@@ -1,0 +1,21 @@
+# Self-hosted GitLab under a path prefix, PAT auth, private CA bundle.
+tool:
+  name: ""
+  type: gitlab
+  baseURL: https://gitlab.example.internal/gitlab
+  tls:
+    caBundleSecretRef:
+      name: gitlab-ca
+      key: ca.crt
+  credentials:
+    method: pat
+    pat:
+      secret:
+        name: gitlab-token
+        key: token
+  defaults:
+    git:
+      pullRequests:
+        branchPrefix: remediation-
+        # Explicit opt-out of the default system labels must render as [].
+        systemLabels: []

@@ -1,3 +1,9 @@
+{{- /*
+The remediator custom resource. It is not rendered as a release object: the chart puts it in
+the resources ConfigMap and the apply-resources hook Job applies it in place (resources.yaml,
+#660).
+*/}}
+{{- define "go-nirmata-agent.manifest.remediator" -}}
 {{- if .Values.remediator.enabled }}
 {{- if eq .Values.remediator.environment.type "fluxHub" }}
   {{- $flux := (.Values.remediator.target | default dict).fluxHub | default dict }}
@@ -12,14 +18,13 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "go-nirmata-agent.labels" . | nindent 4 }}
-  annotations:
-    helm.sh/hook: post-install,post-upgrade
-    helm.sh/hook-weight: "5"
-    helm.sh/hook-delete-policy: before-hook-creation
 spec:
   environment:
     type: {{ .Values.remediator.environment.type }}
-  {{- if .Values.remediator.target }}
+  {{- /* localCluster may have no target block at all; don't emit an empty (null) target. */}}
+  {{- $target := .Values.remediator.target | default dict }}
+  {{- $isLocal := eq .Values.remediator.environment.type "localCluster" }}
+  {{- if and $target (or (not $isLocal) $target.localCluster $target.vcs) }}
   target:
     {{- if and (eq .Values.remediator.environment.type "localCluster") .Values.remediator.target.localCluster }}
     localCluster:
@@ -85,7 +90,12 @@ spec:
       {{- end }}
     {{- end }}
   {{- end }}
+  {{- $mode := include "go-nirmata-agent.remediationMode" . }}
+  {{- if not (or (eq $mode "ai") (eq $mode "prescriptive")) }}
+  {{- fail (printf "remediator.remediation.remediationMode must be 'ai' or 'prescriptive', got: '%s'" $mode) }}
+  {{- end }}
   remediation:
+    remediationMode: {{ $mode | quote }}
     triggers:
       - schedule:
           crontab: {{ .Values.remediator.remediation.schedule | quote }}
@@ -95,24 +105,43 @@ spec:
         matchSeverity:
           {{- toYaml .Values.remediator.remediation.matchSeverity | nindent 10 }}
     {{- end }}
+    {{- if eq $mode "ai" }}
+    {{- /* The CRD requires llmConfigRef only in ai mode; prescriptive runs without an LLM. */}}
+    {{- $llmRef := .Values.remediator.remediation.llmConfigRef | default dict }}
     llmConfigRef:
-      name: {{ include "go-nirmata-agent.name" . }}-llm
-      namespace: {{ .Release.Namespace }}
+      name: {{ $llmRef.name | default (printf "%s-llm" (include "go-nirmata-agent.name" .)) | quote }}
+      namespace: {{ $llmRef.namespace | default .Release.Namespace | quote }}
+    {{- else }}
+    {{- with .Values.remediator.remediation.resourceOptimization }}
+    {{- with .policyCategories }}
+    resourceOptimization:
+      policyCategories:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
     gitCredentials:
-      name: {{ .Values.tool.name | default (printf "%s-github" (include "go-nirmata-agent.name" .)) }}
+      name: {{ include "go-nirmata-agent.toolName" . | quote }}
       namespace: {{ .Release.Namespace }}
+    {{- /* hasKey, not `default true`: default treats an explicit false as unset. */}}
+    {{- $eventPolling := .Values.remediator.remediation.eventPolling | default dict }}
     eventPolling:
-      enabled: {{ if .Values.remediator.remediation.eventPolling }}{{ .Values.remediator.remediation.eventPolling.enabled | default true }}{{ else }}true{{ end }}
+      enabled: {{ if hasKey $eventPolling "enabled" }}{{ $eventPolling.enabled }}{{ else }}true{{ end }}
       {{- if and .Values.remediator.remediation.eventPolling .Values.remediator.remediation.eventPolling.intervalMinutes }}
       intervalMinutes: {{ .Values.remediator.remediation.eventPolling.intervalMinutes }}
+      {{- end }}
+      {{- with $eventPolling.allowedUsers }}
+      allowedUsers:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
     actions:
       {{- range .Values.remediator.remediation.actions }}
       - type: {{ .type }}
         {{- if or (eq .type "CreatePR") (eq .type "DryRun") }}
         toolRef:
-          name: {{ .toolRefName | default $.Values.tool.name | default (printf "%s-github" (include "go-nirmata-agent.name" $)) }}
+          name: {{ .toolRefName | default (include "go-nirmata-agent.toolName" $) | quote }}
           namespace: {{ $.Release.Namespace }}
         {{- end }}
       {{- end }}
+{{- end }}
 {{- end }}

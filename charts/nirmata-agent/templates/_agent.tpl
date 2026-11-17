@@ -1,3 +1,9 @@
+{{- /*
+The agent custom resource. It is not rendered as a release object: the chart puts it in
+the resources ConfigMap and the apply-resources hook Job applies it in place (resources.yaml,
+#660).
+*/}}
+{{- define "go-nirmata-agent.manifest.agent" -}}
 {{- if .Values.agent.enabled }}
 {{- if not .Values.agent.prompt }}
 {{- fail "agent.prompt is required when agent.enabled is true" }}
@@ -20,10 +26,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "go-nirmata-agent.labels" . | nindent 4 }}
-  annotations:
-    helm.sh/hook: post-install,post-upgrade
-    helm.sh/hook-weight: "5"
-    helm.sh/hook-delete-policy: before-hook-creation
 spec:
   prompt: {{ .Values.agent.prompt | quote }}
   {{- if .Values.agent.tools }}
@@ -105,4 +107,4 @@ spec:
     namespace: {{ .Release.Namespace }}
     {{- end }}
 {{- end }}
-
+{{- end }}

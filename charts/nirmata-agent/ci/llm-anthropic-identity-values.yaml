@@ -1,0 +1,31 @@
+# Anthropic through an enterprise LLM gateway with workload identity (OAuth2
+# client credentials) instead of an API key, restricted to two extra namespaces.
+# API preview: needs a Service Agent release with identity runtime support.
+nirmata:
+  auth: none
+llm:
+  provider: anthropic
+  anthropic:
+    model: claude-sonnet-4-6
+    baseURL: https://llm-gateway.example.internal
+  identity:
+    enabled: true
+    tokenURL: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
+    scopes:
+      - api://llm-gateway/.default
+    clientIDSecretRef:
+      name: llm-gw
+    clientSecretSecretRef:
+      name: llm-gw
+    boundOrigins:
+      - https://llm-gateway.example.internal
+  allowedNamespaces:
+    - team-b
+    - team-c
+tool:
+  credentials:
+    method: pat
+    pat:
+      secret:
+        name: github-token
+        key: token
