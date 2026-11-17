@@ -1,0 +1,98 @@
+{{- /*
+The toolconfig custom resource. It is not rendered as a release object: the chart puts it in
+the resources ConfigMap and the apply-resources hook Job applies it in place (resources.yaml,
+#660).
+*/}}
+{{- define "go-nirmata-agent.manifest.toolconfig" -}}
+{{- if .Values.tool.enabled }}
+apiVersion: serviceagents.nirmata.io/v1alpha1
+kind: ToolConfig
+metadata:
+  name: {{ include "go-nirmata-agent.toolName" . | quote }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-nirmata-agent.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.tool.type | quote }}
+  {{- if .Values.tool.baseURL }}
+  {{- if not (has .Values.tool.type (list "gitlab" "azure-devops")) }}
+  {{- fail "tool.baseURL is only supported when tool.type is 'gitlab' or 'azure-devops'" }}
+  {{- end }}
+  baseURL: {{ .Values.tool.baseURL | quote }}
+  {{- end }}
+  {{- with .Values.tool.tls }}
+  {{- $caBundle := .caBundleSecretRef | default dict }}
+  {{- if or .insecureSkipVerify $caBundle.name }}
+  tls:
+    {{- if .insecureSkipVerify }}
+    insecureSkipVerify: true
+    {{- end }}
+    {{- if $caBundle.name }}
+    caBundleSecretRef:
+      name: {{ $caBundle.name | quote }}
+      key: {{ $caBundle.key | default "ca.crt" | quote }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+  credentials:
+    method: {{ .Values.tool.credentials.method | quote }}
+    {{- if eq .Values.tool.credentials.method "app" }}
+    {{- if .Values.tool.credentials.app }}
+    app:
+      appId: {{ .Values.tool.credentials.app.appId }}
+      {{- if .Values.tool.credentials.app.installationId }}
+      installationId: {{ .Values.tool.credentials.app.installationId }}
+      {{- end }}
+      privateKeySecretRef:
+        name: {{ required "tool.credentials.app.privateKeySecret.name or tool.credentials.app.privateKey is required when method is 'app'" (include "go-nirmata-agent.appPrivateKeySecretName" .) | quote }}
+        key: {{ include "go-nirmata-agent.appPrivateKeySecretKey" . | quote }}
+    {{- else }}
+    {{- fail "tool.credentials.app must be configured when method is 'app'" }}
+    {{- end }}
+    {{- else if eq .Values.tool.credentials.method "pat" }}
+    {{- if .Values.tool.credentials.pat }}
+    pat:
+      tokenSecretRef:
+        name: {{ required "tool.credentials.pat.secret.name or tool.credentials.pat.token is required when method is 'pat'" (include "go-nirmata-agent.patSecretName" .) | quote }}
+        key: {{ include "go-nirmata-agent.patSecretKey" . | quote }}
+      {{- with .Values.tool.credentials.pat.usernameSecret }}
+      usernameSecretRef:
+        name: {{ .name | quote }}
+        key: {{ .key | quote }}
+      {{- end }}
+      {{- with .Values.tool.credentials.pat.gitUsernameSecret }}
+      gitUsernameSecretRef:
+        name: {{ .name | quote }}
+        key: {{ .key | quote }}
+      {{- end }}
+    {{- else }}
+    {{- fail "tool.credentials.pat must be configured when method is 'pat'" }}
+    {{- end }}
+    {{- else if eq .Values.tool.credentials.method "nirmata-app" }}
+    # Nirmata GitHub App requires no additional configuration
+    {{- else }}
+    {{- fail "tool.credentials.method must be either 'pat', 'app', or 'nirmata-app'" }}
+    {{- end }}
+  defaults:
+    {{- if .Values.tool.defaults.git }}
+    git:
+      {{- if .Values.tool.defaults.git.pullRequests }}
+      pullRequests:
+        {{- if .Values.tool.defaults.git.pullRequests.branchPrefix }}
+        branchPrefix: {{ .Values.tool.defaults.git.pullRequests.branchPrefix | quote }}
+        {{- end }}
+        {{- if .Values.tool.defaults.git.pullRequests.titleTemplate }}
+        titleTemplate: {{ .Values.tool.defaults.git.pullRequests.titleTemplate | quote }}
+        {{- end }}
+        {{- if .Values.tool.defaults.git.pullRequests.commitMessageTemplate }}
+        commitMessageTemplate: {{ .Values.tool.defaults.git.pullRequests.commitMessageTemplate | quote }}
+        {{- end }}
+        {{- /* Rendered whenever it is a list, including [] (opts out of the default system labels). */}}
+        {{- $systemLabels := index .Values.tool.defaults.git.pullRequests "systemLabels" }}
+        {{- if kindIs "slice" $systemLabels }}
+        systemLabels: {{ $systemLabels | toJson }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+{{- end }}
+{{- end }}

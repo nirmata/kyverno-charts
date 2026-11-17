@@ -1,0 +1,16 @@
+# Remediator targeting FluxCD Kustomizations and HelmReleases.
+remediator:
+  enabled: true
+  environment:
+    type: fluxHub
+  target:
+    fluxHub:
+      fluxNamespace: flux-system
+      kustomizationSelector:
+        names:
+          - my-app
+      helmReleaseSelector:
+        allHelmReleases: true
+  remediation:
+    eventPolling:
+      enabled: false

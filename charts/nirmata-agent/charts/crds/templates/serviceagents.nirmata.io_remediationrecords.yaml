@@ -620,10 +620,23 @@ spec:
                               type: string
                           type: object
                       type: object
+                    clusterScoped:
+                      description: |-
+                        ClusterScoped is true when the resource is cluster-scoped (remediated from a
+                        ClusterPolicyReport). PR comment commands (split-pr, request-exception) rebuild the
+                        plan from the record, so they read it to keep the PR's cluster-scoped presentation.
+                      type: boolean
                     lastActionTime:
                       description: LastActionTime is when the last remediation action
                         was taken
                       format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        Message explains why the last attempt took no action, for a failed attempt
+                        (ActionMetadata unset): a prescriptive skip reason (e.g. GitOps value overrides
+                        that could not be determined, a VPA read error) or a plan generation error. Empty
+                        when an action was taken.
                       type: string
                     resourceHash:
                       description: ResourceHash is the SHA256 hash of the resource

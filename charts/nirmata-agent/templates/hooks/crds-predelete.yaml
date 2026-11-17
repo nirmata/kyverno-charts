@@ -1,7 +1,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "go-nirmata-agent.fullname" . }}-crds-delete
+  {{- /* The Job controller copies the name into a pod label (max 63 characters). */}}
+  name: {{ include "go-nirmata-agent.fullname" . | trunc 51 | trimSuffix "-" }}-crds-delete
   namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook: pre-delete

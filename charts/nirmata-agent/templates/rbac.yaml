@@ -41,6 +41,32 @@ rules:
   - list
   - watch
 
+# Flux resources - for FluxHub mode (pkg/flux discovery)
+- apiGroups:
+  - kustomize.toolkit.fluxcd.io
+  resources:
+  - kustomizations
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - helm.toolkit.fluxcd.io
+  resources:
+  - helmreleases
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - gitrepositories
+  verbs:
+  - get
+  - list
+  - watch
+
 # Kyverno policies (kyverno.io API group)
 - apiGroups:
   - kyverno.io
@@ -52,11 +78,14 @@ rules:
   - list
   - watch
 
-# Kyverno ValidatingPolicy (policies.kyverno.io API group)
+# Kyverno CEL validating policies (policies.kyverno.io API group)
 - apiGroups:
   - policies.kyverno.io
   resources:
   - validatingpolicies
+  - namespacedvalidatingpolicies
+  - imagevalidatingpolicies
+  - namespacedimagevalidatingpolicies
   verbs:
   - get
   - list
@@ -102,7 +131,8 @@ rules:
 # =============================================================================
 # Kubernetes tools permissions (pkg/agent/tools/k8s/)
 # These permissions are required for the Agent CRD's built-in k8s tools:
-# k8s_get_resources, k8s_describe, k8s_events, k8s_pod_logs
+# k8s_get_resources, k8s_describe, k8s_events, k8s_pod_logs, k8s_api_resources,
+# k8s_top, k8s_rollout_status, k8s_can_i (all read-only)
 # =============================================================================
 
 # Core v1 resources
@@ -224,6 +254,25 @@ rules:
   - get
   - list
   - watch
+
+# Resource usage from metrics-server (k8s_top)
+- apiGroups:
+  - metrics.k8s.io
+  resources:
+  - pods
+  - nodes
+  verbs:
+  - get
+  - list
+
+# Own-permission checks (k8s_can_i). Usually also granted by the default
+# system:basic-user ClusterRole; listed here so the tool does not depend on it.
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - selfsubjectaccessreviews
+  verbs:
+  - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

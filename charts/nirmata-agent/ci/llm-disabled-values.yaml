@@ -1,0 +1,11 @@
+# No LLMConfig rendered; the Remediator references an external LLMConfig instead.
+llm:
+  enabled: false
+remediator:
+  enabled: true
+  environment:
+    type: localCluster
+  remediation:
+    llmConfigRef:
+      name: shared-llm
+      namespace: llm-system

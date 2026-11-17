@@ -1,0 +1,103 @@
+{{- /*
+The llmconfig custom resource. It is not rendered as a release object: the chart puts it in
+the resources ConfigMap and the apply-resources hook Job applies it in place (resources.yaml,
+#660).
+*/}}
+{{- define "go-nirmata-agent.manifest.llmconfig" -}}
+{{- if .Values.llm.enabled }}
+{{- $identity := .Values.llm.identity | default dict }}
+{{- $useIdentity := $identity.enabled }}
+{{- if and $useIdentity (not (has .Values.llm.provider (list "anthropic" "azure-openai"))) }}
+{{- fail (printf "llm.identity is only supported for llm.provider \"anthropic\" or \"azure-openai\", not %q" .Values.llm.provider) }}
+{{- end }}
+{{- if and $useIdentity (or (and (eq .Values.llm.provider "anthropic") (.Values.llm.anthropic | default dict).apiKey) (and (eq .Values.llm.provider "azure-openai") (.Values.llm.azureOpenAI | default dict).apiKey)) }}
+{{- fail "llm.identity.enabled replaces the API key: unset the inline llm.anthropic.apiKey / llm.azureOpenAI.apiKey" }}
+{{- end }}
+apiVersion: serviceagents.nirmata.io/v1alpha1
+kind: LLMConfig
+metadata:
+  name: {{ include "go-nirmata-agent.name" . }}-llm
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "go-nirmata-agent.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.llm.provider | quote }}
+  {{- if eq .Values.llm.provider "bedrock" }}
+  bedrock:
+    model: {{ .Values.llm.bedrock.model | quote }}
+    region: {{ .Values.llm.bedrock.region | quote }}
+    {{- $bedrockSecret := include "go-nirmata-agent.bedrockSecretName" . }}
+    {{- if $bedrockSecret }}
+    credentialsSecretRef:
+      name: {{ $bedrockSecret | quote }}
+      {{- if .Values.llm.bedrock.secretRef.key }}
+      key: {{ .Values.llm.bedrock.secretRef.key | quote }}
+      {{- end }}
+    {{- end }}
+  {{- else if eq .Values.llm.provider "azure-openai" }}
+  azureOpenAI:
+    endpoint: {{ .Values.llm.azureOpenAI.endpoint | quote }}
+    deploymentName: {{ .Values.llm.azureOpenAI.deploymentName | quote }}
+    {{- if not $useIdentity }}
+    apiKeySecretRef:
+      name: {{ include "go-nirmata-agent.azureOpenAISecretName" . | quote }}
+      key: {{ .Values.llm.azureOpenAI.secretRef.key | default "api-key" | quote }}
+    {{- end }}
+  {{- else if eq .Values.llm.provider "nirmataAI" }}
+  nirmataAI:
+    model: {{ .Values.llm.nirmataAI.model | quote }}
+  {{- else if eq .Values.llm.provider "anthropic" }}
+  anthropic:
+    model: {{ required "llm.anthropic.model is required when llm.provider is \"anthropic\"" .Values.llm.anthropic.model | quote }}
+    {{- if $useIdentity }}
+    baseURL: {{ required "llm.anthropic.baseURL is required when llm.identity.enabled is true" .Values.llm.anthropic.baseURL | quote }}
+    {{- else }}
+    {{- if .Values.llm.anthropic.baseURL }}
+    baseURL: {{ .Values.llm.anthropic.baseURL | quote }}
+    {{- end }}
+    apiKeySecretRef:
+      name: {{ required "llm.anthropic.secretRef.name (or an inline llm.anthropic.apiKey) is required when llm.provider is \"anthropic\"" (include "go-nirmata-agent.anthropicSecretName" .) | quote }}
+      key: {{ .Values.llm.anthropic.secretRef.key | default "api-key" | quote }}
+    {{- end }}
+  {{- else }}
+  {{- fail (printf "llm.provider %q is not supported. Valid values: nirmataAI, bedrock, azure-openai, anthropic" .Values.llm.provider) }}
+  {{- end }}
+  {{- if $useIdentity }}
+  {{- $cid := $identity.clientIDSecretRef | default dict }}
+  {{- $csec := $identity.clientSecretSecretRef | default dict }}
+  # API preview: requires a Service Agent version with identity runtime support.
+  identity:
+    type: oauth2ClientCredentials
+    oauth2ClientCredentials:
+      tokenURL: {{ required "llm.identity.tokenURL is required when llm.identity.enabled is true" $identity.tokenURL | quote }}
+      {{- with $identity.scopes }}
+      scopes:
+        {{- range . }}
+        - {{ . | quote }}
+        {{- end }}
+      {{- end }}
+      clientIDSecretRef:
+        name: {{ required "llm.identity.clientIDSecretRef.name is required when llm.identity.enabled is true" $cid.name | quote }}
+        key: {{ $cid.key | default "clientId" | quote }}
+      clientSecretSecretRef:
+        name: {{ required "llm.identity.clientSecretSecretRef.name is required when llm.identity.enabled is true" $csec.name | quote }}
+        key: {{ $csec.key | default "clientSecret" | quote }}
+    {{- if not $identity.boundOrigins }}
+    {{- fail "llm.identity.boundOrigins must list at least one origin when llm.identity.enabled is true" }}
+    {{- end }}
+    boundOrigins:
+      {{- range $identity.boundOrigins }}
+      - {{ . | quote }}
+      {{- end }}
+    {{- if $identity.allowInClusterHTTP }}
+    allowInClusterHTTP: true
+    {{- end }}
+  {{- end }}
+  {{- with .Values.llm.allowedNamespaces }}
+  allowedNamespaces:
+    {{- range . }}
+    - {{ . | quote }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
