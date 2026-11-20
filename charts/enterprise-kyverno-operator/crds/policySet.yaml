@@ -54,6 +54,18 @@ spec:
                   generic object structure, typically matching the
                   value.yaml of individual components
                 type: object
+              scope:
+                description: |-
+                  Scope controls which policies of the set the operator is allowed to apply.
+                  An empty value is equivalent to "Cluster". With "Namespace" only namespaced policy
+                  kinds (Policy, NamespacedValidatingPolicy, NamespacedMutatingPolicy and
+                  NamespacedImageValidatingPolicy) located in one of TargetNamespaces are applied;
+                  generate rules and rules that mutate existing resources are rejected, and every
+                  rejected document is reported in status.lastSyncErrorMessage.
+                enum:
+                - Cluster
+                - Namespace
+                type: string
               source:
                 properties:
                   description:
@@ -101,6 +113,15 @@ spec:
                 type: object
               syncInterval:
                 type: integer
+              targetNamespaces:
+                description: |-
+                  TargetNamespaces lists the namespaces this PolicySet may deploy policies into on this
+                  cluster. It is only used when Scope is "Namespace": documents in other namespaces are
+                  ignored (they are meant for another cluster) and, when the list is empty, nothing is
+                  applied.
+                items:
+                  type: string
+                type: array
             type: object
           status:
             description: PolicySetStatus defines the observed state of PolicySet
@@ -137,6 +158,9 @@ spec:
                     type: string
                   policiesStatus:
                     items:
+                      description: |-
+                        PolicyState is the status of one policy deployed (or rejected as invalid) by a PolicySet. It is an
+                        entry of status.policies.policiesStatus.
                       properties:
                         errorMessage:
                           type: string
@@ -147,6 +171,20 @@ spec:
                         lastAppliedCommit:
                           type: string
                         name:
+                          description: |-
+                            Name identifies the policy. Its format depends on Kind and must stay stable, because the
+                            Nirmata Control Hub, nctl and older operator-aware clients match on it: a Policy is reported as
+                            "<namespace>/<name>", every other kind (ClusterPolicy, ValidatingPolicy and the Namespaced*
+                            kinds) as the bare "<name>". For an invalid policy file the name may be the file name.
+                          type: string
+                        namespace:
+                          description: |-
+                            Namespace is the namespace of the policy. It is set for Policy and the Namespaced* kinds
+                            (NamespacedValidatingPolicy, NamespacedMutatingPolicy, NamespacedImageValidatingPolicy),
+                            including a Namespaced* policy without metadata.namespace, which is deployed to the operator
+                            namespace and reported with that namespace. It is empty for the cluster-scoped kinds.
+                            Together with Kind and Name it tells apart same-named Namespaced* policies of different
+                            namespaces, which share the bare Name.
                           type: string
                         ready:
                           type: boolean
