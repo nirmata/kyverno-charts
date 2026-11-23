@@ -40,11 +40,13 @@ spec:
         {{- tpl (include "kyverno.sortedImagePullSecrets" .) $ | nindent 8 }}
       {{- end }}
       containers:
-        - name: readiness-checker
-          image: {{ (include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.webhooksCleanup.image "defaultTag" (default .Chart.AppVersion .Values.webhooksCleanup.image.tag) "fipsEnabled" .Values.fipsEnabled)) | quote }}
+        - name: kubectl
+          image: {{ (include "kyverno.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.webhooksCleanup.image "defaultTag" (default .Chart.AppVersion .Values.webhooksCleanup.image.tag))) | quote }}
           imagePullPolicy: {{ .Values.webhooksCleanup.image.pullPolicy }}
           args:
             - scale-deploy
+            - --namespace={{ template "kyverno.namespace" . }}
+            - --label=app.kubernetes.io/part-of={{ template "kyverno.fullname" . }}
           {{- with .Values.webhooksCleanup.resources }}
           resources:
             {{- tpl (toYaml .) $ | nindent 12 }}
