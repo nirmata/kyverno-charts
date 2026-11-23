@@ -88,9 +88,13 @@ spec:
       {{- end }}
       serviceAccountName: {{ template "kyverno.background-controller.serviceAccountName" . }}
       automountServiceAccountToken: {{ $automountSAToken }}
+      {{- if and .Values.reportsServer.enabled .Values.reportsServer.waitForReady }}
+      initContainers:
+        {{- include "kyverno.reportsServer.initContainer" . | nindent 8 }}
+      {{- end }}
       containers:
         - name: controller
-          image: {{ include "kyverno.background-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.backgroundController.image "defaultTag" .Chart.AppVersion "fipsEnabled" .Values.fipsEnabled) | quote }}
+          image: {{ include "kyverno.background-controller.image" (dict "globalRegistry" .Values.global.image.registry "image" .Values.backgroundController.image "defaultTag" .Chart.AppVersion) | quote }}
           imagePullPolicy: {{ .Values.backgroundController.image.pullPolicy }}
           ports:
           - containerPort: {{ .Values.backgroundController.server.port }}
@@ -134,8 +138,12 @@ spec:
               {{- join "," $secretNames -}}
             {{- end }}
             - --resyncPeriod={{ .Values.backgroundController.resyncPeriod | default .Values.global.resyncPeriod }}
-            {{- $features := mergeOverwrite (deepCopy .Values.features) .Values.backgroundController.featuresOverride }}
-            {{- include "kyverno.features.flags" (pick $features
+            {{- $crdWatcher := .Values.global.crdWatcher }}
+            {{- if hasKey .Values.backgroundController "crdWatcher" }}
+            {{- $crdWatcher = .Values.backgroundController.crdWatcher }}
+            {{- end }}
+            - --crdWatcher={{ $crdWatcher }}
+            {{- include "kyverno.features.flags" (pick (mergeOverwrite (deepCopy .Values.features) .Values.backgroundController.featuresOverride)
               "reporting"
               "configMapCaching"
               "deferredLoading"
@@ -145,11 +153,6 @@ spec:
               "policyExceptions"
               "controllerRuntimeMetrics"
             ) | nindent 12 }}
-            {{- include "kyverno.registryClient.validate" $features.registryClient }}
-            - --privateRegistryEgressMode={{ $features.registryClient.privateRegistryEgressMode }}
-            {{- with $features.registryClient.privateRegistryAllowlist }}
-            - --privateRegistryAllowlist={{ join "," . }}
-            {{- end }}
             {{- range $key, $value := .Values.backgroundController.extraArgs }}
             {{- if $value }}
             - --{{ $key }}={{ $value }}
