@@ -66,8 +66,113 @@ upgrade:
   # -- Upgrading from v2 to v3 is not allowed by default, set this to true once changes have been reviewed.
   fromV2: false
 
+  # -- Installing or upgrading is blocked by default when legacy kyverno.io policy resources
+  # (`ClusterPolicy`, `Policy`, `CleanupPolicy`, `ClusterCleanupPolicy`, `PolicyException`) are found
+  # on the cluster. As of 1.20, Kyverno no longer executes these legacy policy types even though
+  # their APIs remain available for read, list, export, and delete: setting this to true does not
+  # restore enforcement, it only acknowledges that legacy policies found on this cluster are not
+  # enforced. Migrate them to the `policies.kyverno.io` policy types
+  # (see https://kyverno.io/docs/guides/migration-to-cel/), or set this to true to bypass the check.
+  # This disables both the render-time check and the `legacyPolicyCheck` hook Job.
+  acknowledgeLegacyPoliciesNotEnforced: false
+
+  legacyPolicyCheck:
+
+    # -- Enable the pre-install/pre-upgrade hook Job that checks for legacy kyverno.io policy
+    # resources on the cluster. This is a second, server-side check for GitOps tools that honor
+    # Helm hooks; it is independent from the render-time `lookup` check, which some GitOps tools
+    # and `helm template`/`--dry-run` do not evaluate against a live cluster.
+    enabled: true
+
+    # -- Seconds after the hook Job finishes before it (and its Pod) are auto-deleted.
+    # A failed Job's logs stay available until then. Set to 0 or null to keep it indefinitely.
+    ttlSecondsAfterFinished: 300
+
+    # -- Maximum seconds the hook Job may run before it is failed, so a stalled or
+    # unreachable API server can't hang the install/upgrade. Set to 0 or null to disable.
+    activeDeadlineSeconds: 120
+
+    image:
+      # -- (string) Image registry
+      registry: ~
+      defaultRegistry: reg.nirmata.io
+      # -- (string) Image repository
+      repository: nirmata/kyverno-cli
+      # -- (string) Image tag
+      # Defaults to appVersion in Chart.yaml if omitted
+      tag: ~
+      # -- (string) Image pull policy
+      pullPolicy: IfNotPresent
+
+    # -- Image pull secrets
+    imagePullSecrets: []
+    # - name: secretName
+
+    # -- Security context for the pod
+    podSecurityContext: {}
+
+    # -- Node labels for pod assignment. Overrides `global.nodeSelector` when non-empty. When empty, the default is `kubernetes.io/os: linux`.
+    nodeSelector: {}
+
+    # -- List of node taints to tolerate
+    tolerations: []
+
+    # -- Pod anti affinity constraints.
+    podAntiAffinity: {}
+
+    # -- Pod affinity constraints.
+    podAffinity: {}
+
+    # -- Pod labels.
+    podLabels: {}
+
+    # -- Pod annotations.
+    podAnnotations: {}
+
+    # -- Node affinity constraints.
+    nodeAffinity: {}
+
+    # -- Security context for the hook container
+    securityContext:
+      runAsUser: 65534
+      runAsGroup: 65534
+      runAsNonRoot: true
+      privileged: false
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault
+
+    podResources:
+      # -- Pod resource limits
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      # -- Pod resource requests
+      requests:
+        cpu: 10m
+        memory: 64Mi
+
+    serviceAccount:
+      # -- Toggle automounting of the ServiceAccount.
+      # When set to false, a projected service account token is used instead
+      # which provides time-limited and audience-bound tokens for improved security.
+      automountServiceAccountToken: true
+
+      # -- Projected service account token configuration (only used when automountServiceAccountToken is false)
+      projectedServiceAccountToken:
+        # -- Token expiration time in seconds.
+        # The kubelet will request a new token before the token expires.
+        expirationSeconds: 3600
+        # -- Audience for the projected service account token.
+        # If not set, the token will have no audience restriction.
+        audience: ""
+
 apiVersionOverride:
-  # -- (string) Override api version used to create `PodDisruptionBudget`` resources.
+  # -- (string) Override api version used to create `PodDisruptionBudget` resources.
   # When not specified the chart will check if `policy/v1/PodDisruptionBudget` is available to
   # determine the api version automatically.
   podDisruptionBudget: ~
@@ -94,8 +199,8 @@ reportsServer:
   # -- Wait for reports-server to be ready before starting Kyverno components
   waitForReady: true
 
-  # -- Timeout for waiting for reports-server readiness (in seconds)
-  readinessTimeout: 300
+  # -- Timeout for waiting for reports-server readiness (as duration string, e.g. 300s, 5m)
+  readinessTimeout: 300s
 
 # CRDs configuration
 crds:
@@ -163,20 +268,13 @@ crds:
 
     # -- Resources to migrate
     resources:
-      - cleanuppolicies.kyverno.io
-      - clustercleanuppolicies.kyverno.io
-      - clusterpolicies.kyverno.io
       - globalcontextentries.kyverno.io
-      - policies.kyverno.io
-      - policyexceptions.kyverno.io
       - updaterequests.kyverno.io
       # policies.kyverno.io
       - deletingpolicies.policies.kyverno.io
       - generatingpolicies.policies.kyverno.io
       - imagevalidatingpolicies.policies.kyverno.io
-      - namespacedimagevalidatingpolicies.policies.kyverno.io
       - mutatingpolicies.policies.kyverno.io
-      - namespacedmutatingpolicies.policies.kyverno.io
       - namespaceddeletingpolicies.policies.kyverno.io
       - namespacedgeneratingpolicies.policies.kyverno.io
       - namespacedimagevalidatingpolicies.policies.kyverno.io
@@ -250,7 +348,9 @@ crds:
         memory: 64Mi
 
     serviceAccount:
-      # -- Toggle automounting of the ServiceAccount
+      # -- Toggle automounting of the ServiceAccount.
+      # When set to false, a projected service account token is used instead
+      # which provides time-limited and audience-bound tokens for improved security.
       automountServiceAccountToken: true
 
       # -- Projected service account token configuration (only used when automountServiceAccountToken is false)
@@ -277,6 +377,7 @@ apiCallToken:
   # frequency.
   expirationSeconds: 3600
 
+# Configuration
 # -- Nirmata commercial license. When create or existingSecret is set, the
 # admission controller mounts the Secret (optional volume) and validates the
 # license offline. Deleting the Secret does not take pods down: the evaluator
@@ -294,21 +395,7 @@ license:
   # holds the license file. Ignored when `create` is true.
   existingSecret: ~
 
-# Configuration
 config:
-
-  # -- Create the configmap.
-  create: true
-
-  # -- Preserve the configmap settings during upgrade.
-  preserve: true
-
-  # -- (string) The configmap name (required if `create` is `false`).
-  name: ~
-
-  # -- Additional annotations to add to the configmap.
-  annotations: {}
-
   # -- Nirmata license state. Holds trial and grace bookkeeping, written only by
   # the leader-elected admission controller.
   licenseState:
@@ -321,20 +408,17 @@ config:
     # -- (string) The configmap name (required if `create` is `false`).
     name: ~
 
-  # -- Disable auto webhook generation. This is useful for environments like AKS
-  # where certain webhooks may cause issues.
-  disableAutoWebhookGeneration:
-    # -- Enable the disableAutoWebhookGeneration feature
-    enable: false
-    # -- List of webhooks to disable
-    webhooks:
-      - kyverno-policy-validating-webhook-cfg
-      - kyverno-exception-validating-webhook-cfg
+  # -- Create the configmap.
+  create: true
 
-  # -- Generate events on policy objects.
-  # When set to false, events (violations, errors, etc.) will only be created on resources, not on policy objects.
-  # This reduces event noise in multi-tenant environments where policy events may not be needed.
-  generatePolicyEvents: true
+  # -- Preserve the configmap settings during upgrade.
+  preserve: true
+
+  # -- (string) The configmap name (required if `create` is `false`).
+  name: ~
+
+  # -- Additional annotations to add to the configmap.
+  annotations: {}
 
   # -- Enable registry mutation for container images. Enabled by default.
   enableDefaultRegistryMutation: true
@@ -488,6 +572,13 @@ config:
   # -- Sets the threshold for the total number of UpdateRequests generated for mutateExisitng and generate policies.
   updateRequestThreshold: 1000
 
+  # -- Enable cleanup of UpdateRequests.
+  enableUpdateRequestCleanup: false
+
+  # -- Defines the TTL for UpdateRequests if cleanup is enabled.
+  # Format is a duration string (e.g. 1h, 24h, 168h).
+  updateRequestCleanupTTL: ""
+
   # -- Defines the `namespaceSelector`/`objectSelector` in the webhook configurations.
   # The Kyverno namespace is excluded if `excludeKyvernoNamespace` is `true` (default)
   webhooks:
@@ -566,9 +657,6 @@ metricsConfig:
 
   # -- (map) Configures the exposure of individual metrics, by default all metrics and all labels are exported, changing this configuration requires restart of the kyverno admission controller
   metricsExposure:
-    kyverno_policy_execution_duration_seconds:
-      # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
-      disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
     kyverno_validating_policy_execution_duration_seconds:
       # bucketBoundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
       disabledLabelDimensions: ["resource_namespace", "resource_request_operation"]
@@ -584,14 +672,8 @@ metricsConfig:
     kyverno_admission_review_duration_seconds:
       # enabled: false
       disabledLabelDimensions: ["resource_namespace"]
-    kyverno_policy_rule_info_total:
-      disabledLabelDimensions: ["resource_namespace", "policy_namespace"]
-    kyverno_policy_results_total:
-      disabledLabelDimensions: ["resource_namespace", "policy_namespace"]
     kyverno_admission_requests_total:
       disabledLabelDimensions: ["resource_namespace"]
-    kyverno_cleanup_controller_deletedobjects_total:
-      disabledLabelDimensions: ["resource_namespace", "policy_namespace"]
     kyverno_validating_policy_results_total:
       disabledLabelDimensions: ["resource_namespace", "policy_namespace"]
     kyverno_mutating_policy_results_total:
@@ -628,7 +710,7 @@ test:
     # -- Image repository
     repository: nirmata/readiness-checker
     # -- Image tag
-    # Defaults to the chart appVersion if omitted
+    # Defaults to `latest` if omitted
     tag: ~
     # -- (string) Image pull policy
     # Defaults to image.pullPolicy if omitted
@@ -662,7 +744,9 @@ test:
     seccompProfile:
       type: RuntimeDefault
 
-  # -- Toggle automounting of the ServiceAccount
+  # -- Toggle automounting of the ServiceAccount.
+  # When set to false, a projected service account token is used instead
+  # which provides time-limited and audience-bound tokens for improved security.
   automountServiceAccountToken: true
 
   # -- Projected service account token configuration (only used when automountServiceAccountToken is false)
@@ -691,14 +775,12 @@ webhooksCleanup:
   # -- Create a helm pre-delete hook to cleanup webhooks.
   enabled: true
 
-  autoDeleteWebhooks:
-    # -- Allow webhooks controller to delete webhooks using finalizers
-    enabled: false
-
   image:
     # -- (string) Image registry
-    registry: ghcr.io
-    # -- Image repository (readiness-checker supports delete-webhooks and scale-deploy)
+    registry: ~
+    # -- (string) Default image registry, used only when neither `registry` nor `global.image.registry` is set
+    defaultRegistry: ghcr.io
+    # -- Image repository
     repository: nirmata/readiness-checker
     # -- Image tag
     # Defaults to `latest` if omitted
@@ -759,8 +841,19 @@ webhooksCleanup:
       memory: 64Mi
 
   serviceAccount:
-    # -- Toggle automounting of the ServiceAccount
+    # -- Toggle automounting of the ServiceAccount.
+    # When set to false, a projected service account token is used instead
+    # which provides time-limited and audience-bound tokens for improved security.
     automountServiceAccountToken: true
+
+    # -- Projected service account token configuration (only used when automountServiceAccountToken is false)
+    projectedServiceAccountToken:
+      # -- Token expiration time in seconds.
+      # The kubelet will request a new token before the token expires.
+      expirationSeconds: 3600
+      # -- Audience for the projected service account token.
+      # If not set, the token will have no audience restriction.
+      audience: ""
 
 grafana:
   # -- Enable grafana dashboard creation.
@@ -849,20 +942,39 @@ prometheusRule:
   #       - alert: KyvernoPolicyExecutionHighLatency
   #         expr: |
   #           histogram_quantile(0.99,
-  #             sum(rate(kyverno_policy_execution_duration_seconds_bucket[5m])) by (le, rule_type)
+  #             sum(rate(kyverno_validating_policy_execution_duration_seconds_bucket[5m])) by (le, policy_name)
   #           ) > 0.5
   #         for: 5m
   #         labels:
   #           severity: warning
   #         annotations:
-  #           summary: Kyverno policy execution p99 latency is elevated
+  #           summary: Kyverno validating policy execution p99 latency is elevated
   #           description: >-
-  #             {{ $labels.rule_type }} rule p99 execution latency is
+  #             {{ $labels.policy_name }} p99 execution latency is
   #             {{ $value | humanizeDuration }}.
   #           runbook_url: https://kyverno.io/docs/guides/monitoring/#policy-execution-latency-high
 
 # Features configuration
 features:
+  licensing:
+    # -- (string) How often Nirmata license state is re-evaluated. Clamped to
+    # between `1m` and `1h`. Leave unset to use the built-in default of `15m`.
+    #
+    # Licensing itself is always enabled and cannot be turned off. In FreeTier,
+    # FreeExpired and Degraded states, CREATE of a new policy that would exceed
+    # the licensed policy cap is refused. Core workload admission
+    # (validate/mutate/generate) is never gated. Feature-tier gating is not
+    # enforced in this release.
+    evaluationInterval: ~
+    # -- (string) Path to a commercial license file inside the admission
+    # controller container. Leave unset to use the free-tier community license.
+    # When `license.create` or `license.existingSecret` is set, the chart mounts
+    # the Secret and defaults this to the mount path unless overridden here.
+    licensePath: ~
+    # -- (float) Capacity utilization fraction, in (0, 1], at which the license
+    # state enters Warning. Leave unset to use the built-in default of `0.9`.
+    # Values outside that range fall back to the default.
+    warnRatio: ~
   admissionReports:
     # -- Enables the feature
     enabled: true
@@ -935,25 +1047,6 @@ features:
     apiCallTimeout: 30s
     # -- Maximum number of entries in the global context store. A value of 0 means unbounded.
     maxGlobalContextEntries: 0
-  licensing:
-    # -- (string) How often Nirmata license state is re-evaluated. Clamped to
-    # between `1m` and `1h`. Leave unset to use the built-in default of `15m`.
-    #
-    # Licensing itself is always enabled and cannot be turned off. In FreeTier,
-    # FreeExpired and Degraded states, CREATE of a new policy that would exceed
-    # the licensed policy cap is refused. Core workload admission
-    # (validate/mutate/generate) is never gated. Feature-tier gating is not
-    # enforced in this release.
-    evaluationInterval: ~
-    # -- (string) Path to a commercial license file inside the admission
-    # controller container. Leave unset to use the free-tier community license.
-    # When `license.create` or `license.existingSecret` is set, the chart mounts
-    # the Secret and defaults this to the mount path unless overridden here.
-    licensePath: ~
-    # -- (float) Capacity utilization fraction, in (0, 1], at which the license
-    # state enters Warning. Leave unset to use the built-in default of `0.9`.
-    # Values outside that range fall back to the default.
-    warnRatio: ~
   logging:
     # -- Logging format
     format: text
@@ -975,13 +1068,12 @@ features:
   protectManagedResources:
     # -- Enables the feature
     enabled: false
+  protectGenerationLabels:
+    # -- Enables generation label protection webhook
+    enabled: true
   registryClient:
     # -- Allow insecure registry
     allowInsecure: false
-    # -- Registry egress policy for admission, background, and reports controllers: audit permits private addresses and logs requests enforce would block; enforce requires an allowlist entry. Both modes always block metadata and other unsafe addresses.
-    privateRegistryEgressMode: audit
-    # -- Exact registry hostnames, IP addresses, or CIDRs permitted to reach private addresses in enforce mode. Entries must be non-empty strings. Metadata and other unsafe addresses remain blocked.
-    privateRegistryAllowlist: []
     # -- Enable registry client helpers
     credentialHelpers:
     - default
@@ -1047,8 +1139,19 @@ admissionController:
       annotations: {}
         # example.com/annotation: value
 
-      # -- Toggle automounting of the ServiceAccount
+      # -- Toggle automounting of the ServiceAccount.
+      # When set to false, a projected service account token is used instead
+      # which provides time-limited and audience-bound tokens for improved security.
       automountServiceAccountToken: true
+
+      # -- Projected service account token configuration (only used when automountServiceAccountToken is false)
+      projectedServiceAccountToken:
+        # -- Token expiration time in seconds.
+        # The kubelet will request a new token before the token expires.
+        expirationSeconds: 3600
+        # -- Audience for the projected service account token.
+        # If not set, the token will have no audience restriction.
+        audience: ""
 
     coreClusterRole:
       # -- Extra resource permissions to add in the core cluster role.
@@ -1135,6 +1238,9 @@ admissionController:
   podAnnotations: {}
     # example.com/annotation: foo
 
+  # -- Deployment labels.
+  labels: {}
+
   # -- Deployment annotations.
   annotations: {}
 
@@ -1200,7 +1306,7 @@ admissionController:
       port: 9443
       scheme: HTTPS
     failureThreshold: 20
-    initialDelaySeconds: 7
+    initialDelaySeconds: 2
     periodSeconds: 6
 
   # -- Liveness probe.
@@ -1334,6 +1440,8 @@ admissionController:
 
     # -- Container security context
     securityContext:
+      runAsUser: 65534
+      runAsGroup: 65534
       runAsNonRoot: true
       privileged: false
       allowPrivilegeEscalation: false
@@ -1379,6 +1487,8 @@ admissionController:
 
     # -- Container security context
     securityContext:
+      runAsUser: 65534
+      runAsGroup: 65534
       runAsNonRoot: true
       privileged: false
       allowPrivilegeEscalation: false
@@ -1506,6 +1616,11 @@ admissionController:
     config: prometheus
     # -- Prometheus endpoint port
     port: 8000
+    # -- Is TLS required for endpoint
+    secure: false
+    # -- Key algorithm for self-signed TLS certificates.
+    # Supported values: RSA, ECDSA, Ed25519
+    tlsKeyAlgorithm: RSA
     # -- Otel collector endpoint
     collector: ''
     # -- Otel collector credentials
@@ -1549,8 +1664,19 @@ backgroundController:
       annotations: {}
         # example.com/annotation: value
 
-      # -- Toggle automounting of the ServiceAccount
+      # -- Toggle automounting of the ServiceAccount.
+      # When set to false, a projected service account token is used instead
+      # which provides time-limited and audience-bound tokens for improved security.
       automountServiceAccountToken: true
+
+      # -- Projected service account token configuration (only used when automountServiceAccountToken is false)
+      projectedServiceAccountToken:
+        # -- Token expiration time in seconds.
+        # The kubelet will request a new token before the token expires.
+        expirationSeconds: 3600
+        # -- Audience for the projected service account token.
+        # If not set, the token will have no audience restriction.
+        audience: ""
 
     coreClusterRole:
       # -- Extra resource permissions to add in the core cluster role.
@@ -1638,6 +1764,9 @@ backgroundController:
   # -- Resync period for informers
   resyncPeriod: 15m
 
+  # -- Enable/Disable custom resource watcher to invalidate cache
+  crdWatcher: false
+
   # -- Additional labels to add to each pod
   podLabels: {}
   # example.com/label: foo
@@ -1645,6 +1774,9 @@ backgroundController:
   # -- Additional annotations to add to each pod
   podAnnotations: {}
   # example.com/annotation: foo
+
+  # -- Deployment labels.
+  labels: {}
 
   # -- Deployment annotations.
   annotations: {}
@@ -1736,6 +1868,8 @@ backgroundController:
 
   # -- Security context for the containers
   securityContext:
+    runAsUser: 65534
+    runAsGroup: 65534
     runAsNonRoot: true
     privileged: false
     allowPrivilegeEscalation: false
@@ -1855,6 +1989,11 @@ backgroundController:
     config: prometheus
     # -- Prometheus endpoint port
     port: 8000
+    # -- Is TLS required for endpoint
+    secure: false
+    # -- Key algorithm for self-signed TLS certificates.
+    # Supported values: RSA, ECDSA, Ed25519
+    tlsKeyAlgorithm: RSA
     # -- Otel collector endpoint
     collector: ''
     # -- Otel collector credentials
@@ -1897,7 +2036,9 @@ cleanupController:
       annotations: {}
         # example.com/annotation: value
 
-      # -- Toggle automounting of the ServiceAccount
+      # -- Toggle automounting of the ServiceAccount.
+      # When set to false, a projected service account token is used instead
+      # which provides time-limited and audience-bound tokens for improved security.
       automountServiceAccountToken: true
 
       # -- Projected service account token configuration (only used when automountServiceAccountToken is false)
@@ -2007,6 +2148,9 @@ cleanupController:
   podAnnotations: {}
   # example.com/annotation: foo
 
+  # -- Deployment labels.
+  labels: {}
+
   # -- Deployment annotations.
   annotations: {}
 
@@ -2073,7 +2217,7 @@ cleanupController:
       port: 9443
       scheme: HTTPS
     failureThreshold: 20
-    initialDelaySeconds: 7
+    initialDelaySeconds: 2
     periodSeconds: 6
 
   # -- Liveness probe.
@@ -2145,6 +2289,8 @@ cleanupController:
 
   # -- Security context for the containers
   securityContext:
+    runAsUser: 65534
+    runAsGroup: 65534
     runAsNonRoot: true
     privileged: false
     allowPrivilegeEscalation: false
@@ -2266,6 +2412,11 @@ cleanupController:
     config: prometheus
     # -- Prometheus endpoint port
     port: 8000
+    # -- Is TLS required for endpoint
+    secure: false
+    # -- Key algorithm for self-signed TLS certificates.
+    # Supported values: RSA, ECDSA, Ed25519
+    tlsKeyAlgorithm: RSA
     # -- Otel collector endpoint
     collector: ''
     # -- Otel collector credentials
@@ -2309,8 +2460,19 @@ reportsController:
       annotations: {}
         # example.com/annotation: value
 
-      # -- Toggle automounting of the ServiceAccount
+      # -- Toggle automounting of the ServiceAccount.
+      # When set to false, a projected service account token is used instead
+      # which provides time-limited and audience-bound tokens for improved security.
       automountServiceAccountToken: true
+
+      # -- Projected service account token configuration (only used when automountServiceAccountToken is false)
+      projectedServiceAccountToken:
+        # -- Token expiration time in seconds.
+        # The kubelet will request a new token before the token expires.
+        expirationSeconds: 3600
+        # -- Audience for the projected service account token.
+        # If not set, the token will have no audience restriction.
+        audience: ""
 
     coreClusterRole:
       # -- Extra resource permissions to add in the core cluster role.
@@ -2365,6 +2527,9 @@ reportsController:
   # -- Additional annotations to add to each pod
   podAnnotations: {}
   # example.com/annotation: foo
+
+  # -- Deployment labels.
+  labels: {}
 
   # -- Deployment annotations.
   annotations: {}
@@ -2474,6 +2639,8 @@ reportsController:
 
   # -- Security context for the containers
   securityContext:
+    runAsUser: 65534
+    runAsGroup: 65534
     runAsNonRoot: true
     privileged: false
     allowPrivilegeEscalation: false
@@ -2600,6 +2767,11 @@ reportsController:
     config: prometheus
     # -- Prometheus endpoint port
     port: 8000
+    # -- Is TLS required for endpoint
+    secure: false
+    # -- Key algorithm for self-signed TLS certificates.
+    # Supported values: RSA, ECDSA, Ed25519
+    tlsKeyAlgorithm: RSA
     # -- (string) Otel collector endpoint
     collector: ~
     # -- (string) Otel collector credentials
@@ -2623,354 +2795,6 @@ reportsController:
 
   # -- Enable sanity check for reports CRDs
   sanityChecks: true
-
-reports-server:
-
-  install: false
-
-  # -- Internal settings used with `helm template` to generate install manifest
-  # @ignored
-  templating:
-    enabled: false
-  fipsEnabled: false
-
-  # -- Name override
-  nameOverride: ""
-
-  # -- Full name override
-  fullnameOverride: ""
-
-  # -- Number of pod replicas
-  replicaCount: 1
-
-  image:
-    # -- (string) Image registry
-    registry: reg.nirmata.io
-    # -- Image repository
-    repository: nirmata/reports-server
-    # -- Image pull policy
-    pullPolicy: IfNotPresent
-    # -- Image tag (will default to app version if not set)
-    tag: ~
-
-  # -- Image pull secrets
-  imagePullSecrets: []
-
-  # -- Priority class name
-  priorityClassName: system-cluster-critical
-
-  serviceAccount:
-    # -- Create service account
-    create: true
-
-    # -- Service account annotations
-    annotations: {}
-
-    # -- Service account name (required if `serviceAccount.create` is `false`)
-    name: ""
-
-  # -- Pod annotations
-  podAnnotations: {}
-
-  # -- Labels to add to resources managed by the chart
-  commonLabels: {}
-
-  # -- Pod security context
-  podSecurityContext:
-    fsGroup: 2000
-
-  # -- Server version to use (v1 or v2). Defaults to v1 for backward compatibility.
-  # v1: Stable implementation (default)
-  # v2: Optimized implementation with improved performance
-  serverVersion: v1
-
-  # -- Provide additional environment variables to the pods. Map with the same format as kubernetes deployment spec's env.
-  podEnv: {}
-
-  # -- Container security context
-  # @default -- See [values.yaml](values.yaml)
-  securityContext:
-    capabilities:
-      drop:
-      - ALL
-    readOnlyRootFilesystem: true
-    runAsNonRoot: true
-    runAsUser: 1000
-    privileged: false
-    allowPrivilegeEscalation: false
-    seccompProfile:
-      type: RuntimeDefault
-
-  # -- Liveness probe
-  livenessProbe:
-    initialDelaySeconds: 20
-    failureThreshold: 10
-    periodSeconds: 10
-    httpGet:
-      path: /livez
-      port: https
-      scheme: HTTPS
-
-  # -- Readiness probe
-  readinessProbe:
-    initialDelaySeconds: 30
-    failureThreshold: 10
-    periodSeconds: 10
-    httpGet:
-      path: /readyz
-      port: https
-      scheme: HTTPS
-
-  compliance:
-    # -- Enable all compliance monitoring features at once
-    # When enabled, this automatically enables:
-    # - metrics.serviceMonitor.enabled
-    # - metrics.prometheusRules.enabled
-    # - metrics.grafanaDashboard.enabled
-    enabled: false
-
-  metrics:
-    # -- Enable prometheus metrics
-    enabled: true
-
-    serviceMonitor:
-      # -- Enable service monitor for scraping prometheus metrics
-      enabled: false
-
-      # -- Service monitor additional labels
-      additionalLabels: {}
-
-      # -- Service monitor scrape interval
-      interval: ""
-
-      # -- Service monitor metric relabelings
-      metricRelabelings: []
-
-      # -- Service monitor relabelings
-      relabelings: []
-
-      # -- Service monitor scrape timeout
-      scrapeTimeout: ""
-
-    prometheusRules:
-      # -- Enable prometheus recording rules for policy compliance metrics
-      enabled: false
-
-      # -- PrometheusRule additional labels
-      additionalLabels: {}
-
-    grafanaDashboard:
-      # -- Enable Grafana dashboard ConfigMap creation
-      enabled: false
-
-      # -- Namespace to create the ConfigMap in (defaults to release namespace)
-      namespace: ""
-
-      # -- Labels to add to the ConfigMap (for Grafana sidecar discovery)
-      # @default -- See values.yaml
-      labels:
-        grafana_dashboard: "1"
-
-      # -- Annotations to add to the ConfigMap
-      annotations: {}
-
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  resources:
-    # -- Container resource limits
-    limits:
-      memory: 128Mi
-    # -- Container resource requests
-    requests:
-      cpu: 100m
-      memory: 64Mi
-
-  autoscaling:
-    # -- Enable autoscaling
-    enabled: false
-
-    # -- Min number of replicas
-    minReplicas: 1
-
-    # -- Max number of replicas
-    maxReplicas: 100
-
-    # -- Target CPU utilisation
-    targetCPUUtilizationPercentage: 80
-
-    # -- Target Memory utilisation
-    targetMemoryUtilizationPercentage: ~
-
-    # -- HPA behavior configuration (optional)
-    # behavior:
-    #   scaleDown:
-    #     stabilizationWindowSeconds: 300
-    #     policies:
-    #     - type: Percent
-    #       value: 100
-    #       periodSeconds: 15
-    #   scaleUp:
-    #     stabilizationWindowSeconds: 0
-    #     policies:
-    #     - type: Percent
-    #       value: 100
-    #       periodSeconds: 15
-    #     - type: Pods
-    #       value: 4
-    #       periodSeconds: 15
-    #     selectPolicy: Max
-
-
-  # -- Using a PDB is highly recommended for highly available deployments. Defaults to enabled. The default configuration doesn't prevent disruption when using a single replica
-  pdb:
-    # -- Enable PodDisruptionBudget
-    enabled: true
-    # -- minAvailable pods for PDB, cannot be used together with maxUnavailable
-    minAvailable: ~
-    # -- maxUnavailable pods for PDB, will take precedence over minAvailable if both are defined
-    maxUnavailable: 50%
-
-  # -- Node selector
-  nodeSelector: {}
-
-  # -- Tolerations
-  tolerations: []
-
-  # -- Affinity
-  affinity: {}
-
-  service:
-    # -- Service type
-    type: ClusterIP
-
-    # -- Service port
-    port: 443
-
-  config:
-
-    etcd:
-      image:
-        # -- Image registry
-        registry: ghcr.io
-        # -- Image repository
-        repository: nirmata/etcd
-        # -- Image tag
-        tag: 3.6.15-hardened
-
-      # -- Image pull secrets
-      imagePullSecrets: []
-
-      enabled: true
-      endpoints: ~
-      insecure: true
-      # PVC Storage configuration for etcd persistence:
-      # - Default: If not specified, the chart will allocate 2Gi of storage.
-      # - Override: Set a custom storage size (e.g., "2Gi", "5Gi") as needed.
-      # - NOTE: keep this **10‑20 % greater** than `quotaBackendBytes`
-      # This value defines the size of the persistent volume claim (PVC) for etcd.
-      storage: 2Gi
-
-      # -- Storage class name for etcd PVC
-      # - Leave empty to use the default storage class
-      # - Set to a specific storage class name (e.g., "fast", "standard", "aws-ebs")
-      storageClassName: ""
-
-    # Quota for etcd's internal database (BoltDB) **in bytes**
-    # - What it limits: the logical size of the etcd DB file, *not* the PVC.
-    # - Format: plain integer bytes (no Ki/Mi/Gi suffix).
-      quotaBackendBytes: 1932735283
-
-      # Auto-compaction configuration for etcd
-      autoCompaction:
-        # -- Enable auto-compaction for etcd
-        enabled: true
-        # -- Auto-compaction mode (periodic or revision)
-        mode: periodic
-        # -- Auto-compaction retention (e.g., 30m for 30 minutes, 1h for 1 hour)
-        retention: 30m
-
-      ## @param nodeSelector [object] Node labels for pod assignment
-      ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
-      ##
-      nodeSelector: {}
-
-      ## @param tolerations [array] Tolerations for pod assignment
-      ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-      ##
-      tolerations: []
-
-    db:
-
-      # -- If set, a secret will be created with the database connection information. If this is set to true, secretName must be set.
-      secretCreation: false
-
-      # -- If set, database connection information will be read from the Secret with this name. Overrides `db.host`, `db.name`, `db.user`, `db.password` and `db.readReplicaHosts`.
-      secretName: ""
-
-      # -- Database host
-      host: reports-server-cluster-rw.reports-server
-
-      # -- The database host will be read from this `key` in the specified Secret, when `db.secretName` is set.
-      hostSecretKeyName: "host"
-
-      # -- Database read replica hosts
-      readReplicaHosts: ""
-
-      # -- The database read replica hosts will be read from this `key` in the specified Secret, when `db.secretName` is set.
-      readReplicaHostsSecretKeyName: readReplicaHosts
-
-      # -- Database port
-      port:
-      # -- The database port will be read from this `key` in the specified Secret, when `db.secretName` is set.
-      portSecretKeyName: "port"
-
-      # -- Database name
-      name: reportsdb
-      # -- The database name will be read from this `key` in the specified Secret, when `db.secretName` is set.
-      dbNameSecretKeyName: "dbname"
-
-      # -- Database user
-      user: app
-
-      # -- The database username will be read from this `key` in the specified Secret, when `db.secretName` is set.
-      userSecretKeyName: "username"
-
-      # -- Database password
-      password: password
-
-      # -- The database password will be read from this `key` in the specified Secret, when `db.secretName` is set.
-      passwordSecretKeyName: "password"
-
-      # -- Database SSL
-      sslmode: disable
-
-      # -- Database SSL root cert
-      sslrootcert: ""
-
-      # -- Database SSL key
-      sslkey: ""
-
-      # -- Database SSL cert
-      sslcert: ""
-
-      # -- Volume configuration for RDS certificate
-      sslrds:
-        secretName: ""
-        mountPath: "/etc/ssl/rds"
-
-  apiServicesManagement:
-    # -- Install api services in manifest
-    installApiServices:
-
-      # -- Store reports in reports-server
-      enabled: true
-
-      # -- Store ephemeral reports in reports-server
-      installEphemeralReportsService: true
-      # -- Store open reports in reports-server
-      installOpenreportsService: true
 
 # kyverno-notation-aws is vendored as a disabled-by-default subchart, following
 # the same pattern as reports-server above. When enabled it deploys into the
