@@ -7,36 +7,11 @@
 {{- end -}}
 {{- end -}}
 
-{{/* Determine if reports-server subchart is being installed */}}
-{{- define "kyverno.installReportsServer" -}}
-{{- if (hasKey .Values "reports-server") -}}
-  {{- if (index .Values "reports-server").install -}}
-true
-  {{- else -}}
-false
-  {{- end -}}
-{{- else -}}
-false
-{{- end -}}
-{{- end -}}
-
 {{- define "kyverno.chartVersion" -}}
 {{- if .Values.global.templating.enabled -}}
   {{- required "templating.version is required when templating.enabled is true" .Values.global.templating.version | replace "+" "_" -}}
 {{- else -}}
   {{- .Chart.Version | replace "+" "_" -}}
-{{- end -}}
-{{- end -}}
-
-{{/* Validate registry allowlist entries before serializing them into a CSV flag. */}}
-{{- define "kyverno.registryClient.validate" -}}
-{{- range $index, $entry := .privateRegistryAllowlist -}}
-  {{- if not (kindIs "string" $entry) -}}
-    {{- fail (printf "registryClient.privateRegistryAllowlist[%d] must be a non-empty string" $index) -}}
-  {{- end -}}
-  {{- if eq (trim $entry) "" -}}
-    {{- fail (printf "registryClient.privateRegistryAllowlist[%d] must be a non-empty string" $index) -}}
-  {{- end -}}
 {{- end -}}
 {{- end -}}
 
@@ -101,19 +76,6 @@ false
   {{- $flags = append $flags (print "--apiCallTimeout=" .apiCallTimeout) -}}
   {{- $flags = append $flags (print "--maxGlobalContextEntries=" (int .maxGlobalContextEntries)) -}}
 {{- end -}}
-{{- with .licensing -}}
-  {{/* Licensing itself is always on and has no enable flag; only the cadence and
-       optional commercial license path are adjustable. */}}
-  {{- with .evaluationInterval -}}
-    {{- $flags = append $flags (print "--licenseEvaluationInterval=" .) -}}
-  {{- end -}}
-  {{- with .licensePath -}}
-    {{- $flags = append $flags (print "--licensePath=" .) -}}
-  {{- end -}}
-  {{- with .warnRatio -}}
-    {{- $flags = append $flags (print "--licenseWarnRatio=" .) -}}
-  {{- end -}}
-{{- end -}}
 {{- with .logging -}}
   {{- $flags = append $flags (print "--loggingFormat=" .format) -}}
   {{- $flags = append $flags (print "--v=" .verbosity) -}}
@@ -132,14 +94,12 @@ false
 {{- with .protectManagedResources -}}
   {{- $flags = append $flags (print "--protectManagedResources=" .enabled) -}}
 {{- end -}}
+{{- with .protectGenerationLabels -}}
+  {{- $flags = append $flags (print "--protectGenerationLabels=" .enabled) -}}
+{{- end -}}
 {{- with .registryClient -}}
-  {{- include "kyverno.registryClient.validate" . -}}
   {{- $flags = append $flags (print "--allowInsecureRegistry=" .allowInsecure) -}}
   {{- $flags = append $flags (print "--registryCredentialHelpers=" (join "," .credentialHelpers)) -}}
-  {{- $flags = append $flags (print "--privateRegistryEgressMode=" .privateRegistryEgressMode) -}}
-  {{- with .privateRegistryAllowlist -}}
-    {{- $flags = append $flags (print "--privateRegistryAllowlist=" (join "," .)) -}}
-  {{- end -}}
 {{- end -}}
 {{- with .ttlController -}}
   {{- $flags = append $flags (print "--ttlReconciliationInterval=" .reconciliationInterval) -}}
