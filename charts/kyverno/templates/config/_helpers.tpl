@@ -16,14 +16,6 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "kyverno.config.licenseStateConfigMapName" -}}
-{{- if .Values.config.licenseState.create -}}
-    {{ default (printf "%s-license-state" (include "kyverno.fullname" .)) .Values.config.licenseState.name }}
-{{- else -}}
-    {{ required "A configmap name is required when `config.licenseState.create` is set to `false`" .Values.config.licenseState.name }}
-{{- end -}}
-{{- end -}}
-
 {{- define "kyverno.config.labels" -}}
 {{- template "kyverno.labels.merge" (list
   (include "kyverno.labels.common" .)
@@ -89,4 +81,12 @@
 
 {{- define "kyverno.config.imagePullSecret" -}}
 {{- printf "{\"auths\":{\"%s\":{\"auth\":\"%s\"}}}" .registry (printf "%s:%s" .username .password | b64enc) | b64enc }}
+{{- end -}}
+
+{{- define "kyverno.config.licenseStateConfigMapName" -}}
+{{- if .Values.config.licenseState.create -}}
+    {{ default (printf "%s-license-state" (include "kyverno.fullname" .)) .Values.config.licenseState.name }}
+{{- else -}}
+    {{ required "A configmap name is required when `config.licenseState.create` is set to `false`" .Values.config.licenseState.name }}
+{{- end -}}
 {{- end -}}
