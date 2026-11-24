@@ -451,6 +451,60 @@ spec:
                 description: LastUpdateTime is when this record was last updated
                 format: date-time
                 type: string
+              notRemediated:
+                description: |-
+                  NotRemediated lists the violating resources of a namespace shared by several
+                  localCluster repo mappings that no mapping remediates, with the reason (#2503). It is
+                  set only on the per-namespace record (label RecordKindLabel=RecordKindNamespace) and
+                  replaced on every run. At most 200 entries are kept; NotRemediatedTotal holds the
+                  full count.
+                items:
+                  description: NotRemediatedResource is one violating resource that
+                    no mapping remediates.
+                  properties:
+                    candidates:
+                      description: |-
+                        Candidates are the repos involved: the repos that could own the resource for an
+                        ambiguous reason, or the owning repo for NoSourceFileInOwningRepo. A repo mapped
+                        more than once appears as "<url>#<path>".
+                      items:
+                        type: string
+                      type: array
+                    policies:
+                      description: Policies are the violated policies of the resource.
+                      items:
+                        type: string
+                      type: array
+                    reason:
+                      description: Reason says why no mapping remediates the resource.
+                      enum:
+                      - ReleaseNotMapped
+                      - NotHelmManaged
+                      - AmbiguousRelease
+                      - AmbiguousManifest
+                      - NoSourceFileInOwningRepo
+                      - AmbiguousSharedFile
+                      type: string
+                    release:
+                      description: Release is the Helm release named on the live resource,
+                        when it has one.
+                      type: string
+                    resourceKey:
+                      description: ResourceKey identifies the resource as "Kind/namespace/name".
+                      type: string
+                  required:
+                  - reason
+                  - resourceKey
+                  type: object
+                maxItems: 200
+                type: array
+                x-kubernetes-list-type: atomic
+              notRemediatedTotal:
+                description: |-
+                  NotRemediatedTotal is the number of not-remediated resources found in the run. It is
+                  larger than len(NotRemediated) when the list was truncated.
+                format: int32
+                type: integer
               phase:
                 description: |-
                   Phase is the lifecycle phase of the current (or most recent) reconcile run.
@@ -595,6 +649,15 @@ spec:
                                     description: PRURL is the URL of the created pull
                                       request
                                     type: string
+                                  resources:
+                                    description: |-
+                                      Resources lists the resources this PR changes, as "Kind/namespace/name". It lets an
+                                      ownership move tell whether every resource of the PR moved (the PR can be closed) or
+                                      only some (the PR is kept and regenerated for the rest). Empty on PRs recorded
+                                      before it existed.
+                                    items:
+                                      type: string
+                                    type: array
                                   state:
                                     description: 'State tracks the current PR state:
                                       "open", "merged", "closed"'
@@ -642,6 +705,37 @@ spec:
                       description: ResourceHash is the SHA256 hash of the resource
                         content
                       type: string
+                    supersededBy:
+                      description: |-
+                        SupersededBy lists the resources of this file that moved to another collector's
+                        ownership. They are no longer remediated by this collector.
+                      items:
+                        description: |-
+                          SupersededResource records that a resource of this state's file is now owned by another
+                          collector (an ownership move between runs, #666), so this collector no longer remediates it.
+                        properties:
+                          at:
+                            description: At is when the move was detected.
+                            format: date-time
+                            type: string
+                          collectorId:
+                            description: CollectorID is the collector that owns the
+                              resource now.
+                            type: string
+                          prUrl:
+                            description: PRURL is the new owner's PR/MR for the resource,
+                              when one exists.
+                            type: string
+                          resource:
+                            description: Resource identifies the moved resource as
+                              "Kind/namespace/name".
+                            type: string
+                        required:
+                        - at
+                        - collectorId
+                        - resource
+                        type: object
+                      type: array
                     violations:
                       description: Violations is the list of policy violations detected
                       items:

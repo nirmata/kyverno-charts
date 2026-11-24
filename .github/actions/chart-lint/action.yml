@@ -30,6 +30,17 @@ runs:
     - name: Set up chart-testing
       uses: helm/chart-testing-action@v2.6.1
 
+    - name: Add chart dependency repositories
+      shell: bash
+      # ct lint runs `helm dependency build`, which resolves every dependency's
+      # repository URL against the runner's helm config before it reads any
+      # vendored tarball. Without these the kyverno chart fails to lint.
+      run: |
+        helm repo add kyverno-api https://kyverno.github.io/api
+        helm repo add openreports https://openreports.github.io/reports-api
+        helm repo add nirmata https://nirmata.github.io/kyverno-charts
+        helm repo update
+
     - name: Run chart-testing (lint)
       shell: bash
       run: ct lint --target-branch ${{ inputs.target-branch }} 
