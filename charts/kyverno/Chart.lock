@@ -1,0 +1,21 @@
+dependencies:
+- name: grafana
+  repository: ""
+  version: 3.10.0
+- name: crds
+  repository: ""
+  version: 3.10.0
+- name: kyverno-api
+  repository: https://kyverno.github.io/api
+  version: 0.0.1-alpha.5
+- name: openreports
+  repository: https://openreports.github.io/reports-api
+  version: 0.1.0
+- name: reports-server
+  repository: https://nirmata.github.io/kyverno-charts
+  version: 0.2.43
+- name: kyverno-notation-aws
+  repository: https://nirmata.github.io/kyverno-charts
+  version: 2.0.0
+digest: sha256:f28decb477e8a60d323d348272d6892dc9e6540707045c047a7ddd0ca8bdb886
+generated: "2026-11-24T13:50:47.053832+05:30"

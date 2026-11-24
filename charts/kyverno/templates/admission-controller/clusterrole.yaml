@@ -16,14 +16,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ template "kyverno.admission-controller.roleName" . }}:core
-  {{- if .Values.webhooksCleanup.autoDeleteWebhooks.enabled }}
-  {{- if not .Values.global.templating.enabled }}
-  finalizers:
-  - kyverno.io/webhooks
-  - kyverno.io/exceptionwebhooks
-  - kyverno.io/globalcontextwebhooks
-  {{- end }}
-  {{- end }}
   labels:
     {{- include "kyverno.admission-controller.labels" . | nindent 4 }}
 rules:
@@ -37,14 +29,6 @@ rules:
       - list
       - watch
       {{- end }}
-  - apiGroups:
-      - apiregistration.k8s.io
-    resources:
-      - apiservices
-    verbs:
-      - get
-      - list
-      - watch
   - apiGroups:
       - admissionregistration.k8s.io
     resources:
@@ -79,10 +63,6 @@ rules:
   - apiGroups:
       - kyverno.io
     resources:
-      - policies
-      - policies/status
-      - clusterpolicies
-      - clusterpolicies/status
       - updaterequests
       - updaterequests/status
       - globalcontextentries
@@ -96,17 +76,32 @@ rules:
       - update
       - watch
       - deletecollection
+  # Read-only: kyverno-init's startup inventory and the admission controller's
+  # kyverno_legacy_policies_total gauge list the legacy kyverno.io kinds. Nothing in this
+  # pod creates, updates, or deletes them (kyverno-init only patches their status, below).
   - apiGroups:
       - kyverno.io
     resources:
+      - clusterpolicies
+      - policies
       - policyexceptions
+      - cleanuppolicies
+      - clustercleanuppolicies
     verbs:
-      - create
-      - get
+      - list
+  # kyverno-init replaces the stale Ready condition on legacy ClusterPolicy/Policy objects
+  # (see cmd/kyverno-init/legacy_status.go). Status only: spec stays read-only.
+  - apiGroups:
+      - kyverno.io
+    resources:
+      - clusterpolicies/status
+      - policies/status
+      - cleanuppolicies/status
+      - clustercleanuppolicies/status
+    verbs:
       - list
       - patch
       - update
-      - watch
   - apiGroups:
       - policies.kyverno.io
     resources:
@@ -211,31 +206,6 @@ rules:
       - get
       - list
       - watch
-  {{- if .Values.webhooksCleanup.autoDeleteWebhooks.enabled }}
-  {{- if not .Values.global.templating.enabled }}
-  - apiGroups:
-      - rbac.authorization.k8s.io
-    resources:
-      - clusterroles
-      - clusterrolebindings
-    resourceNames:
-      - {{ template "kyverno.admission-controller.roleName" . }}
-      - {{ template "kyverno.admission-controller.roleName" . }}:core
-      - {{ template "kyverno.admission-controller.roleName" . }}:temporary
-    verbs:
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - rbac.authorization.k8s.io
-    resources:
-      - clusterroles
-      - clusterrolebindings
-    verbs:
-      - create
-      - list
-  {{- end }}
-  {{- end }}
 {{- with .Values.admissionController.rbac.coreClusterRole.extraResources }}
   {{- toYaml . | nindent 2 }}
 {{- end }}
