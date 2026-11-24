@@ -163,6 +163,8 @@ rules:
   - statefulsets
   - daemonsets
   - replicasets
+  # Shared-namespace ownership follows StatefulSet/DaemonSet children (go-service-agent#665).
+  - controllerrevisions
   verbs:
   - get
   - list
