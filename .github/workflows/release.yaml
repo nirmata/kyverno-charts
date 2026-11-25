@@ -52,6 +52,17 @@ jobs:
         with:
           version: v3.13.0
 
+      - name: Add chart dependency repositories
+        # chart-releaser runs `helm dependency build` while packaging, which
+        # needs every dependency repository URL registered (same fix as #1350
+        # for ct lint). Without this the kyverno chart fails to package and the
+        # job aborts before any other chart is released.
+        run: |
+          helm repo add kyverno-api https://kyverno.github.io/api
+          helm repo add openreports https://openreports.github.io/reports-api
+          helm repo add nirmata https://nirmata.github.io/kyverno-charts
+          helm repo update
+
       - name: Run chart-releaser
         id: releaser
         uses: helm/chart-releaser-action@v1.6.0
