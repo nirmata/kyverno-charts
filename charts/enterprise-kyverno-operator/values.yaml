@@ -46,6 +46,17 @@ kyvernoDeployment: kyverno-admission-controller
 kyvernoNamespace: kyverno
 enablePolicyset: false
 
+policySet:
+  # Let a Cluster-scope PolicySet apply a read-only ClusterRole that Kyverno aggregates into its reports
+  # controller (labelled rbac.kyverno.io/aggregate-to-reports-controller: "true", get/list/watch verbs
+  # only, no wildcard or exec/proxy resources, no other aggregate-to-* label, no aggregationRule, not
+  # aggregated by any other role), without giving the operator cluster-admin (rbac.operatorHasAdminPerms
+  # stays false). The operator only creates, updates or deletes roles it owns (annotation
+  # policies.nirmata.io/reports-rbac-owner). Adds to the operator ClusterRole cluster-wide
+  # get/list/watch on everything (Secrets included) and create/update/patch/delete on all ClusterRoles.
+  # See the chart README, "Applying reports RBAC from a PolicySet".
+  allowReportsRbac: false
+
 preventPolicyTamper: true
 
 # Whether certificate management is done by "cert-manager", "operator", "other"
