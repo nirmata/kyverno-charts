@@ -204,4 +204,25 @@ rules:
   - watch
   - update
   - patch
+{{- if (.Values.policySet | default dict).allowReportsRbac }}
+# --allow-reports-rbac: apply read-only ClusterRoles for the Kyverno reports controller. The operator
+# can only grant permissions it holds itself (and has no "escalate"), hence the cluster-wide read access.
+- apiGroups:
+  - "*"
+  resources:
+  - "*"
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+{{- end }}
 {{- end }}
